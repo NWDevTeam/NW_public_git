@@ -1,0 +1,616 @@
+@SMALL_STATE_SUPPORT_VALUE = 5
+@BIG_STATE_SUPPORT_VALUE = 9
+@WARLORD_SUPPORT_VALUE = 5
+
+#Country scope
+WTT_setup_political_struggle = {
+	#Only run setup if not already run
+	if = {
+		limit = {
+			NOT = {
+				any_country = {
+					has_country_flag = wtt_political_struggle
+				}
+			}
+		}
+
+		#Can be set from console to change live
+		set_variable = { global.days_add_support = 60 }
+		set_variable = { global.days_remove_support = 60 }
+		
+		set_variable = { global.small_state_support_value = @SMALL_STATE_SUPPORT_VALUE }
+		set_variable = { global.big_state_support_value = @BIG_STATE_SUPPORT_VALUE }
+
+
+		
+		#283 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Gansu
+		#287 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Taklamakan
+			#Warlord capital
+			325 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Yunnan
+		#591 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Hainan
+		#592 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Guangzhou
+		#593 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Guangdong
+			#Warlord capital
+			594 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Nanning
+		595 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Fujian
+		#596 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Zhejiang
+		597 = {	set_variable = { state_political_support_value = @BIG_STATE_SUPPORT_VALUE } } # Shandong
+		#598 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Jiangsu
+		#599 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Guangxi
+		#600 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Jiangxi
+		#601 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Xikang
+		602 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Hunan
+		603 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Guizhou
+			#Warlord capital
+			604 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Qinghai
+		605 = {	set_variable = { state_political_support_value = @BIG_STATE_SUPPORT_VALUE } } # Sichuan
+		#606 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Anhui
+		#607 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Henan
+		608 = {	set_variable = { state_political_support_value = @BIG_STATE_SUPPORT_VALUE } } # Beijing
+		613 = {	set_variable = { state_political_support_value = @BIG_STATE_SUPPORT_VALUE } } # Shanghai
+		#614 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Hebei
+			#Warlord capital
+			615 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Shanxi
+		#616 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Ningxia
+			#Warlord capital
+			617 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Urumqi
+		#618 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Dzungaria
+		#619 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Yarkand
+		620 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Hubei
+		#621 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Suiyuan
+			#PRC capital
+			622 = {	set_variable = { state_political_support_value = @SMALL_STATE_SUPPORT_VALUE } } # Shaanxi
+
+
+		GXC = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		YUN = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		SHX = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		XSM = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		SIK = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		
+		SHA = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		SIH = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		XIK = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		TNG = { set_variable = { warlord_political_support_value = @WARLORD_SUPPORT_VALUE } }
+		
+		event_target:WTT_current_china_leader = {
+			WTT_save_country_as_event_target = yes
+			set_country_flag = wtt_political_struggle
+
+			#Set all states to support WTT_current_china_leader. We only calculate support from the ones they actually control
+			every_state = {
+				limit = {
+					#Make sure we limit to correct states even if some crazy core switching or conquering happens
+					WTT_is_potential_political_struggle_state = yes
+				}
+				add_to_variable = { political_platform_@PREV = 1 }
+				set_state_flag = majority_political_platform_@PREV
+			}
+		}
+		#Not needed here. WTT_add_ROOT_to_political_struggle will call it
+		#WTT_political_struggle_recalculate_support = yes
+	}
+}
+
+#Country scope
+WTT_restart_political_struggle = {
+
+	#If the leader has support in a start they get it all
+	event_target:WTT_current_china_leader = {
+		set_country_flag = wtt_political_struggle
+		clr_country_flag = wtt_political_struggle_paused
+		WTT_save_country_as_event_target = yes
+	}
+
+	every_country = {
+		limit = {
+			has_country_flag = wtt_political_struggle_paused
+		}
+		WTT_save_country_as_event_target = yes
+		set_country_flag = wtt_political_struggle
+		clr_country_flag = wtt_political_struggle_paused
+
+		#We gain support in all our owned core states
+		every_owned_state = {
+			limit = { is_core_of = ROOT }
+			WTT_clear_political_platform_make_ROOT_majority = yes
+		}		
+	}
+
+	WTT_political_struggle_recalculate_support = yes
+}
+
+WTT_save_country_as_event_target = {
+	if = {
+		limit = {
+			original_tag = CHI
+		}
+		save_global_event_target_as = scope_CHI
+	}
+	else_if = {
+		limit = {
+			original_tag = PRC
+		}
+		save_global_event_target_as = scope_PRC
+	}
+	else_if = {
+		limit = {
+			original_tag = GXC
+		}
+		save_global_event_target_as = scope_GXC
+	}
+	else_if = {
+		limit = {
+			original_tag = YUN
+		}
+		save_global_event_target_as = scope_YUN
+	}
+	else_if = {
+		limit = {
+			original_tag = SHX
+		}
+		save_global_event_target_as = scope_SHX
+	}
+	else_if = {
+		limit = {
+			original_tag = XSM
+		}
+		save_global_event_target_as = scope_XSM
+	}
+	else_if = {
+		limit = {
+			original_tag = SIK
+		}
+		save_global_event_target_as = scope_SIK
+	}
+	
+	else_if = {
+		limit = {
+			original_tag = SHA
+		}
+		save_global_event_target_as = scope_SHA
+	}
+	else_if = {
+		limit = {
+			original_tag = SIH
+		}
+		save_global_event_target_as = scope_SIH
+	}
+	else_if = {
+		limit = {
+			original_tag = XIK
+		}
+		save_global_event_target_as = scope_XIK
+	}
+	else_if = {
+		limit = {
+			original_tag = TNG
+		}
+		save_global_event_target_as = scope_TNG
+	}
+}
+
+WTT_clear_country_event_target = {
+	if = {
+		limit = {
+			original_tag = CHI
+		}
+		clear_global_event_target = scope_CHI
+	}
+	else_if = {
+		limit = {
+			original_tag = PRC
+		}
+		clear_global_event_target = scope_PRC
+	}
+	else_if = {
+		limit = {
+			original_tag = GXC
+		}
+		clear_global_event_target = scope_GXC
+	}
+	else_if = {
+		limit = {
+			original_tag = YUN
+		}
+		clear_global_event_target = scope_YUN
+	}
+	else_if = {
+		limit = {
+			original_tag = SHX
+		}
+		clear_global_event_target = scope_SHX
+	}
+	else_if = {
+		limit = {
+			original_tag = XSM
+		}
+		clear_global_event_target = scope_XSM
+	}
+	else_if = {
+		limit = {
+			original_tag = SIK
+		}
+		clear_global_event_target = scope_SIK
+	}
+	
+	else_if = {
+		limit = {
+			original_tag = SHA
+		}
+		clear_global_event_target = scope_SHA
+	}
+	else_if = {
+		limit = {
+			original_tag = SIH
+		}
+		clear_global_event_target = scope_SIH
+	}
+	else_if = {
+		limit = {
+			original_tag = XIK
+		}
+		clear_global_event_target = scope_XIK
+	}
+	else_if = {
+		limit = {
+			original_tag = TNG
+		}
+		clear_global_event_target = scope_TNG
+	}
+}
+
+#Country scope
+WTT_add_ROOT_to_political_struggle = {
+	hidden_effect = {
+		WTT_save_country_as_event_target = yes
+
+		set_country_flag = wtt_political_struggle
+		
+		#Remove support if we ever supported anyone
+		random_country = {
+			limit = {
+				ROOT = { has_country_flag = warlord_supports_@PREV }
+			}
+			ROOT = { clr_country_flag = warlord_supports_@PREV }
+		}
+
+		#We gain support in all our owned core states
+		every_owned_state = {
+			limit = { is_core_of = ROOT }
+			WTT_clear_political_platform_make_ROOT_majority = yes
+		}
+	}
+	WTT_political_struggle_recalculate_support = yes
+}
+
+#State scope
+WTT_clear_political_platform_make_ROOT_majority = {
+	every_country = {
+		limit = {
+			is_literally_china = yes
+		}
+		clear_variable = PREV.political_platform_@THIS
+		PREV = { clr_state_flag = majority_political_platform_@PREV }
+	}
+	set_state_flag = majority_political_platform_@ROOT
+}
+
+#State scope
+WTT_make_ROOT_majority_1_point_over_next = {
+	random_country = {
+		limit = { PREV = { has_state_flag = majority_political_platform_@PREV } }
+		PREV = { clr_state_flag = majority_political_platform_@PREV }
+		set_variable = { PREV.political_platform_@ROOT = PREV.political_platform_@THIS }
+		add_to_variable = { PREV.political_platform_@ROOT = 1 }
+	}
+	set_state_flag = majority_political_platform_@ROOT
+}
+
+#State scope
+WTT_random_support_chance_increase_for_ROOT_in_state = {
+	random_list = {
+		#TODO_WTT_CD modify chances based on ministers
+		# Could be ideology pusher.
+		# Need to make nice custom tooltips that explains it
+		65 = { #Better than nothing
+			add_to_variable = { political_platform_@ROOT = 1 }
+			custom_effect_tooltip = increase_support_in_state_1
+		}
+		25 = { #Medium success
+			add_to_variable = { political_platform_@ROOT = 2 }
+			custom_effect_tooltip = increase_support_in_state_2
+		}
+		10 = { #Great success
+			add_to_variable = { political_platform_@ROOT = 3 }
+			custom_effect_tooltip = increase_support_in_state_3
+		}
+	}
+}
+
+#State scope
+WTT_remove_opposition_state_support = {
+	ROOT = {
+		add_stability = -0.03
+		custom_effect_tooltip = other_political_support_down_1
+		subtract_from_variable = { other_political_support = 1 }
+	}
+
+	set_variable = { support_to_remove = 3 }
+	if = {
+		limit = {
+			ROOT = { has_idea_with_trait = prince_of_terror }
+		}
+		add_to_variable = { support_to_remove = 2 }
+	}
+	if = {
+		limit = {
+			ROOT = { has_idea_with_trait = backroom_backstabber }
+		}
+		add_to_variable = { support_to_remove = 1 }
+	}
+
+	every_country = {
+		limit = {
+			has_country_flag = wtt_political_struggle
+			NOT = { tag = ROOT }
+			#check_variable = { political_platform_@PREV > 0 }
+		}
+		custom_effect_tooltip = empty_key					
+
+		subtract_from_variable = { PREV.political_platform_@THIS = PREV.support_to_remove }
+		clamp_variable = {
+			var = PREV.political_platform_@THIS
+			min = 0
+			max = PREV.political_platform_@THIS
+		}
+	}
+	clear_variable = support_to_remove
+
+	#Tooltip here looks better
+	if = {
+		limit = {
+			NOT = { 
+				ROOT = { has_idea_with_trait = prince_of_terror }
+				ROOT = { has_idea_with_trait = backroom_backstabber }
+			}
+		}
+		custom_effect_tooltip = remove_support_in_state_3
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_idea_with_trait = backroom_backstabber }
+			NOT = { ROOT = { has_idea_with_trait = prince_of_terror } }
+		}
+		custom_effect_tooltip = remove_support_in_state_4
+	}
+	else_if = {
+		limit = {
+			NOT = { ROOT = { has_idea_with_trait = backroom_backstabber } }
+			ROOT = { has_idea_with_trait = prince_of_terror }
+		}
+		custom_effect_tooltip = remove_support_in_state_5
+	}
+	else_if = {
+		limit = {
+			ROOT = { has_idea_with_trait = prince_of_terror }
+			ROOT = { has_idea_with_trait = backroom_backstabber }
+		}
+		custom_effect_tooltip = remove_support_in_state_6
+	}
+}
+
+#State scope
+WTT_recalculate_state_support_for_ROOT = {
+	if = {
+		limit = {
+			any_other_country = {
+				is_literally_china = yes
+				NOT = { tag = ROOT }
+				PREV = {
+					check_variable = {
+						var = political_platform_@PREV
+						compare = greater_than_or_equals
+						value = political_platform_@ROOT
+					}
+				}
+			}
+		}
+	}
+	else = {
+		#Clear old majority flag
+		random_country = {
+			limit = {
+				PREV = { has_state_flag = majority_political_platform_@PREV }
+			}
+			PREV = { clr_state_flag = majority_political_platform_@PREV }
+		}
+		set_state_flag = majority_political_platform_@ROOT
+	}
+}
+
+
+#State scope
+WTT_fire_add_support_status_events = {
+	if = {
+		limit = {
+			has_state_flag = majority_political_platform_@ROOT
+			event_target:majority_country = { tag = ROOT }
+		}
+		ROOT = {
+			#Event that we still have state majority and have built further support
+			country_event = { id = wtt_political_organisation.1 }
+		
+
+			#Event to others that campaign from ROOT is increasing the lead in state
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				country_event = { id = wtt_political_organisation.2 hours = 1 }
+			}
+		}
+
+	}
+	else_if = {
+		limit = {
+			has_state_flag = majority_political_platform_@ROOT
+			event_target:majority_country = { NOT = { tag = ROOT } }
+		}
+		event_target:majority_country = { save_event_target_as = old_majority_country }
+		ROOT = {
+			save_event_target_as = majority_country
+
+			#Event that we have taken state majority from old_majority_country
+			country_event = { id = wtt_political_organisation.3 }
+			
+			#Event to others that campaign from ROOT has taken state majority old_majority_country
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				country_event = { id = wtt_political_organisation.4 hours = 1 }
+			}
+		}
+	}
+	else = {
+		ROOT = {
+			#Event that we are building support, but majority_country still has state majority
+			country_event = { id = wtt_political_organisation.5 }
+
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				#Event to others that ROOT is building support, but majority_country still has greatest support
+				country_event = { id = wtt_political_organisation.6 hours = 1 }
+			}
+		}
+	}
+}
+
+
+#State scope
+WTT_fire_remove_support_status_events = {
+	if = {
+		limit = {
+			has_state_flag = majority_political_platform_@ROOT
+			event_target:majority_country = { tag = ROOT }
+		}
+		ROOT = {
+			#Event that we still have state majority and have removed opposition
+			country_event = { id = wtt_political_organisation.7 }
+		
+
+			#Event to others that opposition support has been removed and majority_country still leads state
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				country_event = { id = wtt_political_organisation.8 hours = 1 }
+			}
+		}
+
+	}
+	else_if = {
+		limit = {
+			has_state_flag = majority_political_platform_@ROOT
+			event_target:majority_country = { NOT = { tag = ROOT } }
+		}
+		event_target:majority_country = { save_event_target_as = old_majority_country }
+		ROOT = {
+			save_event_target_as = majority_country
+
+			#Event that we have taken state majority from old_majority_country after removing opposition support
+			country_event = { id = wtt_political_organisation.9 }
+			
+			#Event to others that raid from majority_country has given them state majority over old_majority_country
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				country_event = { id = wtt_political_organisation.10 hours = 1 }
+			}
+		}
+	}
+	else = {
+		ROOT = {
+			#Event that we have removed support in state, but majority_country still has state majority
+			country_event = { id = wtt_political_organisation.11 }
+
+			every_other_country = {
+				limit = { has_country_flag = wtt_political_struggle }
+				#Event to others that opposition support has been removed, but majority_country still has greatest support
+				country_event = { id = wtt_political_organisation.12 hours = 1 }
+			}
+		}
+	}
+}
+
+#Country scope
+WTT_political_struggle_recalculate_support = {
+	hidden_effect = {
+		#Clear
+		every_country = {
+			limit = {
+				has_country_flag = wtt_political_struggle
+			}
+			clear_variable = total_political_support_points
+		}
+		#Recalc states
+		every_state = {
+			limit = {
+				WTT_is_potential_political_struggle_state = yes
+				OR = {
+					is_controlled_by = event_target:WTT_current_china_leader
+					CONTROLLER = { is_subject_of = event_target:WTT_current_china_leader }
+					#Own state points
+					CONTROLLER = { has_country_flag = wtt_political_struggle }
+				}
+			}
+			every_country = {
+				limit = {
+					has_country_flag = wtt_political_struggle
+					PREV = { has_state_flag = majority_political_platform_@PREV }
+				}
+				add_to_variable = { total_political_support_points = PREV.state_political_support_value }
+			}
+		}
+		
+		#Recalc warlord support
+		every_country = {
+			limit = {
+				has_country_flag = wtt_political_struggle
+			}
+			every_country = {
+				limit = {
+					has_country_flag = warlord_supports_@PREV
+				}
+				add_to_variable = { PREV.total_political_support_points = warlord_political_support_value }
+			}
+		}
+
+		#Recalc other support
+		every_country = {
+			limit = {
+				has_country_flag = wtt_political_struggle
+			}
+			add_to_variable = { total_political_support_points = other_political_support }
+		}
+	}
+}
+
+#Country scope
+WTT_political_struggle_remove_current_country = {
+	hidden_effect = {
+		#Recalc states
+		clr_country_flag = wtt_political_struggle
+		clear_variable = total_political_support_points
+		every_state = {
+			limit = {
+				WTT_is_potential_political_struggle_state = yes
+			}
+			clr_state_flag = majority_political_platform_@PREV
+			clear_variable = political_platform_@PREV
+		}
+		WTT_clear_country_event_target = yes
+	}
+}
+
+#Country scope
+WTT_political_struggle_pause_current_country = {
+	hidden_effect = {
+		set_country_flag = wtt_political_struggle_paused
+		WTT_clear_country_event_target = yes
+	}
+}

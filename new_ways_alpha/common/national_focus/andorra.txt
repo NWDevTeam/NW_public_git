@@ -1,0 +1,664 @@
+focus_tree = {
+	id = andorra_focus
+	country = {
+		factor = 0
+		modifier = {
+			add = 10
+			tag = ADR
+		}
+	}
+	default = no
+	
+	### Различные фокусы ###
+	focus = {
+		id = ADR_create_adr_money
+		icon = GFX_focus_mex_privatisation
+		cost = 10
+		x = 2
+		y = 0
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = industrial_bonus
+				bonus = 1.0
+				uses = 1
+				category = industry
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_build_roads_to_france #Строительство дорог
+		icon = GFX_z_build_roads_to_france
+		cost = 10
+		prerequisite = {
+			focus = ADR_create_adr_money
+		}
+		x = 1
+		y = 1
+		ai_will_do = {
+			factor = 3
+		}
+		completion_reward = {
+			820 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_reform_the_police_corps_of_Andorra
+		icon = GFX_z_goal_luxembourg_police
+		cost = 15
+		ai_will_do = {
+			factor = 2
+		}
+		prerequisite = {
+			focus = ADR_create_adr_money
+		}
+		x = 3
+		y = 1
+		completion_reward = {
+			army_experience = 20
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 2.0
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_establish_a_telephone_connection
+		icon = GFX_goal_generic_radar
+		cost = 20
+		ai_will_do = {
+			factor = 1
+		}
+		prerequisite = {
+			focus = ADR_build_roads_to_france
+		}
+		x = 1
+		y = 2
+		completion_reward = {
+			add_tech_bonus = {
+				name = secret_bonus
+				bonus = 2.0
+				uses = 2
+				category = electronics
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_ceremonial_army
+		icon = GFX_z_goal_appeal_youngmens
+		cost = 10
+		prerequisite = {
+			focus = ADR_reform_the_police_corps_of_Andorra
+		}
+		ai_will_do = {
+			factor = 2
+		}
+		x = 3
+		y = 2
+		completion_reward = {
+			add_tech_bonus = {
+			name = special_forces_bonus
+			bonus = 1.0
+			uses = 2
+			category = infantry_weapons
+			technology = paratroopers
+			technology = paratroopers2
+			technology = tech_mountaineers
+			technology = tech_mountaineers2
+		}
+		}
+	}
+	
+	### Политика ###
+	
+	focus = {
+		id = ADR_neutrality_act
+		icon = GFX_z_goal_neutrality
+		cost = 12
+		x = 6
+		y = 0
+		ai_will_do = {
+			factor = 4
+		}
+		completion_reward = {
+			add_ideas = neutrality_idea
+		}
+	}
+
+	focus = {
+		id = ADR_accept_refugee_in_spain
+		icon = GFX_focus_generic_military_academy
+		cost = 12
+		x = 8
+		y = 0
+		ai_will_do = {
+			factor = 5
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = spanish_civil_war		
+				OR = {
+					has_global_flag = spanish_civil_war
+					has_global_flag = anarcho_spanish_civil_war
+					has_global_flag = expand_spanish_civil_war
+					has_global_flag = liberal_spanish_civil_war
+					has_global_flag = haos_liberal_spanish_civil_war
+				}
+			}
+			NOT = { has_global_flag = scw_over }
+		}
+		completion_reward = {
+			add_manpower = 500
+		}
+	}
+	
+	focus = {
+		id = ADR_cut_boris_i
+		icon = GFX_z_goal_adr_cut_boris_i
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		prerequisite = {
+			focus = ADR_neutrality_act
+			focus = ADR_accept_refugee_in_spain
+		}
+		mutually_exclusive = {
+			focus = ADR_return_boris
+		}
+		available = {
+			has_country_flag = ADR_not_boris_flag
+		}
+		x = 6
+		y = 1
+		completion_reward = {
+			add_political_power = 50
+			set_cosmetic_tag = ADR_new_flag
+			add_popularity = {
+				ideology = monarchy
+				popularity = 0.1
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_return_boris
+		icon = GFX_z_goal_adr_return_boris_i
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		prerequisite = {
+			focus = ADR_neutrality_act
+			focus = ADR_accept_refugee_in_spain
+		}
+		mutually_exclusive = {
+			focus = ADR_cut_boris_i
+		}
+		available = {
+			has_country_flag = ADR_boris_flag
+		}
+		x = 8
+		y = 1
+		completion_reward = {
+			add_stability = -0.05
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.1
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_election
+		icon = GFX_z_goal_elections
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		prerequisite = {
+			focus = ADR_return_boris
+			focus = ADR_cut_boris_i
+		}
+		available = {
+			date > 1937.01.01
+			is_subject = no
+		}
+		x = 7
+		y = 2
+		completion_reward = {
+			add_political_power = 100
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = ADR_boris_flag
+					}
+					set_politics = {
+						ruling_party = democratic
+					}
+					FRA = {
+						news_event = { id = andorra.2 }
+					}
+					FRC = {
+						news_event = { id = andorra.2 }
+					}
+					FRR = {
+						news_event = { id = andorra.2 }
+					}
+					SPA = {
+						news_event = { id = andorra.2 }
+					}
+					SPR = {
+						news_event = { id = andorra.2 }
+					}
+					ARA = {
+						news_event = { id = andorra.2 }
+					}
+					CAT = {
+						news_event = { id = andorra.2 }
+					}
+					POR = {
+						news_event = { id = andorra.2 }
+					}
+					if = {
+						limit = {
+							ADR = {
+								is_guaranteed_by = SPR
+							}
+							CAT = {
+								OR = {
+									exists = no
+									is_subject = yes
+								}
+							}
+							SPR = {
+								OR = {
+									has_government = monarchy
+									has_government = neutrality
+									has_government = fascism
+									has_government = democratic
+								}
+								is_subject = no
+							}
+						}
+						SPR = {
+							country_event = { id = andorra.3 days = 10 }
+						}
+					}
+					if = {
+						limit = {
+							ADR = {
+								is_guaranteed_by = SPA
+							}
+							CAT = {
+								OR = {
+									exists = no
+									is_subject = yes
+								}
+							}
+							SPA = {
+								OR = {
+									has_government = monarchy
+									has_government = neutrality
+									has_government = fascism
+									has_government = democratic
+								}
+								is_subject = no
+							}
+						}
+						SPA = {
+							country_event = { id = andorra.3 days = 10 }
+						}
+					}
+					if = {
+						limit = {
+							ADR = {
+								is_guaranteed_by = FRA
+							}
+							FRA = {
+								OR = {
+									has_government = monarchy
+									has_government = neutrality
+									has_government = fascism
+									has_government = democratic
+								}
+								is_subject = no
+							}
+						}
+						FRA = {
+							country_event = { id = andorra.4 days = 10 }
+						}
+					}
+					if = {
+						limit = {
+							ADR = {
+								is_guaranteed_by = FRC
+							}
+							FRC = {
+								OR = {
+									has_government = monarchy
+									has_government = neutrality
+									has_government = fascism
+									has_government = democratic
+								}
+								is_subject = no
+							}
+						}
+						FRC = {
+							country_event = { id = andorra.4 days = 10 }
+						}
+					}
+					if = {
+						limit = {
+							CAT = {
+								OR = {
+									has_government = monarchy
+									has_government = neutrality
+									has_government = fascism
+									has_government = democratic
+								}
+								is_subject = no
+							}
+						}
+						CAT = {
+							country_event = { id = andorra.6 days = 10 }
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	### Не Борис ###
+	
+	focus = {
+		id = ADR_found_andbank
+		icon = GFX_z_goal_bank2
+		cost = 10
+		cancel_if_invalid = yes
+		prerequisite = {
+			focus = ADR_return_boris
+			focus = ADR_cut_boris_i
+		}
+		available = {
+			NOT = {
+				has_government = democratic
+			}
+		}
+		prerequisite = {
+			focus = ADR_election
+		}
+		x = 5
+		y = 3
+		ai_will_do = {
+			factor = 6
+		}
+		completion_reward = {
+			add_research_slot = 1
+			820 = {
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_Andorran_mullahs
+		icon = GFX_z_goal_andorran_mullahs
+		cost = 10
+		prerequisite = {
+			focus = ADR_found_andbank
+		}
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			NOT = {
+				has_government = democratic
+			}
+		}
+		x = 4
+		y = 4
+		completion_reward = {
+			add_political_power = 100
+		}
+	}
+	
+	focus = {
+		id = ADR_support_for_sheep_breeding
+		icon = GFX_z_goal_support_for_sheep_breeding
+		cost = 10
+		prerequisite = {
+			focus = ADR_found_andbank
+		}
+		x = 6
+		y = 4
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			NOT = {
+				has_government = democratic
+			}
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = industrial_bonus
+				bonus = 1.0
+				uses = 1
+				category = industry
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_abolish_capital_punishment
+		icon = GFX_z_goal_abolish_capital_punishment
+		cost = 20
+		ai_will_do = {
+			factor = 1
+		}
+		available = {
+			NOT = {
+				has_government = democratic
+			}
+		}
+		prerequisite = {
+			focus = ADR_support_for_sheep_breeding
+		}
+		prerequisite = {
+			focus = ADR_Andorran_mullahs
+		}
+		x = 5
+		y = 5
+		completion_reward = {
+			add_stability = 0.1
+			add_manpower = 1
+		}
+	}
+	
+	### Борис ###
+	
+	focus = {
+		id = ADR_act_constitution_1934
+		icon = GFX_z_goal_aviation_fund
+		cost = 10
+		cancel_if_invalid = yes
+		prerequisite = {
+			focus = ADR_return_boris
+			focus = ADR_cut_boris_i
+		}
+		prerequisite = {
+			focus = ADR_election
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		available = {
+			has_government = democratic
+		}
+		x = 9
+		y = 3
+		completion_reward = {
+			add_stability = 0.1
+			remove_ideas = ADR_feodalism_goverment
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.1
+			}
+		}
+	}
+	
+	
+	focus = {
+		id = ADR_tax_haven
+		icon = GFX_z_goal_support_businessmen_2
+		cost = 10
+		prerequisite = {
+			focus = ADR_act_constitution_1934
+		}
+		available = {
+			has_government = democratic
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 1
+				date > 1939.02.01
+			}
+		}
+		x = 8
+		y = 4
+		completion_reward = {
+			if = {
+				limit = {
+					820 = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+				820 = {
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_begin_to_modern
+		icon = GFX_z_goal_gold_up
+		cost = 10
+		ai_will_do = {
+			factor = 2
+		}
+		available = {
+			has_government = democratic
+		}
+		prerequisite = {
+			focus = ADR_act_constitution_1934
+		}
+		x = 10
+		y = 4
+		completion_reward = {
+			add_timed_idea = {
+				idea = ADR_begin_to_modern_idea
+				days = 220
+			}
+		}
+	}
+	
+	focus = {
+		id = ADR_develop_mount_tourism
+		icon = GFX_z_goal_develop_mount_tourism
+		cost = 20
+		prerequisite = {
+			focus = ADR_begin_to_modern
+		}
+		prerequisite = {
+			focus = ADR_tax_haven
+		}
+		ai_will_do = {
+			factor = 3
+		}
+		available = {
+			has_government = democratic
+		}
+		x = 9
+		y = 5
+		completion_reward = {
+			820 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			remove_ideas = ADR_economic_bad
+		}
+	}
+	
+	###
+	
+	focus = {
+		id = ADR_legacy_of_the_Andorran_blacksmiths
+		icon = GFX_z_goal_production
+		cost = 20
+		prerequisite = {
+			focus = ADR_begin_to_modern
+			focus = ADR_tax_haven
+		}
+		prerequisite = {
+			focus = ADR_support_for_sheep_breeding
+			focus = ADR_Andorran_mullahs
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 1
+				date > 1943.01.01
+			}
+		}
+		x = 7
+		y = 5
+		completion_reward = {
+			if = {
+				limit = {
+					820 = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = no
+						}
+					}
+				}
+				820 = {
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+}

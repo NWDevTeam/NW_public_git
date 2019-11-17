@@ -1,0 +1,816 @@
+focus_tree = {
+	id = bascov_focus
+	country = {
+		factor = 0
+		modifier = {
+			add = 10
+			tag = BAS
+		}
+	}
+	default = no
+	
+	### Политические фокусы ###
+	focus = {
+		id = BAS_provisional_government
+		icon = GFX_z_goal_provisional_government
+		cost = 0.85
+		x = 2
+		y = 0
+		ai_will_do = {
+			factor = 40
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			add_political_power = 100
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_provisional_government"
+		}
+	}
+	
+	focus = {
+		id = BAS_promotion_of_Basque_nationalism
+		icon = GFX_z_national_greatness
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		prerequisite = {
+			focus = BAS_provisional_government
+		}
+		relative_position_id = BAS_provisional_government
+		x = -2
+		y = 1
+		completion_reward = {
+			add_ideas = BAS_promotion_of_Basque_nationalism_idea
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_promotion_of_Basque_nationalism"
+		}
+	}
+	
+	focus = {
+		id = BAS_religious_tolerance
+		icon = GFX_z_goal_monarchism_10
+		cost = 10
+		prerequisite = {
+			focus = BAS_provisional_government
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		relative_position_id = BAS_provisional_government
+		x = 0
+		y = 1
+		completion_reward = {
+			add_stability = 0.2
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_religious_tolerance"
+		}
+	}
+	
+	focus = {
+		id = BAS_absorb_functions_state
+		icon = GFX_z_goal_give_democracy
+		cost = 10
+		prerequisite = {
+			focus = BAS_provisional_government
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		relative_position_id = BAS_provisional_government
+		x = 2
+		y = 1
+		available_if_capitulated = no
+		completion_reward = {
+			custom_effect_tooltip = BAS_autonomy_colony_tooltip
+			hidden_effect = {
+				if = {
+					limit = { is_subject = yes }
+					OVERLORD = {
+						set_autonomy = {
+							target = ROOT
+							autonomy_state = autonomy_colony
+						}
+					}
+				}
+			}
+			add_political_power = 50
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_absorb_functions_state"
+		}
+	}
+	
+	focus = {
+		id = BAS_guarantees_clergy
+		icon = GFX_z_goal_monarchism_17
+		cost = 10
+		prerequisite = {
+			focus = BAS_religious_tolerance
+		}
+		relative_position_id = BAS_religious_tolerance
+		x = 0
+		y = 1
+		ai_will_do = {
+			factor = 1
+		}
+		available = {
+			controls_state = 981
+		}
+		cancel_if_invalid = yes
+		available_if_capitulated = no
+		completion_reward = {
+			981 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+				
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_guarantees_clergy"
+		}
+	}
+	
+	focus = {
+		id = BAS_regain_control_of_Navarra
+		icon = GFX_z_goal_regain_control_of_navarra
+		cost = 10
+		prerequisite = {
+			focus = BAS_absorb_functions_state
+		}
+		relative_position_id = BAS_absorb_functions_state
+		x = 0
+		y = 1
+		available_if_capitulated = no
+		bypass = {
+			NOT = { owns_state = 172 }
+		}
+		available = {
+			172 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						tag = SPR
+						is_subject_of = SPR
+					}
+				}
+			}
+		}
+		completion_reward = {
+			add_autonomy_score = {
+				value = 200
+				localization = BAS_regain_control_of_Navarra_autonomy
+			}
+			add_state_core = 172
+			transfer_state = 172
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_regain_control_of_Navarra"
+		}
+	}
+	
+	focus = {
+		id = BAS_Basque_oasis
+		icon = GFX_z_goal_basque_oasis
+		cost = 10
+		prerequisite = {
+			focus = BAS_promotion_of_Basque_nationalism
+		}
+		prerequisite = {
+			focus = BAS_guarantees_clergy
+		}
+		relative_position_id = BAS_guarantees_clergy
+		x = -2
+		y = 1
+		completion_reward = {
+			add_political_power = 50
+			if = {
+				limit = {
+					is_subject = yes
+				}
+				add_timed_idea = {
+					idea = BAS_Basque_oasis_idea
+					days = 1000
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Basque_oasis"
+		}
+	}
+	
+	focus = {
+		id = BAS_independent_Basque_country
+		icon = GFX_z_goal_near_autonomy_status
+		cost = 10
+		mutually_exclusive = { focus = BAS_Autonomous_region }
+		prerequisite = {
+			focus = BAS_Basque_oasis
+		}
+		relative_position_id = BAS_Basque_oasis
+		x = 0
+		y = 1
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				NOT = {
+					SPR = { 	
+						OR = {
+							has_government = communism
+							has_government = trozkism
+							has_government = anarchism
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 3
+				is_historical_focus_on = yes
+				SPR = { 	
+					OR = {
+						has_government = communism
+						has_government = trozkism
+						has_government = anarchism
+					}
+				}
+			}
+		}
+		bypass = {
+			is_subject = no
+		}
+		available = {
+			has_autonomy_state = autonomy_dominion
+		}
+		completion_reward = {
+			set_autonomy = {
+				target = ROOT
+				autonomy_state = autonomy_free
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_independent_Basque_country"
+		}
+	}
+	
+	focus = {
+		id = BAS_Autonomous_region
+		icon = GFX_z_goal_two_great_empires
+		cost = 10
+		prerequisite = {
+			focus = BAS_regain_control_of_Navarra
+		}
+		relative_position_id = BAS_regain_control_of_Navarra
+		mutually_exclusive = { focus = BAS_independent_Basque_country }
+		x = 0
+		y = 2
+		ai_will_do = {
+			factor = 12
+			modifier = {
+				factor = 0
+				SPR = { 
+					OR = {
+						has_government = communism
+						has_government = trozkism
+						has_government = anarchism
+					}
+				}
+			}
+		}
+		
+		bypass = {
+			NOT = { is_subject_of = SPR }
+			is_subject = yes
+		}
+		available = {
+			is_subject_of = SPR
+		}
+		completion_reward = {
+			add_ideas = BAS_Autonomous_region_idea
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Autonomous_region"
+		}
+	}
+	
+	focus = {
+		id = BAS_elections
+		icon = GFX_z_goal_elections
+		cost = 10
+		prerequisite = {
+			focus = BAS_independent_Basque_country
+			focus = BAS_Autonomous_region
+		}
+		relative_position_id = BAS_Autonomous_region
+		x = -2
+		y = 1
+		completion_reward = {
+			add_political_power = 100
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_elections"
+		}
+	}
+	
+	### Армия ###
+	
+	focus = {
+		id = BAS_Arcana
+		icon = GFX_z_goal_arcana
+		cost = 10
+		relative_position_id = BAS_provisional_government
+		x = 4
+		y = 0
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			army_experience = 10
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 1.0
+				uses = 1
+				category = land_doctrine
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Arcana"
+		}
+	}
+	
+	focus = {
+		id = BAS_formation_regular_army
+		icon = GFX_z_goal_war_department
+		cost = 10
+		prerequisite = { focus = BAS_Arcana }
+		relative_position_id = BAS_Arcana
+		x = 0
+		y = 1
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					NOT = { has_template = "Basks Brigada" }
+				}
+				division_template = {
+					name = "Basks Brigada"
+					priority = 1
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+					}
+				}
+			}
+			add_tech_bonus = {
+				name = infantry_artillery_bonus
+				bonus = 1.0
+				uses = 1
+				category = infantry_weapons
+				category = artillery
+			}
+			add_timed_idea = {
+				idea = BAS_formation_regular_army_idea
+				days = 300
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_formation_regular_army"
+		}
+	}
+	
+	focus = {
+		id = BAS_Production_of_own_tanks
+		icon = GFX_focus_NZL_bob_semple_tank
+		cost = 10
+		prerequisite = { focus = BAS_Arcana }
+		relative_position_id = BAS_Arcana
+		cancel_if_invalid = yes
+		available_if_capitulated = no
+		available = {
+			controls_state = 981
+		}
+		ai_will_do = {
+			factor = 2
+		}
+		x = 2
+		y = 1
+		completion_reward = {
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 1.0
+				uses = 2
+				category = armor
+			}
+			981 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Production_of_own_tanks"
+		}
+	}
+	
+	focus = {
+		id = BAS_Fleet_formation
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		cost = 10
+		prerequisite = { focus = BAS_Arcana }
+		relative_position_id = BAS_Arcana
+		x = 4
+		y = 1
+		ai_will_do = {
+			factor = 1
+		}
+		completion_reward = {
+			navy_experience = 25
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Fleet_formation"
+		}
+	}
+	
+	focus = {
+		id = BAS_Euzko_Gudarostea 
+		icon = GFX_z_goal_euzko_gudarostea
+		cost = 10
+		prerequisite = { focus = BAS_formation_regular_army }
+		relative_position_id = BAS_formation_regular_army
+		x = 0
+		y = 1
+		ai_will_do = {
+			factor = 2
+		}
+		completion_reward = {
+			custom_effect_tooltip = Basks_Brigada_3
+			hidden_effect = {
+				create_unit = {
+					division = "name = \"Basks Brigada\" division_template = \"Basks Brigada\" start_experience_factor = 0.4" 
+					owner = BAS
+				}
+				create_unit = {
+					division = "name = \"Basks Brigada\" division_template = \"Basks Brigada\" start_experience_factor = 0.4" 
+					owner = BAS
+				}
+				create_unit = {
+					division = "name = \"Basks Brigada\" division_template = \"Basks Brigada\" start_experience_factor = 0.4" 
+					owner = BAS
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Euzko_Gudarostea"
+		}
+	}
+	
+	focus = {
+		id = BAS_Reform_assault_squads 
+		icon = GFX_focus_prc_infiltration
+		cost = 10
+		prerequisite = { focus = BAS_formation_regular_army }
+		relative_position_id = BAS_formation_regular_army
+		x = 2
+		y = 1
+		ai_will_do = {
+			factor = 1
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 1.0
+				uses = 1
+				category = land_doctrine
+			}
+			custom_effect_tooltip = Basks_Brigada_2
+			hidden_effect = {
+				create_unit = {
+					division = "name = \"Basks Brigada\" division_template = \"Basks Brigada\" start_experience_factor = 0.4" 
+					owner = BAS
+				}
+				create_unit = {
+					division = "name = \"Basks Brigada\" division_template = \"Basks Brigada\" start_experience_factor = 0.4" 
+					owner = BAS
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Reform_assault_squads"
+		}
+	}
+	
+	focus = {
+		id = BAS_Build_an_airport
+		icon = GFX_z_goal_generic_airports_focus
+		cost = 10
+		prerequisite = { focus = BAS_Reform_assault_squads }
+		prerequisite = { focus = BAS_Euzko_Gudarostea }
+		relative_position_id = BAS_Euzko_Gudarostea
+		x = 0
+		y = 1
+		completion_reward = {
+			981 = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = air_doc_bonus
+				bonus = 1.0
+				uses = 1
+				category = air_doctrine
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Build_an_airport"
+		}
+	}
+	
+	focus = {
+		id = BAS_form_own_air_fleet
+		icon = GFX_z_goal_generic_strategic_bombers_focus
+		cost = 10
+		prerequisite = { focus = BAS_Build_an_airport }
+		relative_position_id = BAS_Build_an_airport
+		x = 0
+		y = 1
+		completion_reward = {
+			add_tech_bonus = {
+				name = bomber_bonus
+				bonus = 1.0
+				uses = 2
+				technology = strategic_bomber1
+				technology = strategic_bomber2
+				technology = strategic_bomber3
+				category = tactical_bomber
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_form_own_air_fleet"
+		}
+	}
+	
+	focus = {
+		id = BAS_Countering_Enemy_Bombing
+		icon = GFX_z_goal_generic_tactical_aviation
+		cost = 10
+		prerequisite = { focus = BAS_Build_an_airport }
+		relative_position_id = BAS_Build_an_airport
+		x = 2
+		y = 1
+		completion_reward = {
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 1.0
+				uses = 2
+				technology = early_fighter
+				technology = fighter1
+				technology = fighter2
+				technology = fighter3
+				technology = heavy_fighter1
+				technology = heavy_fighter2
+				technology = heavy_fighter3
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Countering_Enemy_Bombing"
+		}
+	}
+	
+	focus = {
+		id = BAS_Expansion_seaport
+		icon = GFX_z_goal_generic_coastal_navy
+		cost = 10
+		prerequisite = { focus = BAS_Fleet_formation }
+		relative_position_id = BAS_Fleet_formation
+		x = 0
+		y = 1
+		completion_reward = {
+			981 = {
+				add_building_construction = {
+					type = naval_base
+					level = 2
+					instant_build = yes
+					province = 740
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Expansion_seaport"
+		}
+	}
+	
+	focus = {
+		id = BAS_Fleet_expansion
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		cost = 10
+		prerequisite = { focus = BAS_Expansion_seaport }
+		relative_position_id = BAS_Expansion_seaport
+		x = 0
+		y = 1
+		completion_reward = {
+			add_tech_bonus = {
+				name = dd_bonus
+				bonus = 1.0
+				ahead_reduction = 2
+				uses = 1
+				category = dd_tech
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Fleet_expansion"
+		}
+	}
+	
+	### промышленность ###
+	
+	focus = {
+		id = BAS_Economic_recovery
+		icon = GFX_z_goal_agrarian_reform
+		cost = 10
+		relative_position_id = BAS_Arcana
+		x = 6
+		y = 0
+		ai_will_do = {
+			factor = 3
+		}
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = construction_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = industrial_complex
+						size < 1
+						include_locked = yes
+					}					
+				}
+			}
+		}
+		available = {
+			has_global_flag = scw_over
+		}
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}			
+		}
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = industrial_complex
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Economic_recovery"
+		}
+	}
+	
+	focus = {
+		id = BAS_Develop_steel_industry
+		icon = GFX_focus_generic_industry_3
+		cost = 10
+		ai_will_do = {
+			factor = 1
+		}
+		prerequisite = { focus = BAS_Economic_recovery }
+		relative_position_id = BAS_Economic_recovery
+		x = 0
+		y = 1
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = construction_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = industrial_complex
+						size < 1
+						include_locked = yes
+					}					
+				}
+			}
+		}
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}			
+		}
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = industrial_complex
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Develop_steel_industry"
+		}
+	}
+	
+	focus = {
+		id = BAS_Explore_the_resources_of_the_Basque_Country
+		icon = GFX_focus_generic_steel
+		cost = 10
+		prerequisite = { focus = BAS_Develop_steel_industry }
+		relative_position_id = BAS_Develop_steel_industry
+		x = 0
+		y = 1
+		cancel_if_invalid = no
+		available = {
+			owns_state = 981
+		}
+		completion_reward = {
+			981 = {
+				add_resource = {
+					type = steel
+					amount = 5
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Explore_the_resources_of_the_Basque_Country"
+		}
+	}
+	
+	focus = {
+		id = BAS_explore_resources_Navarra
+		icon = GFX_goal_generic_construct_civilian
+		cost = 10
+		prerequisite = { focus = BAS_Develop_steel_industry }
+		relative_position_id = BAS_Develop_steel_industry
+		x = 2
+		y = 1
+		available = {
+			owns_state = 172
+		}
+		completion_reward = {
+			172 = {
+				add_resource = {
+					type = steel
+					amount = 5
+				}
+			}
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_explore_resources_Navarra"
+		}
+	}
+	
+	focus = {
+		id = BAS_University_Bilbao
+		icon = GFX_z_goal_vienna_circle
+		cost = 10
+		prerequisite = { focus = BAS_Explore_the_resources_of_the_Basque_Country }
+		relative_position_id = BAS_Explore_the_resources_of_the_Basque_Country
+		x = 0
+		y = 1
+		completion_reward = {
+			add_research_slot = 1
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_University_Bilbao"
+		}
+	}
+	
+	focus = {
+		id = BAS_Unite_best_minds
+		icon = GFX_z_goal_brain
+		cost = 10
+		prerequisite = { 
+			focus = BAS_University_Bilbao 
+			focus = BAS_explore_resources_Navarra 
+		}
+		relative_position_id = BAS_explore_resources_Navarra
+		available = {
+			num_of_civilian_factories > 25
+		}
+		x = 0
+		y = 2
+		completion_reward = {
+			add_research_slot = 1
+			log = "[GetDateText]: [Root.GetName]: Focus BAS_Unite_best_minds"
+		}
+	}
+}

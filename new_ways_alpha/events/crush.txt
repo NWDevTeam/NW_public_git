@@ -1,0 +1,689 @@
+﻿add_namespace = crush
+
+country_event = { #Страна трещит по швам!
+	id = crush.1
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.1"}
+	title = crush.1.t
+	desc = crush.1.desc
+	picture = GFX_ozn_pilsudski #
+
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { #Исключения
+			OR = {
+				original_tag = USA 
+				AND = {
+					original_tag = HUN
+					has_country_flag = hbbrg_flag
+				}
+				AND = {
+					original_tag = AUS
+					has_country_flag = hbbrg_flag
+				}
+				AND = {
+					original_tag = CZE
+					has_country_flag = hbbrg_flag
+				}
+				original_tag = GER 
+				original_tag = SOV 
+				original_tag = ENG 
+				original_tag = event_target:NW_france_scope
+			}
+		}
+		OR = { #Условие
+			AND = {
+				has_stability < 0 
+				has_political_power < 100
+			}
+			AND = {
+				has_stability < -10
+				has_political_power < 120
+			}
+			AND = {
+				has_stability < -20
+				has_political_power < 150
+			}
+			AND = {
+				has_stability < -50
+				has_political_power < 200
+			}
+			AND = {
+				has_stability < -100
+				has_political_power < 500
+			}
+		}
+		has_capitulated = no
+	}
+	
+	mean_time_to_happen = {
+		days = 60
+	}
+	
+	option = { #Принять отставку
+		name = crush.1.a
+		
+		hidden_effect = { #Изменение и стабилизация правительства
+			set_stability = 0.4
+			set_variable = { crash_pol_pow = political_power }
+			set_variable = { crash_null = 0 }
+			subtract_from_variable = {
+				var = crash_null
+				value = crash_pol_pow
+			}
+			if = {
+				limit = {
+					check_variable = {
+						crash_pol_pow > 80
+					}
+				}
+				add_political_power = crash_null
+				else = {
+					add_political_power = -80
+				}
+			}
+			clear_variable = crash_pol_pow
+			clear_variable = crash_null
+			if = {  
+				limit = { has_government = fascism }
+				random_list = {
+					1 = { set_popularities = { communism = 60 } set_politics = { ruling_party = communism } }
+					1 = { set_popularities = { democratic = 60 } set_politics = { ruling_party = democratic } }
+					1 = { set_popularities = { neutrality = 60 } set_politics = { ruling_party = neutrality } }
+				}
+			}
+			else_if = { 
+				limit = { has_government = democratic }
+				random_list = {
+					1 = { set_popularities = { communism = 60 } set_politics = { ruling_party = communism } }
+					1 = { set_popularities = { fascism = 60 } set_politics = { ruling_party = fascism } }
+					1 = { set_popularities = { neutrality = 60 } set_politics = { ruling_party = neutrality } }
+				}
+			}
+			else_if = { 
+				limit = { has_government = communism }
+				random_list = {
+					1 = { set_popularities = { democratic = 60 } set_politics = { ruling_party = democratic } }
+					1 = { set_popularities = { fascism = 60 } set_politics = { ruling_party = fascism } }
+					1 = { set_popularities = { neutrality = 60 } set_politics = { ruling_party = neutrality } }
+				}
+			}
+			else = { 
+				random_list = {
+					1 = { set_popularities = { democratic = 60 } set_politics = { ruling_party = democratic } }
+					1 = { set_popularities = { fascism = 60 } set_politics = { ruling_party = fascism } }
+					1 = { set_popularities = { communism = 60 } set_politics = { ruling_party = communism } }
+				}
+			}
+		}
+		
+		hidden_effect = { #Слив войны + Слив с фракции
+			if = {
+				limit = { has_war = yes }
+				every_country = {
+					limit = {
+						has_war_with = PREV
+					}
+					country_event = { id = crush.2 days = 1 }
+					white_peace = PREV
+				}
+			}
+			leave_faction = yes
+		}
+		
+		hidden_effect = { #Слив территорий
+			release_all = yes
+			every_country = {
+				limit = {
+					NOT = { tag = ROOT }
+				}
+				every_state = {
+					limit = {
+						is_core_of = PREV
+						is_owned_by = ROOT 
+					}
+					PREV = {
+						set_state_owner = PREV
+						set_state_controller = PREV
+					}
+				}
+			}
+		}
+	}	
+}
+
+country_event = { #У противника совершена революция
+	id = crush.2
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.2"}
+	title = crush.2.t
+	desc = crush.2.desc
+	picture = GFX_ozn_pilsudski #
+	
+	is_triggered_only = yes
+	
+	option = { #
+		name = crush.2.a
+		ai_chance = { 
+			base = 0
+			modifier = {
+				factor = 8
+				has_war = yes
+			}
+			modifier = {
+				factor = 10
+				OR = { 	
+					has_civil_war = yes
+					strength_ratio = {
+						tag = FROM
+						ratio < 0.6
+					}
+				}
+			}
+		}
+		add_political_power = 20
+	}
+	
+	option = { #
+		name = crush.2.b
+		ai_chance = { 
+			base = 10
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				OR = { 	
+					has_civil_war = yes
+					strength_ratio = {
+						tag = FROM
+						ratio < 0.6
+					}
+				}
+			}
+		}
+		
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+		}
+	}
+}
+
+
+
+
+
+
+#Развал ВБ. Начало у Доминиона
+country_event = {
+	id = crush.100
+	title = crush.100.t
+	desc = crush.100.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.100"}
+	
+	option = {
+		name = crush.100.a
+		ai_chance = {
+			factor = 99
+		}
+		every_other_country = {
+			limit = {
+				OR = {
+					tag = CAN
+					tag = SAF
+					tag = RAJ
+					tag = MAL
+					tag = AST
+					tag = NZL
+				}
+				NOT = { tag = ROOT }
+			}
+			country_event = { id = crush.101 days = 1 }
+		}
+		hidden_effect = {
+			country_event = { id = crush.102 days = 2 }
+		}
+	}
+	
+	option = {
+		name = crush.100.b
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+country_event = {
+	id = crush.101
+	title = crush.101.t
+	desc = crush.101.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.101"}
+
+	option = {
+		name = crush.101.a
+		ai_chance = {
+			factor = 90
+		}
+		set_country_flag = conference_adopted
+	}
+	
+	option = {
+		name = crush.101.b
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+#Форма союза
+country_event = {
+	id = crush.102
+	title = crush.102.t
+	desc = crush.102.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.102"}
+
+	option = {
+		name = crush.102.a
+		ai_chance = {
+			factor = 50
+		}
+		every_other_country = {
+			limit = {
+				has_country_flag = conference_adopted
+			}
+			ROOT = {
+				annex_country = {
+					target = PREV
+					transfer_troops = yes
+				}
+				every_state = {
+					limit = {
+						is_core_of = PREV
+					}
+					add_core_of = ROOT
+				}
+			}
+			every_unit_leader = {
+				set_nationality = ROOT
+			}
+		}
+		create_faction = "ALLY_NEW"
+		set_cosmetic_tag = NEW_LIGA_NAZ
+		hidden_effect = {
+			country_event = { id = crush.103 days = 1 }
+		}
+	}
+	
+	option = {
+		name = crush.102.b
+		ai_chance = {
+			factor = 50
+		}
+		create_faction = "LIGA_NAZ_NEW"
+		every_other_country = {
+			limit = {
+				has_country_flag = conference_adopted
+			}
+			ROOT = { add_to_faction = PREV }
+		}
+		hidden_effect = {
+			country_event = { id = crush.104 days = 1 }
+		}
+	}
+	
+	option = {
+		name = crush.102.c
+		ai_chance = {
+			factor = 25
+		}
+		create_faction = "LIGA_NAZ_NEW"
+		every_other_country = {
+			limit = {
+				has_country_flag = conference_adopted
+			}
+			ROOT = { add_to_faction = PREV }
+		}
+	}
+}
+
+#Выбор идеологии единого государства
+country_event = {
+	id = crush.103
+	title = crush.103.t
+	desc = crush.103.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.103"}
+	
+	option = {
+		name = crush.103.a
+		ai_chance = {
+			factor = 50
+		}
+		set_popularities = {
+			democratic = 100
+			fascism = 0
+			communism = 0
+			neutrality = 0
+		}
+		set_politics = {
+			ruling_party = democratic
+		}
+	}
+	
+	option = {
+		name = crush.103.b
+		ai_chance = {
+			factor = 50
+		}
+		set_popularities = {
+			democratic = 0
+			fascism = 100
+			communism = 0
+			neutrality = 0
+		}
+		set_politics = {
+			ruling_party = fascism
+		}
+	}
+	
+	option = {
+		name = crush.103.c
+		ai_chance = {
+			factor = 50
+		}
+		set_popularities = {
+			democratic = 0
+			fascism = 0
+			communism = 100
+			neutrality = 0
+		}
+		set_politics = {
+			ruling_party = communism
+		}
+	}
+	
+	option = {
+		name = crush.103.d
+		ai_chance = {
+			factor = 25
+		}
+		set_popularities = {
+			democratic = 0
+			fascism = 0
+			communism = 0
+			neutrality = 100
+		}
+		set_politics = {
+			ruling_party = neutrality
+		}
+	}
+}
+
+#Выбор идеологии альянса
+country_event = {
+	id = crush.104
+	title = crush.104.t
+	desc = crush.104.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.104"}
+	
+	option = {
+		name = crush.104.a
+		ai_chance = {
+			factor = 50
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+			set_popularities = {
+				democratic = 100
+				fascism = 0
+				communism = 0
+				neutrality = 0
+			}
+			set_politics = {
+				ruling_party = democratic
+			}
+		}
+		country_event = { id = crush.105 days = 1 }
+	}
+	
+	option = {
+		name = crush.104.b
+		ai_chance = {
+			factor = 50
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+			set_popularities = {
+				democratic = 0
+				fascism = 100
+				communism = 0
+				neutrality = 0
+			}
+			set_politics = {
+				ruling_party = fascism
+			}
+		}
+		country_event = { id = crush.105 days = 1 }
+	}
+	
+	option = {
+		name = crush.104.c
+		ai_chance = {
+			factor = 50
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+			set_popularities = {
+				democratic = 0
+				fascism = 0
+				communism = 100
+				neutrality = 0
+			}
+			set_politics = {
+				ruling_party = communism
+			}
+		}
+		country_event = { id = crush.105 days = 1 }
+	}
+	
+	option = {
+		name = crush.104.d
+		ai_chance = {
+			factor = 25
+		}
+		every_country = {
+			limit = {
+				OR = {
+					tag = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+			set_popularities = {
+				democratic = 0
+				fascism = 0
+				communism = 0
+				neutrality = 100
+			}
+			set_politics = {
+				ruling_party = neutrality
+			}
+		}
+		country_event = { id = crush.105 days = 1 }
+	}
+}
+
+country_event = {
+	id = crush.105
+	title = crush.105.t
+	desc = crush.105.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.105"}
+	
+	option = {
+		name = crush.105.a
+		ai_chance = {
+			factor = 200
+		}
+		trigger = {
+			TUR = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = TUR
+		}
+	}
+	
+	option = {
+		name = crush.105.b
+		ai_chance = {
+			factor = 100
+		}
+		trigger = {
+			KMX = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = KMX
+		}
+	}
+	
+	option = {
+		name = crush.105.c
+		ai_chance = {
+			factor = 100
+		}
+		trigger = {
+			ITA = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = ITA
+		}
+	}
+	
+	option = {
+		name = crush.105.d
+		ai_chance = {
+			factor = 100
+		}
+		trigger = {
+			any_country = {
+				has_country_flag = hbbrg_flag
+				is_faction_leader = yes
+			}
+			OR = {
+				ROOT = { NOT = { has_government = democratic } }
+				any_country = {
+					has_country_flag = hbbrg_flag
+					NOT = { has_government = democratic }
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				has_country_flag = hbbrg_flag
+			}
+			ROOT = {
+				create_wargoal = {
+					type = annex_everything
+					target = PREV
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = crush.105.e
+		ai_chance = {
+			factor = 10
+		}
+		trigger = {
+			OR = {
+				ROOT = { NOT = { has_government = democratic } }
+				SOV = { NOT = { has_government = democratic } }
+			}
+			SOV = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = SOV
+		}
+	}
+	
+	option = {
+		name = crush.105.f
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			GER = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = GER
+		}
+	}
+	
+	option = {
+		name = crush.105.g
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 15
+				event_target:NW_france_scope = { has_government = trozkism }
+			}
+		}
+		trigger = {
+			OR = {
+				ROOT = { NOT = { has_government = democratic } }
+				event_target:NW_france_scope = { NOT = { has_government = democratic } }
+			}
+			event_target:NW_france_scope = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = event_target:NW_france_scope
+		}
+	}
+	
+	option = {
+		name = crush.105.o
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			JAP = { is_faction_leader = yes }
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = JAP
+		}
+	}
+}
+

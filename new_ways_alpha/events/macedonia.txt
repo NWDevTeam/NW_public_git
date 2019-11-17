@@ -1,0 +1,199 @@
+﻿###########################
+# MACEDONIAN Events
+###########################
+
+add_namespace = macedonia
+
+########### Македонское восстание #############
+ 
+country_event = {
+	id = macedonia.1
+	title = macedonia.1.t
+	desc = macedonia.1.d
+	picture = GFX_report_event_soldiers
+	immediate = { log = "[GetDateText]: [Root.GetName]: event macedonia.1" }
+
+	is_triggered_only = yes	
+	
+	option = {
+		name = macedonia.1.a
+		custom_effect_tooltip = macedonian_rise
+		hidden_effect = {
+			load_oob = "Macedonian_rise"
+			add_manpower = 30000
+			declare_war_on = {
+				target = YUG
+				type = annex_everything
+			}
+		}
+	}	
+}
+
+
+########### Македония мир #############
+ 
+country_event = {
+	id = macedonia.2
+	title = macedonia.2.t
+	desc = macedonia.2.d
+	picture = GFX_report_event_second_vienna_award_pact
+	immediate = { log = "[GetDateText]: [Root.GetName]: event macedonia.2" }
+
+	is_triggered_only = yes	
+	
+	option = {
+		name = macedonia.2.a
+		ai_chance = { factor = 90 }
+		BUL = { white_peace = YUG }
+		MAC = { white_peace = YUG }
+	}
+	
+	option = {
+		name = macedonia.2.b
+		ai_chance = { factor = 10 }
+		
+	}	
+}
+
+
+########### Если: Македония существует; НЕ марионетка Болгарии ИЛИ не все регионы в составе Болгарии или её марионетки Македонии. #############
+
+country_event = {
+	id = macedonia.3
+	title = macedonia.3.t
+	desc = macedonia.3.d
+	picture = GFX_report_event_second_vienna_award_pact
+	immediate = { log = "[GetDateText]: [Root.GetName]: event macedonia.3" }
+
+	is_triggered_only = yes	
+	
+	option = {
+		name = macedonia.3.a
+		ai_chance = { 
+			factor = 90
+			modifier = {
+				factor = 100
+				is_subject_of = BUL
+			}
+			modifier = {
+				factor = 0
+				825 = { is_owned_by = MAC }
+				812 = { is_owned_by = MAC }
+				106 = { is_owned_by = MAC }
+				is_subject = no
+			}
+			modifier = {
+				factor = 90
+				any_state = {
+					is_core_of = MAC
+					NOT = { is_owned_by = MAC } 
+				}
+				is_subject = yes
+				NOT = { is_subject_of = BUL }
+			}
+			modifier = {
+				factor = 50
+				OR = {
+					any_state = {
+						is_core_of = MAC
+						NOT = { is_owned_by = MAC } 
+					}
+					AND = { is_subject = yes NOT = { is_subject_of = BUL } }
+				}
+			}
+		}
+		
+		if = {
+			limit = { NOT = { 825 = { is_owned_by = BUL } } }
+			MAC = { transfer_state = 825 }
+		}
+		if = {
+			limit = { NOT = { 106 = { is_owned_by = BUL } } }
+			MAC = { transfer_state = 106 }
+		}
+		if = {
+			limit = { NOT = { 812 = { is_owned_by = BUL } } }
+			MAC = { transfer_state = 812 }
+		}
+		
+		BUL = {
+			create_wargoal = {
+				type = take_state_focus
+				target = YUG
+				generator = { 106 812 825 }
+			}
+		}
+		
+		hidden_effect = {
+			load_oob = "Macedonian_rise"
+			add_manpower = 30000
+			
+			if = { 
+				limit = { 
+					NOT = { is_subject_of = BUL is_subject = yes }
+				}
+				set_autonomy = {
+					target = MAC
+					autonomy_state = autonomy_free
+				}
+			}
+			
+			declare_war_on = {
+				target = YUG
+				type = annex_everything
+			}
+		}
+	}
+	
+	option = {
+		name = macedonia.3.b
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0
+				is_subject_of = BUL
+			}
+			modifier = {
+				factor = 2
+				any_state = {
+					is_core_of = MAC
+					NOT = { is_owned_by = MAC } 
+				}
+				is_subject = yes
+				NOT = { is_subject_of = BUL }
+			}
+		}
+		effect_tooltip = {
+			BUL = {
+				create_wargoal = {
+					type = annex_everything
+					target = MAC
+				}
+			}
+		}
+		BUL = { country_event = { id = macedonia.4 hours = 6 } }
+	}	
+}
+
+
+###########  #############
+
+country_event = {
+	id = macedonia.4
+	title = macedonia.4.t
+	desc = macedonia.4.d
+	picture = GFX_report_event_second_vienna_award_pact
+	immediate = { log = "[GetDateText]: [Root.GetName]: event macedonia.4" }
+
+	is_triggered_only = yes	
+	
+	option = {
+		name = macedonia.4.b
+		add_political_power = -20
+		
+		create_wargoal = {
+			type = annex_everything
+			target = MAC
+		}
+	}
+}

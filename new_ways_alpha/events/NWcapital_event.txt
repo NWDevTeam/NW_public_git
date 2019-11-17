@@ -1,0 +1,85 @@
+﻿##################
+# NWcapital Events
+##################
+
+add_namespace = NWcapital
+
+state_event = {
+	id = NWcapital.1
+	title = NWcapital.1.t
+	desc = NWcapital.1.desc
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWcapital.1" }
+	
+	option = {
+		name = NWcapital.1.a
+		ROOT = {
+			set_capital = FROM.FROM
+			add_timed_idea = {
+				idea = new_capital
+				days = 30
+			}
+			if = {
+				limit = {
+					has_war = no
+					has_civil_war = no
+				}
+				add_political_power = -50
+			}
+			if = {
+				limit = {
+					OR = {
+						has_war = yes
+						has_civil_war = yes
+					}
+				}
+				add_political_power = -100
+			}
+			random_state = {
+				limit = { has_state_flag = new_capital }
+				clr_state_flag = new_capital
+				save_event_target_as = new_capital
+			}
+			hidden_effect = { news_event = { id = NWcapital.3 } }
+		}
+	}
+}
+
+
+news_event = {
+	id = NWcapital.3
+	title = NWcapital.3.t
+	desc = NWcapital.3.desc
+	picture = GFX_news_event_generic_sign_treaty2
+	major = yes
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWcapital.3" }
+	
+	option = {
+		name = NWcapital.3.a
+		trigger = { tag = FROM }
+	}
+	option = {
+		name = NWcapital.3.b
+		trigger = {
+			NOT = { tag = FROM }
+			NOT = {	has_war_with = FROM }
+			NOT = {	has_border_war_with = FROM }
+			NOT = {	has_wargoal_against = FROM }
+			NOT = {	is_justifying_wargoal_against = FROM }
+		}
+	}
+	option = {
+		name = NWcapital.3.c
+		trigger = {
+			NOT = { tag = FROM }
+			has_war_with = FROM
+			has_border_war_with = FROM
+			has_wargoal_against = FROM
+			is_justifying_wargoal_against = FROM
+		}
+	}
+}

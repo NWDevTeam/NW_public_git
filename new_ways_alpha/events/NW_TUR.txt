@@ -1,0 +1,5566 @@
+﻿###########################
+# Ветка Турка
+###########################
+
+add_namespace = NWturkey
+
+#Претензии на Хатай // FRA
+country_event = {
+	id = NWturkey.1
+	title = NWturkey.1.t
+	desc = NWturkey.1.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.1" }
+	
+	#Оставить Хатай частью Сирии 
+	option = {
+		name = NWturkey.1.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		ROOT = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = diplomatic_affront
+			}
+			add_named_threat = { threat = 3 name = TUR_claims_hatay_threat1_tt }
+		}
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+	}
+	#Предоставить автономию Хатаю
+	option = {
+		name = NWturkey.1.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				has_war = yes
+			}
+		}
+		#release = HAT
+		if = {
+			limit = { event_target:NW_france_scope = { has_full_control_of_state = 945 } }
+			HAT = {
+				transfer_state = 945
+				event_target:NW_france_scope = {
+					puppet = HAT
+					set_autonomy = { target = HAT autonomy_state = autonomy_integrated_puppet }
+				}
+				hidden_effect = {
+					add_ideas = HAT_near_autonomy_status
+					set_cosmetic_tag = HAT_SANDJAK
+				}
+			}
+		}
+		if = {
+			limit = { SYR = { has_full_control_of_state = 945 } }
+			HAT = {
+				transfer_state = 945
+				SYR = {
+					puppet = HAT
+					set_autonomy = { target = HAT autonomy_state = autonomy_integrated_puppet }
+				}
+				hidden_effect = {
+					add_ideas = HAT_near_autonomy_status
+					set_cosmetic_tag = HAT_SANDJAK
+				}
+			}
+		}
+		add_named_threat = { threat = -3 name = TUR_claims_hatay_threat2_tt }
+		FROM = {
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.02
+			}
+		}
+		if = {
+			limit = { SYR = { exists = yes } }
+			SYR = { country_event = { id = NWturkey.73 } }
+		}
+	}
+}
+
+
+#Монтрё. Приглашение
+country_event = {
+	id = NWturkey.2
+	title = NWturkey.2.t
+	desc = NWturkey.2.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.2" }
+	
+	#Согласиться на переговоры
+	option = {
+		name = NWturkey.2.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				AND = {
+					tag = ITA
+					has_government = fascism
+				}
+				factor = 0
+			}
+		}
+		country_event = { id = NWturkey.3 days = 1 }
+		set_country_flag = montreux_member_flag
+	}
+	#Отказаться 
+	option = {
+		name = NWturkey.2.b
+		ai_chance = {
+			factor = 10
+		}
+		add_opinion_modifier = {
+			target = FROM
+			modifier = TUR_the_montreux_convention_cancel
+		}
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = TUR_the_montreux_convention_cancel
+			}
+		}
+	}
+}
+
+#Монтрё. Голосование
+country_event = {
+	id = NWturkey.3
+	title = NWturkey.3.t
+	desc = NWturkey.3.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.3" }
+	
+	#Оставить зону демилитаризированной 
+	option = {
+		name = NWturkey.3.a
+		ai_chance = {
+			factor = 25
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = TUR_the_montreux_convention_abort_demilitariz
+		}
+		TUR = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = TUR_the_montreux_convention_abort_demilitariz
+			}
+		}
+	}
+	#Ремилитаризация зоны 
+	option = {
+		name = NWturkey.3.b
+		ai_chance = {
+			factor = 75
+		}
+		TUR = { add_to_variable = { montreux_score = 1 } }
+		add_opinion_modifier = {
+			target = TUR
+			modifier = TUR_the_montreux_convention_accept_demilitariz
+		}
+		TUR = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = TUR_the_montreux_convention_accept_demilitariz
+			}
+		}
+	}
+}
+
+#Монтрё. Итог у турка
+country_event = {
+	id = NWturkey.4
+	title = NWturkey.4.t
+	desc = NWturkey.4.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.4" }
+	
+	#Таки ремилитаризация
+	option = {
+		name = NWturkey.4.a
+		trigger = {
+			TUR = { check_variable = { var = montreux_score value = 5 compare = greater_than_or_equals } }
+		}
+		341 = { set_demilitarized_zone = no }
+		964 = { set_demilitarized_zone = no }
+	}
+	#Таки слив
+	option = {
+		name = NWturkey.4.b
+		trigger = {
+			TUR = { check_variable = { montreux_score < 5 } }
+		}
+		set_country_flag = dem_montreux_denied
+	}
+}
+
+#Аннексия Хатая
+country_event = {
+	id = NWturkey.5
+	title = NWturkey.5.t
+	desc = NWturkey.5.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.5" }
+	
+	option = {
+		name = NWturkey.5.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 3
+				has_war = yes
+			}
+		}
+		TUR = { transfer_state = 945 }
+	}
+	option = {
+		name = NWturkey.5.b
+		ai_chance = {
+			factor = 90
+			modifier = {
+				AND = {
+					event_target:NW_france_scope = { has_government = democratic }
+					GER = { has_government = fascism }
+					threat > 0.39
+				}
+				factor = 0
+			}
+			modifier = {
+				AND = {
+					event_target:NW_france_scope = { has_government = democratic }
+					GER = { has_government = fascism }
+					event_target:NW_france_scope = { has_war_with = GER }
+				}
+				factor = 0
+			}
+			modifier = {
+				TUR = { is_in_faction_with = event_target:NW_france_scope }
+				factor = 0
+			}
+			modifier = {
+				event_target:NW_france_scope = { is_in_faction_with = ENG }
+				ENG = { has_guaranteed = TUR }
+				factor = 0
+			}
+			modifier = {
+				FROM = { has_government = ROOT }
+				factor = 0
+			}
+		}
+		TUR = { transfer_state = 945 }
+		if = {
+			limit = {
+				TUR = { is_in_faction_with = ENG }
+				event_target:NW_france_scope = { 
+					is_in_faction_with = ENG
+					is_faction_leader = no
+				}
+			}
+			event_target:NW_france_scope = { leave_faction = yes }
+		}
+		945 = {
+			owner = {
+				TUR = {
+					declare_war_on = {
+						type = take_state_focus
+						target = ROOT.PREV
+						generator = { 945 }
+					}
+				}
+			}
+		}
+		if = {
+			limit = { TUR = { NOT = { has_country_flag = tur_hatay_peace_flag } } }
+			TUR = { country_event = { id = NWturkey.74 months = 1 } }
+		}
+	}
+}
+
+
+#Поиск союзников
+country_event = {
+	id = NWturkey.6
+	title = NWturkey.6.t
+	desc = NWturkey.6.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.6" }
+
+	option = {
+		name = NWturkey.6.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				tag = GER
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 1000
+				AND = {
+					ROOT = { tag = ENG }
+					OR = {
+						AND = {
+							GER = { exists = yes }
+							GER = {
+								OR = {
+									has_government = monarchy
+									has_government = fascism
+								}
+							}
+						}
+						AND = {
+							SOV = { exists = yes }
+							SOV = { has_government = communism }
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				AND = {
+					ROOT = { tag = ENG }
+					TUR = { has_government = fascism }
+				}
+			}
+			modifier = {
+				factor = 1000
+				AND = {
+					ROOT = { tag = GER }
+					OR = {
+						AND = {
+							ENG = { exists = yes }
+							ENG = { has_government = democratic }
+						}
+						AND = {
+							SOV = { exists = yes }
+							SOV = { has_government = communism }
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				AND = {
+					ROOT = { tag = GER }
+					TUR = { has_government = democratic }
+				}
+			}
+		}
+		set_country_flag = finding_allies_accept
+		TUR = { country_event = { id = NWturkey.7 days = 1 } }
+	}
+	option = {
+		name = NWturkey.6.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				tag = ENG
+				is_historical_focus_on = yes
+			}
+		}
+		add_political_power = -10
+		TUR = { country_event = { id = NWturkey.8 days = 1 } }
+	}
+}
+
+#Поиск союзников. Согласие
+country_event = {
+	id = NWturkey.7
+	title = NWturkey.7.t
+	desc = NWturkey.7.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.7" }
+
+	option = {
+		name = NWturkey.7.a
+		hidden_effect = {
+			FROM = { 
+				set_variable = { influence = 0 }
+				set_variable = { discontent = 0 }
+			}
+		}
+	}
+}
+
+#Поиск союзников. Отказ
+country_event = {
+	id = NWturkey.8
+	title = NWturkey.8.t
+	desc = NWturkey.8.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.8" }
+
+	option = {
+		name = NWturkey.8.a
+	}
+}
+
+#Восстание курдов в Дерсиме. Спустя год после запрета курдского языка
+country_event = {
+	id = NWturkey.9
+	title = NWturkey.9.t
+	desc = NWturkey.9.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.9" }
+
+	option = {
+		name = NWturkey.9.a
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_government = fascism }
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = communism }
+			add_popularity = {
+				ideology = communism
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = democratic }
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = neutrality }
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = monarchy }
+			add_popularity = {
+				ideology = monarchy
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = trozkism }
+			add_popularity = {
+				ideology = trozkism
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = { has_government = anarchism }
+			add_popularity = {
+				ideology = anarchism
+				popularity = -0.1
+			}
+		}
+		
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.05
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.05
+		}
+		add_manpower = -5000
+		add_stability = 0.05
+	}
+	
+	option = {
+		name = NWturkey.9.b
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_government = fascism }
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.05
+			}
+		}
+		if = {
+			limit = { has_government = communism }
+			add_popularity = {
+				ideology = communism
+				popularity = -0.05
+			}
+		}
+		if = {
+			limit = { has_government = democratic }
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.05
+			}
+		}
+		if = {
+			limit = { has_government = neutrality }
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.05
+			}
+		}
+		if = {
+			limit = { has_government = monarchy }
+			add_popularity = {
+				ideology = monarchy
+				popularity = -0.05
+			}
+		}
+		if = {
+			limit = { has_government = trozkism }
+			add_popularity = {
+				ideology = trozkism
+				popularity = -0.05
+			}
+		}
+		
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.03
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.03
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.03
+		}
+	}
+}
+
+#Смерть Ататюрка
+country_event = {
+	id = NWturkey.10
+	title = NWturkey.10.t
+	desc = NWturkey.10.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	
+	trigger = {
+		tag = TUR
+		date > 1938.11.09
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.10" }
+	immediate = {
+		set_global_flag = ataturk_dead
+		if = {
+			limit = { neutrality > 0.2 }
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.1
+			}
+		}
+		if = {
+			limit = {
+				ROOT = { is_ai = yes }
+				OR = {
+					has_country_flag = NW_TUR_AI_NEUTRAL
+					has_country_flag = NW_TUR_AI_NEUTRAL_ALTERNATE
+					is_historical_focus_on = yes
+				}
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.42
+			}
+		}
+		if = {
+			limit = {
+				ROOT = { is_ai = yes }
+				OR = {
+					has_country_flag = NW_TUR_AI_DEMOCRATIC
+					has_country_flag = NW_TUR_AI_FASCIST
+					has_country_flag = NW_TUR_AI_TROZKIST
+					has_country_flag = NW_TUR_AI_COMMUNIST
+					has_country_flag = NW_TUR_AI_MONARCHY
+				}
+				is_historical_focus_on = no
+				neutrality > 0.390
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = -1
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.15
+			}
+		}
+	}
+
+	option = {
+		name = NWturkey.10.a
+		if = {
+			limit = { neutrality > 0.2 }
+			effect_tooltip = {
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.1
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_leader = { name = "Mustafa Kemal Atatürk" }
+			}
+			kill_country_leader = yes
+		}
+		if = {
+			limit = { has_unit_leader = 59 }
+			remove_unit_leader = 59
+		}
+
+		create_country_leader = {
+			name = "Mustafa Abdülhalik Renda"
+			desc = "POLITICS_MUSTAFA_ABDÜLHALIK_RENDA_DESC"
+			picture = "Portrait_Baskani_Abdulhalik_Renda.dds"
+			expire = "1965.1.1"
+			ideology = kemalism
+			traits = {
+				#
+			}
+		}
+		if = {
+			limit = { neutrality < 0.4 }
+			country_event = { id = NWturkey.29 days = 2 }
+		}
+		else = {
+			country_event = { id = NWturkey.30 days = 2 }
+		}
+		news_event = { id = trworldnews.55 }
+	}
+}
+
+
+#Пантюркизм
+country_event = {
+	id = NWturkey.11
+	title = NWturkey.11.t
+	desc = NWturkey.11.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.11" }
+
+	option = {
+		name = NWturkey.11.a
+		ai_chance = {
+			factor = 75
+		}
+		diplomatic_relation = {
+			country = FROM
+			relation = guarantee
+			active = no
+		}
+		FROM = {
+			diplomatic_relation = {
+				country = ROOT
+				relation = guarantee
+				active = no
+			}
+		}
+		add_threat = 1
+	}
+	
+	option = {
+		name = NWturkey.11.b
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Месть Турана
+country_event = {
+	id = NWturkey.12
+	title = NWturkey.12.t
+	desc = NWturkey.12.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.12" }
+
+	option = {
+		name = NWturkey.12.a
+		ai_chance = {
+			factor = 25
+		}
+		419 = { add_core_of = FROM }
+		963 = { add_core_of = FROM }
+		FROM = {
+			transfer_state = 419
+			transfer_state = 963
+		}
+		diplomatic_relation = {
+			country = FROM
+			relation = military_access
+			active = yes
+		}
+	}
+	
+	option = {
+		name = NWturkey.12.b
+		ai_chance = {
+			factor = 50
+		}
+		FROM = { country_event = { id = NWturkey.13 days = 1 } }
+	}
+	
+	option = {
+		name = NWturkey.12.c
+		ai_chance = {
+			factor = 75
+		}
+		419 = { add_claim_by = FROM }
+		963 = { add_claim_by = FROM }
+		FROM = {
+			create_wargoal = {
+				type = take_state_focus
+				target = ROOT
+				generator = { 419 963 }
+			}
+		}
+	}
+}
+
+#Обмен Турана
+country_event = {
+	id = NWturkey.13
+	title = NWturkey.13.t
+	desc = NWturkey.13.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.13" }
+
+	option = {
+		name = NWturkey.13.a
+		ai_chance = {
+			factor = 80
+		}
+		ROOT = {
+			add_political_power = -100
+			random_owned_controlled_state = {
+				limit = {
+					industrial_complex > 1
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					industrial_complex > 1
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+		}
+		419 = { add_core_of = ROOT }
+		963 = { add_core_of = ROOT }
+		ROOT = {
+			transfer_state = 419
+			transfer_state = 963
+		}
+		PER = {
+			add_political_power = 100
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = NWturkey.13.b
+		ai_chance = {
+			factor = 20
+		}
+		419 = { add_claim_by = ROOT }
+		963 = { add_claim_by = ROOT }
+		create_wargoal = {
+			type = take_state_focus
+			target = FROM
+			generator = { 419 963 }
+		}
+	}
+}
+
+
+
+#Присоединить тюркские племена Афганистана
+country_event = {
+	id = NWturkey.14
+	title = NWturkey.14.t
+	desc = NWturkey.14.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.14" }
+
+	option = {
+		name = NWturkey.14.a
+		ai_chance = {
+			factor = 25
+		}
+		951 = { add_core_of = FROM }
+		952 = { add_core_of = FROM }
+		FROM = {
+			transfer_state = 951
+			transfer_state = 952
+		}
+		diplomatic_relation = {
+			country = FROM
+			relation = military_access
+			active = yes
+		}
+	}
+	
+	option = {
+		name = NWturkey.14.b
+		ai_chance = {
+			factor = 50
+		}
+		FROM = { country_event = { id = NWturkey.15 days = 1 } }
+	}
+	
+	option = {
+		name = NWturkey.14.c
+		ai_chance = {
+			factor = 75
+		}
+		951 = { add_claim_by = FROM }
+		952 = { add_claim_by = FROM }
+		FROM = {
+			create_wargoal = {
+				type = take_state_focus
+				target = ROOT
+				generator = { 951 952 }
+			}
+		}
+	}
+}
+
+#Обмен племен Афганистана
+country_event = {
+	id = NWturkey.15
+	title = NWturkey.15.t
+	desc = NWturkey.15.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.15" }
+
+	option = {
+		name = NWturkey.15.a
+		ai_chance = {
+			factor = 80
+		}
+		ROOT = {
+			add_political_power = -100
+			random_owned_controlled_state = {
+				limit = {
+					industrial_complex > 1
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					industrial_complex > 1
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+		}
+		951 = { add_core_of = ROOT }
+		952 = { add_core_of = ROOT }
+		ROOT = {
+			transfer_state = 951
+			transfer_state = 952
+		}
+		AFG = {
+			add_political_power = 100
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = NWturkey.15.b
+		ai_chance = {
+			factor = 20
+		}
+		951 = { add_claim_by = ROOT }
+		952 = { add_claim_by = ROOT }
+		create_wargoal = {
+			type = take_state_focus
+			target = AFG
+			generator = { 951 952 }
+		}
+	}
+}
+
+
+
+#Киприотские Турки
+country_event = {
+	id = NWturkey.16
+	title = NWturkey.16.t
+	desc = NWturkey.16.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.16" }
+
+	option = {
+		name = NWturkey.16.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 100
+				ENG = { has_war = yes }
+				ENG = {
+					OR = {
+						surrender_progress > 0.65
+						has_capitulated = yes
+					}
+				}
+				GRE = { is_in_faction_with = ENG }
+			}
+		}
+		release_puppet = CYP
+	}
+	option = {
+		name = NWturkey.16.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 100
+				ENG = { has_war = no }
+			}
+			modifier = {
+				factor = 100
+				ENG = { surrender_progress < 0.01 }
+			}
+		}
+		add_stability = -0.03
+		release = NCP
+		NCP = {
+			declare_war_on = {
+				target = ENG
+				type = annex_everything
+			}
+		}
+		TUR = { country_event = { id = NWturkey.17 days = 1 } }
+	}
+	option = {
+		name = NWturkey.16.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 100
+				ENG = { has_war = yes }
+				ENG = {
+					OR = {
+						surrender_progress > 0.65
+						has_capitulated = yes
+					}
+				}
+				GRE = { NOT = { is_in_faction_with = ENG } }
+			}
+		}
+		GRE = { country_event = { id = NWturkey.19 days = 1 } }
+		183 = { add_core_of = GRE }
+		772 = { add_core_of = GRE }
+		GRE = {
+			transfer_state = 183
+			transfer_state = 772
+		}
+	}
+}
+
+#Освободительная война киприотских турок против ВБ
+country_event = {
+	id = NWturkey.17
+	title = NWturkey.17.t
+	desc = NWturkey.17.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.17" }
+
+	option = {
+		name = NWturkey.17.a
+		ai_chance = {
+			factor = 90
+		}
+		declare_war_on = {
+			target = ENG
+			type = annex_everything
+		}
+	}
+	option = {
+		name = NWturkey.17.b
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+#Капитуляция ВБ из on_actions. Аннексия Кипра Турком
+country_event = {
+	id = NWturkey.18
+	title = NWturkey.18.t
+	desc = NWturkey.18.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.18" }
+
+	option = {
+		name = NWturkey.18.a
+		annex_country = {
+			target = NCP
+			transfer_troops = yes
+		}
+		every_state = {
+			limit = {
+				is_core_of = NCP
+			}
+			add_core_of = ROOT
+		}
+		NCP = {
+			every_unit_leader = {
+				set_nationality = ROOT
+			}
+		}
+	}
+}
+
+#Кипр передан греческим администраторам
+country_event = {
+	id = NWturkey.19
+	title = NWturkey.19.t
+	desc = NWturkey.19.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.19" }
+
+	option = {
+		name = NWturkey.19.a
+		ai_chance = {
+			factor = 50
+		}
+		release = CYP
+		TUR = {
+			create_wargoal = {
+				type = annex_everything
+				target = CYP
+			}
+		}
+		
+	}
+	option = {
+		name = NWturkey.19.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.03
+		release = NCP
+		NCP = {
+			declare_war_on = {
+				target = GRE
+				type = annex_everything
+			}
+		}
+		TUR = { country_event = { id = NWturkey.20 days = 1 } }
+	}
+}
+
+#Освободительная война киприотских турок против Греции
+country_event = {
+	id = NWturkey.20
+	title = NWturkey.20.t
+	desc = NWturkey.20.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.20" }
+
+	option = {
+		name = NWturkey.20.a
+		ai_chance = {
+			factor = 99.9
+		}
+		declare_war_on = {
+			target = GRE
+			type = annex_everything
+		}
+	}
+	option = {
+		name = NWturkey.20.b
+		ai_chance = {
+			factor = 0.1
+		}
+	}
+}
+
+#Капитуляция Грека из on_actions. Аннексия Кипра Турком
+country_event = {
+	id = NWturkey.21
+	title = NWturkey.21.t
+	desc = NWturkey.21.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.21" }
+
+	option = {
+		name = NWturkey.21.a
+		annex_country = {
+			target = NCP
+			transfer_troops = yes
+		}
+		every_state = {
+			limit = {
+				is_core_of = NCP
+			}
+			add_core_of = ROOT
+		}
+		NCP = {
+			every_unit_leader = {
+				set_nationality = ROOT
+			}
+		}
+	}
+}
+
+#Турция просит передать Северный Кипр
+country_event = {
+	id = NWturkey.22
+	title = NWturkey.22.t
+	desc = NWturkey.22.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.22" }
+
+	option = {
+		name = NWturkey.22.a
+		ai_chance = {
+			factor = 90
+		}
+		772 = { add_core_of = TUR }
+		TUR = { transfer_state = 772 }
+	}
+	option = {
+		name = NWturkey.22.b
+		ai_chance = {
+			factor = 45
+		}
+		TUR = { country_event = { id = NWturkey.23 days = 1 } }
+	}
+	option = {
+		name = NWturkey.22.c
+		ai_chance = {
+			factor = 5
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = diplomatic_affront
+		}
+		TUR = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+	}
+}
+
+#Великобритания требует плату за Северный Кипр
+country_event = {
+	id = NWturkey.23
+	title = NWturkey.23.t
+	desc = NWturkey.23.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.23" }
+	
+	option = {
+		name = NWturkey.23.a
+		ai_chance = {
+			factor = 5
+		}
+	}
+	option = {
+		name = NWturkey.23.b
+		ai_chance = {
+			factor = 50
+		}
+		random_owned_controlled_state = {
+			limit = {
+				industrial_complex > 1
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		772 = { add_core_of = ROOT }
+		ROOT = { transfer_state = 772 }
+		ENG = { country_event = { id = NWturkey.24 days = 1 } }
+	}
+}
+
+country_event = {
+	id = NWturkey.24
+	title = NWturkey.24.t
+	desc = NWturkey.24.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.24" }
+
+	option = {
+		name = NWturkey.24.a
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 1
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}
+
+#Турция предлагает отдать Курдистану национальные территории
+country_event = {
+	id = NWturkey.25
+	title = NWturkey.25.t
+	desc = NWturkey.25.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.25" }
+
+	option = {
+		name = NWturkey.25.a
+		ai_chance = {
+			factor = 90
+		}
+		961 = { add_core_of = KRD }
+		KRD = { transfer_state = 961 }
+	}
+	option = {
+		name = NWturkey.25.b
+		ai_chance = {
+			factor = 45
+		}
+		TUR = { country_event = { id = NWturkey.26 days = 1 } }
+	}
+	option = {
+		name = NWturkey.25.c
+		ai_chance = {
+			factor = 5
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = diplomatic_affront
+		}
+		TUR = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+	}
+}
+
+#Франция  требует плату за Северный Кипр
+country_event = {
+	id = NWturkey.26
+	title = NWturkey.26.t
+	desc = NWturkey.26.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.26" }
+	
+	option = {
+		name = NWturkey.26.a
+		ai_chance = {
+			factor = 5
+		}
+	}
+	option = {
+		name = NWturkey.26.b
+		ai_chance = {
+			factor = 50
+		}
+		random_owned_controlled_state = {
+			limit = {
+				industrial_complex > 1
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		961 = { add_core_of = KRD }
+		KRD = { transfer_state = 961 }
+		event_target:NW_france_scope = { country_event = { id = NWturkey.27 days = 1 } }
+	}
+}
+
+country_event = {
+	id = NWturkey.27
+	title = NWturkey.27.t
+	desc = NWturkey.27.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.27" }
+
+	option = {
+		name = NWturkey.27.a
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 1
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}
+
+#Поддержка экономики Ирака
+country_event = {
+	id = NWturkey.28
+	title = NWturkey.28.t
+	desc = NWturkey.28.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.28" }
+
+	option = {
+		name = NWturkey.28.a
+		ai_chance = {
+			factor = 50
+		}
+		291 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}
+		}
+		676 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				industrial_complex > 1
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		IRQ = {
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+		}
+	}
+	option = {
+		name = NWturkey.28.b
+		ai_chance = {
+			factor = 50
+		}
+		291 = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = industrial_complex
+				level = 2
+				instant_build = yes
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				industrial_complex > 1
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				industrial_complex > 1
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		IRQ = {
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.1
+			}
+		}
+	}
+}
+
+
+#Образование оппозиционных партий после смерти Ататюка
+country_event = {
+	id = NWturkey.29
+	title = NWturkey.29.t
+	desc = NWturkey.29.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.29" }
+
+	option = {
+		name = NWturkey.29.a
+		ai_chance = {
+			factor = 50
+		}
+		set_party_name = {
+			ideology = democratic
+			name = TUR_democratic_okyar_party
+			long_name = TUR_democratic_okyar_party_long
+		}
+		set_country_flag = TUR_oppositions_parties_formed_flag
+		
+		country_event = { id = NWturkey.71 days = 15 random = 5 } #государственные перевороты
+	}
+}
+
+#Избрание президентом Исмета Инёню
+country_event = {
+	id = NWturkey.30
+	title = NWturkey.30.t
+	desc = NWturkey.30.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.30" }
+	
+	immediate = {
+		set_country_flag = TUR_Ismet_Inonu_peace_flag
+	}
+
+	option = {
+		name = NWturkey.30.a
+		create_country_leader = {
+			name = "Ismet Inönü"
+			desc = "POLITICS_ISMET_INÖNÜ_DESC"
+			picture = "Portrait_Turkey_Ismet_Inonu.dds"
+			expire = "1965.1.1"
+			ideology = kemalism
+			traits = {
+				#
+			}
+		}
+		hidden_effect = {
+			complete_national_focus = TUR_president_ismet_inenu
+			news_event = { id = trworldnews.57 }
+		}
+	}
+}
+
+#Переворот Чакмака
+country_event = {
+	id = NWturkey.31
+	title = NWturkey.31.t
+	desc = NWturkey.31.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.31" }
+
+	option = {
+		name = NWturkey.31.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_ai = yes
+				has_country_flag = NW_TUR_AI_NEUTRAL
+			}
+		}
+		add_political_power = 100
+		hidden_effect = {
+			complete_national_focus = TUR_dictatorship_cakmak
+		}
+	}
+	option = {
+		name = NWturkey.31.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_ai = yes
+				has_country_flag = NW_TUR_AI_NEUTRAL_ALTERNATE
+			}
+		}
+		trigger = { has_civil_war = no }
+		
+		remove_unit_leader = 1800
+		custom_effect_tooltip = TUR_civwar_tt
+		hidden_effect = {
+			add_ideas = TUR_civil_war
+			set_country_flag = same_ideology_civil_war_flag
+			if = {
+				limit = {
+					341 = { is_owned_by = TUR }
+					843 = { is_owned_by = TUR }
+					964 = { is_owned_by = TUR }
+				}
+				start_civil_war = {
+					ideology = fascism
+					size = 0.4
+					states = { 341 843 964 }
+				}
+			}
+			else = {
+				start_civil_war = {
+					ideology = fascism
+					size = 0.4
+					states = { 342 343 339 }
+				}
+			}
+			random_other_country = {
+				limit = {
+					original_tag = TUR
+					has_government = fascism
+				}
+				add_ideas = TUR_civil_war
+				set_country_flag = same_ideology_civil_war_flag
+				set_popularities = {
+					neutrality = 95
+					fascism = 5
+				}
+				set_politics = {
+					ruling_party = neutrality
+					elections_allowed = no
+				}
+				set_cosmetic_tag = TUR_dictatorship_tag
+				create_country_leader = {
+					name = "Fevzi Çakmak"
+					desc = "POLITICS_FEVZI_CAKMAK_DESC"
+					picture = "gfx/leaders/TUR/Portrait_Fevzi_Cakmak.dds"
+					expire = "1965.1.1"
+					ideology = kemalism
+					traits = { maresal }
+				}
+				load_focus_tree = { tree = turkish_focus keep_completed = yes }
+				add_timed_idea = { idea = focus_synchronization days = 7 }
+				unlock_national_focus = TUR_president_ismet_inenu
+				complete_national_focus = TUR_dictatorship_cakmak
+			}
+			news_event = { id = trworldnews.56 }
+			set_global_flag = cakmak_turkey_civil_war
+		}
+	}
+	
+	option = {
+		name = NWturkey.31.c
+		ai_chance = {
+			factor = 50
+		}
+		trigger = { has_civil_war = yes }
+		
+		remove_unit_leader = 1800
+		custom_effect_tooltip = TUR_civwar_tt
+		hidden_effect = {
+
+			TRK = {
+				#neut
+				if = {
+					limit = {
+						341 = { is_owned_by = TUR }
+						843 = { is_owned_by = TUR }
+						964 = { is_owned_by = TUR }
+					}
+					transfer_state = 341
+					transfer_state = 843
+					transfer_state = 964
+				}
+				else = {
+					transfer_state = 342
+					transfer_state = 343
+					transfer_state = 339
+				}
+				
+				set_popularities = {
+					neutrality = 95
+					fascism = 5
+				}
+				set_politics = {
+					ruling_party = neutrality
+					elections_allowed = no
+				}
+				add_ideas = TUR_civil_war
+				set_cosmetic_tag = TUR_dictatorship_tag
+				create_country_leader = {
+					name = "Fevzi Çakmak"
+					desc = "POLITICS_FEVZI_CAKMAK_DESC"
+					picture = "gfx/leaders/TUR/Portrait_Fevzi_Cakmak.dds"
+					expire = "1965.1.1"
+					ideology = kemalism
+					traits = { maresal }
+				}
+			}
+			
+			every_state = {
+				limit = {
+					is_core_of = TUR
+				}
+				add_core_of = TRK
+			}
+
+			TRK = {
+				inherit_technology = TUR
+				spawn_tur_civil_war_cakmak = yes
+				load_focus_tree = { tree = turkish_focus keep_completed = yes }
+				add_timed_idea = { idea = focus_synchronization days = 7 }
+				unlock_national_focus = TUR_president_ismet_inenu
+				complete_national_focus = TUR_dictatorship_cakmak
+				declare_war_on = {
+					target = ROOT
+					type = civil_war
+				}
+				
+				#
+				if = {
+					limit = { TUR = { has_completed_focus = TUR_revolution } }
+					add_ideas = TUR_revolution
+				}
+				if = {
+					limit = { TUR = { has_completed_focus = TUR_government_regulation } }
+					add_ideas = TUR_government_regulation
+				}
+				if = {
+					limit = { TUR = { has_completed_focus = TUR_varlik_vergisi } }
+					add_ideas = TUR_varlik_vergisi
+				}
+				if = {
+					limit = { TUR = { has_completed_focus = TUR_mobilization_eastern_regions } }
+					add_ideas = TUR_mobilization_eastern_regions
+				}
+			}
+			news_event = { id = trworldnews.56 }
+			set_global_flag = cakmak_trk_turkey_civil_war
+		}
+	}
+}
+
+
+#Образование Демократической партии в 1946г
+country_event = {
+	id = NWturkey.32
+	title = NWturkey.32.t
+	desc = NWturkey.32.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.32" }
+	
+	trigger = {
+		tag = TUR
+		date > 1946.01.01
+		NOT = { has_country_flag = TUR_oppositions_parties_formed_flag }
+	}
+	
+	mean_time_to_happen = {
+		days = 90
+	}
+
+	option = {
+		name = NWturkey.32.a
+		ai_chance = {
+			factor = 50
+		}
+		set_party_name = {
+			ideology = democratic
+			name = TUR_democratic_1946_party
+			long_name = TUR_democratic_1946_party_long
+		}
+		create_country_leader = {
+			name = "Celâl Bayar"
+			desc = "POLITICS_CELAL_BAYAR_DESC"
+			picture = "gfx/leaders/Europe/Portrait_Europe_Generic_2.dds"
+			expire = "1965.1.1"
+			ideology = conservatism
+			traits = {
+			}
+		}
+	}
+}
+
+
+#Устроить честные выборы
+country_event = {
+	id = NWturkey.33
+	title = NWturkey.33.t
+	desc = NWturkey.33.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.33" }
+
+	option = {
+		name = NWturkey.33.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				is_historical_focus_on = no
+				any_country = {
+					has_country_flag = hbbrg_flag
+					has_government = democratic
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_FASCIST
+			}
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = yes
+		}
+		news_event = { id = trworldnews.58 }
+		if = {
+			limit = {
+				is_faction_leader = yes
+				any_other_country = {
+					is_in_faction_with = ROOT
+					OR = {
+						has_government = democratic
+						has_government = neutrality
+					}
+				}
+			}
+			every_country = {
+				limit = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_government = democratic
+						has_government = neutrality
+					}
+				}
+				leave_faction = yes
+			}
+			set_faction_name = TUR_dem_sadabad
+		}
+		else_if = {
+			limit = {
+				is_faction_leader = yes
+				any_other_country = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_government = democratic
+						has_government = neutrality
+					}
+				}
+			}
+			dismantle_faction = yes
+		}
+	}
+	option = {
+		name = NWturkey.33.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				is_historical_focus_on = no
+				GER = { has_government = fascism }
+			}
+			modifier = {
+				factor = 2
+				is_historical_focus_on = no
+				any_country = {
+					has_country_flag = hbbrg_flag
+					has_government = fascism
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_DEMOCRATIC
+			}
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = yes
+		}
+		news_event = { id = trworldnews.59 }
+		if = {
+			limit = {
+				is_faction_leader = yes
+				any_other_country = {
+					is_in_faction_with = ROOT
+					OR = {
+						has_government = fascism
+						has_government = monarchy
+					}
+				}
+			}
+			every_country = {
+				limit = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_government = fascism
+						has_government = monarchy
+					}
+				}
+				leave_faction = yes
+			}
+			set_faction_name = TUR_fas_sadabad
+		}
+		else_if = {
+			limit = {
+				is_faction_leader = yes
+				any_other_country = {
+					is_in_faction_with = ROOT
+					NOT = {
+						has_government = fascism
+						has_government = monarchy
+					}
+				}
+			}
+			dismantle_faction = yes
+		}
+	}
+}
+
+#Переворот Этхема-черкеса
+country_event = {
+	id = NWturkey.34
+	title = NWturkey.34.t
+	desc = NWturkey.34.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.34" }
+
+	option = {
+		name = NWturkey.34.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				is_in_faction = yes
+				factor = 0.7
+			}
+			modifier = {
+				has_completed_focus = TUR_finding_allies
+				factor = 0.7
+			}
+			modifier = {
+				GER = { has_government = trozkism }
+				factor = 2
+			}
+			modifier = {
+				GER = {
+					OR = {
+						has_government = trozkism
+						has_government = communism
+					}
+				}
+				is_in_faction_with = GER
+				factor = 2
+			}
+			modifier = {
+				event_target:NW_france_scope = { has_government = trozkism }
+				is_in_faction_with = event_target:NW_france_scope
+				factor = 2
+			}
+			modifier = {
+				KMX = { has_government = trozkism }
+				is_in_faction_with = KMX
+				factor = 2
+			}
+		}
+		set_party_name = {
+			ideology = trozkism
+			name = TUR_trozkism_green_army_party
+			long_name = TUR_trozkism_party_green_army_long
+		}
+		add_popularity = {
+			ideology = trozkism
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = trozkism
+			elections_allowed = yes
+		}
+		create_country_leader = {
+			name = "Ethem Şeftürk"
+			desc = "POLITICS_ETHEM_SEFTURK_DESC"
+			picture = "gfx/leaders/TUR/Portrait_Turkey_Cerkez_Ethem.dds"
+			expire = "1965.1.1"
+			ideology = islamic_socialism
+			traits = {
+				sefturk
+			}
+		}
+		create_field_marshal = {
+	        name = "Ethem Şeftürk"
+	        portrait_path = "gfx/leaders/TUR/Portrait_Turkey_Cerkez_Ethem.dds"
+	        traits = { offensive_doctrine war_hero }
+	        skill = 4
+	        attack_skill = 4
+	        defense_skill = 3
+	        planning_skill = 3
+	        logistics_skill = 2
+        }
+		hidden_effect = {
+			if = {
+				limit = { has_war = yes }
+				every_other_country = {
+					limit = { has_war_with = PAK }
+					every_other_country = {
+						limit = {
+							is_in_faction_with = PAK
+							is_faction_leader = yes
+						}
+						white_peace = PREV
+					}
+				}
+				every_other_country = {
+					limit = { has_war_with = ROOT }
+					white_peace = PREV
+				}
+			}
+			if = {
+				limit = { is_in_faction = yes }
+				leave_faction = yes
+			}
+			if = {
+				limit = {
+					any_country = {
+						has_guaranteed = ROOT
+					}
+				}
+				every_other_country = {
+					limit = {
+						has_guaranteed = ROOT
+					}
+					diplomatic_relation = {
+						country = ROOT
+						relation = guarantee
+						active = no
+					}
+					ROOT = {
+						diplomatic_relation = {
+							country = PREV
+							relation = guarantee
+							active = no
+						}
+					}
+				}
+			}
+			set_country_flag = troz_focus_block_flag
+			complete_national_focus = TUR_etchem_circassian_coup
+			country_event = { id = NWturkey.35 days = 1 } #запуск ГВ
+			news_event = { id = trworldnews.60 }
+			if = {
+				limit = {
+					is_in_faction = yes
+					is_faction_leader = no
+				}
+				leave_faction = yes
+			}
+			if = {
+				limit = { is_faction_leader = yes }
+				dismantle_faction = yes
+			}
+		}
+	}
+	option = {
+		name = NWturkey.34.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_TROZKIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_COMMUNIST
+			}
+		}
+		add_stability = -0.1
+		add_war_support = -0.05
+	}
+}
+
+#Переворот Этхема-черкеса. ГВ
+country_event = {
+	id = NWturkey.35
+	title = NWturkey.35.t
+	desc = NWturkey.35.desc
+	picture = GFX_report_event_ger_civil_war
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.35" }
+
+	option = {
+		name = NWturkey.35.a
+		
+		hidden_effect = {
+
+			#Онли Фаши
+			if = {
+				limit = {
+					fascism > 0.099
+					#democratic < 0.1
+				}
+				
+				if = {
+					limit = { NOT = { has_global_flag = troz_turkey_civil_war } }
+					set_global_flag = troz_turkey_civil_war
+				}
+				
+				add_ideas = TUR_civil_war
+				
+				every_state = {
+					limit = {
+						is_core_of = TUR
+					}
+					add_core_of = TRK
+				}
+				TRK = {
+					#fas
+					transfer_state = 354
+					transfer_state = 355
+					transfer_state = 356
+					transfer_state = 347
+					
+					set_popularities = {
+						democratic = 1
+						fascism = 98
+						communism = 1
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+				}
+					
+				TRK = {
+					inherit_technology = TUR
+					load_focus_tree = { tree = turkish_focus keep_completed = yes }
+					add_timed_idea = { idea = focus_synchronization days = 7 }
+					unlock_national_focus = TUR_organize_fair_elections
+					complete_national_focus = TUR_proclaim_panturkism
+					add_ideas = TUR_civil_war
+					#
+					if = {
+						limit = { TUR = { has_completed_focus = TUR_revolution } }
+						add_ideas = TUR_revolution
+					}
+					if = {
+						limit = { TUR = { has_completed_focus = TUR_government_regulation } }
+						add_ideas = TUR_government_regulation
+					}
+					if = {
+						limit = { TUR = { has_completed_focus = TUR_varlik_vergisi } }
+						add_ideas = TUR_varlik_vergisi
+					}
+					if = {
+						limit = { TUR = { has_completed_focus = TUR_mobilization_eastern_regions } }
+						add_ideas = TUR_mobilization_eastern_regions
+					}
+				}
+				
+				TRK = {
+					division_template = {
+						name = "Süvari Tümeni Legion"					
+
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+							artillery_brigade = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mountaineers Dag Tugayi"
+
+						regiments = {
+							mountaineers = { x = 0 y = 0 }
+							mountaineers = { x = 0 y = 1 }
+							mountaineers = { x = 0 y = 2 }
+							mountaineers = { x = 1 y = 0 }
+							mountaineers = { x = 1 y = 1 }
+							mountaineers = { x = 1 y = 2 }
+						} 
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mobile Süvari Tümeni"
+
+						regiments = {
+							cavalry = { x = 0 y = 0 }
+							cavalry = { x = 0 y = 1 }
+							cavalry = { x = 1 y = 0 }
+							cavalry = { x = 1 y = 1 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							light_armor = { x = 3 y = 0 }
+						}
+
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+					
+					division_template = {
+						name = "Armored division"
+						regiments = {
+							light_armor = { x = 0 y = 0 }
+							light_armor = { x = 0 y = 1 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							light_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }		
+							motorized = { x = 2 y = 1 }	
+							motorized = { x = 2 y = 2 }		
+							motorized = { x = 2 y = 3 }		
+						}
+					}
+					
+					load_oob = "TUR_civil_war_fash"
+				
+					declare_war_on = {
+						target = TUR
+						type = civil_war
+					}
+				}
+			}
+			
+			#Нейтралы
+			if = {
+				limit = {
+					neutrality > 0.1
+				}
+				
+				if = {
+					limit = { NOT = { has_global_flag = troz_turkey_civil_war } }
+					set_global_flag = troz_turkey_civil_war
+				}
+				if = {
+					limit = { NOT = { has_idea = TUR_civil_war } }
+					add_ideas = TUR_civil_war
+				}
+				
+				if = {
+					limit = {
+						341 = { is_owned_by = TUR }
+						843 = { is_owned_by = TUR }
+						964 = { is_owned_by = TUR }
+					}
+					start_civil_war = {
+						ideology = neutrality
+						size = 0.49
+						states = { 843 341 964 340 }
+					}
+				}
+				else = {
+					start_civil_war = {
+						ideology = neutrality
+						size = 0.49
+						states = { 342 343 339 340 }
+					}
+				}
+				
+				random_other_country = {
+					limit = {
+						original_tag = TUR
+						has_government = neutrality
+					}
+					load_focus_tree = { tree = turkish_focus keep_completed = yes }
+					add_timed_idea = { idea = focus_synchronization days = 7 }
+					unlock_national_focus = TUR_president_ismet_inenu
+					complete_national_focus = TUR_dictatorship_cakmak
+					add_ideas = TUR_civil_war
+					set_cosmetic_tag = TUR_dictatorship_tag
+					declare_war_on = {
+						target = TRK
+						type = civil_war
+					}
+					create_country_leader = {
+						name = "Fevzi Çakmak"
+						desc = "POLITICS_FEVZI_CAKMAK_DESC"
+						picture = "gfx/leaders/TUR/Portrait_Fevzi_Cakmak.dds"
+						expire = "1965.1.1"
+						ideology = kemalism
+						traits = { maresal }
+					}
+					if = {
+						limit = { has_idea = TUR_great_depression }
+						remove_ideas = TUR_great_depression
+					}
+					unlock_national_focus = TUR_president_ismet_inenu
+					complete_national_focus = TUR_dictatorship_cakmak
+				}
+				
+				350 = {
+					controller = {
+						random_other_country = {
+							limit = {
+								original_tag = TUR
+								has_government = neutrality
+							}
+							declare_war_on = {
+								type = civil_war
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+			country_event = { id = NWturkey.72 days = 150 }
+		}
+	}
+}
+
+#Объединение к компарией\\Турция просит помочь в гражданской войне
+country_event = {
+	id = NWturkey.36
+	title = NWturkey.36.t
+	desc = NWturkey.36.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.36" }
+
+	option = {
+		name = NWturkey.36.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = 50
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		
+		FROM = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+		
+	}
+	option = {
+		name = NWturkey.36.b
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			has_equipment = { infantry_equipment > 3000 }
+			has_equipment = { artillery_equipment > 1000 }
+		}
+		add_political_power = 50
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 3000
+			target = FROM
+		}
+		send_equipment = {
+			equipment = artillery_equipment
+			amount = 1000
+			target = FROM
+		}
+	}
+	option = {
+		name = NWturkey.36.c
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			has_equipment = { infantry_equipment > 3000 }
+			has_equipment = { artillery_equipment > 1000 }
+		}
+		
+		add_political_power = 100
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		
+		FROM = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+		
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 3000
+			target = FROM
+		}
+		send_equipment = {
+			equipment = artillery_equipment
+			amount = 1000
+			target = FROM
+		}
+		
+	}
+	option = {
+		name = NWturkey.36.d
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -50
+		every_country = {
+			limit = {
+				has_war_with = FROM
+				NOT = { tag = FROM }
+				OR = {
+					original_tag = TUR
+					original_tag = TRK
+				}
+			}
+			SOV = {
+				declare_war_on = {
+					target = PREV
+					type = annex_everything
+				}
+			}
+		}
+		
+	}
+	option = {
+		name = NWturkey.36.e
+		ai_chance = {
+			factor = 50
+		}
+		
+		add_opinion_modifier = {
+			target = FROM
+			modifier = diplomatic_affront
+		}
+
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+		FROM = { set_country_flag = USSR_decline_support }
+		
+	}
+}
+
+#Оккупация Ирана
+country_event = {
+	id = NWturkey.37
+	title = NWturkey.37.t
+	desc = NWturkey.37.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.37" }
+
+	option = {
+		name = NWturkey.37.a
+		ai_chance = {
+			factor = 1
+		}
+		every_state = {
+			limit = {
+				is_core_of = PER
+			}
+			add_claim_by = FROM
+		}
+		FROM = {
+			create_wargoal = {
+				type = annex_everything
+				target = PER
+			}
+		}
+	}
+	option = {
+		name = NWturkey.37.b
+		ai_chance = {
+			factor = 25
+		}
+		963 = { add_claim_by = FROM }
+		421 = { add_claim_by = FROM }
+		417 = { add_claim_by = FROM }
+		FROM = {
+			create_wargoal = {
+				type = take_state_focus
+				target = PER
+				generator = { 963 421 417 }
+			}
+		}
+		every_state = {
+			limit = {
+				is_core_of = PER
+				NOT = { state = 963 }
+				NOT = { state = 421 }
+				NOT = { state = 417 }
+			}
+			add_claim_by = SOV
+		}
+		
+	}
+	option = {
+		name = NWturkey.37.c
+		ai_chance = {
+			factor = 50
+		}
+		963 = { add_claim_by = FROM }
+		every_state = {
+			limit = {
+				is_core_of = PER
+				NOT = { state = 963 }
+			}
+			add_claim_by = SOV
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = PER
+		}
+	}
+	option = {
+		name = NWturkey.37.d
+		ai_chance = {
+			factor = 50
+			modifier = {
+				PER = { is_faction_leader = yes }
+				factor = 0
+			}
+			modifier = {
+				OR = {
+					PER = { is_guaranteed_by = ENG }
+					PER = { is_guaranteed_by = event_target:NW_france_scope }
+					PER = { is_guaranteed_by = GER }
+					PER = { is_guaranteed_by = USA }
+					PER = { is_guaranteed_by = JAP }
+					PER = { is_guaranteed_by = ITA }
+				}
+				factor = 0
+			}
+		}
+		add_opinion_modifier = {
+			target = FROM
+			modifier = diplomatic_affront
+		}
+
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+	}
+}
+
+#Турция требует Батуми
+country_event = {
+	id = NWturkey.38
+	title = NWturkey.38.t
+	desc = NWturkey.38.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.38" }
+
+	option = {
+		name = NWturkey.38.a
+		ai_chance = {
+			factor = 25
+		}
+		972 = {
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+		FROM = { transfer_state = 972 }
+		
+	}
+	option = {
+		name = NWturkey.38.b
+		ai_chance = {
+			factor = 50
+		}
+		FROM = { country_event = { id = NWturkey.39 days = 1 } }
+		
+	}
+	option = {
+		name = NWturkey.38.c
+		ai_chance = {
+			factor = 5
+		}
+		add_opinion_modifier = {
+			target = FROM
+			modifier = diplomatic_affront
+		}
+
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+	}
+}
+
+#Обмен региона Аджария на регионы Стамбул и Дарданеллы
+country_event = {
+	id = NWturkey.39
+	title = NWturkey.39.t
+	desc = NWturkey.39.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.39" }
+
+	option = {
+		name = NWturkey.39.a
+		ai_chance = {
+			factor = 75
+		}
+		972 = {
+			add_core_of = ROOT
+			remove_core_of = FROM
+		}
+		ROOT = { transfer_state = 972 }
+		
+		341 = {
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+		FROM = { transfer_state = 341 }
+		
+		964 = {
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+		FROM = { transfer_state = 964 }
+	}
+	option = {
+		name = NWturkey.39.b
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Сюлейман Шефик-паша врывается в Меджлис
+country_event = {
+	id = NWturkey.40
+	title = NWturkey.40.t
+	desc = NWturkey.40.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.40" }
+
+	option = {
+		name = NWturkey.40.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				is_in_faction_with = ENG
+				factor = 0.7
+			}
+			modifier = {
+				GER = { has_government = monarchy }
+				factor = 2
+			}
+			modifier = {
+				any_country = {
+					has_country_flag = hbbrg_flag
+				}
+				factor = 2
+			}
+		}
+		set_country_flag = monarch_focus_block_flag
+		add_stability = 0.05
+		add_political_power = 100
+		create_country_leader = {
+			name = "Süleyman Şefik Paşa"
+			desc = "POLITICS_SULEYMAN_SEFIK_PASA_DESC"
+			picture = "gfx/leaders/TUR/Portrait_Suleyman_Sefik_pasa.dds"
+			expire = "1965.1.1"
+			ideology = monarchy_ideology
+			traits = {
+				keep_of_order
+			}
+		}
+		create_field_marshal = {
+	        name = "Süleyman Şefik Paşa"
+	        portrait_path = "gfx/leaders/TUR/Portrait_Suleyman_Sefik_pasa.dds"
+	        traits = { offensive_doctrine war_hero }
+	        skill = 4
+	        attack_skill = 4
+	        defense_skill = 3
+	        planning_skill = 3
+	        logistics_skill = 2
+        }
+		set_party_name = {
+			ideology = monarchy
+			name = TUR_monarchy_force_of_order_party
+			long_name = TUR_monarchy_force_of_order_army_long
+		}
+		add_popularity = {
+			ideology = monarchy
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = monarchy
+			elections_allowed = no
+		}
+		country_event = { id = NWturkey.41 days = 1 }
+		hidden_effect = {
+			if = {
+				limit = { has_war = yes }
+				every_other_country = {
+					limit = { has_war_with = ROOT }
+					white_peace = PREV
+				}
+			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					is_faction_leader = no
+				}
+				leave_faction = yes
+			}
+			if = {
+				limit = { is_faction_leader = yes }
+				dismantle_faction = yes
+			}
+			if = {
+				limit = { NOT = { has_global_flag = mona_turkey_civil_war } }
+				set_global_flag = mona_turkey_civil_war
+			}
+			add_ideas = TUR_civil_war
+			complete_national_focus = TUR_force_of_order
+			news_event = { id = trworldnews.61 }
+
+			set_capital = 341
+			start_civil_war = {
+				ideology = neutrality
+				size = 0.3
+				states = { 49 356 343 340 347 }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = TUR
+					has_government = neutrality
+				}
+				load_focus_tree = { tree = turkish_focus keep_completed = yes }
+				add_timed_idea = { idea = focus_synchronization days = 7 }
+				unlock_national_focus = TUR_president_ismet_inenu
+				complete_national_focus = TUR_dictatorship_cakmak
+				add_ideas = TUR_civil_war
+				set_cosmetic_tag = TUR_dictatorship_tag
+				create_country_leader = {
+					name = "Fevzi Çakmak"
+					desc = "POLITICS_FEVZI_CAKMAK_DESC"
+					picture = "gfx/leaders/TUR/Portrait_Fevzi_Cakmak.dds"
+					expire = "1965.1.1"
+					ideology = kemalism
+					traits = { maresal }
+				}
+				if = {
+					limit = { has_idea = TUR_great_depression }
+					remove_ideas = TUR_great_depression
+				}
+				unlock_national_focus = TUR_president_ismet_inenu
+				complete_national_focus = TUR_dictatorship_cakmak
+			}
+		}
+	}
+	option = {
+		name = NWturkey.40.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_MONARCHY
+			}
+		}
+		add_political_power = -100
+	}
+}
+
+#Независимость Курдистана
+country_event = {
+	id = NWturkey.41
+	title = NWturkey.41.t
+	desc = NWturkey.41.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.41" }
+
+	option = {
+		name = NWturkey.41.a
+		ai_chance = {
+			factor = 50
+		}
+
+		hidden_effect = {
+			KRD = {
+				transfer_state = 350
+				transfer_state = 352
+				transfer_state = 353
+				load_oob = "TUR_civil_war_krd"
+			}
+		}
+	}
+	option = {
+		name = NWturkey.41.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.1
+		
+		hidden_effect = {
+			KRD = {
+				transfer_state = 350
+				transfer_state = 352
+				transfer_state = 353
+				load_oob = "TUR_civil_war_krd"
+			}
+		}
+		
+		KRD = {
+			declare_war_on = {
+				target = ROOT
+				type = civil_war
+			}
+		}
+	}
+}
+
+#Смерть Абдул-Меджида II
+country_event = {
+	id = NWturkey.42
+	title = NWturkey.42.t
+	desc = NWturkey.42.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.42" }
+	
+	trigger = {
+		tag = TUR
+		date > 1944.01.01
+	}
+
+	option = {
+		name = NWturkey.42.a
+		random_unit_leader = {
+			limit = { has_id = 1801 }
+			retire = yes
+		}
+		if = {
+			limit = { has_government = monarchy }
+			if = {
+				limit = { has_idea = TUR_Abdulmejid_II }
+				swap_ideas = {
+					remove_idea = TUR_Abdulmejid_II
+					add_idea = TUR_Omer_Faruk_Osmanoglu
+				}
+			}
+			add_stability = -0.05
+		}
+		else = {
+			create_country_leader = {
+				name = "Omer Faruk Osmanoglu"
+				desc = "POLITICS_OMER_FARUK_OSMANOGLU_DESC"
+				picture = "gfx/leaders/TUR/Portrait_Omer_Faruk_Osmanoglu.dds"
+				expire = "1965.1.1"
+				ideology = monarchy_ideology
+				traits = {
+					keep_of_order
+				}
+			}
+		}
+	}
+}
+
+#Пульсар. Саадабад. Гарантии
+country_event = {
+	id = NWturkey.430
+	title = NWturkey.430.t
+	desc = NWturkey.430.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.430" }
+	
+	trigger = {
+		has_country_flag = saadabad_accept_flag
+		date > 1937.06.01
+		has_start_date < 1939.1.1
+	}
+	
+	option = {
+		name = NWturkey.430.a
+		every_country = {
+			limit = { has_country_flag = saadabad_accept_flag }
+			country_event = { id = NWturkey.43 }
+		}
+	}
+}
+
+#Саадабад. Гарантии
+country_event = {
+	id = NWturkey.43
+	title = NWturkey.43.t
+	desc = NWturkey.43.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.43" }
+	
+	option = {
+		name = NWturkey.43.a
+		if = {
+			limit = {
+				ROOT = { NOT = { tag = TUR } }
+				TUR = { has_country_flag = saadabad_accept_flag }
+			}
+			ROOT = { give_guarantee = TUR }
+		}
+		if = {
+			limit = {
+				ROOT = { NOT = { tag = PER } }
+				PER = { has_country_flag = saadabad_accept_flag }
+			}
+			ROOT = { give_guarantee = PER }
+		}
+		if = {
+			limit = {
+				ROOT = { NOT = { tag = IRQ } }
+				IRQ = { has_country_flag = saadabad_accept_flag }
+			}
+			ROOT = { give_guarantee = IRQ }
+		}
+		if = {
+			limit = {
+				ROOT = { NOT = { tag = AFG } }
+				AFG = { has_country_flag = saadabad_accept_flag }
+			}
+			ROOT = { give_guarantee = AFG }
+		}
+		
+		#Новый лидер пакта
+		hidden_effect = {
+			if = {
+				limit = { TUR = { NOT = { has_country_flag = saadabad_accept_flag } } }
+				random_list = {
+					50 = {
+						if = {
+							limit = { PER = { has_country_flag = saadabad_accept_flag } }
+							PER = { set_country_flag = new_saadabad_creator_flag }
+						}
+						else_if = {
+							limit = {
+								IRQ = { has_country_flag = saadabad_accept_flag } }
+							IRQ = { set_country_flag = new_saadabad_creator_flag }
+						}
+						else_if = {
+							limit = {
+								AFG = { has_country_flag = saadabad_accept_flag } }
+							AFG = { set_country_flag = new_saadabad_creator_flag }
+						}
+					}
+					50 = {
+					}
+				}
+			}
+		}
+	}
+}
+
+#СССР требует проливы
+country_event = {
+	id = NWturkey.44
+	title = NWturkey.44.t
+	desc = NWturkey.44.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.44" }
+	
+	option = {
+		name = NWturkey.44.a
+		ai_chance = {
+			factor = 75
+		}
+		SOV = {
+			transfer_state = 341
+			transfer_state = 964
+		}
+		ROOT = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = TUR_annexation_straits
+			}
+		}
+	}
+	option = {
+		name = NWturkey.44.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				OR = {
+					has_civil_war = yes
+					has_war = yes
+				}
+				factor = 0
+			}
+		}
+		ROOT = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = TUR_annexation_straits
+			}
+		}
+		FROM = { country_event = { id = NWturkey.45 days = 1 } }
+	}
+}
+
+#Отказ Турции
+country_event = {
+	id = NWturkey.45
+	title = NWturkey.45.t
+	desc = NWturkey.45.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.45" }
+	
+	option = {
+		name = NWturkey.45.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				any_country = {
+					is_major = yes
+					has_war_with = SOV
+				}
+				factor = 0
+			}
+		}
+		declare_war_on = {
+			type = take_state_focus
+			target = FROM
+			generator = { 341 964 }
+		}
+	}
+	option = {
+		name = NWturkey.45.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				FROM = { is_ai = no }
+				factor = 5
+			}
+		}
+	}
+}
+
+#Пакистанская дилемма
+country_event = {
+	id = NWturkey.46
+	title = NWturkey.46.t
+	desc = NWturkey.46.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.46" }
+	
+	option = {
+		name = NWturkey.46.a
+		ai_chance = {
+			factor = 40
+		}
+		country_event = { id = NWturkey.56 days = 1 }
+	}
+	option = {
+		name = NWturkey.46.b
+		ai_chance = {
+			factor = 60
+			modifier = {
+				RAJ = {
+					NOT = {
+						is_subject_of = ENG
+						is_puppet_of = ENG
+					}
+				}
+				factor = 0
+			}
+		}
+		every_other_country = {
+			limit = {
+				OR = {
+					is_major = yes
+					tag = RAJ
+					tag = PER
+				}
+			}
+			country_event = { id = NWturkey.47 days = 1 }
+		}
+		hidden_effect = {
+			set_variable = { pakistan_score = 0 }
+			country_event = { id = NWturkey.49 days = 7 }
+		}
+	}
+}
+
+#Пакистанская конференция. Приглашение
+country_event = {
+	id = NWturkey.47
+	title = NWturkey.47.t
+	desc = NWturkey.47.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.47" }
+	
+	option = {
+		name = NWturkey.47.a
+		ai_chance = {
+			factor = 900
+			modifier = {
+				tag = ENG
+				ENG = { NOT = { has_government = democratic } }
+				factor = 0
+			}
+			modifier = {
+				is_in_faction_with = ENG
+				ENG = { NOT = { has_government = democratic } }
+				factor = 0
+			}
+			modifier = {
+				tag = RAJ
+				RAJ = { OR = { is_subject_of = ROOT is_puppet_of = ROOT } }
+				ENG = { NOT = { has_government = democratic } }
+				factor = 0
+			}
+		}
+		set_country_flag = pakistan_konf_accept
+		country_event = { id = NWturkey.48 days = 1 }
+	}
+	
+	option = {
+		name = NWturkey.47.b
+		ai_chance = {
+			factor = 10
+		}
+		add_threat = 2
+	}
+}
+
+#Пакистанская конференция. Голосование по Пакистану
+country_event = {
+	id = NWturkey.48
+	title = NWturkey.48.t
+	desc = NWturkey.48.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.48" }
+	
+	option = {
+		name = NWturkey.48.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				is_in_faction_with = ENG
+				factor = 0
+			}
+			modifier = {
+				tag = RAJ
+				factor = 0
+			}
+		}
+		TUR = { add_to_variable = { pakistan_score = 1 } }
+	}
+	
+	option = {
+		name = NWturkey.48.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				has_opinion = {
+					target = ENG
+					value < 0
+				}
+				factor = 0
+			}
+			modifier = {
+				tag = TUR
+				factor = 0
+			}
+			modifier = {
+				is_in_faction_with = TUR
+				factor = 0
+			}
+		}
+		TUR = { subtract_from_variable = { pakistan_score = 1 } }
+	}
+}
+
+#Пакистанская конференция. Итог у турка
+country_event = {
+	id = NWturkey.49
+	title = NWturkey.49.t
+	desc = NWturkey.49.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.49" }
+	
+	#Поддержка пакистанского суверенитета
+	option = {
+		name = NWturkey.49.a
+		trigger = {
+			TUR = { check_variable = { pakistan_score > 0 } }
+		}
+		every_other_country = {
+			limit = { OR = { has_country_flag = pakistan_konf_accept tag = ENG } }
+			country_event = { id = NWturkey.51 days = 1 }
+		}
+	}
+	#Воспротивиться пакистанскому суверенитету
+	option = {
+		name = NWturkey.49.b
+		trigger = {
+			TUR = { check_variable = { var = pakistan_score value = 0 compare = less_than_or_equals } }
+		}
+		every_other_country = {
+			limit = { OR = { has_country_flag = pakistan_konf_accept tag = ENG } }
+			country_event = { id = NWturkey.50 days = 1 }
+		}
+	}
+}
+
+#Воспротивиться пакистанскому суверенитету
+country_event = {
+	id = NWturkey.50
+	title = NWturkey.50.t
+	desc = {
+		text = NWturkey.50.desc_1
+	 	trigger = { NOT = { tag = ENG } }
+	}
+	desc = {
+		text = NWturkey.50.desc_2
+	 	trigger = { tag = ENG }
+	}
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.50" }
+	
+	#ВСЕ
+	option = {
+		name = NWturkey.50.a
+		trigger = {
+			NOT = { tag = ENG }
+		}
+	}
+	#Брит
+	option = {
+		name = NWturkey.50.b
+		trigger = {
+			tag = ENG
+		}
+		add_stability = 0.05
+		add_political_power = 100
+		TUR = {
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.03
+				}
+			}
+			if = {
+				limit = { has_government = communism }
+				add_popularity = {
+					ideology = communism
+					popularity = -0.03
+				}
+			}
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = {
+					ideology = democratic
+					popularity = -0.03
+				}
+			}
+			if = {
+				limit = { has_government = neutrality }
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.03
+				}
+			}
+			if = {
+				limit = { has_government = monarchy }
+				add_popularity = {
+					ideology = monarchy
+					popularity = -0.03
+				}
+			}
+			if = {
+				limit = { has_government = trozkism }
+				add_popularity = {
+					ideology = trozkism
+					popularity = -0.03
+				}
+			}
+		}
+	}
+}
+
+
+#Поддержка пакистанского суверенитета
+country_event = {
+	id = NWturkey.51
+	title = NWturkey.51.t
+	desc = {
+		text = NWturkey.51.desc_1
+	 	trigger = { NOT = { tag = ENG } }
+	}
+	desc = {
+		text = NWturkey.51.desc_2
+	 	trigger = { tag = ENG }
+	}
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.51" }
+	
+	#ВСЕ
+	option = {
+		name = NWturkey.51.a
+		trigger = {
+			NOT = { tag = ENG }
+		}
+	}
+	
+	#Брит
+	option = {
+		name = NWturkey.51.b
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			tag = ENG
+		}
+		PAK = {
+			transfer_state = 430
+			transfer_state = 440
+			transfer_state = 441
+			transfer_state = 442
+			transfer_state = 443
+			transfer_state = 444
+			transfer_state = 445
+			add_state_core = 430
+			add_state_core = 440
+			add_state_core = 441
+			add_state_core = 442
+			add_state_core = 443
+			add_state_core = 444
+			add_state_core = 445
+		}
+		ENG = {
+			puppet = PAK
+			set_autonomy = { target = PAK autonomy_state = autonomy_dominion }
+		}
+		TUR = {
+			add_political_power = 100
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = {
+					ideology = fascism
+					popularity = 0.05
+				}
+			}
+			if = {
+				limit = { has_government = communism }
+				add_popularity = {
+					ideology = communism
+					popularity = 0.05
+				}
+			}
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = {
+					ideology = democratic
+					popularity = 0.05
+				}
+			}
+			if = {
+				limit = { has_government = neutrality }
+				add_popularity = {
+					ideology = neutrality
+					popularity = 0.05
+				}
+			}
+			if = {
+				limit = { has_government = monarchy }
+				add_popularity = {
+					ideology = monarchy
+					popularity = 0.05
+				}
+			}
+			if = {
+				limit = { has_government = trozkism }
+				add_popularity = {
+					ideology = trozkism
+					popularity = 0.05
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_country_flag = pakistan_konf_accept } }
+			add_stability = -0.05
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.05
+				}
+			}
+			if = {
+				limit = { has_government = communism }
+				add_popularity = {
+					ideology = communism
+					popularity = -0.05
+				}
+			}
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = {
+					ideology = democratic
+					popularity = -0.05
+				}
+			}
+			if = {
+				limit = { has_government = neutrality }
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.05
+				}
+			}
+			if = {
+				limit = { has_government = monarchy }
+				add_popularity = {
+					ideology = monarchy
+					popularity = -0.05
+				}
+			}
+			if = {
+				limit = { has_government = trozkism }
+				add_popularity = {
+					ideology = trozkism
+					popularity = -0.05
+				}
+			}
+		}
+	}
+	option = {
+		name = NWturkey.51.c
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			tag = ENG
+		}
+		if = {
+			limit = { has_country_flag = pakistan_konf_accept }
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.05
+			}
+			add_stability = -0.05
+			add_threat = 5
+		}
+		if = {
+			limit = { NOT = { has_country_flag = pakistan_konf_accept } }
+			add_threat = 5
+		}
+		TUR = { country_event = { id = NWturkey.52 days = 1 } }
+	}
+}
+
+#Британия отказывается соблюдать обязательства
+country_event = {
+	id = NWturkey.52
+	title = NWturkey.52.t
+	desc = NWturkey.52.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.52" }
+	
+	option = {
+		name = NWturkey.52.a
+		ai_chance = {
+			factor = 90
+		}
+		add_war_support = 0.02
+		add_threat = 2
+		every_state = {
+			limit = { is_core_of = PAK }
+			add_claim_by = ROOT
+		}
+		create_wargoal = {
+			type = take_state_focus
+			target = RAJ
+			generator = { 440 441 442 443 444 445 }
+		}
+	}
+	option = {
+		name = NWturkey.52.b
+		ai_chance = {
+			factor = 10
+		}
+		add_threat = -1
+	}
+}
+
+#Турция предлагает мирный договор // ВБ
+country_event = {
+	id = NWturkey.53
+	title = NWturkey.53.t
+	desc = NWturkey.53.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.53" }
+	
+	option = {
+		name = NWturkey.53.a
+		ai_chance = {
+			factor = 50
+
+		}
+		every_other_country = {
+			limit = { 
+				has_war_with = FROM
+				is_in_faction_with = ENG
+			}
+			every_country = {
+				limit = { is_in_faction_with = FROM }
+				white_peace = PREV
+			}
+		}
+		PAK = {
+			transfer_state = 430
+			transfer_state = 440
+			transfer_state = 441
+			transfer_state = 442
+			transfer_state = 443
+			transfer_state = 444
+			transfer_state = 445
+			add_state_core = 430
+			add_state_core = 440
+			add_state_core = 441
+			add_state_core = 442
+			add_state_core = 443
+			add_state_core = 444
+			add_state_core = 445
+		}
+		FROM = { puppet = PAK }
+		
+		hidden_effect = {
+			if = {
+				limit = {
+					JAP = { is_faction_leader = yes }
+					TIB = { is_in_faction_with = FROM }
+				}
+				every_state = {
+					limit = {
+						is_core_of = TIB
+					}
+					add_claim_by = JAP
+				} 
+			}
+		}
+	}
+	option = {
+		name = NWturkey.53.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				any_country = {
+					is_major = yes
+					has_war_with = ENG
+				}
+				factor = 0
+			}
+			modifier = {
+				threat > 0.5
+				factor = 0
+			}
+		}
+	}
+}
+
+
+#Пульсар для решений Британии
+country_event = {
+	id = NWturkey.54
+	title = NWturkey.54.t
+	desc = NWturkey.54.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.54" }
+	
+	option = {
+		name = NWturkey.54.a
+		if = {
+			limit = {
+				440 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				441 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				442 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				443 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				444 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				445 = {
+					OR = {
+						is_controlled_by = ENG
+						is_controlled_by = RAJ
+					}
+				}
+				TUR = { has_war_with = ENG }
+			}
+			ENG = { set_country_flag = eng_pakistan_peace_flag }
+		}
+	}
+}
+
+#Британия предлагает мирный договор
+country_event = {
+	id = NWturkey.55
+	title = NWturkey.55.t
+	desc = NWturkey.55.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.55" }
+	
+	option = {
+		name = NWturkey.55.a
+		ai_chance = {
+			factor = 40
+
+		}
+		every_other_country = {
+			limit = { 
+				has_war_with = TUR
+				is_in_faction_with = ENG
+			}
+			every_other_country = {
+				limit = {
+					is_in_faction_with = TUR
+				}
+				white_peace = PREV
+			}
+		}
+		every_state = {
+			limit = { is_core_of = PAK }
+			remove_claim_by = ROOT
+		}
+		
+		TUR = {
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = {
+					ideology = fascism
+					popularity = -0.06
+				}
+			}
+			if = {
+				limit = { has_government = communism }
+				add_popularity = {
+					ideology = communism
+					popularity = -0.06
+				}
+			}
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = {
+					ideology = democratic
+					popularity = -0.06
+				}
+			}
+			if = {
+				limit = { has_government = neutrality }
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.06
+				}
+			}
+			if = {
+				limit = { has_government = monarchy }
+				add_popularity = {
+					ideology = monarchy
+					popularity = -0.06
+				}
+			}
+			if = {
+				limit = { has_government = trozkism }
+				add_popularity = {
+					ideology = trozkism
+					popularity = -0.06
+				}
+			}
+		}
+	}
+	option = {
+		name = NWturkey.55.b
+		ai_chance = {
+			factor = 60
+			modifier = {
+				any_country = {
+					is_major = yes
+					has_war_with = TUR
+				}
+				factor = 0
+			}
+		}
+	}
+}
+
+#Помощь для пакистанских националистов
+country_event = {
+	id = NWturkey.56
+	title = NWturkey.56.t
+	desc = NWturkey.56.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.56" }
+	
+	option = {
+		name = NWturkey.56.a
+		ai_chance = {
+			factor = 75
+		}
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				arms_factory > 1
+			}
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -5000
+		}
+		set_country_flag = TUR_full_supply_pak
+
+	}
+	option = {
+		name = NWturkey.56.b
+		ai_chance = {
+			factor = 25
+		}
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -5000
+		}
+		set_country_flag = TUR_partial_supply_pak
+	}
+}
+
+#Автоивент на начало войнушки
+country_event = {
+	id = NWturkey.57
+	title = NWturkey.57.t
+	desc = NWturkey.57.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.57" }
+	
+	trigger = {
+		threat > 0.499
+		tag = RAJ
+		RAJ = { has_war = yes }
+		TUR = {
+			OR = {
+				has_country_flag = TUR_full_supply_pak
+				has_country_flag = TUR_partial_supply_pak
+			}
+		}
+	}
+	
+	option = {
+		name = NWturkey.57.a
+		ai_chance = {
+			factor = 75
+		}
+		if = {
+			limit = { TUR = { has_country_flag = TUR_full_supply_pak } }
+			PAK = {
+				transfer_state = 443
+				transfer_state = 444
+				transfer_state = 445
+				add_state_core = 443
+				add_state_core = 444
+				add_state_core = 445
+			}
+			PAK = { load_oob = "PAK_rebels" }
+		}
+		if = {
+			limit = { TUR = { has_country_flag = TUR_partial_supply_pak } }
+			PAK = {
+				transfer_state = 443
+				add_state_core = 443
+			}
+		}
+		if = {
+			limit = { TUR = { is_faction_leader = yes } }
+			PAK = {
+				add_ai_strategy = {
+					type = befriend
+					id = "TUR"			
+					value = 200
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = "TUR"			
+					value = 200
+				}
+			}
+			TUR = { add_to_faction = PAK }
+		}
+		if = { 
+			limit = { TUR = { is_faction_leader = no } }
+			PAK = { set_country_flag = pakistan_eng_peace_flag }
+			if = {
+				limit = { RAJ = { OR = { is_subject_of = ENG is_puppet_of = ENG } } }
+				ENG = { set_country_flag = eng_pakistan_peace_flag_2 }
+			}
+			if = {
+				limit = { RAJ = { NOT = { is_subject_of = ENG is_puppet_of = ENG } } }
+				RAJ = { set_country_flag = eng_pakistan_peace_flag_2 }
+			}
+		}
+		RAJ = {
+			declare_war_on = {
+				target = PAK
+				type = annex_everything
+			}
+		}
+		if = {
+			limit = { RAJ = { has_civil_war = yes } }
+			random_country = {
+				limit = { 
+					original_tag = RAJ
+					NOT = { tag = RAJ }
+				}
+				declare_war_on = {
+					target = PAK
+					type = annex_everything
+				}
+			}
+		}
+	}
+	
+}
+
+#Пакистан предлагает мирный договор
+country_event = {
+	id = NWturkey.58
+	title = NWturkey.58.t
+	desc = NWturkey.58.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.58" }
+	
+	option = {
+		name = NWturkey.58.a
+		ai_chance = {
+			factor = 50
+
+		}
+		every_other_country = {
+			limit = { 
+				has_war_with = PAK
+				is_in_faction_with = ENG
+			}
+			white_peace = PREV
+		}
+		PAK = {
+			transfer_state = 430
+			transfer_state = 440
+			transfer_state = 441
+			transfer_state = 442
+			transfer_state = 443
+			transfer_state = 444
+			transfer_state = 445
+			add_state_core = 430
+			add_state_core = 440
+			add_state_core = 441
+			add_state_core = 442
+			add_state_core = 443
+			add_state_core = 444
+			add_state_core = 445
+		}
+		RAJ = {
+			remove_state_core = 430
+			remove_state_core = 440
+			remove_state_core = 441
+			remove_state_core = 442
+			remove_state_core = 443
+			remove_state_core = 444
+			remove_state_core = 445
+		}
+		
+		hidden_effect = {
+			if = {
+				limit = {
+					JAP = { is_faction_leader = yes }
+					PAK = { is_in_faction_with = TUR }
+					TIB = { is_in_faction_with = TUR }
+				}
+				every_state = {
+					limit = {
+						is_core_of = TIB
+					}
+					add_claim_by = JAP
+				} 
+			}
+		}
+	}
+	option = {
+		name = NWturkey.58.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				any_country = {
+					is_major = yes
+					has_war_with = ENG
+				}
+				factor = 0
+			}
+			modifier = {
+				threat > 0.5
+				factor = 0
+			}
+		}
+	}
+}
+
+#ВБ/Индия предлагает мирный договор
+country_event = {
+	id = NWturkey.59
+	title = NWturkey.59.t
+	desc = NWturkey.59.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.59" }
+	
+	option = {
+		name = NWturkey.59.a
+		ai_chance = {
+			factor = 50
+		}
+		every_other_country = {
+			limit = { 
+				has_war_with = PAK
+				is_in_faction_with = ENG
+			}
+			white_peace = PREV
+		}
+		PAK = {
+			transfer_state = 430
+			transfer_state = 440
+			transfer_state = 441
+			transfer_state = 442
+			transfer_state = 443
+			transfer_state = 444
+			transfer_state = 445
+			add_state_core = 430
+			add_state_core = 440
+			add_state_core = 441
+			add_state_core = 442
+			add_state_core = 443
+			add_state_core = 444
+			add_state_core = 445
+		}
+		RAJ = {
+			remove_state_core = 430
+			remove_state_core = 440
+			remove_state_core = 441
+			remove_state_core = 442
+			remove_state_core = 443
+			remove_state_core = 444
+			remove_state_core = 445
+		}
+		RAJ = { puppet = PAK }
+	}
+	option = {
+		name = NWturkey.59.b
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+
+
+#Перетягивание
+#1.Гарантия
+country_event = {
+	id = NWturkey.60
+	title = NWturkey.60.t
+	desc = NWturkey.60.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.60" }
+	
+	option = {
+		name = NWturkey.60.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = { give_guarantee = TUR }
+		add_to_variable = { FROM.influence = 5 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.60.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 } 
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#2.Пехотка
+country_event = {
+	id = NWturkey.61
+	title = NWturkey.61.t
+	desc = NWturkey.61.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.61" }
+	
+	option = {
+		name = NWturkey.61.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -5000
+			}
+		}
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 5000
+		}
+		add_to_variable = { FROM.influence = 4 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.61.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 }
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#3.Арта
+country_event = {
+	id = NWturkey.62
+	title = NWturkey.62.t
+	desc = NWturkey.62.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.62" }
+	
+	option = {
+		name = NWturkey.62.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = {
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = -500
+			}
+		}
+		add_equipment_to_stockpile = {
+			type = artillery_equipment
+			amount = 500
+		}
+		add_to_variable = { FROM.influence = 4 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.62.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 }
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#4.Генералы
+country_event = {
+	id = NWturkey.63
+	title = NWturkey.63.t
+	desc = NWturkey.63.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.63" }
+	
+	option = {
+		name = NWturkey.63.a
+		ai_chance = {
+			factor = 75
+		}
+		army_experience = 10
+		add_to_variable = { FROM.influence = 3 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.63.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 }
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#5.Адмиралы
+country_event = {
+	id = NWturkey.64
+	title = NWturkey.64.t
+	desc = NWturkey.64.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.64" }
+	
+	option = {
+		name = NWturkey.64.a
+		ai_chance = {
+			factor = 75
+		}
+		navy_experience = 10
+		add_to_variable = { FROM.influence = 3 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.64.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 }
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#6.Пилоты
+country_event = {
+	id = NWturkey.65
+	title = NWturkey.65.t
+	desc = NWturkey.65.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.65" }
+	
+	option = {
+		name = NWturkey.65.a
+		ai_chance = {
+			factor = 75
+		}
+		air_experience = 10
+		add_to_variable = { FROM.influence = 3 }
+		hidden_effect = {
+			country_event = { id = NWturkey.68 days = 0 }
+		}
+	}
+	option = {
+		name = NWturkey.65.b
+		ai_chance = {
+			factor = 25
+		}
+		subtract_from_variable = { FROM.influence = 2 }
+		add_to_variable = { FROM.discontent = 1 } 
+	}
+}
+
+#8.Отзыв Брит
+country_event = {
+	id = NWturkey.66
+	title = NWturkey.66.t
+	desc = NWturkey.66.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.66" }
+	
+	option = {
+		name = NWturkey.66.a
+		
+		clear_variable = ENG.influence
+		clear_variable = GER.influence
+		clear_variable = ENG.discontent
+		clear_variable = GER.discontent
+		complete_national_focus = TUR_alliance_with_germany
+	}
+}
+
+#8.Отзыв Герм
+country_event = {
+	id = NWturkey.67
+	title = NWturkey.67.t
+	desc = NWturkey.67.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.67" }
+	
+	option = {
+		name = NWturkey.67.a
+		
+		clear_variable = ENG.influence
+		clear_variable = GER.influence
+		clear_variable = ENG.discontent
+		clear_variable = GER.discontent
+		complete_national_focus = TUR_alliance_with_britain
+	}
+}
+
+#Пульсар. Проверка лидера
+country_event = {
+	id = NWturkey.68
+	title = NWturkey.68.t
+	desc = NWturkey.68.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.68" }
+	
+	option = {
+		name = NWturkey.68.a
+		
+		if = {
+			limit = {
+				check_variable = {
+					var = GER.influence
+					value = 26
+					compare = greater_than_or_equals
+				}
+			}
+			clear_variable = ENG.influence
+			clear_variable = GER.influence
+			clear_variable = ENG.discontent
+			clear_variable = GER.discontent
+			complete_national_focus = TUR_alliance_with_germany
+		}
+		if = {
+			limit = {
+				check_variable = {
+					var = ENG.influence
+					value = 26
+					compare = greater_than_or_equals
+				}
+			}
+			clear_variable = ENG.influence
+			clear_variable = GER.influence
+			clear_variable = ENG.discontent
+			clear_variable = GER.discontent
+			complete_national_focus = TUR_alliance_with_britain
+		}
+	}
+}
+
+#Пульсар. Фокуса
+country_event = {
+	id = NWturkey.69
+	title = NWturkey.69.t
+	desc = NWturkey.69.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.69" }
+	
+	option = {
+		name = NWturkey.69.a
+		if = {
+			limit = { NOT = { has_completed_focus = TUR_getting_rid_left } }
+			country_event = { id = NWturkey.70 }
+		}
+	}
+}
+
+#Захват власти радикалом Alparslan Türkeş
+country_event = {
+	id = NWturkey.70
+	title = NWturkey.70.t
+	desc = NWturkey.70.desc
+	picture = GFX_report_event_fascist_gathering
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.70" }
+	
+	option = {
+		name = NWturkey.70.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -50
+		set_country_flag = kill_alparslan_turkes_flag
+		#if = {
+		#	limit = { has_idea_with_trait = { fascist_demagogue }
+		#	}
+		#	remove_ideas_with_trait = { fascist_demagogue }
+		#}
+	}
+	option = {
+		name = NWturkey.70.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		add_war_support = 0.02
+		add_political_power = 50
+		create_country_leader = {
+			name = "Alparslan Türkeş"
+			desc = "POLITICS_ALPARSLAN_TURKES_DESC"
+			picture = "gfx/leaders/TUR/Portrait_Alparslan_Turkes.dds"
+			expire = "1965.1.1"
+			ideology = fascism_ideology
+			traits = {
+				anti_communist
+				enemy_of_ussr
+				supporter_nationalist_dictatorship
+			}
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+	}
+}
+
+#В Анкаре готовятся государственные перевороты после форм. опп. партий
+country_event = {
+	id = NWturkey.71
+	title = NWturkey.71.t
+	desc = NWturkey.71.desc
+	picture = GFX_report_event_american_hunger_march
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.71" }
+	
+	#Посадить обоих
+	option = {
+		name = NWturkey.71.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 99
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_TROZKIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_COMMUNIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_MONARCHY
+			}
+			modifier = {
+				add = 500
+				has_country_flag = NW_TUR_AI_DEMOCRATIC
+			}
+			modifier = {
+				add = 500
+				has_country_flag = NW_TUR_AI_FASCIST
+			}
+		}
+		add_stability = -0.2
+		add_war_support = -0.1
+	}
+	
+	#Посадить Черкеса
+	option = {
+		name = NWturkey.71.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_TROZKIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_COMMUNIST
+			}
+			modifier = {
+				add = 500
+				has_country_flag = NW_TUR_AI_MONARCHY
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_DEMOCRATIC
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_FASCIST
+			}
+		}
+		add_stability = -0.1
+		add_war_support = -0.05
+		
+		hidden_effect = {
+			country_event = { id = NWturkey.40 days = 15 random = 5 } #Сулейман пришел
+		}
+	}
+	
+	#Посадить Сулеймана
+	option = {
+		name = NWturkey.71.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 500
+				has_country_flag = NW_TUR_AI_TROZKIST
+			}
+			modifier = {
+				add = 500
+				has_country_flag = NW_TUR_AI_COMMUNIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_MONARCHY
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_DEMOCRATIC
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_FASCIST
+			}
+		}
+		add_stability = -0.1
+		add_war_support = -0.05
+		
+		hidden_effect = {
+			country_event = { id = NWturkey.34 days = 15 random = 5 } #Черкес пришел
+		}
+	}
+	
+	#Никого не сажать
+	option = {
+		name = NWturkey.71.d
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_TROZKIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_COMMUNIST
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_MONARCHY
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_DEMOCRATIC
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_TUR_AI_FASCIST
+			}
+		}
+		add_political_power = 50
+		add_stability = -0.05
+		
+		hidden_effect = {
+			set_temp_variable = { comm_p = party_popularity@communism }
+			set_temp_variable = { troz_p = party_popularity@trozkism }
+			set_temp_variable = { red = comm_p }
+			add_to_temp_variable = { var = red value = troz_p }
+			set_temp_variable = { king_p = party_popularity@monarchy }
+			
+			if = {
+				limit = { 
+					check_variable = { var = red value = king_p compare = greater_than_or_equals }
+				}
+				country_event = { id = NWturkey.34 days = 15 random = 5 }
+			}
+			else_if = {
+				limit = {
+					check_variable = { var = king_p value = red compare = greater_than }
+				}
+				country_event = { id = NWturkey.40 days = 15 random = 5 }
+			}
+		}
+	}
+}
+
+#Пульсар. Фокуса Курдская автономия
+country_event = {
+	id = NWturkey.72
+	title = NWturkey.72.t
+	desc = NWturkey.72.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.72" }
+	
+	option = {
+		name = NWturkey.72.a
+		if = {
+			limit = {
+				NOT = { has_completed_focus = TUR_kurdish_autonomy }
+				OR = {
+					has_civil_war = yes
+					any_country = {
+						original_tag = TRK
+						has_war_with = ROOT
+					}
+				}
+			}
+			set_country_flag = TUR_kurdish_autonomy_tranform
+			country_event = { id = NWturkey.41 days = 0 }
+		}
+	}
+}
+
+#Александретта получает автономию \\ Сирия
+country_event = {
+	id = NWturkey.73
+	title = NWturkey.73.t
+	desc = NWturkey.73.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.73" }
+	
+	option = {
+		name = NWturkey.73.a
+		ai_chance = {
+			factor = 75
+		}
+		add_opinion_modifier = {
+			target = HAT
+			modifier = diplomatic_affront
+		}
+		add_opinion_modifier = {
+			target = TUR
+			modifier = diplomatic_affront
+		}
+	}
+	option = {
+		name = NWturkey.73.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		945 = { remove_core_of = SYR }
+	}
+	option = {
+		name = NWturkey.73.c
+		trigger = {
+			is_ai = no
+		}
+		HAT = { change_tag_from = ROOT }
+		hidden_effect = {
+			SYR = { country_event = { id = NWturkey.73 hours = 3 } }
+		}
+	}
+}
+
+#Пульсар для решений Франции
+country_event = {
+	id = NWturkey.74
+	title = NWturkey.74.t
+	desc = NWturkey.74.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.74" }
+	
+	option = {
+		name = NWturkey.74.a
+		if = {
+			limit = {
+				SOV = { NOT = { is_in_faction_with = TUR } }
+				ENG = { NOT = { is_in_faction_with = TUR } }
+				event_target:NW_france_scope = { NOT = { is_in_faction_with = TUR } }
+				KMX = { NOT = { is_in_faction_with = TUR } }
+				USA = { NOT = { is_in_faction_with = TUR } }
+				GER = { NOT = { is_in_faction_with = TUR } }
+				JAP = { NOT = { is_in_faction_with = TUR } }
+				ITA = { NOT = { is_in_faction_with = TUR } }
+			}
+			add_political_power = 5
+			TUR = { set_country_flag = tur_hatay_peace_flag }
+			TUR = { set_variable = { SP_var = surrender_progress } }
+			event_target:NW_france_scope = { set_variable = { SP_var = surrender_progress } }
+		}
+	}
+}
+
+#Турция предлагает мирный договор \\ Франции
+country_event = {
+	id = NWturkey.75
+	title = NWturkey.75.t
+	desc = NWturkey.75.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.75" }
+	
+	option = {
+		log = "[GetDateText]: [Root.GetName]: choose option NWturkey.75.a"
+		name = NWturkey.75.a
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_government = fascism }
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = communism }
+			add_popularity = {
+				ideology = communism
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = democratic }
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = neutrality }
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = monarchy }
+			add_popularity = {
+				ideology = monarchy
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = trozkism }
+			add_popularity = {
+				ideology = trozkism
+				popularity = -0.03
+			}
+		}
+		if = {
+			limit = { has_government = anarchism }
+			add_popularity = {
+				ideology = anarchism
+				popularity = -0.03
+			}
+		}
+		TUR = {
+			transfer_state = 945
+			add_state_core = 945
+		}
+		SYR = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = diplomatic_affront
+			}
+		}
+		
+		hidden_effect = {
+			every_other_country = {
+				limit = { 
+					has_war_with = TUR
+					is_in_faction_with = event_target:NW_france_scope
+				}
+				every_other_country = {
+					limit = {
+						is_in_faction_with = TUR
+					}
+					white_peace = PREV
+				}
+			}
+			TUR = { set_country_flag = tur_hatay_peace_accept_flag }
+		}
+	}
+	option = {
+		log = "[GetDateText]: [Root.GetName]: choose option NWturkey.75.b"
+		name = NWturkey.75.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				enemies_strength_ratio > 0.5
+				factor = 0.5
+			}
+			modifier = {
+				enemies_strength_ratio > 1
+				factor = 0
+			}
+			modifier = {
+				any_country = {
+					is_major = yes
+					has_war_with = event_target:NW_france_scope
+				}
+				factor = 0
+			}
+			modifier = {
+				alliance_strength_ratio < 0.5
+				factor = 0
+			}
+			modifier = {
+				TUR = { alliance_strength_ratio > 1 }
+				factor = 0.9
+			}
+			modifier = {
+				TUR = { alliance_strength_ratio > 1.5 }
+				factor = 0.5
+			}
+			modifier = {
+				TUR = { alliance_strength_ratio > 2 }
+				factor = 0.25
+			}
+			modifier = {
+				threat > 0.1
+				factor = 0.9
+			}
+			modifier = {
+				threat > 0.2
+				factor = 0.8
+			}
+			modifier = {
+				threat > 0.3
+				factor = 0.7
+			}
+			modifier = {
+				threat > 0.4
+				factor = 0.6
+			}
+			modifier = {
+				threat > 0.5
+				factor = 0.5
+			}
+			modifier = {
+				threat > 0.6
+				factor = 0.4
+			}
+			modifier = {
+				threat > 0.7
+				factor = 0.3
+			}
+			modifier = {
+				threat > 0.8
+				factor = 0.2
+			}
+			modifier = {
+				threat > 0.9
+				factor = 0.1
+			}
+			modifier = {
+				threat > 0.99
+				factor = 0
+			}
+		}
+	}
+}
+
+#Сброс нац.духа на ГВ у всех
+country_event = {
+	id = NWturkey.76
+	title = NWturkey.76.t
+	desc = NWturkey.76.desc
+	picture = GFX_report_event_generic_rally_3
+	fire_only_once = yes
+	hidden = yes
+	
+	trigger = {
+		OR = {
+			has_global_flag = turkey_civil_war
+			has_global_flag = cakmak_turkey_civil_war
+			has_global_flag = cakmak_trk_turkey_civil_war
+			has_global_flag = troz_turkey_civil_war
+			has_global_flag = mona_turkey_civil_war
+		}
+		NOT = { has_global_flag = tcw_over }
+		OR = {
+			AND = { #Победил Исмет 3х
+				TUR = { has_civil_war = no }
+				any_other_country = {
+					original_tag = TUR
+					NOT = { has_government = fascism }
+				}
+				all_country = {
+					OR = {
+						NOT = { original_tag = TUR }
+						NOT = { has_government = fascism }
+					}
+				}
+				NOT = { country_exists = TRK }
+			}
+			AND = { #Победил Исмет 2х
+				TUR = { has_civil_war = no }
+				any_other_country = {
+					original_tag = TUR
+					NOT = { has_completed_focus = TUR_dictatorship_cakmak }
+				}
+				all_country = {
+					OR = {
+						NOT = { original_tag = TUR }
+						NOT = { has_completed_focus = TUR_dictatorship_cakmak }
+					}
+				}
+				NOT = { country_exists = TRK }
+			}
+			AND = { #Победил Фаш 3х
+				TUR = { has_civil_war = no }
+				any_other_country = {
+					original_tag = TUR
+					has_government = fascism
+				}
+				all_country = {
+					OR = {
+						NOT = { original_tag = TUR }
+						has_government = fascism
+					}
+				}
+				NOT = { country_exists = TRK }
+			}
+			AND = { #Победил Чакмак 2х
+				TUR = { has_civil_war = no }
+				any_other_country = {
+					original_tag = TUR
+					has_completed_focus = TUR_dictatorship_cakmak
+				}
+				all_country = {
+					OR = {
+						NOT = { original_tag = TUR }
+						has_completed_focus = TUR_dictatorship_cakmak
+					}
+				}
+				NOT = { country_exists = TRK }
+			}
+			AND = { #Победил Чакмак-TRK
+				all_country = {
+					NOT = { original_tag = TUR }
+				}
+				country_exists = TRK
+			}
+		}
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.76" }
+	immediate = { set_global_flag = tcw_over }
+	
+	option = {
+		name = NWturkey.76.a
+		every_country = { remove_ideas = TUR_civil_war }
+	}
+}
+
+
+
+
+
+#ТЕСТ ГВ
+country_event = {
+	id = NWturkey.999
+	title = NWturkey.999.t
+	desc = NWturkey.999.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NWturkey.999" }
+
+	option = {
+		name = NWturkey.999.a
+		ai_chance = {
+			factor = 50
+		}
+		
+		hidden_effect = {
+		
+			#Онли Фаши
+			if = {
+				limit = {
+					fascism > 0.099
+					democratic < 0.1
+				}
+				
+				every_state = {
+					limit = {
+						is_core_of = TUR
+					}
+					add_core_of = TRK
+				}
+				TRK = {
+					#fas
+					transfer_state = 354
+					transfer_state = 355
+					transfer_state = 356
+					transfer_state = 347
+					
+					set_popularities = {
+						democratic = 1
+						fascism = 98
+						communism = 1
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+				}
+					
+				TRK = {
+					inherit_technology = TUR
+				}
+				
+				TRK = {
+					division_template = {
+						name = "Süvari Tümeni Legion"					
+
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+							artillery_brigade = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mountaineers Dag Tugayi"
+
+						regiments = {
+							mountaineers = { x = 0 y = 0 }
+							mountaineers = { x = 0 y = 1 }
+							mountaineers = { x = 0 y = 2 }
+							mountaineers = { x = 1 y = 0 }
+							mountaineers = { x = 1 y = 1 }
+							mountaineers = { x = 1 y = 2 }
+						} 
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mobile Süvari Tümeni"
+
+						regiments = {
+							cavalry = { x = 0 y = 0 }
+							cavalry = { x = 0 y = 1 }
+							cavalry = { x = 1 y = 0 }
+							cavalry = { x = 1 y = 1 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							light_armor = { x = 3 y = 0 }
+						}
+
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+					
+					division_template = {
+						name = "Armored division"
+						regiments = {
+							light_armor = { x = 0 y = 0 }
+							light_armor = { x = 0 y = 1 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							light_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }		
+							motorized = { x = 2 y = 1 }	
+							motorized = { x = 2 y = 2 }		
+							motorized = { x = 2 y = 3 }		
+						}
+					}
+					
+					load_oob = "TUR_civil_war_fash"
+				
+					declare_war_on = {
+						target = TUR
+						type = civil_war
+					}
+				}
+			}
+			
+			#Онли Демы
+			if = {
+				limit = {
+					democratic > 0.099
+					fascism < 0.1
+				}
+				
+				every_state = {
+					limit = {
+						is_core_of = TUR
+					}
+					add_core_of = TRK
+				}
+				TRK = {
+					#dem
+					transfer_state = 352
+					transfer_state = 350
+					transfer_state = 353
+					
+					set_popularities = {
+						democratic = 98
+						fascism = 1
+						communism = 1
+					}
+					set_politics = {
+						ruling_party = democratic
+						elections_allowed = no
+					}
+				}
+					
+				TRK = {
+					inherit_technology = TUR
+				}
+				
+				TRK = {
+					division_template = {
+						name = "Süvari Tümeni Legion"					
+
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+							artillery_brigade = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mountaineers Dag Tugayi"
+
+						regiments = {
+							mountaineers = { x = 0 y = 0 }
+							mountaineers = { x = 0 y = 1 }
+							mountaineers = { x = 0 y = 2 }
+							mountaineers = { x = 1 y = 0 }
+							mountaineers = { x = 1 y = 1 }
+							mountaineers = { x = 1 y = 2 }
+						} 
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mobile Süvari Tümeni"
+
+						regiments = {
+							cavalry = { x = 0 y = 0 }
+							cavalry = { x = 0 y = 1 }
+							cavalry = { x = 1 y = 0 }
+							cavalry = { x = 1 y = 1 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							light_armor = { x = 3 y = 0 }
+						}
+
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+					
+					division_template = {
+						name = "Armored division"
+						regiments = {
+							light_armor = { x = 0 y = 0 }
+							light_armor = { x = 0 y = 1 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							light_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }		
+							motorized = { x = 2 y = 1 }	
+							motorized = { x = 2 y = 2 }		
+							motorized = { x = 2 y = 3 }		
+						}
+					}
+					
+					load_oob = "TUR_civil_war_dem"
+
+					declare_war_on = {
+						target = TUR
+						type = civil_war
+					}
+				}
+			}
+			
+			#Фаш+Демы
+			if = {
+				limit = {
+					democratic > 0.099
+					fascism > 0.099
+				}
+				
+				every_state = {
+					limit = {
+						is_core_of = TUR
+					}
+					add_core_of = TRK
+				}
+				
+				TRK = {
+					#fas
+					transfer_state = 354
+					transfer_state = 355
+					transfer_state = 356
+					transfer_state = 347
+				
+					#dem
+					transfer_state = 352
+					transfer_state = 350
+					transfer_state = 353
+					
+					set_popularities = {
+						democratic = 1
+						fascism = 98
+						communism = 1
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+				}
+				
+				TRK = {
+					inherit_technology = TUR
+				}
+				
+				TRK = {
+					division_template = {
+						name = "Süvari Tümeni Legion"					
+
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+							artillery_brigade = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mountaineers Dag Tugayi"
+
+						regiments = {
+							mountaineers = { x = 0 y = 0 }
+							mountaineers = { x = 0 y = 1 }
+							mountaineers = { x = 0 y = 2 }
+							mountaineers = { x = 1 y = 0 }
+							mountaineers = { x = 1 y = 1 }
+							mountaineers = { x = 1 y = 2 }
+						} 
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+
+					division_template = {
+						name = "Mobile Süvari Tümeni"
+
+						regiments = {
+							cavalry = { x = 0 y = 0 }
+							cavalry = { x = 0 y = 1 }
+							cavalry = { x = 1 y = 0 }
+							cavalry = { x = 1 y = 1 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							light_armor = { x = 3 y = 0 }
+						}
+
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+						}
+					}
+					
+					division_template = {
+						name = "Armored division"
+						regiments = {
+							light_armor = { x = 0 y = 0 }
+							light_armor = { x = 0 y = 1 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							light_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }		
+							motorized = { x = 2 y = 1 }	
+							motorized = { x = 2 y = 2 }		
+							motorized = { x = 2 y = 3 }		
+						}
+					}
+					
+					load_oob = "TUR_civil_war_fash"
+					load_oob = "TUR_civil_war_dem"
+				
+					declare_war_on = {
+						target = TUR
+						type = civil_war
+					}
+					
+					start_civil_war = {
+						ideology = democratic
+						size = 0.4
+						states = { 352 350 353 }
+					}
+				}
+				
+				random_other_country = {
+					limit = {
+						original_tag = TRK
+						has_government = democratic
+					}
+					declare_war_on = {
+						target = TUR
+						type = civil_war
+					}
+				}
+			}
+			
+			#Нейтралы
+			if = {
+				limit = {
+					neutrality > 0.1
+				}
+				
+				if = {
+					limit = {
+						341 = { is_owned_by = TUR }
+						843 = { is_owned_by = TUR }
+						964 = { is_owned_by = TUR }
+					}
+					start_civil_war = {
+						ideology = neutrality
+						size = 0.5
+						states = { 843 341 964 340 }
+					}
+				}
+				else = {
+					start_civil_war = {
+						ideology = neutrality
+						size = 0.5
+						states = { 342 343 339 340 }
+					}
+				}
+				
+				random_other_country = {
+					limit = {
+						original_tag = TUR
+						has_government = neutrality
+					}
+					set_cosmetic_tag = TUR_dictatorship_tag
+					declare_war_on = {
+						target = TRK
+						type = civil_war
+					}
+					create_country_leader = {
+						name = "Fevzi Çakmak"
+						desc = "POLITICS_FEVZI_CAKMAK_DESC"
+						picture = "gfx/leaders/TUR/Portrait_Fevzi_Cakmak.dds"
+						expire = "1965.1.1"
+						ideology = kemalism
+						traits = {
+							maresal
+						}
+					}
+				}
+				
+				350 = {
+					controller = {
+						random_other_country = {
+							limit = {
+								original_tag = TUR
+								has_government = neutrality
+							}
+							declare_war_on = {
+								type = civil_war
+								target = PREV
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = NWturkey.999.b
+		random_country = {
+			limit = {
+				original_tag = TUR
+				has_government = fascism
+			}
+			load_focus_tree = turkish_focus
+			add_timed_idea = { idea = focus_synchronization days = 7 }
+		}
+	}
+}
+

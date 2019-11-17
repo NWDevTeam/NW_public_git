@@ -1,0 +1,102 @@
+﻿add_namespace = monaco
+
+#Франция напоминает о Парижском договоре
+country_event = { 
+	id = monaco.1
+	title = monaco.1.t
+	desc = monaco.1.d
+	picture = GFX_report_event_fra_event_1
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = monaco.1.a
+		FRA = { 
+			set_autonomy = {
+				target = MNC
+				autonomy_state = autonomy_puppet
+			}
+		}
+	}
+	option = {
+		name = monaco.1.b
+		FRA = {
+			set_autonomy = {
+				target = MNC
+				autonomy_state = autonomy_free
+			}
+		}
+		FRA = { country_event = { id = monaco.3 days = 1 } }
+	}
+}
+
+country_event = { #Монако больше не принадлежит княжескому дому
+	id = monaco.2
+	title = monaco.2.t
+	desc = monaco.2.d
+	picture = GFX_report_event_fra_event_1
+	trigger = { 
+		original_tag = FRA
+		MNC = { 
+			NOT = { has_government = monarchy } 
+			OR = {
+				is_subject = no
+				is_subject_of = FRA
+			}
+		} 
+		FRA = { 
+			exists = yes
+			is_subject = no
+			NOT = { 
+				OR = {
+					has_government = trozkism 
+					has_government = anarchism
+					has_government = communism
+				}
+			} 
+		} 
+	}
+	
+	fire_only_once = yes
+	
+	option = {
+		name = monaco.2.a
+		MNC = { country_event = { id = monaco.1 days = 1 } }
+	}
+	option = {
+		name = monaco.2.b
+		add_political_power = 10
+		MNC = { 
+			add_opinion_modifier = { target = FRA modifier = mnc_france35 } 
+			remove_ideas = MNC_paris_theatry
+		}
+		
+	}
+}
+
+#Монако денонсирует Парижский договор
+country_event = { 
+	id = monaco.3
+	title = monaco.3.t
+	desc = monaco.3.d
+	picture = GFX_report_event_fra_event_1
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = monaco.3.a
+		MNC = {
+			remove_ideas = MNC_paris_theatry
+		}
+	}
+	option = {
+		name = monaco.3.b
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = MNC
+		}
+		MNC = {
+			remove_ideas = MNC_paris_theatry
+		}
+	}
+}

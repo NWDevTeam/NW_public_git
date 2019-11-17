@@ -1,0 +1,189 @@
+scripted_gui = {
+	capital_self_state = {
+	
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		
+		window_name = "capital_self_state_container"
+		
+		visible = {
+			is_fully_controlled_by = ROOT
+			is_core_of = ROOT
+			is_capital = no
+			ROOT = { is_ai = no }
+			FROM.FROM = {
+				OR = {
+					has_state_category = city
+					has_state_category = large_city
+					has_state_category = large_town
+					has_state_category = megalopolis
+					has_state_category = metropolis
+					has_state_category = town
+				}
+			}
+		}
+
+		effects = {
+			new_capital_click = {
+				#set_capital = FROM.FROM
+				FROM.FROM = {
+					set_state_flag = new_capital
+					state_event = { id = NWcapital.1 trigger_for = controller }
+				}
+			}
+		}
+		
+		triggers = {
+			new_capital_click_enabled = {
+				ROOT = {
+					NOT = { has_idea = new_capital }
+					OR = {
+						AND = {
+							has_political_power > 50
+							has_war = no
+							has_civil_war = no
+						}
+						AND = {
+							has_political_power > 100
+							OR = {
+								has_war = yes
+								has_civil_war = yes
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	state_coup = {
+	
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		
+		window_name = "state_coup_container"
+		
+		visible = {
+			ROOT = {
+				has_country_flag = state_coup_flag
+				has_government = fascism
+			}
+			FROM.FROM = {
+				owner = {
+					OR = {
+						has_war_with = ROOT
+						ROOT = { has_wargoal_against = PREV }
+					}
+				}
+				NOT = {
+					is_owned_by = ROOT
+					is_controlled_by = ROOT
+				}
+			}
+		}
+
+		effects = {
+			state_coup_click = {
+				log = "[GetDateText]: ROOT: [Root.GetName] ([Root.GetTag]) // TARGET: [From.From.Owner.GetName] ([From.From.Owner.GetTag]) [From.From.GetName] : gui effects state_coup_click"
+				FROM.FROM = {
+					set_state_flag = state_coup_state_flag
+					owner = {
+						set_country_flag = { flag = state_coup_per_rate days = 3 }
+						if = {
+							limit = { NOT = { has_war_with = ROOT } }
+							set_country_flag = { flag = state_coup_once days = 180 }
+						}
+						if = {
+							limit = {
+								has_war_with = ROOT
+								has_country_flag = state_coup_once
+							}
+							clr_country_flag = state_coup_once
+							set_country_flag = { flag = state_coup_per_month days = 30 }
+						}
+						country_event = { id = NWstate_coup.1 days = 25 }
+					}
+				}
+				ROOT = { add_political_power = -50 }
+			}
+		}
+		
+		triggers = {
+			state_coup_click_enabled = {
+				hidden_trigger = {
+					ROOT = { has_political_power > 49.99 }
+				}
+				FROM.FROM = {
+					owner = {
+						OR = {
+							has_war_with = ROOT
+							ROOT = { has_wargoal_against = PREV }
+						}
+					}
+					NOT = {
+						is_owned_by = ROOT
+						is_controlled_by = ROOT
+					}
+				}
+			}
+		}
+		
+		ai_test_scopes = test_enemy_owned_states
+		
+		ai_enabled = {
+            OR = {
+				original_tag = FRF
+				original_tag = PER
+			}
+		}
+		
+		ai_check = {
+			
+		}
+		
+		ai_check_scope = {
+			
+		}
+		
+		ai_weights = {
+			state_coup_click = {
+				ai_will_do = {
+					factor = 0
+					modifier = {
+						add = 1
+						FROM.FROM = {
+							is_capital = yes
+							owner = {
+								NOT = {
+									has_war_with = ROOT
+									has_country_flag = state_coup_once
+									has_country_flag = state_coup_per_month
+								}
+							}
+						}
+					}
+					modifier = {
+						add = 1
+						ROOT = { has_political_power > 149.99 }
+						FROM.FROM = {
+							owner = {
+								has_war_with = ROOT
+								NOT = { has_country_flag = state_coup_per_month }
+							}
+						}
+					}
+					modifier = {
+						add = -2
+						FROM.FROM = {
+							owner = {
+								has_country_flag = state_coup_per_rate
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
