@@ -3846,16 +3846,24 @@ country_event = {
 		OR = {
 			AND = {
 				has_war_with = GER
+				GER = { has_government = fascism }
 				NOT = { has_war_with = ITA }
 			}
 			AND = {
 				has_war_with = ITA
+				ITA = { has_government = fascism }
 				NOT = { has_war_with = GER }
 			}
 			AND = {
-				GER = { has_war_with = FRA }
-				ITA = { has_war_with = FRA }
-				ITA = { is_in_faction_with = GER }
+				GER = {
+					has_war_with = FRA
+					has_government = fascism
+				}
+				ITA = {
+					has_war_with = FRA
+					is_in_faction_with = GER
+					has_government = fascism
+				}
 			}
 		}
 		NOT = {
@@ -3919,20 +3927,28 @@ country_event = {
 		
 		hidden_effect = {
 			set_country_flag = FRA_peace_flag
-			every_state = {
-				limit = {
-					is_owned_by = FRA
-					is_controlled_by = GER
+			if = {
+				limit = { has_war_with = GER }
+				every_state = {
+					limit = {
+						is_owned_by = FRA
+						is_controlled_by = GER
+					}
+					add_to_variable = { GER_FRA_occupy_state = 1 }
 				}
-				add_to_variable = { GER_FRA_occupy_state = 1 }
 			}
-			every_state = {
-				limit = {
-					is_owned_by = FRA
-					is_controlled_by = ITA
+			if = {
+				limit = { has_war_with = ITA }
+				every_state = {
+					limit = {
+						is_owned_by = FRA
+						is_controlled_by = ITA
+					}
+					add_to_variable = { ITA_FRA_occupy_state = 1 }
 				}
-				add_to_variable = { ITA_FRA_occupy_state = 1 }
 			}
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): GER_FRA_occupy_state: [?GER_FRA_occupy_state]"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): ITA_FRA_occupy_state: [?ITA_FRA_occupy_state]"
 			if = {
 				limit = { check_variable = { var = GER_FRA_occupy_state value = ITA_FRA_occupy_state compare = greater_than_or_equals } }
 				GER = { save_global_event_target_as = france_occupy_leader }
@@ -5851,6 +5867,10 @@ country_event = {
 		name = NWfrance.312.b
 		ai_chance = {
 			factor = 90
+			modifier = {
+				factor = 0
+				has_country_flag = NW_FRC_AI_TROZKIST
+			}
 		}
 		complete_national_focus = FRC_government_general_confederation_labour
 		add_ideas = FRC_no_ideological_unity
