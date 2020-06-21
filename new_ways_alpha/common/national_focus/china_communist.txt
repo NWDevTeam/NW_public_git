@@ -201,27 +201,25 @@ focus_tree = {
 	
 	focus = {
 		id = PRC_join_four_inter
-		icon = GFX_z_goal_support_trozkism3
+		text = JAP_join_four_inter
+		icon = GFX_z_focus_generic_join_tro
 		prerequisite = { focus = PRC_adopt_trozkist_ideas }
 		mutually_exclusive = { focus = PRC_asian_international }
 	 	available = {
-	 		is_puppet = no
-	 		is_in_faction = no
+	 		is_subject = no
+			is_in_faction = no
 	 		OR = {
 	 			has_government = trozkism
 	 			trozkism > 0.4
 	 		}
-	 		has_war = no
- 			KMX = {
- 				exists = yes
- 				has_government = trozkism
-				is_in_faction = yes
- 				is_faction_leader = yes
- 			}
 		}
 	 	bypass = {
-	 		is_in_faction_with = KMX
-	 	}
+			any_other_country = {
+				is_in_faction_with = ROOT
+				has_government = trozkism
+				is_faction_leader = yes
+			}
+		}
 		x = -2
 		y = 1
 		relative_position_id = PRC_adopt_trozkist_ideas
@@ -233,7 +231,51 @@ focus_tree = {
 			factor = 50
 		}
 		completion_reward = {
-			KMX = { country_event = { id = generic.2 days = 1 } }
+			set_rule = { can_create_factions = yes }
+			if = {
+				limit = { NOT = { has_global_flag = four_international_flag } }
+				if = {
+					limit = {
+						any_other_country = {
+							NOT = { has_war_with = ROOT }
+							is_literally_china = yes
+							has_government = trozkism
+							is_faction_leader = yes
+						}
+					}
+					random_other_country = {
+						limit = {
+							NOT = { has_war_with = ROOT }
+							is_literally_china = yes
+							has_government = trozkism
+							is_faction_leader = yes
+						}
+						country_event = { id = generic.2 }
+					}
+				}
+				else = {
+					if = {
+						limit = { is_faction_leader = yes }
+						set_faction_name = CHI_section_fourth_international
+					}
+					else = { create_faction = CHI_section_fourth_international }
+				}
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						NOT = { has_war_with = ROOT }
+						has_government = trozkism
+						is_faction_leader = yes
+						has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+					}
+					country_event = { id = generic.2 }
+				}
+			}
+			set_temp_variable = { troz_threat_temp_var = 3 }
+			add_to_variable = { global.troz_threat_var = troz_threat_temp_var }
+			custom_effect_tooltip = troz_threat_tt1
+			set_var_for_troz_threat_dyn = yes
 		}
 	}
 	
@@ -264,6 +306,10 @@ focus_tree = {
 			add_political_power = 100
 			set_rule = { can_create_factions = yes }
 			create_faction = "PRC_asian_intern"
+			set_temp_variable = { troz_threat_temp_var = 1 }
+			add_to_variable = { global.troz_threat_var = troz_threat_temp_var }
+			custom_effect_tooltip = troz_threat_tt1
+			set_var_for_troz_threat_dyn = yes
 		}
 	}
 
@@ -616,7 +662,7 @@ focus_tree = {
 		completion_reward = {
 			set_cosmetic_tag = PRC_proclaimed
 			hidden_effect = {
-				news_event = { id = wtt_news.37 days = 3 random = 72 }
+				news_event = { id = wtt_news.37 days = 3 random_days = 72 }
 			}
 		}
 	}
@@ -1131,6 +1177,12 @@ focus_tree = {
 						}
 					}
 					TNG = {
+						OR = {
+							exists = no
+							is_in_faction_with = ROOT
+						}
+					}
+					NEA = {
 						OR = {
 							exists = no
 							is_in_faction_with = ROOT
@@ -1715,12 +1767,16 @@ focus_tree = {
 			OR = {
 				SHX = { can_ROOT_get_wargoal_on_THIS = yes }
 				XSM = { can_ROOT_get_wargoal_on_THIS = yes }
+				MEN = { can_ROOT_get_wargoal_on_THIS = yes }
+				NEA = { can_ROOT_get_wargoal_on_THIS = yes }
 			}
 		}
 
 		bypass = {
 			has_war_with = SHX
 			has_war_with = XSM
+			has_war_with = MEN
+			has_war_with = NEA
 		}
 
 		cancel_if_invalid = yes
@@ -1748,6 +1804,24 @@ focus_tree = {
 				create_wargoal = {
 					type = annex_everything
 					target = XSM
+				}
+			}
+			if = {
+				limit = {
+					MEN = { can_ROOT_get_wargoal_on_THIS = yes }
+				}
+				create_wargoal = {
+					type = annex_everything
+					target = MEN
+				}
+			}
+			if = {
+				limit = {
+					NEA = { can_ROOT_get_wargoal_on_THIS = yes }
+				}
+				create_wargoal = {
+					type = annex_everything
+					target = NEA
 				}
 			}
 		}

@@ -92,15 +92,15 @@ country_event = {
 	
 	immediate = {
 		random_list = {
-			25 = { country_event = { id = mtg_usa_civil_war_fascists.10 days = 5 random = 6 } } #armory raided
-			10 = { country_event = { id = mtg_usa_civil_war_fascists.11 days = 5 random = 6 } } #state refuses to transfer funds
+			25 = { country_event = { id = mtg_usa_civil_war_fascists.10 days = 5 random_days = 6 } } #armory raided
+			10 = { country_event = { id = mtg_usa_civil_war_fascists.11 days = 5 random_days = 6 } } #state refuses to transfer funds
 			#10 = { #general resigns
 			#	random_unit_leader = {
-			#		unit_leader_event = { id = mtg_usa_civil_war_fascists.12 } #days = 5 random = 6 } 
+			#		unit_leader_event = { id = mtg_usa_civil_war_fascists.12 } #days = 5 random_days = 6 } 
 			#	}
 			#} 
-			35 = { country_event = { id = mtg_usa_civil_war_fascists.13 days = 5 random = 6 } } #governor mobilizes national guard
-			20 = { country_event = { id = mtg_usa_civil_war_fascists.14 days = 5 random = 6 } } #soldiers desert
+			35 = { country_event = { id = mtg_usa_civil_war_fascists.13 days = 5 random_days = 6 } } #governor mobilizes national guard
+			20 = { country_event = { id = mtg_usa_civil_war_fascists.14 days = 5 random_days = 6 } } #soldiers desert
 		}
 	}
 }
@@ -165,7 +165,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -189,7 +189,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 		add_to_variable = { var = usa_fascists_funds value = 1}
@@ -213,7 +213,7 @@ unit_leader_event = {
 				country_event = {
 					id = mtg_usa_civil_war_fascists.3
 					days = 15
-					random = 5
+					random_days = 5
 				}
 			}
 		}
@@ -254,7 +254,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -287,7 +287,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -336,7 +336,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.4
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -384,7 +384,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_fascists.4
 				days = 20
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -678,7 +678,7 @@ country_event = {
 				every_other_country = {
 					limit = {
 						has_government = democratic
-						not = {
+						NOT = {
 							OR = {
 								has_completed_focus = ENG_organize_the_blackshirts
 								has_completed_focus = FRA_cooperation_with_right
@@ -689,11 +689,16 @@ country_event = {
 					add_ai_strategy = {
 						type = alliance 
 						id = CSA
-						value =-200
+						value = -400
 					}
 					if = {
 						limit = {
-							USA = { not = { has_government = communism } }
+							USA = {
+								NOT = {
+									has_government = communism
+									has_government = trozkism
+								}
+							}
 						}
 						add_ai_strategy = {
 							type = support
@@ -702,21 +707,44 @@ country_event = {
 						}
 					}
 				}
-				every_other_country = {
-					limit = {
-						has_government = communism
-						is_major = yes
-						has_war = no
+				if = {
+					limit = { USA = { has_government = trozkism } }
+					every_other_country = {
+						limit = {
+							has_government = trozkism
+							is_major = yes
+							has_war = no
+						}
+						add_ai_strategy = {
+							type = support
+							id = USA
+							value = 400
+						}
+						add_ai_strategy = {
+							type = send_volunteers_desire
+							id = USA
+							value = 400
+						}
 					}
-					add_ai_strategy = {
-						type = support
-						id = USA
-						value = 400
-					}
-					add_ai_strategy = {
-						type = send_volunteers_desire
-						id = USA
-						value = 400
+				}
+				else_if = {
+					limit = { USA = { has_government = communism } }
+					every_other_country = {
+						limit = {
+							has_government = communism
+							is_major = yes
+							has_war = no
+						}
+						add_ai_strategy = {
+							type = support
+							id = USA
+							value = 400
+						}
+						add_ai_strategy = {
+							type = send_volunteers_desire
+							id = USA
+							value = 400
+						}
 					}
 				}
 			}
@@ -876,9 +904,12 @@ country_event = {
 	hidden = yes
 	trigger = {
 		original_tag = USA
-		communism > 0.3
+		OR = {
+			communism > 0.3
+			trozkism > 0.3
+		}
 		has_country_flag = mtg_usa_civil_war_fascists_1
-		not = { has_country_flag = mtg_usa_civil_war_fascists_2 }
+		NOT = { has_country_flag = mtg_usa_civil_war_fascists_2 }
 	}
 	mean_time_to_happen = { days = 20 }
 	fire_only_once = yes
@@ -1069,7 +1100,7 @@ country_event = {
 	mean_time_to_happen = { days = 20 }
 	fire_only_once = yes
 	immediate = {
-		news_event = { id = mtg_news.6 days = 3 random = 5 }
+		news_event = { id = mtg_news.6 days = 3 random_days = 5 }
 		if = {
 			limit = {
 				has_country_flag = USA_civil_war_volunteers
@@ -1149,12 +1180,12 @@ country_event = {
 			}
 		}
 		hidden_effect = {
-			country_event = { id = mtg_usa_civil_war_democrats.3 days = 15 random = 6 }
+			country_event = { id = mtg_usa_civil_war_democrats.3 days = 15 random_days = 6 }
 			if = {
 				limit = {
 					has_completed_focus = USA_national_prosperity_program
 				}
-				country_event = { id = mtg_usa_civil_war_democrats.4 days = 15 random = 12 }
+				country_event = { id = mtg_usa_civil_war_democrats.4 days = 15 random_days = 12 }
 			}
 		}
 	}
@@ -1246,7 +1277,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_democrats.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 			country_event = { id = mtg_usa_civil_war_democrats.11 days = 14 }
 		}
@@ -1299,7 +1330,7 @@ unit_leader_event = {
 				country_event = {
 					id = mtg_usa_civil_war_democrats.3
 					days = 15
-					random = 5
+					random_days = 5
 				}
 			}
 		}
@@ -1332,7 +1363,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_democrats.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -1356,7 +1387,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_democrats.3
 				days = 15
-				random = 5
+				random_days = 5
 			}
 		}
 	}
@@ -1406,7 +1437,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_democrats.4
 				days = 15
-				random = 3
+				random_days = 3
 			}
 		}
 	}
@@ -1456,7 +1487,7 @@ country_event = {
 			country_event = {
 				id = mtg_usa_civil_war_democrats.4
 				days = 15
-				random = 3
+				random_days = 3
 			}
 		}
 	}
@@ -1497,23 +1528,9 @@ country_event = {
 					infantry = { x = 1 y = 2 }
 				}
 			}
-			hidden_effect = {
-				set_political_party = {
-					ideology = fascism
-					popularity = 0
-				}
-				set_political_party = {
-					ideology = democratic
-					popularity = 0
-				}
-				add_popularity = {
-					ideology = neutrality
-					popularity = neutrality_support
-				}
-				add_popularity = {
-					ideology = fascism
-					popularity = fascism_support
-				}
+			set_popularities = {
+				neutrality = neutrality_support
+				fascism = fascism_support
 			}
 			country_event = { id = mtg_usa_civil_war_democrats.40 days = 20 }
 			set_global_flag = USA_civil_war_fired_democrats
@@ -1802,7 +1819,10 @@ country_event = {
 			}
 			every_other_country = {
 				limit = {
-					has_government = communism
+					OR = {
+						has_government = communism
+						has_government = trozkism
+					}
 				}
 				add_ai_strategy = {
 					type = support
@@ -2086,18 +2106,18 @@ country_event = {
 	immediate = {
 		#north west
 		random_list = {
-			70 = { country_event = { id = mtg_usa_civil_war_democrats.25 days = 6 random = 5 } }
-			30 = { country_event = { id = mtg_usa_civil_war_democrats.26 days = 6 random = 5 } }
+			70 = { country_event = { id = mtg_usa_civil_war_democrats.25 days = 6 random_days = 5 } }
+			30 = { country_event = { id = mtg_usa_civil_war_democrats.26 days = 6 random_days = 5 } }
 		}
 		#south west
 		random_list = {
-			70 = { country_event = { id = mtg_usa_civil_war_democrats.27 days = 6 random = 5 } }
-			30 = { country_event = { id = mtg_usa_civil_war_democrats.28 days = 6 random = 5 } }
+			70 = { country_event = { id = mtg_usa_civil_war_democrats.27 days = 6 random_days = 5 } }
+			30 = { country_event = { id = mtg_usa_civil_war_democrats.28 days = 6 random_days = 5 } }
 		}
 		#west midwest
 		random_list = {
-			70 = { country_event = { id = mtg_usa_civil_war_democrats.29 days = 6 random = 5 } }
-			30 = { country_event = { id = mtg_usa_civil_war_democrats.30 days = 6 random = 5 } }
+			70 = { country_event = { id = mtg_usa_civil_war_democrats.29 days = 6 random_days = 5 } }
+			30 = { country_event = { id = mtg_usa_civil_war_democrats.30 days = 6 random_days = 5 } }
 		}
 		if = {
 			limit = {
@@ -3043,7 +3063,7 @@ country_event = {
 			}
 		}
 		FROM = {
-			country_event = { id = mtg_usa_strategic_interests.2 days = 3 random = 1}
+			country_event = { id = mtg_usa_strategic_interests.2 days = 3 random_days = 1}
 		}
 		effect_tooltip = {
 			FROM = {

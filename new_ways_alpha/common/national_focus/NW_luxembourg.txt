@@ -1,0 +1,2016 @@
+focus_tree = {
+	continuous_focus_position = { x = 100 y = 1350 }
+	id = nw_luxembourgian_focus
+	
+	country = {
+		factor = 0
+		
+		modifier = {
+			add = 10
+			tag = LUX
+		}
+	}
+	
+	default = no
+	
+	############################
+	##### POLITICS SECTION #####
+	############################
+	
+	#####democratic#####
+	
+	focus = {
+		id = LUX_democratic_win
+		icon = GFX_goal_support_democracy
+		available = {
+			has_country_flag = LUX_elections_1937
+		}
+		x = 27
+		y = 0
+		cost = 10
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_democratic_win"
+			add_political_power = 50
+			add_stability = 0.05
+		}
+	}
+	
+	focus = {
+		id = LUX_referendum
+		icon = GFX_z_goal_elections
+		prerequisite = { focus = LUX_democratic_win }
+		available = {
+			
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_democratic_win
+		cost = 10
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_referendum"
+			country_event = { id = luxembourg.1 hours = 6 }
+		}
+	}
+	
+	focus = {
+		id = LUX_maulkuerfgesetz_yes
+		icon = GFX_goal_anti_comintern_pact
+		prerequisite = { focus = LUX_referendum }
+		mutually_exclusive = { focus = LUX_maulkuerfgesetz_no }
+		x = -1
+		y = 1
+		relative_position_id = LUX_referendum
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_maulkuerfgesetz_yes"
+			add_ideas = LUX_maulkuerfgesetz_yes_idea
+			hidden_effect = {
+				if = { limit = { has_country_flag = LUX_muzzle_law_no_flag }
+					random_list = {
+						80 = { country_event = { id = luxembourg.5 hours = 6 } }
+						20 = {  }
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_maulkuerfgesetz_no
+		icon = GFX_focus_generic_self_management
+		prerequisite = { focus = LUX_referendum }
+		mutually_exclusive = { focus = LUX_maulkuerfgesetz_yes }
+		available = {
+			
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_referendum
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_maulkuerfgesetz_no"
+			add_stability = 0.05
+			add_popularity = { ideology = communism popularity = 0.1 }
+			add_popularity = { ideology = fascism popularity = 0.05 }
+			hidden_effect = {
+				if = { limit = { has_country_flag = LUX_muzzle_law_yes_flag }
+					random_list = {
+						80 = { country_event = { id = luxembourg.5 hours = 6 } }
+						20 = {  }
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_french_guruantee
+		icon = GFX_focus_chi_reach_out_to_france
+		prerequisite = { focus = LUX_maulkuerfgesetz_yes focus = LUX_maulkuerfgesetz_no }
+		available = {
+			democratic > 0.65
+			NOT = { has_war_with = event_target:NW_france_scope }
+			event_target:NW_france_scope = { is_puppet = no }
+			country_exists = event_target:NW_france_scope
+		}
+		bypass = { NOT = { country_exists = event_target:NW_france_scope } }
+		x = -2
+		y = 1
+		relative_position_id = LUX_maulkuerfgesetz_no
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_french_guruantee"
+			event_target:NW_france_scope = { country_event = { id = luxembourg.14 hours = 6 } }
+		}
+	}
+	
+	focus = {
+		id = LUX_belgian_guruantee
+		icon = GFX_goal_generic_major_alliance
+		prerequisite = { focus = LUX_maulkuerfgesetz_yes focus = LUX_maulkuerfgesetz_no }
+		available = {
+			democratic > 0.65
+			NOT = { has_war_with = BEL }
+			BEL = { is_puppet = no }
+			country_exists = BEL
+		}
+		bypass = { NOT = { country_exists = BEL } }
+		x = 0
+		y = 1
+		relative_position_id = LUX_maulkuerfgesetz_no
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_belgian_guruantee"
+			BEL = { country_event = { id = luxembourg.14 hours = 6 } }
+		}
+	}
+	
+	focus = {
+		id = LUX_french_economic_help
+		icon = GFX_goal_generic_intelligence_exchange
+		prerequisite = { focus = LUX_french_guruantee }
+		available = {
+			NOT = { has_war_with = event_target:NW_france_scope }
+			event_target:NW_france_scope = { is_puppet = no }
+			country_exists = event_target:NW_france_scope
+		}
+		bypass = { NOT = { country_exists = event_target:NW_france_scope } }
+		x = -2
+		y = 1
+		relative_position_id = LUX_belgian_guruantee
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = production_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = industrial_complex
+						size < 1
+						include_locked = yes
+					}
+				}
+			}
+		}
+
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}		
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_french_economic_help"
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = industrial_complex
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_belgian_economic_help
+		icon = GFX_goal_generic_intelligence_exchange
+		prerequisite = { focus = LUX_belgian_guruantee }
+		available = {
+			NOT = { has_war_with = BEL }
+			BEL = { is_puppet = no }
+			country_exists = BEL
+		}
+		bypass = { NOT = { country_exists = BEL } }
+		x = 0
+		y = 1
+		relative_position_id = LUX_belgian_guruantee
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = production_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = industrial_complex
+						size < 1
+						include_locked = yes
+					}
+				}
+			}
+		}
+
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}		
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_belgian_economic_help"
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = industrial_complex
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_war_neutrality
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = LUX_french_economic_help focus = LUX_belgian_economic_help }
+		available = {
+			
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_belgian_economic_help
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_war_neutrality"
+			add_ideas = LUX_war_neutrality_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_communism_win
+		icon = GFX_goal_support_communism 
+		prerequisite = { focus = LUX_maulkuerfgesetz_yes focus = LUX_maulkuerfgesetz_no }
+		available = {
+			communism > 0.40
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+		}
+		x = -3
+		y = 1
+		relative_position_id = LUX_maulkuerfgesetz_yes
+		cost = 5
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				date < 1941.1.1
+				is_historical_focus_on = yes
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_communism_win"
+			add_political_power = 50
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = no
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_nationalize_banks
+		icon = GFX_z_goal_bank2
+		prerequisite = { focus = LUX_communism_win }
+		available = {
+		
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_communism_win
+		cost = 10
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_nationalize_banks"
+			add_ideas = LUX_nationalize_banks_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_nationalize_bear
+		icon = GFX_z_goal_anti_alcohol
+		prerequisite = { focus = LUX_communism_win }
+		available = {
+		
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_communism_win
+		cost = 10
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_nationalize_bear"
+			add_ideas = LUX_nationalize_bear_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_communist_island
+		icon = GFX_z_focus_revolutionary_government
+		prerequisite = { focus = LUX_nationalize_banks }
+		prerequisite = { focus = LUX_nationalize_bear }
+		available = {
+		
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		x = 0
+		y = 2
+		relative_position_id = LUX_communism_win
+		cost = 10
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_communist_island"
+			add_ideas = LUX_communist_island_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_opora_our_strenth
+		icon = GFX_z_goal_communist_factories
+		prerequisite = { focus = LUX_communist_island }
+		available = {
+		
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_communist_island
+		cost = 10
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_opora_our_strenth"
+			add_ideas = LUX_opora_our_strenth_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_isolition
+		icon = GFX_z_goal_antimarket
+		prerequisite = { focus = LUX_opora_our_strenth }
+		available = {
+		
+		}
+		ai_will_do = {
+			factor = 5
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_opora_our_strenth
+		cost = 10
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_isolition"
+			add_ideas = closed_economy
+		}
+	}
+	
+	#####fascist#####
+	
+	focus = {
+		id = LUX_fascist_win
+		icon = GFX_goal_support_fascism 
+		prerequisite = { focus = LUX_maulkuerfgesetz_yes focus = LUX_maulkuerfgesetz_no }
+		available = {
+			fascism > 0.40
+			OR = {
+				has_government = democratic
+				has_government = fascism
+			}
+		}
+		x = 3
+		y = 1
+		relative_position_id = LUX_maulkuerfgesetz_no
+		cost = 5
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				date < 1941.1.1
+				is_historical_focus_on = yes
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_fascist_win"
+			add_political_power = 50
+			set_politics = {
+				ruling_party = fascism
+				elections_allowed = no
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_power_to_duchess
+		icon = GFX_z_goal_monarchism_19
+		prerequisite = { focus = LUX_fascist_win }
+		mutually_exclusive = { focus = LUX_german }
+		x = -1
+		y = 1
+		relative_position_id = LUX_fascist_win
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_nationalism"
+			create_country_leader = {
+			    name = "Charlotte"
+			    desc = "POLITICS_CHARLOTTE_DESC"
+			    picture = "gfx/leaders/LUX/Portrait_Charlotte.dds"
+			    expire = "1965.1.1"
+			    ideology = fascism_ideology
+			    traits = {
+				    popular_figurehead
+			    }
+		    }
+			add_political_power = 150
+			remove_ideas = LUX_charlotte_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_nationalism
+		icon = GFX_focus_generic_strike_at_democracy1
+		prerequisite = { focus = LUX_power_to_duchess }
+		x = 0
+		y = 1
+		relative_position_id = LUX_power_to_duchess
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_nationalism"
+			add_popularity = { ideology = fascism popularity = 0.1 }
+			add_ideas = LUX_nationalism_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_german
+		icon = GFX_focus_CZE_german_puppet
+		prerequisite = { focus = LUX_fascist_win }
+		mutually_exclusive = { focus = LUX_power_to_duchess }
+		available = {
+			NOT = { has_war_with = GER }
+			GER = { is_puppet = no }
+			country_exists = GER
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_fascist_win
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_german"
+			GER = { country_event = { id = luxembourg.17 hours = 6 } }
+		}
+	}
+	
+	focus = {
+		id = LUX_old_luxembourgian
+		icon = GFX_z_focus_propaganda_fascism
+		prerequisite = { focus = LUX_nationalism }
+		available = {
+			
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_nationalism
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_old_luxembourgian"
+			add_popularity = { ideology = fascism popularity = 0.15 }
+		}
+	}
+	
+	focus = {
+		id = LUX_great_luxembourg
+		icon = GFX_z_goal_power_fascist_council
+		prerequisite = { focus = LUX_old_luxembourgian }
+		available = {
+			
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_old_luxembourgian
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_great_luxembourg"
+			973 = { add_core_of = LUX }
+			add_ideas = LUX_great_luxembourg
+		}
+	}
+	
+	focus = {
+		id = LUX_defend_fatherland
+		icon = GFX_z_goal_elite_troops
+		prerequisite = { focus = LUX_old_luxembourgian }
+		available = {
+			
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_old_luxembourgian
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_defend_fatherland"
+			add_ideas = LUX_defend_fatherland_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_belgian_luxembourg
+		icon = GFX_goal_generic_territory_or_war
+		prerequisite = { focus = LUX_great_luxembourg focus = LUX_defend_fatherland }
+		available = {
+			
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_defend_fatherland
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_belgian_luxembourg"
+			BEL = { country_event = { id = luxembourg.18 hours = 6 } }
+		}
+	}
+
+
+	
+############################################
+###################INDUSTRY##################
+############################################
+
+	focus = {
+		id = LUX_social_economical_life
+		icon = GFX_goal_generic_demand_territory
+		x = 8
+		y = 0
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_social_economical_life"
+			add_political_power = 50
+			add_stability = 0.05
+		}
+	}
+	
+	focus = {
+		id = LUX_pivo1
+		icon = GFX_z_goal_pivo_battin
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -8
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_pivo1"
+			add_political_power = 10
+			add_stability = 0.05
+		}
+	}
+	
+	focus = {
+		id = LUX_pivo2
+		icon = GFX_z_goal_dulezhanska_pivovarna
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -6
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_pivo2"
+			add_political_power = 10
+			add_stability = 0.05
+		}
+	}
+	
+	focus = {
+		id = LUX_pivo_army
+		icon = GFX_z_goal_pivo_army
+		prerequisite = { focus = LUX_pivo1 }
+		prerequisite = { focus = LUX_pivo2 }
+		x = 1
+		y = 1
+		relative_position_id = LUX_pivo1
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_pivo_army"
+			add_ideas = LUX_pivo_army_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_football_union
+		icon = GFX_z_goal_sandveller
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -4
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_football_union"
+			add_political_power = 10
+			add_stability = 0.05
+		}
+	}
+	
+	focus = {
+		id = LUX_hospital
+		icon = GFX_focus_generic_concessions
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -5
+		y = 2
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_hospital"
+			add_political_power = 10
+			add_ideas = LUX_hospital_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_support_banks
+		icon = GFX_z_goal_bank2
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -3
+		y = 2
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_support_banks"
+			add_ideas = LUX_support_banks_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_extra_tech_slot2
+		icon = GFX_z_goal_great_science
+		prerequisite = { focus = LUX_support_banks }
+		available = {
+			num_of_factories > 15
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_support_banks
+		cost = 7.2
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_extra_tech_slot2"
+			add_research_slot = 1
+		}
+	}
+	
+	focus = {
+		id = LUX_support_infrastructure
+		icon = GFX_goal_generic_construct_infrastructure
+		prerequisite = { focus = LUX_social_economical_life }
+		x = -2
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = infrastructure_effort_tt
+				all_owned_state = {			
+					free_building_slots = {
+						building = infrastructure
+						size < 1
+					}
+				}
+			}
+		}
+
+		complete_tooltip = {
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_support_infrastructure"
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 0
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = infrastructure
+										size > 0
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_referendum_economy
+		icon = GFX_focus_generic_the_giant_wakes
+		prerequisite = { focus = LUX_social_economical_life }
+		mutually_exclusive = { focus = LUX_belgian_economy }
+		available = {
+			OR = {
+				event_target:NW_france_scope = { 
+					is_puppet = no
+					NOT = { has_war_with = LUX }
+					exists = yes
+				}
+				GER = { 
+					is_puppet = no
+					NOT = { has_war_with = GER }
+					exists = yes
+				}
+			}
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_referendum_economy"
+			country_event = { id = luxembourg.7 hours = 6 }
+		}
+	}
+	
+	focus = {
+		id = LUX_belgian_economy
+		icon = GFX_z_goal_new_industry_standard
+		prerequisite = { focus = LUX_social_economical_life }
+		mutually_exclusive = { focus = LUX_referendum_economy }
+		available = {
+			NOT = { has_war_with = BEL }
+			BEL = { is_puppet = no }
+			country_exists = BEL
+		}
+		x = 3
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_belgian_economy"
+			set_country_flag = LUX_belgian_economy_flag
+			BEL = { add_opinion_modifier = { target = LUX modifier = LUX_french_economy_friend } }
+			LUX = { add_opinion_modifier = { target = BEL modifier = LUX_french_economy_friend } }
+			swap_ideas = {
+					remove_idea = LUX_belgian_economy_idea
+					add_idea = LUX_belgian_economy_idea2
+				}
+		}
+	}
+	
+	focus = {
+		id = LUX_new_factory
+		icon = GFX_z_promka_11
+		prerequisite = { focus = LUX_belgian_economy focus = LUX_referendum_economy }
+		available = {
+			OR = {
+				LUX = {
+					has_country_flag = LUX_belgian_economy_flag
+					NOT = { has_war_with = BEL }
+				}
+				LUX = {
+					has_country_flag = LUX_french_economy_flag
+					NOT = { has_war_with = event_target:NW_france_scope }
+				}
+			}
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_belgian_economy
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = construction_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = industrial_complex
+						size < 1
+						include_locked = yes
+					}					
+				}
+			}
+		}
+
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}			
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_factory"
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = industrial_complex
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_belgian_dotation
+		icon = GFX_z_goal_generic_keynesian_economics
+		prerequisite = { focus = LUX_new_factory focus = LUX_belgian_economy }
+		available = {
+			has_country_flag = LUX_belgian_economy_flag
+			NOT = { has_war_with = BEL }
+			BEL = { is_puppet = no }
+			country_exists = BEL
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_new_factory
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_belgian_dotation"
+			add_ideas = LUX_belgian_dotation_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_french_dotation
+		icon = GFX_z_goal_ekonomik_ref
+		prerequisite = { focus = LUX_new_factory focus = LUX_referendum_economy }
+		available = {
+			has_country_flag = LUX_french_economy_flag
+			NOT = { has_war_with = event_target:NW_france_scope }
+			event_target:NW_france_scope = { is_puppet = no }
+			country_exists = event_target:NW_france_scope
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_new_factory
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_french_dotation"
+			add_ideas = LUX_french_dotation_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_new_zavod
+		icon = GFX_goal_generic_construct_mil_factory
+		prerequisite = { focus = LUX_referendum_economy }
+		available = {
+			has_country_flag = LUX_german_economy_flag
+			NOT = { has_war_with = GER }
+			GER = { is_puppet = no }
+			country_exists = GER
+		}
+		x = -2
+		y = 1
+		relative_position_id = LUX_referendum_economy
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = production_effort_tt
+				all_owned_state = {
+					free_building_slots = {
+						building = arms_factory
+						size < 1
+						include_locked = yes
+					}
+				}
+			}
+		}
+
+		complete_tooltip = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = arms_factory
+				level = 1
+				instant_build = yes
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_zavod"
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = arms_factory
+										size > 0
+										include_locked = yes
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_german_dotation
+		icon = GFX_z_goal_clearing_with_germany
+		prerequisite = { focus = LUX_new_zavod }
+		available = {
+			has_country_flag = LUX_german_economy_flag
+			NOT = { has_war_with = GER }
+			GER = { is_puppet = no }
+			country_exists = GER
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_new_zavod
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_german_dotation"
+			add_ideas = LUX_german_dotation_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_extra_tech_slot
+		icon = GFX_z_goal_generic_technology_sharing_tmo
+		prerequisite = { focus = LUX_german_dotation  focus = LUX_french_dotation focus = LUX_belgian_dotation }
+		x = 0
+		y = 1
+		relative_position_id = LUX_french_dotation
+		cost = 7.2
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_extra_tech_slot"
+			add_research_slot = 1
+		}
+	}
+	
+	focus = {
+		id = LUX_good_land
+		icon = GFX_z_goal_andorran_mullahs
+		prerequisite = { focus = LUX_social_economical_life }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 12
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_good_land"
+			8 = {
+				add_extra_state_shared_building_slots = 2
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_good_land1
+		icon = GFX_z_goal_agriculture3
+		prerequisite = { focus = LUX_good_land }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_good_land
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_good_land1"
+			8 = {
+				add_extra_state_shared_building_slots = 2
+			}
+		}
+	}
+
+	focus = {
+		id = LUX_Luxlait
+		icon = GFX_z_goal_luxlait
+		prerequisite = { focus = LUX_good_land }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_good_land
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_Luxlait"
+			8 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_iron
+		icon = GFX_z_goal_excavations
+		prerequisite = { focus = LUX_social_economical_life }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 5
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_iron"
+			add_tech_bonus = {
+				name = industrial_bonus
+				bonus = 1.0
+				uses = 1
+				category = excavation_tech
+			}
+		}
+
+	}
+	
+	focus = {
+		id = LUX_iron1
+		icon = GFX_focus_generic_steel
+		prerequisite = { focus = LUX_iron }
+		x = 0
+		y = 1
+		relative_position_id = LUX_iron
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_iron1"
+			8 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_resource = {
+					type = steel
+					amount = 4
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_iron2
+		icon = GFX_z_goal_Terres_Rouges
+		prerequisite = { focus = LUX_iron1 }
+		prerequisite = { focus = LUX_iron4 }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 2
+		y = 2
+		relative_position_id = LUX_iron1
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_iron2"
+			give_resource_rights = { receiver = ROOT state = 51 }
+		}
+	}
+
+	focus = {
+		id = LUX_iron3
+		icon = GFX_z_goal_Rodange
+		prerequisite = { focus = LUX_social_economical_life }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 9
+		y = 1
+		relative_position_id = LUX_social_economical_life
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_iron3"
+			8 = {
+				add_resource = {
+					type = steel
+					amount = 8
+				}
+			}
+		}
+
+	}
+
+	focus = {
+		id = LUX_iron4
+		icon = GFX_z_goal_Brazil_filial
+		prerequisite = { focus = LUX_iron3 }
+		x = 0
+		y = 1
+		relative_position_id = LUX_iron3
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_iron4"
+			add_political_power = 25
+			496 = {
+				add_resource = {
+					type = steel
+					amount = 8
+				}
+			}
+			8 = {
+				add_resource = {
+					type = steel
+					amount = 4
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = LUX_Luxembourgeois
+		icon = GFX_z_goal_lux_JD_socium
+		prerequisite = { focus = LUX_iron2 }
+		prerequisite = { focus = LUX_extra_tech_slot }
+		x = -3
+		y = 1
+		relative_position_id = LUX_iron2
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_Luxembourgeois"
+			add_ideas = LUX_nacional_JD_road_idea
+			random_owned_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 0
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = infrastructure
+										size > 0
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 3
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = LUX_Piwel
+		icon = GFX_z_goal_Piwel
+		prerequisite = {
+			focus = LUX_iron
+			focus = LUX_iron3
+		}
+		x = 2
+		y = 1
+		relative_position_id = LUX_iron
+		cost = 7.2
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_Piwel"
+			8 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+############################################
+###################ARMY#####################
+############################################
+
+	focus = {
+		id = LUX_patriotism
+		icon = GFX_goal_generic_propaganda
+		x = 3
+		y = 5
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_patriotism"
+			add_war_support = 0.15
+			add_ideas = LUX_patriotism_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_more_police
+		icon = GFX_z_goal_luxembourg_police
+		prerequisite = { focus = LUX_patriotism }
+		x = -1
+		y = 1
+		relative_position_id = LUX_patriotism
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_more_police"
+			add_ideas = LUX_more_police_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_new_weaphone
+		icon = GFX_goal_generic_small_arms
+		prerequisite = { focus = LUX_patriotism }
+		x = 1
+		y = 1
+		relative_position_id = LUX_patriotism
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_weaphone"
+			add_tech_bonus = {
+				name = infantry_weapons_bonus
+				bonus = 1.0
+				uses = 1
+				category = infantry_weapons
+				category = artillery
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_schuster_line
+		icon = GFX_goal_generic_fortify_city
+		prerequisite = { focus = LUX_more_police focus = LUX_new_weaphone }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = -1
+		y = 1
+		relative_position_id = LUX_new_weaphone
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_schuster_line"
+			8 = {
+				add_building_construction = {
+					type = bunker
+					level = 2
+					province = 6583
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_schuster_line2
+		icon = GFX_z_goal_generic_defensive_strategy
+		prerequisite = { focus = LUX_schuster_line }
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 0
+		y = 1
+		relative_position_id = LUX_schuster_line
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_schuster_line2"
+			8 = {
+				add_building_construction = {
+					type = bunker
+					level = 2
+					province = 6583
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_war_academy
+		icon = GFX_focus_generic_military_mission
+		prerequisite = { focus = LUX_more_police }
+		x = -1
+		y = 1
+		relative_position_id = LUX_more_police
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_war_academy"
+			add_ideas = LUX_war_academy_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_train_to_defend
+		icon = GFX_goal_generic_defence
+		prerequisite = { focus = LUX_war_academy }
+		x = 0
+		y = 1
+		relative_position_id = LUX_war_academy
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_train_to_defend"
+			army_experience = 10
+		}
+	}
+
+	focus = {
+		id = LUX_army_woman
+		icon = GFX_z_goal_GER_Jungsturm
+		prerequisite = { focus = LUX_train_to_defend }
+		x = 0
+		y = 1
+		relative_position_id = LUX_train_to_defend
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_army_woman"
+			set_rule = {
+				can_generate_female_aces = yes
+			}
+			add_ideas = LUX_woman_in_war_idea
+		}
+	}
+	
+	focus = {
+		id = LUX_new_artillery
+		icon = GFX_goal_generic_army_artillery2
+		prerequisite = { focus = LUX_new_weaphone }
+		x = 1
+		y = 1
+		relative_position_id = LUX_new_weaphone
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_artillery"
+			add_tech_bonus = {
+				name = infantry_weapons_bonus
+				bonus = 1.0
+				uses = 1
+				category = artillery
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_cars
+		icon = GFX_goal_generic_army_motorized
+		prerequisite = { focus = LUX_new_artillery }
+		bypass = { has_tech = motorised_infantry }
+		x = 0
+		y = 1
+		relative_position_id = LUX_new_artillery
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_cars"
+			add_tech_bonus = {
+				name = motorized_bonus
+				bonus = 3.0
+				technology = motorised_infantry
+			}
+		}
+	}
+
+	focus = {
+		id = LUX_Rotarex
+		icon = GFX_goal_generic_army_motorized
+		prerequisite = { focus = LUX_cars }
+		bypass = { has_tech = motorised_infantry }
+		x = 0
+		y = 1
+		relative_position_id = LUX_cars
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_Rotarex"
+			8 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = LUX_war_train
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = LUX_train_to_defend focus = LUX_schuster_line2 focus = LUX_cars }
+		x = 0
+		y = 1
+		relative_position_id = LUX_schuster_line2
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_war_train"
+			army_experience = 25
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 1.0
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+############################################
+###################Air######################
+############################################
+
+	focus = {
+		id = LUX_new_airport
+		icon = GFX_goal_generic_build_airforce
+		available = {
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 9
+		y = 7
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_airport"
+			8 = {
+				add_building_construction = {
+					type = air_base
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_new_fighters
+		icon = GFX_goal_generic_air_fighter
+		prerequisite = { focus = LUX_new_airport }
+		x = -1
+		y = 1
+		relative_position_id = LUX_new_airport
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_fighters"
+			add_tech_bonus = {
+				name = cze_import_fighter
+				bonus = 1.0
+				uses = 1
+				category = light_fighter
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_new_cas_bombers
+		icon = GFX_goal_generic_CAS
+		prerequisite = { focus = LUX_new_airport }
+		x = 1
+		y = 1
+		relative_position_id = LUX_new_airport
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_new_cas_bombers"
+			add_tech_bonus = {
+				name = CAS_bonus
+				bonus = 1.0
+				uses = 1
+				category = cas_bomber
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_radars
+		icon = GFX_goal_generic_radar
+		prerequisite = { focus = LUX_new_fighters focus = LUX_new_cas_bombers }
+		available = {
+			has_tech = radio_detection
+			LUX = {
+				owns_state = 8
+			}
+		}
+		x = 1
+		y = 1
+		relative_position_id = LUX_new_fighters
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_radars"
+			8 = {
+				add_building_construction = {
+					type = radar_station
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+############################################
+###################Navy#####################
+############################################
+
+	focus = {
+		id = LUX_naval_effort
+		icon = GFX_goal_generic_build_navy
+		x = 15
+		y = 7
+		cost = 7.2
+
+		available_if_capitulated = yes
+
+
+		available = {
+			any_state = {
+				is_coastal = yes
+				is_controlled_by = ROOT
+			}
+		}
+
+		complete_tooltip = {
+			navy_experience = 25
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = dockyard
+				level = 1
+				instant_build = yes
+			}
+		}
+		
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_naval_effort"
+			navy_experience = 25
+			if = {
+				limit = {
+					NOT = {
+						any_owned_state = {
+							dockyard > 0
+							free_building_slots = {
+								building = dockyard
+								size > 2
+								include_locked = yes
+							}
+						}
+					}
+					any_owned_state = {
+						is_coastal = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_country_flag = naval_effort_built
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = naval_effort_built }
+					any_owned_state = {
+						dockyard > 0
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						dockyard > 0
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+				set_country_flag = naval_effort_built
+			}
+			if = {
+				limit = {
+					NOT = { has_country_flag = naval_effort_built }
+					NOT = {
+						any_owned_state = {
+							free_building_slots = {
+								building = dockyard
+								size > 2
+								include_locked = yes
+							}
+						}
+					}
+				}
+				random_state = {
+					limit = {
+						controller = { tag = ROOT }
+						free_building_slots = {
+							building = dockyard
+							size > 2
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+			}			
+		}
+	}
+	
+	focus = {
+		id = LUX_podlodka_effort
+		icon = GFX_goal_generic_navy_submarine
+		prerequisite = { focus = LUX_naval_effort }
+		x = -1
+		y = 1
+		relative_position_id = LUX_naval_effort
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_podlodka_effort"
+			add_tech_bonus = {
+				name = CAS_bonus
+				bonus = 1.0
+				uses = 1
+				category = ss_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_destroyer_effort
+		icon = GFX_goal_generic_navy_anti_submarine
+		prerequisite = { focus = LUX_naval_effort }
+		x = 1
+		y = 1
+		relative_position_id = LUX_naval_effort
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_destroyer_effort"
+			add_tech_bonus = {
+				name = CAS_bonus
+				bonus = 1.0
+				uses = 1
+				category = dd_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = LUX_cruiser_effort
+		icon = GFX_goal_generic_navy_cruiser
+		prerequisite = { focus = LUX_podlodka_effort }
+		prerequisite = { focus = LUX_destroyer_effort }
+		x = 1
+		y = 1
+		relative_position_id = LUX_podlodka_effort
+		cost = 7.2
+		ai_will_do = {
+			factor = 10
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LUX_cruiser_effort"
+			add_tech_bonus = {
+				name = CAS_bonus
+				bonus = 1.0
+				uses = 1
+				category = dd_tech
+			}
+		}
+	}
+
+}
+	

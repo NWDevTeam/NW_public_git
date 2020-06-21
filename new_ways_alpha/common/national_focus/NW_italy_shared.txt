@@ -324,7 +324,7 @@
 		x = -4
 		y = 1
 		relative_position_id = ITA_manifest_race
-		cost = 10
+		cost = 5
 		ai_will_do = {
 			factor = 10
 
@@ -396,12 +396,19 @@
 		x = 4
 		y = 1
 		relative_position_id = ITA_manifest_race
-		cost = 10
+		cost = 5
 		ai_will_do = {
 			factor = 10
 			modifier = {
 				factor = 0.8
 				NOT = { country_exists = AUS }
+			}
+			modifier = {
+				factor = 4
+				OR = {
+					is_in_faction_with = AUS
+					is_in_faction_with = HUN
+				}
 			}
 		}
 		available = {
@@ -501,16 +508,21 @@
 			factor = 4
 		}
 		available = { is_subject = no }
+		select_effect = {
+			if = {
+				limit = { is_in_faction = yes }
+				complete_national_focus = ITA_fascist_international
+			}
+		}
 		completion_reward = {
 			set_rule = { can_create_factions = yes }
 			if = {
-				limit = {
-					NOT = {
-						is_in_faction_with = event_target:NW_hbbrg_scope
-						event_target:NW_hbbrg_scope = { is_faction_leader = yes }
-					}
-				}
+				limit = { is_in_faction = no }
 				country_event = { id = duce.54 }
+			}
+			if = {
+				limit = { is_in_faction = yes }
+				custom_effect_tooltip = generic_instant_focus_complete_tt
 			}
 		}
 	}
@@ -878,6 +890,10 @@
 				has_country_flag = NW_ITA_AI_FASCIST_ALTERNATE
 			}
 		}
+		available_if_capitulated = no
+		available = {
+			is_subject = no
+		}
 
 		bypass = {
 			NOT = { country_exists = YUG }
@@ -1039,9 +1055,13 @@
 		prerequisite = { focus = ITA_yugoslavia_friend focus = ITA_slovenia_dalmatia_claims }
 		mutually_exclusive = { focus = ITA_romania_friend }
 		will_lead_to_war_with = ROM
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = ROM }
-			NOT = { has_war_with = ROM }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = ROM
+				has_war_with = ROM
+			}
 			ROM = { NOT = { is_puppet_of = ITA } }
 			country_exists = ROM
 		}
@@ -1150,9 +1170,13 @@
 		icon = GFX_goal_generic_occupy_states_ongoing_war
 		prerequisite = { focus = ITA_yugoslavia_friend focus = ITA_slovenia_dalmatia_claims }
 		mutually_exclusive = { focus = ITA_greece_friend }
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = GRE }
-			NOT = { has_war_with = GRE }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = GRE
+				has_war_with = GRE
+			}
 			GRE = { NOT = { is_puppet_of = ITA } }
 			country_exists = GRE
 		}
@@ -1282,9 +1306,13 @@
 		icon = GFX_goal_generic_occupy_states_ongoing_war
 		prerequisite = { focus = ITA_yugoslavia_friend focus = ITA_slovenia_dalmatia_claims }
 		mutually_exclusive = { focus = ITA_bulgaria_friend }
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = BUL }
-			NOT = { has_war_with = BUL }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = BUL
+				has_war_with = BUL
+			}
 			BUL = { NOT = { is_puppet_of = ITA } }
 			country_exists = BUL
 		}
@@ -1377,9 +1405,13 @@
 		icon = GFX_goal_generic_occupy_states_ongoing_war
 		prerequisite = { focus = ITA_yugoslavia_friend focus = ITA_slovenia_dalmatia_claims }
 		mutually_exclusive = { focus = ITA_hungary_friend }
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = HUN }
-			NOT = { has_war_with = HUN }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = HUN
+				has_war_with = HUN
+			}
 			HUN = { NOT = { is_puppet_of = ITA } }
 			country_exists = HUN
 		}
@@ -1456,11 +1488,15 @@
 		id = ITA_attack_germany
 		icon = GFX_goal_generic_attack_allies
 		prerequisite = { focus = ITA_protect_austria }
+		available_if_capitulated = no
 		available = {
+			is_subject = no
 			country_exists = GER
-			NOT = { has_war_with = GER }
-			NOT = { is_in_faction_with = GER }
-			NOT = { GER = { is_puppet_of = ITA } }
+			NOT = {
+				has_war_with = GER
+				is_in_faction_with = GER
+				GER = { is_puppet_of = ROOT }
+			}
 		}
 		bypass = {
 			has_war_with = GER
@@ -1469,6 +1505,7 @@
 		y = 1
 		relative_position_id = ITA_protect_austria
 		cost = 10
+		
 		ai_will_do = {
 			factor = 5
 			modifier = {
@@ -1477,6 +1514,7 @@
 					is_historical_focus_on = yes
 					has_country_flag = NW_ITA_AI_FASCIST_HISTORICAL
 				}
+				GER = { has_government = fascism }
 			}
 			modifier = {
 				add = 5
@@ -1485,13 +1523,53 @@
 			modifier = {
 				factor = 0
 				has_completed_focus = ITA_pact_of_steel
+				GER = { has_government = fascism }
 			}
 			modifier = {
 				factor = 5
 				GER = { has_war = yes }
+				NOT = {
+					has_war_with = event_target:NW_france_scope
+					has_war_with = FRC
+				}
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = {
+					tag = GER
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 3
+				strength_ratio = {
+					tag = GER
+					ratio > 1.5
+				}
+			}
+			modifier = {
+				factor = 4
+				strength_ratio = {
+					tag = GER
+					ratio > 2
+				}
+			}
+		}
+		
+		select_effect = {
+			every_other_country = {
+				limit = {
+					OR = {
+						tag = GER
+						is_in_faction_with = GER
+					}
+				}
 				ROOT = {
-					NOT = { has_war_with = event_target:NW_france_scope }
-					NOT = { has_war_with = FRC }
+					add_ai_strategy = {
+						type = prepare_for_war
+						id = PREV
+						value = 100
+					}
 				}
 			}
 		}
@@ -1518,20 +1596,26 @@
 		id = ITA_attack_france
 		icon = GFX_goal_generic_attack_allies
 		prerequisite = { focus = ITA_protect_austria }
+		available_if_capitulated = no
 		available = {
+			is_subject = no
 			if = {
 				limit = { country_exists = event_target:NW_france_scope }
 				country_exists = event_target:NW_france_scope
-				NOT = { has_war_with = event_target:NW_france_scope }
-				NOT = { is_in_faction_with = event_target:NW_france_scope }
-				NOT = { event_target:NW_france_scope = { is_subject_of = ITA } }
+				NOT = {
+					has_war_with = event_target:NW_france_scope
+					is_in_faction_with = event_target:NW_france_scope
+					event_target:NW_france_scope = { is_subject_of = ITA }
+				}
 			}
 			if = {
 				limit = { country_exists = FRC }
 				country_exists = FRC
-				NOT = { has_war_with = FRC }
-				NOT = { is_in_faction_with = FRC }
-				NOT = { FRC = { is_subject_of = ITA } }
+				NOT = {
+					has_war_with = FRC
+					is_in_faction_with = FRC
+					FRC = { is_subject_of = ITA }
+				}
 			}
 		}
 		bypass = {
@@ -1552,6 +1636,7 @@
 		y = 1
 		relative_position_id = ITA_protect_austria
 		cost = 10
+		
 		ai_will_do = {
 			factor = 5
 			modifier = {
@@ -1569,6 +1654,25 @@
 				ROOT = { NOT = { has_war_with = GER } }
 			}
 		}
+		
+		select_effect = {
+			every_other_country = {
+				limit = {
+					OR = {
+						tag = event_target:NW_france_scope
+						is_in_faction_with = event_target:NW_france_scope
+					}
+				}
+				ROOT = {
+					add_ai_strategy = {
+						type = prepare_for_war
+						id = PREV
+						value = 100
+					}
+				}
+			}
+		}
+		
 		completion_reward = {
 			create_wargoal = {
 				type = annex_everything
@@ -1591,9 +1695,13 @@
 		id = ITA_turkey_war_goal
 		icon = GFX_goal_generic_occupy_states_ongoing_war
 		prerequisite = { focus = ITA_yugoslavia_friend focus = ITA_slovenia_dalmatia_claims }
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = TUR }
-			NOT = { has_war_with = TUR }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = TUR
+				has_war_with = TUR
+			}
 			TUR = { NOT = { is_puppet_of = ITA } }
 			country_exists = TUR
 		}
@@ -1717,9 +1825,13 @@
 		icon = GFX_goal_generic_occupy_states_ongoing_war
 		prerequisite = { focus = ITA_turkey_war_goal }
 		mutually_exclusive = { focus = ITA_iraq_friend }
+		available_if_capitulated = no
 		available = {
-			NOT = { is_in_faction_with = IRQ }
-			NOT = { has_war_with = IRQ }
+			is_subject = no
+			NOT = {
+				is_in_faction_with = IRQ
+				has_war_with = IRQ
+			}
 			IRQ = { NOT = { is_puppet_of = ITA } }
 			country_exists = IRQ
 		}
@@ -1763,7 +1875,11 @@
 		cost = 10
 		ai_will_do = {
 			factor = 10
-		}	
+		}
+		available_if_capitulated = no
+		available = {
+			is_subject = no
+		}
 		completion_reward = {
 			create_wargoal = {
 				type = annex_everything
@@ -2902,6 +3018,9 @@ shared_focus = {
 				1051 = { controller = { is_subject_of = ROOT } }
 			}
 		}
+		bypass = {
+			always = yes
+		}
 		x = 0
 		y = 1
 		relative_position_id = ITA_ports_east_africa
@@ -3478,10 +3597,16 @@ shared_focus = {
 		cost = 10
 		ai_will_do = {
 			factor = 1
-		}	
+		}
+		available = {
+			any_owned_state = {
+				is_coastal = yes
+			}
+		}
 		completion_reward = {
 			random_owned_controlled_state = {
 				limit = {
+					is_coastal = yes
 					dockyard > 0
 					free_building_slots = {
 						building = dockyard
@@ -3498,6 +3623,7 @@ shared_focus = {
 			}
 			random_owned_controlled_state = {
 				limit = {
+					is_coastal = yes
 					dockyard > 0
 					free_building_slots = {
 						building = dockyard
@@ -3528,6 +3654,7 @@ shared_focus = {
 				}
 				random_owned_controlled_state = {
 					limit = {
+						is_coastal = yes
 						free_building_slots = {
 							building = dockyard
 							size > 1
@@ -3543,6 +3670,7 @@ shared_focus = {
 				}
 				random_owned_controlled_state = {
 					limit = {
+						is_coastal = yes
 						free_building_slots = {
 							building = dockyard
 							size > 1
@@ -3993,7 +4121,7 @@ shared_focus = {
 		x = -5
 		y = 1
 		relative_position_id = ITA_march_steel
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}	
@@ -4014,7 +4142,7 @@ shared_focus = {
 		x = -2
 		y = 1
 		relative_position_id = ITA_xp_ethiopia
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4037,7 +4165,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_xp_ethiopia
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4069,7 +4197,7 @@ shared_focus = {
 		x = 2
 		y = 1
 		relative_position_id = ITA_xp_ethiopia
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4102,7 +4230,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_special_forces
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4125,7 +4253,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_armored_effort
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4146,7 +4274,7 @@ shared_focus = {
 		x = 5
 		y = 1
 		relative_position_id = ITA_march_steel
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 20
 		}	
@@ -4164,7 +4292,7 @@ shared_focus = {
 		x = -1
 		y = 1
 		relative_position_id = ITA_center_aviation
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4193,7 +4321,7 @@ shared_focus = {
 		x = 1
 		y = 1
 		relative_position_id = ITA_center_aviation
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4226,7 +4354,7 @@ shared_focus = {
 		x = 1
 		y = 1
 		relative_position_id = ITA_air_innovation
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4255,7 +4383,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_naval_air_effort
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4287,7 +4415,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_march_steel
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}	
@@ -4303,13 +4431,14 @@ shared_focus = {
 		x = -1
 		y = 1
 		relative_position_id = ITA_naval_college
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
 
 		completion_reward = {
 			navy_experience = 10
+			custom_effect_tooltip = available_designer
 			show_ideas_tooltip = Tirrenia
 		}
 	}
@@ -4321,7 +4450,7 @@ shared_focus = {
 		x = 1
 		y = 1
 		relative_position_id = ITA_naval_college
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4351,7 +4480,7 @@ shared_focus = {
 		x = -2
 		y = 1
 		relative_position_id = ITA_escort_effort
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4383,7 +4512,7 @@ shared_focus = {
 		x = 0
 		y = 1
 		relative_position_id = ITA_escort_effort
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}
@@ -4415,7 +4544,7 @@ shared_focus = {
 		x = -1
 		y = 1
 		relative_position_id = ITA_submarine_effort
-		cost = 10
+		cost = 7.15
 		ai_will_do = {
 			factor = 1
 		}

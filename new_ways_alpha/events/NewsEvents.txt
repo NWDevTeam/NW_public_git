@@ -121,7 +121,7 @@ news_event = {
 		trigger = {
 			NOT = {
 				TAG = JAP
-				TAG = FRA
+				TAG = event_target:NW_france_scope
 				is_in_faction_with = JAP
 			}
 		}
@@ -132,14 +132,14 @@ news_event = {
 	}
 	option = {
 		name = news.6.c
-		trigger = { TAG = FRA }
+		trigger = { TAG = event_target:NW_france_scope }
 	}
 	option = {
 		name = news.6.e
 		trigger = {
 			NOT = {
 				TAG = JAP
-				TAG = FRA
+				TAG = event_target:NW_france_scope
 			}
 			is_in_faction_with = JAP
 		}
@@ -2249,12 +2249,18 @@ news_event = {
 	
 	trigger = {
 		has_global_flag = spanish_civil_war
-		NOT = { has_global_flag = expand_spanish_civil_war }
-		NOT = { has_global_flag = scw_over }
-		SPA = { NOT = { has_war_with = SPR } }
-		SPA = { NOT = { has_war_with = ARA } }
-		SPA = { NOT = { has_war_with = CAT } }
-		SPA = { exists = yes }
+		NOT = {
+			has_global_flag = expand_spanish_civil_war
+			has_global_flag = scw_over
+		}
+		SPA = {
+			exists = yes
+			NOT = {
+				has_war_with = SPR
+				has_war_with = ARA
+				has_war_with = CAT
+			}
+		}
 		SPR = { exists = no }
 	}
 	
@@ -2286,6 +2292,98 @@ news_event = {
 		}
 		else = { add_timed_idea = { idea = SPA_recovering_from_civil_war days = 365 } }
 		delete_unit_template_and_units = { division_template = "Brigada Legionario" }
+		hidden_effect = {
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = SPR
+						is_core_of = CAS
+						is_core_of = NAV
+						is_core_of = SEU
+						is_core_of = SPC
+						is_core_of = ANL
+						is_core_of = ARA
+						is_core_of = ASU
+						is_core_of = SNT
+						is_core_of = CAT
+						is_core_of = BAS
+						is_core_of = GLC
+						is_core_of = VLA
+					}
+				}
+				remove_core_of = SPR
+				remove_core_of = CAS
+				remove_core_of = NAV
+				remove_core_of = SEU
+				remove_core_of = SPC
+				remove_core_of = ANL
+				remove_core_of = ARA
+				remove_core_of = ASU
+				remove_core_of = SNT
+				remove_core_of = CAT
+				remove_core_of = BAS
+				remove_core_of = GLC
+				remove_core_of = VLA
+			}
+			every_state = {
+				limit = {
+					OR = {
+						is_claimed_by = SPR
+						is_claimed_by = CAS
+						is_claimed_by = NAV
+						is_claimed_by = SEU
+						is_claimed_by = SPC
+						is_claimed_by = ANL
+						is_claimed_by = ARA
+						is_claimed_by = ASU
+						is_claimed_by = SNT
+						is_claimed_by = CAT
+						is_claimed_by = BAS
+						is_claimed_by = GLC
+						is_claimed_by = VLA
+					}
+				}
+				remove_claim_by = SPR
+				remove_claim_by = CAS
+				remove_claim_by = NAV
+				remove_claim_by = SEU
+				remove_claim_by = SPC
+				remove_claim_by = ANL
+				remove_claim_by = ARA
+				remove_claim_by = ASU
+				remove_claim_by = SNT
+				remove_claim_by = CAT
+				remove_claim_by = BAS
+				remove_claim_by = GLC
+				remove_claim_by = VLA
+			}
+			every_country = {
+				limit = {
+					is_subject_of = SPA
+					OR = {
+						tag = SPR
+						tag = CAS
+						tag = NAV
+						tag = SEU
+						tag = SPC
+						tag = ANL
+						tag = ARA
+						tag = ASU
+						tag = SNT
+						tag = CAT
+						tag = BAS
+						tag = GLC
+						tag = VLA
+					}
+				}
+				SPA = {
+					annex_country = {
+						target = PREV
+						transfer_troops = yes
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -2330,6 +2428,25 @@ news_event = {
 	option = {
 		name = news.64.b
 		trigger = { tag = SPR }
+		hidden_effect = {
+			every_state = {
+				limit = { is_core_of = ARA }
+				remove_core_of = ARA
+			}
+			166 = { add_core_of = ARA }
+			792 = { add_core_of = ARA }
+			794 = { add_core_of = ARA }
+			790 = { add_core_of = ARA }
+			every_state = {
+				limit = { is_core_of = CAT }
+				remove_core_of = CAT
+			}
+			165 = { add_core_of = CAT }
+			every_state = {
+				limit = { is_core_of = SPA }
+				remove_core_of = SPA
+			}
+		}
 		remove_ideas = SPR_spain_civil_war
 		if = {
 			limit = { is_historical_focus_on = yes }
@@ -4111,26 +4228,15 @@ news_event = {
 	
 	major = yes
 	
+	is_triggered_only = yes
+	
 	trigger = {
-		OR = {
-			16 = { is_controlled_by = ENG }
-			16 = { is_controlled_by = USA }
-			16 = { is_controlled_by = AST }
-			16 = { is_controlled_by = CAN }
-			16 = { is_controlled_by = NZL }
-			16 = { is_controlled_by = SAF }
-		}
-		16 = { is_owned_by = GER }
 		NOT = { has_global_flag = liberation_of_paris }
 		has_global_flag = fall_of_france
 	}
 	
 	immediate = {
 		set_global_flag = liberation_of_paris
-	}
-	
-	mean_time_to_happen = {
-		days = 2
 	}
 	
 	option = {
@@ -4140,6 +4246,7 @@ news_event = {
 				TAG = ENG
 				TAG = USA
 				TAG = AST
+				TAG = event_target:NW_france_scope
 				TAG = CAN
 				TAG = NZL
 				TAG = SAF
@@ -4148,12 +4255,13 @@ news_event = {
 		}
 	}
 	option = {
-		name = news.134.b
+		name = news.145.a
 		trigger = { 
 			OR = {
 				TAG = ENG
 				TAG = USA
 				TAG = AST
+				TAG = event_target:NW_france_scope
 				TAG = CAN
 				TAG = NZL
 				TAG = SAF
@@ -4281,20 +4389,14 @@ news_event = {
 	picture = GFX_news_event_061
 	
 	major = yes
-	
+	is_triggered_only = yes 
 	trigger = {
-		126 = { is_controlled_by = USA }
-		126 = { is_owned_by = GER }
 		NOT = { has_global_flag = liberation_of_london }
 		has_global_flag = fall_of_london_ger
 	}
 	
 	immediate = {
 		set_global_flag = liberation_of_london
-	}
-	
-	mean_time_to_happen = {
-		days = 2
 	}
 	
 	option = {
@@ -4367,20 +4469,14 @@ news_event = {
 	picture = GFX_news_event_polish_resistance_warsaw
 	
 	major = yes
-	
+	is_triggered_only = yes
 	trigger = {
-		10 = { is_controlled_by = SOV }
-		10 = { is_owned_by = GER }
 		NOT = { has_global_flag = liberation_of_warsaw }
 		has_global_flag = fall_of_warsaw_ger
 	}
 	
 	immediate = {
 		set_global_flag = liberation_of_warsaw
-	}
-	
-	mean_time_to_happen = {
-		days = 2
 	}
 	
 	option = {
@@ -5937,28 +6033,135 @@ news_event = {
 news_event = {
 	id = news.173
 	title = news.173.t
-	desc = news.173.d
 	picture = GFX_news_event_023
-	fire_only_once = yes
-	
-	major = no
+	hidden = yes
+	major = yes
 
 	trigger = {
-		NEP = {
+		NOT = { has_global_flag = SOV_fourth_international_fired }
+		SOV = {
 			OR = {
 				has_completed_focus = SOV_great_purge
 				NOT = { has_country_flag = SOV_purge_started }
 			}
 			has_government = communism
 		}		
-		date > 1999.9.1
+		date > 1938.9.1
 	}
-	
+
+	immediate = {
+		set_global_flag = SOV_fourth_international_fired
+
+		# Set flag for amount of purges (completing focus counts as 1)
+		SOV = {
+			#1
+			if = {
+				limit = {
+					has_completed_focus = SOV_great_purge
+					has_country_flag = no_political_purge
+					has_country_flag = purge_1_no_purge
+					has_country_flag = purge_2_no_purge
+				}
+				set_country_flag = SOV_purged_1
+			}
+			#2
+			if = {
+				limit = {
+					has_completed_focus = SOV_great_purge
+					OR = {
+						AND = {
+							NOT = { has_country_flag = no_political_purge }
+							has_country_flag = purge_1_no_purge
+							has_country_flag = purge_2_no_purge
+						}
+						AND = {
+							has_country_flag = no_political_purge
+							NOT = { has_country_flag = purge_1_no_purge }
+							has_country_flag = purge_2_no_purge
+						}
+						AND = {
+							has_country_flag = no_political_purge
+							has_country_flag = purge_1_no_purge
+							NOT = { has_country_flag = purge_2_no_purge }
+						}
+					}
+				}
+				set_country_flag = SOV_purged_2
+			}
+			#3
+			if = {
+				limit = {
+					has_completed_focus = SOV_great_purge
+					OR = {
+						AND = {
+							NOT = { has_country_flag = no_political_purge }
+							NOT = { has_country_flag = purge_1_no_purge }
+							has_country_flag = purge_2_no_purge
+						}
+						AND = {
+							has_country_flag = no_political_purge
+							NOT = { has_country_flag = purge_1_no_purge }
+							NOT = { has_country_flag = purge_2_no_purge }
+						}
+						AND = {
+							NOT = { has_country_flag = no_political_purge }
+							has_country_flag = purge_1_no_purge
+							NOT = { has_country_flag = purge_2_no_purge }
+						}
+					}
+				}
+				set_country_flag = SOV_purged_3
+			}
+			#4
+			if = {
+				limit = {
+					SOV = {
+						has_completed_focus = SOV_great_purge
+						NOT = { has_country_flag = no_political_purge }
+						NOT = { has_country_flag = purge_1_no_purge }
+						NOT = { has_country_flag = purge_2_no_purge	}
+					}
+				}
+				set_country_flag = SOV_purged_4
+			}
+		}
+	}
+
+	mean_time_to_happen = { days = 2 }
+
+	desc = {
+		#not enough ppl killed
+		text = news.173.d_1
+		trigger = {
+			SOV = {
+				OR = {
+					NOT = { has_completed_focus = SOV_great_purge }
+					has_country_flag = no_political_purge
+					has_country_flag = purge_1_no_purge
+					has_country_flag = purge_2_no_purge
+				}
+			}
+		}
+	}
+	desc = {
+		text = news.173.d_2
+		trigger = {
+			SOV = {
+				has_completed_focus = SOV_great_purge
+				NOT = { has_country_flag = no_political_purge }
+				NOT = { has_country_flag = purge_1_no_purge }
+				NOT = { has_country_flag = purge_2_no_purge	}
+			}
+		}
+	}
+
 	option = {
 		name = news.173.a
-		trigger = { 
-			TAG = NEP
-		}
+		trigger = { NOT = {	tag = SOV } }
+	}
+	option = {
+		name = news.173.b
+		trigger = { tag = SOV }
 	}
 }
 
@@ -6359,8 +6562,10 @@ news_event = {
 	option = {
 		name = news.180.e
 		trigger = {
-			has_government = neutrality
 			NOT = {
+				has_government = communism
+				has_government = fascism
+				has_government = democratic
 				tag = FRA
 			}
 		}
@@ -7554,8 +7759,9 @@ news_event = {
 	option = {
 		name = news.203.c
 		trigger = {
-			has_government = neutrality
 			NOT = {
+				has_government = democratic
+				has_government = communism
 				is_in_faction_with = GER
 			}
 		}
@@ -10373,31 +10579,23 @@ news_event = {
 		trigger = {
 			NOT = {
 				tag = SAF
-			}
-			NOT = {
 				tag = ENG
-			}
-			NOT = {
 				is_in_faction_with = ENG
 			}
-			has_government = communism
 		}
 	}
 	option = {
 		name = news.263.b
-		trigger = { TAG = SAF }
+		trigger = { tag = SAF }
 	}
 	option = {
 		name = news.263.c
-		trigger = { 
+		trigger = {
 			OR = {
 				tag = ENG
 				is_in_faction_with = ENG
-				}
-				NOT = { 
-					has_government = communism 
-				}
-				NOT = { tag = SAF }
+			}
+			NOT = { tag = SAF }
 		}
 	}
 }
@@ -11092,8 +11290,31 @@ news_event = {
 #Austria invites Habsburg Prince
 news_event = {
 	id = news.290
-	title = news.290.t
-	desc = news.290.desc
+	title = {
+		text = news.290.t1
+		trigger = { FROM = { original_tag = HUN } }
+	}
+	title = {
+		text = news.290.t2
+		trigger = { FROM = { original_tag = AUS } }
+	}
+	title = {
+		text = news.290.t3
+		trigger = { FROM = { original_tag = CZE } }
+	}
+
+	desc = {
+		text = news.290.desc1
+		trigger = { FROM = { original_tag = HUN } }
+	}
+	desc = {
+		text = news.290.desc2
+		trigger = { FROM = { original_tag = AUS } }
+	}
+	desc = {
+		text = news.290.desc3
+		trigger = { FROM = { original_tag = CZE } }
+	}
 	picture = GFX_news_event_royal_visit
 	
 	major = yes
@@ -11103,13 +11324,18 @@ news_event = {
 	option = {
 		name = news.290.a
 		trigger = {
-			TAG = HUN
+			tag = FROM
 		}
 	}
 	option = {
 		name = news.290.b
-		trigger = { 
-			TAG = AUS
+		trigger = {
+			NOT = { tag = FROM }
+			OR = {
+				TAG = HUN
+				TAG = AUS
+				TAG = CZE
+			}
 		}
 	}
 	option = {
@@ -11124,6 +11350,7 @@ news_event = {
 			NOT = {
 				TAG = HUN
 				TAG = AUS
+				TAG = CZE
 				TAG = GER
 			}
 		}
@@ -11365,15 +11592,24 @@ news_event = {
 			NOT = { TAG = HUN }
 			OR = {
 				has_government = fascism
+				has_government = monarchy
 				has_government = communism
+				has_government = trozkism
+				has_government = anarchism
 			}
 		}
 	}
-	option = { 
+	option = {
 		name = news.296.c
 		trigger = { 
 			NOT = { TAG = HUN }
-			has_government = democratic
+			NOT = {
+				has_government = fascism
+				has_government = monarchy
+				has_government = communism
+				has_government = trozkism
+				has_government = anarchism
+			}
 		}
 	}
 }

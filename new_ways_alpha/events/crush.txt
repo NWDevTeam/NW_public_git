@@ -2,7 +2,7 @@
 
 country_event = { #Страна трещит по швам!
 	id = crush.1
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.1"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.1"}
 	title = crush.1.t
 	desc = crush.1.desc
 	picture = GFX_ozn_pilsudski #
@@ -123,6 +123,8 @@ country_event = { #Страна трещит по швам!
 				every_country = {
 					limit = {
 						has_war_with = PREV
+						is_subject = no
+						OR = { is_faction_leader = yes is_in_faction = no }
 					}
 					country_event = { id = crush.2 days = 1 }
 					white_peace = PREV
@@ -154,7 +156,7 @@ country_event = { #Страна трещит по швам!
 
 country_event = { #У противника совершена революция
 	id = crush.2
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.2"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.2"}
 	title = crush.2.t
 	desc = crush.2.desc
 	picture = GFX_ozn_pilsudski #
@@ -222,7 +224,7 @@ country_event = {
 	desc = crush.100.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.100"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.100"}
 	
 	option = {
 		name = crush.100.a
@@ -232,16 +234,20 @@ country_event = {
 		every_other_country = {
 			limit = {
 				OR = {
-					tag = CAN
-					tag = SAF
-					tag = RAJ
-					tag = MAL
-					tag = AST
-					tag = NZL
+					AND = {
+						OR = {
+							tag = CAN
+							tag = SAF
+							tag = RAJ
+							tag = AST
+							tag = NZL
+						}
+						has_country_flag = was_be_dominion_flag
+					}
+					is_subject_of = ENG
 				}
-				NOT = { tag = ROOT }
 			}
-			country_event = { id = crush.101 days = 1 }
+			country_event = { id = crush.101 }
 		}
 		hidden_effect = {
 			country_event = { id = crush.102 days = 2 }
@@ -262,7 +268,7 @@ country_event = {
 	desc = crush.101.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.101"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.101"}
 
 	option = {
 		name = crush.101.a
@@ -276,6 +282,10 @@ country_event = {
 		name = crush.101.b
 		ai_chance = {
 			factor = 10
+			modifier = {
+				add = 80
+				is_subject_of = ENG
+			}
 		}
 	}
 }
@@ -287,7 +297,7 @@ country_event = {
 	desc = crush.102.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.102"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.102"}
 
 	option = {
 		name = crush.102.a
@@ -298,20 +308,20 @@ country_event = {
 			limit = {
 				has_country_flag = conference_adopted
 			}
+			every_state = {
+				limit = {
+					is_core_of = PREV
+				}
+				add_core_of = ROOT
+			}
+			every_unit_leader = {
+				set_nationality = ROOT
+			}
 			ROOT = {
 				annex_country = {
 					target = PREV
 					transfer_troops = yes
 				}
-				every_state = {
-					limit = {
-						is_core_of = PREV
-					}
-					add_core_of = ROOT
-				}
-			}
-			every_unit_leader = {
-				set_nationality = ROOT
 			}
 		}
 		create_faction = "ALLY_NEW"
@@ -360,18 +370,16 @@ country_event = {
 	desc = crush.103.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.103"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.103"}
 	
 	option = {
 		name = crush.103.a
 		ai_chance = {
 			factor = 50
 		}
-		set_popularities = {
-			democratic = 100
-			fascism = 0
-			communism = 0
-			neutrality = 0
+		add_popularity = {
+			ideology = democratic
+			popularity = 1
 		}
 		set_politics = {
 			ruling_party = democratic
@@ -383,11 +391,9 @@ country_event = {
 		ai_chance = {
 			factor = 50
 		}
-		set_popularities = {
-			democratic = 0
-			fascism = 100
-			communism = 0
-			neutrality = 0
+		add_popularity = {
+			ideology = fascism
+			popularity = 1
 		}
 		set_politics = {
 			ruling_party = fascism
@@ -399,11 +405,9 @@ country_event = {
 		ai_chance = {
 			factor = 50
 		}
-		set_popularities = {
-			democratic = 0
-			fascism = 0
-			communism = 100
-			neutrality = 0
+		add_popularity = {
+			ideology = communism
+			popularity = 1
 		}
 		set_politics = {
 			ruling_party = communism
@@ -415,11 +419,9 @@ country_event = {
 		ai_chance = {
 			factor = 25
 		}
-		set_popularities = {
-			democratic = 0
-			fascism = 0
-			communism = 0
-			neutrality = 100
+		add_popularity = {
+			ideology = neutrality
+			popularity = 1
 		}
 		set_politics = {
 			ruling_party = neutrality
@@ -434,7 +436,7 @@ country_event = {
 	desc = crush.104.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.104"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.104"}
 	
 	option = {
 		name = crush.104.a
@@ -448,11 +450,9 @@ country_event = {
 					is_in_faction_with = ROOT
 				}
 			}
-			set_popularities = {
-				democratic = 100
-				fascism = 0
-				communism = 0
-				neutrality = 0
+			add_popularity = {
+				ideology = democratic
+				popularity = 1
 			}
 			set_politics = {
 				ruling_party = democratic
@@ -473,11 +473,9 @@ country_event = {
 					is_in_faction_with = ROOT
 				}
 			}
-			set_popularities = {
-				democratic = 0
-				fascism = 100
-				communism = 0
-				neutrality = 0
+			add_popularity = {
+				ideology = fascism
+				popularity = 1
 			}
 			set_politics = {
 				ruling_party = fascism
@@ -498,11 +496,9 @@ country_event = {
 					is_in_faction_with = ROOT
 				}
 			}
-			set_popularities = {
-				democratic = 0
-				fascism = 0
-				communism = 100
-				neutrality = 0
+			add_popularity = {
+				ideology = communism
+				popularity = 1
 			}
 			set_politics = {
 				ruling_party = communism
@@ -523,11 +519,9 @@ country_event = {
 					is_in_faction_with = ROOT
 				}
 			}
-			set_popularities = {
-				democratic = 0
-				fascism = 0
-				communism = 0
-				neutrality = 100
+			add_popularity = {
+				ideology = neutrality
+				popularity = 1
 			}
 			set_politics = {
 				ruling_party = neutrality
@@ -543,7 +537,7 @@ country_event = {
 	desc = crush.105.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
-	immediate = {log = "[GetDateText]: [Root.GetName]: event crush.105"}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event crush.105"}
 	
 	option = {
 		name = crush.105.a

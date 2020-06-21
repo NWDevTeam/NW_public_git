@@ -1,0 +1,806 @@
+FRA_peace_category = {
+
+	FRA_peace = {
+
+		icon = generic_form_nation
+		
+		available = {
+			#has_capitulated = no
+			NOT = {
+				any_state = {
+					is_controlled_by = ROOT
+					OR = {
+						AND = { is_owned_by = GER is_core_of = GER }
+						AND = { is_owned_by = ITA is_core_of = ITA }
+					}
+					NOT = { region = 169 }
+				}
+			}
+			16 = {
+				OR = {
+					is_controlled_by = GER
+					is_controlled_by = ITA
+				}
+			}
+		}
+		
+		visible = {
+			has_country_flag = FRA_peace_flag
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			OR = {
+				AND = {
+					has_war_with = GER
+					NOT = { has_war_with = ITA }
+				}
+				AND = {
+					has_war_with = ITA
+					NOT = { has_war_with = GER }
+				}
+				AND = {
+					GER = { has_war_with = ROOT }
+					ITA = { has_war_with = ROOT }
+					ITA = { is_in_faction_with = GER }
+				}
+			}
+		}
+		
+		#cost = 20
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRA_peace"
+			event_target:france_occupy_leader = { country_event = { id = NWfrance.102 days = 1 } }
+			clr_country_flag = FRA_peace_flag
+			hidden_effect = {
+				set_variable = { fra_comm = party_popularity@communism }
+				set_variable = { fra_demo = party_popularity@democratic }
+				set_variable = { fra_fash = party_popularity@fascism }
+				set_variable = { fra_neut = party_popularity@neutrality }
+				multiply_variable = { fra_comm = 100 }
+				multiply_variable = { fra_demo = 100 }
+				multiply_variable = { fra_fash = 100 }
+				multiply_variable = { fra_neut = 100 }
+				log = "[GetDateText]: [Root.GetName]: fra_comm:[?fra_comm]"
+				log = "[GetDateText]: [Root.GetName]: fra_demo:[?fra_demo]"
+				log = "[GetDateText]: [Root.GetName]: fra_fash:[?fra_fash]"
+				log = "[GetDateText]: [Root.GetName]: fra_neut:[?fra_neut]"
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+FRA_war_category = {
+
+	FRA_war_with_SOV = {
+
+		icon = generic_ignite_civil_war
+		
+		available = {
+			NOT = {
+				has_war_with = SOV
+				is_in_faction_with = SOV
+			}
+			threat > 0.3
+		}
+		
+		visible = {
+			has_completed_focus = FRA_antisoviet_union
+		}
+		
+		cost = 25
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRA_war_with_SOV"
+			add_war_support = 0.05
+			if = {
+				limit = { NOT = { has_war_with = SOV } }
+				declare_war_on = {
+					target = SOV
+					type = annex_everything
+				}
+				add_named_threat = {
+					threat = 10
+					name = FRA_war_with_SOV
+				}
+			}
+			every_country = {
+				limit = { has_idea = FRA_antisoviet_union_idea }
+				declare_war_on = {
+					target = SOV
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 0.5
+			modifier = {
+				factor = 0
+				NOT = { has_completed_focus = FRA_seek_support_in_balkans }
+			}
+			modifier = {
+				factor = 0.1
+				SOV = { has_war = no }
+			}
+			modifier = {
+				factor = 10
+				strength_ratio = {
+					tag = SOV
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 20
+				strength_ratio = {
+					tag = SOV
+					ratio > 2
+				}
+			}
+			modifier = {
+				factor = 10
+				alliance_strength_ratio > 1
+			}
+			modifier = {
+				factor = 20
+				alliance_strength_ratio > 2
+			}
+			modifier = {
+				factor = 10
+				has_completed_focus = FRA_seek_support_in_balkans
+			}
+			
+		}
+	}
+	
+	FRA_war_with_GER = {
+
+		icon = generic_ignite_civil_war
+		
+		available = {
+			NOT = {
+				has_war_with = GER
+				is_in_faction_with = GER
+			}
+			threat > 0.3
+		}
+		
+		visible = {
+			has_completed_focus = FRA_antigerman_union
+		}
+		
+		cost = 25
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRA_war_with_GER"
+			add_war_support = 0.05
+			if = {
+				limit = { NOT = { has_war_with = GER } }
+				declare_war_on = {
+					target = GER
+					type = annex_everything
+				}
+				add_named_threat = {
+					threat = 10
+					name = FRA_war_with_GER
+				}
+			}
+			every_country = {
+				limit = { has_idea = FRA_antigerman_union_idea }
+				declare_war_on = {
+					target = GER
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 0.5
+			modifier = {
+				factor = 0
+				NOT = { has_completed_focus = FRA_seek_support_in_balkans }
+			}
+			modifier = {
+				factor = 0.1
+				GER = { has_war = no }
+			}
+			modifier = {
+				factor = 10
+				strength_ratio = {
+					tag = GER
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 20
+				strength_ratio = {
+					tag = GER
+					ratio > 2
+				}
+			}
+			modifier = {
+				factor = 10
+				alliance_strength_ratio > 1
+			}
+			modifier = {
+				factor = 20
+				alliance_strength_ratio > 2
+			}
+			modifier = {
+				factor = 10
+				has_completed_focus = FRA_seek_support_in_balkans
+			}
+		}
+	}
+}
+
+FRA_polit_category = {
+
+	FRA_accuse_soviet_union_of_inciting_civil_war = {
+
+		icon = generic_ignite_civil_war
+		
+		available = {
+			NOT = { has_war_with = FRC }
+			NOT = { country_exists = FRC }
+		}
+		
+		visible = {
+			has_country_flag = FRA_commi_revolt_flag
+		}
+		
+		cost = 25
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRA_accuse_soviet_union_of_inciting_civil_war"
+			if = {
+				limit = { is_in_faction_with = SOV }
+				leave_faction = yes
+			}
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = SOV
+			}
+			SOV = {
+				add_named_threat = { 
+					threat = 5
+					name = soviet_union_of_inciting_civil_war
+				}
+			}
+			add_ai_strategy = {
+				type = antagonize
+				id = "SOV"
+				value = 100
+			}
+			hidden_effect = { news_event = { hours = 6 id = trworldnews.76 } }
+		}
+
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				threat < 0.3
+				is_in_faction = no
+				OR = {
+					SOV = { has_war = no }
+					NOT = {
+						is_in_faction_with = POL
+						is_in_faction_with = FIN
+						is_in_faction_with = ROM
+						is_in_faction_with = TUR
+					}
+				}
+			}
+		}
+	}
+}
+
+operations = {
+
+	FRA_restart_war = {
+	
+		allowed = {
+			OR = {
+				original_tag = FRA
+				original_tag = FRC
+			}
+		}
+
+		icon = generic_ignite_civil_war
+		
+		available = {
+			num_of_controlled_states > 1
+			country_exists = FROM
+			FROM = {
+				num_of_controlled_states > 1
+				has_capitulated = no
+				OR = {
+					original_tag = FRA
+					original_tag = FRC
+				}
+				NOT = { has_war_with = ROOT }
+			}
+		}
+
+		visible = {
+			num_of_controlled_states > 1
+			country_exists = FROM
+			FROM = {
+				num_of_controlled_states > 1
+				has_capitulated = no
+				OR = {
+					original_tag = FRA
+					original_tag = FRC
+				}
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		
+		targets = { FRA FRC }
+		targets_dynamic = yes
+		
+		target_root_trigger = {
+			num_of_controlled_states > 1
+			has_capitulated = no
+			NOT = { has_war_with = FROM }
+		}
+		
+		target_trigger = {
+			FROM = {
+				num_of_controlled_states > 1
+				has_capitulated = no
+				OR = {
+					original_tag = FRA
+					original_tag = FRC
+				}
+				NOT = { has_war_with = ROOT }
+			}
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRA_restart_war"
+			declare_war_on = {
+				type = civil_war
+				target = FROM
+			}
+			add_civil_war_target = FROM
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+FRF_integration_luxembourg_category = {
+
+	FRF_deprive_luxembourg_of_autonomy = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			LUX = { is_subject_of = ROOT }
+		}
+		
+		visible = {
+			LUX = { is_subject_of = ROOT }
+		}
+		
+		cost = 100
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRF_deprive_luxembourg_of_autonomy"
+			annex_country = {
+				target = LUX
+				transfer_troops = yes
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_send_luxembourg_germans_concentration_camps = {
+
+		icon = oppression
+		
+		available = {
+			8 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		
+		visible = {
+			8 = {
+				NOT = { is_core_of = ROOT }
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		
+		cost = 20
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRF_send_luxembourg_germans_concentration_camps"
+			add_state_core = 8
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+FRF_integration_wallonia_category = {
+
+	FRF_populate_eupen_malmedy_with_french = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			owns_state = 766
+		}
+		
+		visible = {
+			owns_state = 766
+			NOT = { 766 = { is_core_of = ROOT } }
+		}
+		
+		cost = 20
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRF_populate_eupen_malmedy_with_french"
+			add_state_core = 766
+			766 = { add_manpower = 30000 }
+			16 = { add_manpower = -30000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_integration_wallonia = {
+
+		icon = oppression
+		
+		available = {
+			973 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			34 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			1061 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		
+		visible = {
+			973 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			34 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			1061 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+		}
+		
+		cost = 50
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRF_integration_wallonia"
+			add_state_core = 973
+			add_state_core = 34
+			add_state_core = 1061
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+FRF_settle_in_limburg_french_category = {
+
+	FRF_settle_in_limburg_french = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			controls_state = 974
+		}
+		
+		visible = {
+			controls_state = 974
+			NOT = { 974 = { is_core_of = ROOT } }
+		}
+		
+		cost = 75
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRF_settle_in_limburg_french"
+			add_state_core = 974
+			974 = { add_manpower = 100000 }
+			16 = { add_manpower = -100000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+FRF_integration_of_rhineland_category = {
+
+	FRF_colonize_saarland = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			has_full_control_of_state = 809
+		}
+		
+		visible = {
+			controls_state = 809
+			NOT = { 809 = { is_core_of = ROOT } }
+		}
+		
+		cost = 100
+		days_remove = 25
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision FRF_colonize_saarland"
+			add_state_core = 809
+			809 = { add_manpower = 200000 }
+			28 = { add_manpower = -200000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_colonize_mainz = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			has_full_control_of_state = 835
+		}
+		
+		visible = {
+			controls_state = 835
+			NOT = { 835 = { is_core_of = ROOT } }
+		}
+		
+		cost = 150
+		days_remove = 90
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision FRF_colonize_mainz"
+			add_state_core = 835
+			835 = { add_manpower = 1000000 }
+			28 = { add_manpower = -500000 }
+			17 = { add_manpower = -500000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_colonize_moselle = {
+
+		icon = generic_break_treaty
+		
+		available = {
+			has_full_control_of_state = 42
+		}
+		
+		visible = {
+			controls_state = 42
+			NOT = { 42 = { is_core_of = ROOT } }
+		}
+		
+		cost = 150
+		days_remove = 90
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision FRF_colonize_moselle"
+			add_state_core = 42
+			42 = { add_manpower = 1000000 }
+			16 = { add_manpower = -1000000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_destroy_germans_of_cologne_and_replace_them_with_french = {
+
+		icon = generic_civil_support
+		
+		available = {
+			has_full_control_of_state = 51
+		}
+		
+		visible = {
+			controls_state = 51
+			NOT = { 51 = { is_core_of = ROOT } }
+		}
+		
+		cost = 200
+		days_remove = 180
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision FRF_destroy_germans_of_cologne_and_replace_them_with_french"
+			add_state_core = 51
+			51 = { add_manpower = -2000000 }
+			1016 = { add_manpower = -500000 }
+			15 = { add_manpower = -500000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	FRF_destroy_germans_of_essen_and_replace_them_with_french = {
+
+		icon = generic_civil_support
+		
+		available = {
+			has_full_control_of_state = 829
+		}
+		
+		visible = {
+			controls_state = 829
+			NOT = { 829 = { is_core_of = ROOT } }
+		}
+		
+		cost = 150
+		days_remove = 150
+		fire_only_once = yes
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision FRF_destroy_germans_of_essen_and_replace_them_with_french"
+			add_state_core = 829
+			16 = { add_manpower = -1000000 }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+FRC_creation_of_anarchist_alliance_category = {
+
+	FRC_invite_anarchist_alliance = {
+
+		icon = hol_exchange_intelligence_data
+		
+		available = {
+			is_faction_leader = yes
+			FROM = {
+				has_government = anarchism
+				NOT = {
+					has_war_with = ROOT
+					is_in_faction_with = ROOT
+				}
+				OR = {
+					is_in_faction = yes
+					is_faction_leader = yes
+				}
+			}
+		}
+		
+		visible = {
+			FROM = {
+				exists = yes
+				has_government = anarchism
+				NOT = {
+					has_war_with = ROOT
+					is_in_faction_with = ROOT
+				}
+				OR = {
+					is_in_faction = yes
+					is_faction_leader = yes
+				}
+			}
+		}
+		
+		target_root_trigger = {
+			has_completed_focus = FRC_synthetic_organization
+			has_government = anarchism
+			is_faction_leader = yes
+		}
+		
+		target_trigger = {
+			FROM = {
+				has_government = anarchism
+				NOT = {
+					has_war_with = ROOT
+					is_in_faction_with = ROOT
+				}
+				OR = {
+					is_in_faction = yes
+					is_faction_leader = yes
+				}
+			}
+		}
+		
+		cost = 20
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision FRC_invite_anarchist_alliance (From [From.GetName] [From.GetTag])"
+			FROM = { country_event = { id = generic.5 } }
+		}
+		
+		ai_will_do = {
+			factor = 5
+		}
+	}
+}

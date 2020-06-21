@@ -270,6 +270,7 @@ focus_tree = {
 		completion_reward = {
 			add_stability = 0.05
 			add_manpower = 10000
+			remove_ideas = BOL_multinational_state
 		}
 	}
 	
@@ -630,6 +631,7 @@ focus_tree = {
 		completion_reward = {
 			add_stability = 0.05
 			add_manpower = 5000
+			remove_ideas = BOL_multinational_state
 		}
 	}
 	
@@ -807,7 +809,6 @@ focus_tree = {
 						state = 874
 						state = 875
 						state = 876
-						state = 871
 						state = 924
 					}
 				}
@@ -1161,33 +1162,38 @@ focus_tree = {
 			AND = {
 				is_puppet = no
 				BOL = {
-							has_government = fascism
-							is_faction_leader = yes
-						}
-				country_exists = BRA
+					has_government = fascism
+					is_faction_leader = yes
+				}
+			    country_exists = BRA
 				BRA = { is_puppet = no }
 				NOT = { has_war_with = BRA }
-				BRA = { OR = {
-							has_government = fascism
-							has_government = neutrality
-							}
-						}
+				BRA = { 
+			   		OR = {
+						has_government = fascism
+						has_government = neutrality
+					}
+				}
 			}
 		}
-		bypass = { OR = { NOT = { country_exists = BRA }
-				 NOT = { BRA = { is_puppet = no } }
-					 has_war_with = BRA }  }
+		bypass = { 
+		    OR = { 
+			    NOT = { country_exists = BRA }
+				NOT = { BRA = { is_puppet = no } }
+			    has_war_with = BRA 
+			}  
+		}
 		x = 11
 		y = 12
 		cost = 5
 		ai_will_do = {
             factor = 15
-	}	
+	    }	
 		completion_reward = {
-				BRA = {
-					country_event = {
-						id = bolivia.6
-					}
+			BRA = {
+				country_event = {
+					id = bolivia.6
+				}
 			}
 		}
 	}
@@ -2104,6 +2110,7 @@ focus_tree = {
 				ruling_party = democratic
 				elections_allowed = yes
 			}
+			remove_ideas = BOL_multinational_state
 		}
 	}
 	
@@ -2224,6 +2231,7 @@ focus_tree = {
 			add_political_power = 50
 			add_stability = 0.10
 			add_manpower = 10000
+			remove_ideas = BOL_multinational_state
 		}
 	}
 	
@@ -2844,6 +2852,8 @@ focus_tree = {
 		mutually_exclusive = { focus = BOL_german_own }
 		mutually_exclusive = { focus = BOL_german_allies }
 		available = {
+			is_in_faction = no
+			is_subject = no
 			GER = {
 				NOT = { has_war_with = ROOT }
 				is_faction_leader = yes
@@ -2880,11 +2890,7 @@ focus_tree = {
 		mutually_exclusive = { focus = BOL_german_axis }
 		mutually_exclusive = { focus = BOL_german_allies }
 		available = {
-			is_in_faction = no
-		}
-		
-		cancel = {
-			is_in_faction = yes
+			is_subject = no
 		}
 		x = 28
 		y = 8
@@ -2892,9 +2898,28 @@ focus_tree = {
 		ai_will_do = {
 			factor = 10
 		}
+		select_effect = {
+			if = {
+				limit = { is_in_faction = yes }
+				complete_national_focus = BOL_german_own
+			}
+		}
 		completion_reward = {
 			add_political_power = 150
-			create_faction = "BOL_german_faction"
+			set_rule = { can_create_factions = yes }
+			effect_tooltip = {
+				create_faction = "BOL_german_faction"
+			}
+			if = {
+				limit = { is_in_faction = yes }
+				custom_effect_tooltip = generic_instant_focus_complete_tt
+			}
+			hidden_effect = {
+				if = {
+					limit = { is_in_faction = no }
+					create_faction = "BOL_german_faction"
+				}
+			}
 		}
 	}
 	
@@ -2905,6 +2930,8 @@ focus_tree = {
 		mutually_exclusive = { focus = BOL_german_axis }
 		mutually_exclusive = { focus = BOL_german_own }
 		available = {
+			is_in_faction = no
+			is_subject = no
 			ENG = {
 				NOT = { has_war_with = ROOT }
 				is_faction_leader = yes
@@ -3348,6 +3375,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_war_support = 0.05
+			add_popularity = { ideology = monarchy popularity = 0.05 }
 		}
 	}
 	
@@ -3365,7 +3393,8 @@ focus_tree = {
 			factor = 10
 		}
 		completion_reward = {
-			add_war_support = 0.05
+			add_stability = 0.05
+			add_popularity = { ideology = monarchy popularity = 0.05 }
 		}
 	}
 	
@@ -3397,7 +3426,6 @@ focus_tree = {
 				controls_state = 874
 				controls_state = 875
 				controls_state = 876
-				controls_state = 871
 				controls_state = 924
 			}
 		}
@@ -3431,6 +3459,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_stability = 0.1
+			remove_ideas = BOL_multinational_state
 		}
 	}
 	
@@ -3522,7 +3551,7 @@ focus_tree = {
 		}
 		x = 30
 		y = 7
-		cost = 10
+		cost = 5
 		ai_will_do = {
 			factor = 10
 		}
@@ -3622,7 +3651,7 @@ focus_tree = {
 			factor = 20
 		}
 		completion_reward = {
-		487 = {
+			487 = {
 				add_extra_state_shared_building_slots = 2
 				add_building_construction = {
 					type = synthetic_refinery
@@ -3631,7 +3660,7 @@ focus_tree = {
 				}
 			}
 			USA = { add_opinion_modifier = { target = BOL modifier = MEX_USA_oil1 }} 
-			}
+		}
 	}
 	
 	focus = {
@@ -3748,8 +3777,13 @@ focus_tree = {
 			factor = 10
 		}
 		completion_reward = {
-		877 = {
+			877 = {
 				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
 				add_building_construction = {
 					type = industrial_complex
 					level = 1
@@ -3775,8 +3809,12 @@ focus_tree = {
 			factor = 10
 		}
 		completion_reward = {
-		878 = {
+			878 = {
 				add_extra_state_shared_building_slots = 2
+				add_resource = {
+					type = rubber
+					amount = 5
+				}
 			}
 		}
 	}
@@ -3789,6 +3827,11 @@ focus_tree = {
 			BOL = {
 				owns_state = 487
 			}
+			country_exists = BRA
+			NOT = { has_war_with = BRA }
+		}
+		bypass = {
+			NOT = { country_exists = BRA }
 		}
 		x = 8
 		y = 2
@@ -3797,12 +3840,8 @@ focus_tree = {
 			factor = 10
 		}
 		completion_reward = {
-		BRA = {
-			country_event = {
-					id = bolivia.1 hours = 6
-				}
-			}
-		487 = {
+			BRA = { country_event = { id = bolivia.1 hours = 6 } }
+			487 = {
 				add_building_construction = {
 					type = infrastructure
 					level = 2
@@ -4251,15 +4290,15 @@ focus_tree = {
 		y = 4
 		cost = 7.2
 		completion_reward = {
-	create_corps_commander = {
-		name = "René Barrientos Ortuño"
-		portrait_path = "gfx/leaders/BOL/Portrait_Barrientos.dds"
-		traits = {career_officer }
-		skill = 2
-			attack_skill = 2
-			defense_skill = 1
-			planning_skill = 1
-			logistics_skill = 1
+			create_corps_commander = {
+				name = "René Barrientos Ortuño"
+				portrait_path = "gfx/leaders/BOL/Portrait_Barrientos.dds"
+				traits = {career_officer }
+				skill = 2
+				attack_skill = 2
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
 			}
 		}
 	}
@@ -4283,6 +4322,8 @@ focus_tree = {
 		prerequisite = { focus = BOL_german_generals_end }
 		mutually_exclusive = { focus = BOL_american_instructors }
 		available = {
+			country_exists = SOV
+			NOT = { has_war_with = SOV }
 			OR = {
 				has_government = communism
 				has_government = neutrality
@@ -4312,6 +4353,8 @@ focus_tree = {
 		prerequisite = { focus = BOL_german_generals_end }
 		mutually_exclusive = { focus = BOL_soviet_instructors }
 		available = {
+			country_exists = USA
+			NOT = { has_war_with = USA }
 			OR = {
 				has_government = democratic
 				has_government = neutrality
@@ -4335,6 +4378,8 @@ focus_tree = {
 		prerequisite = { focus = BOL_chacko_war_xp }
 		mutually_exclusive = { focus = BOL_german_generals_end }
 		available = {
+			country_exists = GER
+			NOT = { has_war_with = GER }
 			OR = {
 				has_government = fascism
 				has_government = neutrality
@@ -4355,6 +4400,10 @@ focus_tree = {
 		
 		completion_reward = {
 			GER = { add_opinion_modifier = { target = BOL modifier = BOL_sotrudnichestvo } }
+			if = {
+				limit = { NOT = { has_idea = BOL_german_instructora_idea } }
+				add_ideas = BOL_german_instructora_idea
+			}
 		}
 	}
 

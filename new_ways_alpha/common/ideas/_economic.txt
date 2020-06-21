@@ -2,6 +2,8 @@ ideas = {
 
 	economy = {
 		law = yes
+		use_list_view = yes
+		
 		undisturbed_isolation = {
 			
 			
@@ -24,6 +26,7 @@ ideas = {
 				guarantee_tension = 0.75
 				max_fuel_factor = -0.45
 				fuel_gain_factor = -0.6
+				agency_upgrade_time = 1.0
 			}
 			
 			allowed_to_remove = {
@@ -34,13 +37,17 @@ ideas = {
 				}
 			}
 			
+			available = {
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			
 			cancel_if_invalid = no
 		}
 		
 		isolation = {
-			
-			
-			
+	
 			allowed = {
 				always = no
 			}
@@ -59,12 +66,19 @@ ideas = {
 				guarantee_tension = 0.5
 				max_fuel_factor = -0.35
 				fuel_gain_factor = -0.5
+				agency_upgrade_time = 0.8
 			}
 			allowed_to_remove = {
 				OR = {
 					has_war_support > 0.75
 					has_war = yes
 					has_completed_focus = USA_limited_intervention					
+				}
+			}
+			
+			available = {
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
 				}
 			}
 			
@@ -81,13 +95,22 @@ ideas = {
 				consumer_goods_factor = 0.35
 				production_speed_industrial_complex_factor = -0.3
 				production_speed_arms_factory_factor = -0.3
-				conversion_cost_civ_to_mil_factor= 0.3
+				conversion_cost_civ_to_mil_factor = 0.3
 				conversion_cost_mil_to_civ_factor = 0.3
 				max_fuel_factor = -0.25
 				fuel_gain_factor = -0.4
 				monthly_population = 0.5
 				research_speed_factor = 0.05
 				mobilization_speed = -0.25
+			}
+			
+			available = {
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			visible = {
+				NOT = { has_government = anarchism }
 			}
 			
 			default = yes
@@ -120,6 +143,12 @@ ideas = {
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			visible = {
+				NOT = { has_government = anarchism }
 			}
 			on_add = {
 				if = {
@@ -154,6 +183,16 @@ ideas = {
 					
 					is_major = yes
 				}
+				modifier = {
+					has_war_support > 0.25
+					factor = 0 #don't even look at it if you could be taking partial mob
+				}
+				modifier = {
+					tag = ENG
+					has_war = no
+					date < 1937.6.1
+					factor = 0
+				}
    			}
 		}
 		
@@ -186,6 +225,12 @@ ideas = {
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			visible = {
+				NOT = { has_government = anarchism }
 			}
 
 			cost = 150
@@ -236,7 +281,7 @@ ideas = {
 					has_government = communism
 					has_government = trozkism
 					has_government = monarchy
-					has_government = anarchism
+					has_government = technocracy
 					custom_trigger_tooltip = { tooltip = or_clarification_tooltip always = no }
 					AND = {
 						has_war = yes
@@ -269,6 +314,12 @@ ideas = {
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			visible = {
+				NOT = { has_government = anarchism }
 			}
 		
 			cost = 150
@@ -303,7 +354,15 @@ ideas = {
 					factor = 20
 					manpower_per_military_factory >  1000
 				}
-   			}
+   		
+				modifier = {
+					add = 1800
+					
+					# revert from closed_economy if we have large allies
+					has_idea = closed_economy
+					has_large_ally_not_pick_closed_economy = yes
+				}
+			}
 		}
 		
 		tot_economic_mobilisation = {
@@ -340,6 +399,12 @@ ideas = {
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}
+			visible = {
+				NOT = { has_government = anarchism }
 			}
 			on_add = {
 				if = {
@@ -420,13 +485,36 @@ ideas = {
 		
 		technocratic_economic = {
 			
-			allowed = {
-				always = no
+			available = {
+				OR = {
+					has_idea = technocratic_economic
+					AND = {
+						OR = {
+							has_completed_focus = ideological_enthusiasm
+							has_completed_focus = patriotic_inspiration
+						}
+						has_completed_focus = concept_of_technate
+					}
+					has_country_flag = generic_set_technocratic_economic_flag
+				}
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
 			}
 			
-			#visible = {
-			#	always = no
-			#}
+			visible = {
+				OR = {
+					has_idea = technocratic_economic
+					AND = {
+						OR = {
+							has_completed_focus = ideological_enthusiasm
+							has_completed_focus = patriotic_inspiration
+						}
+						has_completed_focus = concept_of_technate
+					}
+					has_country_flag = generic_set_technocratic_economic_flag
+				}
+			}
 
 			cost = 150
 			removal_cost = -1
@@ -440,6 +528,7 @@ ideas = {
 				conversion_cost_mil_to_civ_factor = -0.2
 				research_speed_factor = 0.1
 				mobilization_speed = 0.05
+				
 			}
 			
 			cancel_if_invalid = no
@@ -454,13 +543,59 @@ ideas = {
 					USA_congress_large_opposition = yes
 				}
 			}
+			
+			ai_will_do = {
+   				factor = 15
+				
+				modifier = {
+					#High prio on production
+					factor = 3
+					manpower_per_military_factory > 1500
+				}
+				
+				modifier = {
+					#High prio on production
+					factor = 10
+					NOT = { has_idea = generic_technopark }
+				}
+  			}
 		}
 	}
 	
 	trade_laws = {
 		law = yes
+		use_list_view = yes
 
 		free_trade = {
+			
+			available = {
+				if = {
+					limit = { has_focus_tree = generic_focus }
+					NOT = { has_completed_focus = resource_security }
+				}
+				if = {
+					limit = { has_idea = technocratic_economic }
+					NOT = { has_idea = technocratic_economic }
+				}
+				#if = {
+				#	limit = {
+				#		original_tag = SPR
+				#		has_dlc = "La Resistance"
+				#	}
+				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
+				#}
+				if = {
+					limit = { has_government = anarchism }
+					if = {
+						limit = { NOT = { has_idea = communication_with_black_market_focus } }
+						custom_trigger_tooltip = {
+							check_variable = { anarchism_tendency_need_trade_var > 74.999 }
+							tooltip = free_trade_trigger_tt
+						}
+					}
+					else = { has_idea = communication_with_black_market_focus }
+				}
+			}
 			
 			cost = 150
 			removal_cost = -1
@@ -471,6 +606,8 @@ ideas = {
 				industrial_capacity_dockyard = 0.15
 				production_speed_buildings_factor = 0.15
 				research_speed_factor = 0.10
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 20.0
 			}
 			
 			cancel_if_invalid = no
@@ -507,13 +644,35 @@ ideas = {
 		export_focus = {
 			
 			available = {
-
+			
 				if = {
 					limit = {
 						original_tag = CHI
 						has_dlc = "Waking the Tiger"
 					}
 					NOT = { has_idea = CHI_nine_power_treaty }
+				}
+				#if = {
+				#	limit = {
+				#		original_tag = SPR
+				#		has_dlc = "La Resistance"
+				#	}
+				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
+				#}
+				if = {
+					limit = { has_government = anarchism }
+					if = {
+						limit = { NOT = { has_idea = communication_with_black_market_focus } }
+						custom_trigger_tooltip = {
+							check_variable = { anarchism_tendency_need_trade_var < 75 }
+							tooltip = export_focus_trigger_tt1
+						}
+						custom_trigger_tooltip = {
+							check_variable = { anarchism_tendency_need_trade_var > 49.999 }
+							tooltip = export_focus_trigger_tt2
+						}
+					}
+					else = { has_idea = communication_with_black_market_focus }
 				}
 			}
 			
@@ -527,6 +686,8 @@ ideas = {
 				industrial_capacity_dockyard = 0.1
 				production_speed_buildings_factor = 0.1
 				research_speed_factor = 0.05
+				civilian_intel_to_others = 20.0
+				navy_intel_to_others = 10.0
 			}
 			
 			default = yes
@@ -574,6 +735,10 @@ ideas = {
 						NOT = { has_government = democratic }
 						OR = {
 							has_idea = partial_economic_mobilisation
+							if = {
+								limit = { has_idea = technocratic_economic }
+								has_idea = technocratic_economic
+							}
 							has_idea = war_economy
 							has_idea = tot_economic_mobilisation
 						}
@@ -588,6 +753,24 @@ ideas = {
 					}
 					NOT = { has_idea = CHI_nine_power_treaty }
 				}
+				#if = {
+				#	limit = {
+				#		original_tag = SPR
+				#		has_dlc = "La Resistance"
+				#	}
+				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
+				#}
+				if = {
+					limit = { has_government = anarchism }
+					if = {
+						limit = { NOT = { has_idea = communication_with_black_market_focus } }
+						custom_trigger_tooltip = {
+							check_variable = { anarchism_tendency_need_trade_var < 50 }
+							tooltip = limited_exports_trigger_tt
+						}
+					}
+					else = { has_idea = communication_with_black_market_focus }
+				}
 			}
 		
 			cost = 150
@@ -599,6 +782,8 @@ ideas = {
 				industrial_capacity_dockyard = 0.05
 				production_speed_buildings_factor = 0.05
 				research_speed_factor = 0.01
+				civilian_intel_to_others = 10.0
+				navy_intel_to_others = 5
 			}
 			
 			cancel_if_invalid = no
@@ -616,19 +801,29 @@ ideas = {
 
 				# minors not at war should want to get the bonuses from free trade
 				modifier = {
-					factor = 0
+					add = -1
 					
 					is_major = no
 					has_war = no
+				}
+				
+				modifier = {
+					add = 1500
+					
+					# revert from closed_economy if we have large allies
+					has_idea = closed_economy
+					has_large_ally_not_pick_closed_economy = yes
 				}
    			}
 		}
 		
 		closed_economy = {
 			
-			
 			available = {
-				has_war = yes
+				if = {
+					limit = { NOT = { has_government = anarchism } }
+					has_war = yes
+				}
 				OR = {
 					if = {
 						limit = { tag = SPA }
@@ -638,9 +833,14 @@ ideas = {
 					has_government = communism
 					has_government = trozkism
 					has_government = monarchy
+					has_government = technocracy
 					has_government = anarchism
 				}
 				OR = {
+					if = {
+						limit = { has_idea = technocratic_economic }
+						has_idea = technocratic_economic
+					}
 					has_idea = war_economy
 					has_idea = tot_economic_mobilisation
 				}
@@ -656,6 +856,17 @@ ideas = {
 					}
 					NOT = { has_idea = CHI_nine_power_treaty }
 				}
+				if = {
+					limit = { has_government = anarchism }
+					if = {
+						limit = { NOT = { has_idea = communication_with_black_market_focus } }
+						custom_trigger_tooltip = {
+							check_variable = { anarchism_tendency_need_trade_var < 25 }
+							tooltip = closed_economy_trigger_tt
+						}
+					}
+					else = { has_idea = communication_with_black_market_focus }
+				}
 			}
 			
 			cost = 150
@@ -664,6 +875,7 @@ ideas = {
 			
 			modifier = {
 				min_export = 0
+				#civilian_intel_to_others = 0.0
 			}
 			
 			on_add = {
@@ -671,6 +883,15 @@ ideas = {
 			}
 			
 			cancel_if_invalid = no
+			
+			allowed_to_remove = {
+				if = {
+					limit = { has_government = anarchism }
+					NOT = {
+						has_idea = economic_degradation
+					}
+				}
+			}
 
 			ai_will_do = {
    				factor = 1
@@ -689,6 +910,14 @@ ideas = {
 					
 					is_major = no
 					has_war = no
+				}
+				
+				modifier = {
+					factor = 0
+					
+					# don't take if we have a reasonable sized ally
+					# since they will require our trades
+					has_large_ally_not_pick_closed_economy = yes
 				}
    			}
 		}

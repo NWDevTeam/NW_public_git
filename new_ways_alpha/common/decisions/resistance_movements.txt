@@ -17,7 +17,7 @@ resistance_movements = {
 			is_subject = no
 		}
 
-		days_remove = 1
+		days_remove = 30
 
 		cost = 50
 
@@ -26,19 +26,40 @@ resistance_movements = {
 		visible = {
 			has_capitulated = yes
 			NOT = { has_country_flag = Form_rebel_army }
+			
+			#has_game_rule = {
+			#	rule = rebels_setup
+			#	option = DEFAULT
+			#}
 		}
 
 		modifier = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: start decision form_a_rebel_army"
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision form_a_rebel_army"
+			
 			add_legitimacy = 10
 			set_country_flag = Form_rebel_army
 			custom_effect_tooltip = formed_rebel_army_tt
 			hidden_effect = {
+				if = {
+					limit = { NOT = { has_tech = infantry_weapons } }
+					set_technology = { infantry_weapons = 1 }
+				}
+				if = {
+					limit = { NOT = { has_tech = gw_artillery } }
+					set_technology = { gw_artillery = 1 }
+				}
+				if = {
+					limit = { NOT = { has_tech = tech_support } }
+					set_technology = { tech_support = 1 }
+				}
+				
 				if = {
 					limit = {
 						NOT = { check_variable = { var = rebel_infantry_equipment@ROOT value = 0 compare = greater_than } }
@@ -101,6 +122,15 @@ resistance_movements = {
 					}
 					set_variable = { var = num_small_division_trained_2@ROOT value = 0 }
 				}
+				if = {
+					limit = {
+						NOT = { check_variable = { var = num_all_division@ROOT value = 0 compare = greater_than } }
+					}
+					set_variable = { var = num_all_division@ROOT value = 0 }
+				}
+				
+				delete_rebel_template = yes
+				
 				if = {
 					limit = { NOT = { original_tag = POL has_template = "Rebel Division" } }
 					division_template = {
@@ -211,8 +241,34 @@ resistance_movements = {
 					limit = { difficulty < 2 }
 					add_ideas = resistance_defficulty_1
 				}
-				random_army_leader = {
-					add_unit_leader_trait = resistance_leader
+				
+				if = {
+					limit = { original_tag = POL is_historical_focus_on = yes NOT = { has_unit_leader = 19817 } }
+					create_corps_commander = { ###
+						name = "Tadeusz Komorowski"
+						portrait_path = "gfx/leaders/POL/Portrait_Tadeusz_Bor_Komorowski.dds"
+						traits = { resistance_leader hill_fighter }
+						skill = 3
+						id = 19817
+						attack_skill = 3
+						defense_skill = 2
+						planning_skill = 3
+						logistics_skill = 2
+					}
+				}
+				else_if = {
+					limit = { original_tag = POL is_historical_focus_on = yes has_unit_leader = 19817 }
+					random_army_leader = {
+						limit = {
+							has_id = 19817
+						}
+						add_unit_leader_trait = resistance_leader
+					}	
+				}
+				else = {
+					random_army_leader = {
+						add_unit_leader_trait = resistance_leader
+					}
 				}
 			}
 		}
@@ -232,7 +288,7 @@ resistance_movements = {
 				tooltip = czas_w_level_tt	
 				OR = {
 					NOT = { original_tag = POL }
-					AND = { check_variable = { num_division_trained_2@ROOT > 0 } original_tag = POL }
+					AND = { check_variable = { num_division_trained_2@ROOT > 0 } original_tag = POL NOT = { has_global_flag = POL_powstanie_warszawskie } }
 				}
 				NOT = { has_idea = resistance_failed }
 			 }
@@ -261,16 +317,43 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision czas_w"
+			
 			custom_effect_tooltip = czas_w_tt
 			if = {
-				limit = { 
+				limit = {
 					original_tag = POL
-					owns_state = 10
-					NOT = { controls_state = 10 }   
+					OR = {
+						AND = {
+							owns_state = 10
+							NOT = { controls_state = 10 }
+						}
+						AND = {
+							NOT = { owns_state = 10 }
+							NOT = { controls_state = 10 }
+							10 = { OWNER = { has_war_with = POL } }
+						}
+					}
 					NOT = { has_global_flag = POL_powstanie_warszawskie }
 				}
-				ROOT = { country_event = { id = resistance.44 } } ### Puk-puk, dzień dobry, kurwo 
+				
+				if = {
+					limit = {
+						check_variable = { num_all_division@ROOT > 4}
+					}
+					ROOT = { country_event = { id = resistance.50 } } ### Powstanie Polskie 
+				}
+				else = {
+					ROOT = { country_event = { id = resistance.44 } } ### Puk-puk, dzień dobry, kurwo 
+					set_country_flag = warszaw_battle
+				}
 			}
+			else = {
+				hidden_effect = {
+					news_event = { id = rm_news.1 }
+				}
+			}
+			
 			hidden_effect = {
 				set_country_flag = baptized_in_fire
 				
@@ -314,21 +397,26 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision open_magazyn"
+			
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
 				amount = rebel_infantry_equipment@ROOT
 			}
 			set_variable = { var = rebel_infantry_equipment@ROOT value = 0 }
+			
 			add_equipment_to_stockpile = {
 				type = support_equipment
 				amount = rebel_support_equipment@ROOT
 			}
 			set_variable = { var = rebel_support_equipment@ROOT value = 0 }
+			
 			add_equipment_to_stockpile = {
 				type = artillery_equipment
 				amount = rebel_artillery_equipment@ROOT
 			}
 			set_variable = { var = rebel_artillery_equipment@ROOT value = 0 }
+			
 			add_manpower = rebel_manpower@ROOT
 			set_variable = { var = rebel_manpower@ROOT value = 0 }
 		}
@@ -368,6 +456,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision transfer_light_weapons_to_the_partisans"
+			
 			add_command_power = -10
 			hidden_effect = {
 				add_equipment_to_stockpile = {
@@ -416,6 +506,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision transfer_additional_equipment_to_the_partisans"
+			
 			add_command_power = -10
 			hidden_effect = {
 				add_equipment_to_stockpile = {
@@ -426,6 +518,8 @@ resistance_movements = {
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision transfer_additional_equipment_to_the_partisans"
+			
 			custom_effect_tooltip = bedzie_dodano_support_equipment_powstancam_tt
 			add_to_variable = { var = rebel_support_equipment@ROOT value = 40 }
 		}
@@ -464,6 +558,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision transfer_heavy_weapons_to_the_partisans"
+			
 			add_command_power = -10
 			hidden_effect = {
 				add_equipment_to_stockpile = {
@@ -474,6 +570,8 @@ resistance_movements = {
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision transfer_heavy_weapons_to_the_partisans"
+			
 			custom_effect_tooltip = bedzie_dodano_rebel_artillery_equipment_powstancam_tt
 			add_to_variable = { var = rebel_artillery_equipment@ROOT value = 20 }
 		}
@@ -513,10 +611,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision recruit_to_the_rebel_army"
+			
 			add_command_power = -15
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision recruit_to_the_rebel_army"
+			
 			if = {
 				limit = {
 					check_variable = { var_statistic@ROOT > 0 } 
@@ -527,6 +629,11 @@ resistance_movements = {
 			hidden_effect = {
 				add_var_manpower = yes
 				add_to_variable = { var = rebel_manpower@ROOT value = var_statistic@ROOT }
+				
+				set_variable = { var = temp_var@ROOT value = var_statistic@ROOT }
+				divide_variable = { var = temp_var@ROOT value = 40 }
+				round_variable = temp_var@ROOT
+				add_to_variable = { var = rebel_infantry_equipment@ROOT value = temp_var@ROOT }
 			}
 		}
 	}
@@ -564,13 +671,21 @@ resistance_movements = {
 		
 		visible = {
 			has_country_flag = Form_rebel_army
+			any_state = {
+				is_owned_by = ROOT
+				NOT = { is_controlled_by = ROOT }
+			}
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision attack_on_an_enemy_officer"
+			
 			add_command_power = -10
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision attack_on_an_enemy_officer"
+			
 			custom_effect_tooltip = attack_on_an_enemy_officer_tt
 			hidden_effect = {
 				
@@ -725,11 +840,13 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision capture_warehouse"
+			
 			add_command_power = -10
 		}
 
 		remove_effect = {
-			
+			log = "[GetDateText]: [Root.GetName]: remove decision capture_warehouse"
 		}
 	}
 	
@@ -772,6 +889,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_industrial_complex"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -835,6 +954,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_industrial_complex"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -848,6 +969,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_industrial_complex"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -861,6 +984,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_industrial_complex"
+			
 			custom_effect_tooltip = strike_to_industrial_complex_tt
 			hidden_effect = {
 				set_country_flag = strike_to_industrial_complex
@@ -920,6 +1045,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_arms_factory"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -983,6 +1110,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_arms_factory"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -996,6 +1125,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_arms_factory"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1009,6 +1140,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_arms_factory"
+			
 			custom_effect_tooltip = strike_to_arms_factory_tt
 			hidden_effect = {
 				set_country_flag = strike_to_arms_factory
@@ -1068,6 +1201,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_dockyard"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1131,6 +1266,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_dockyard"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1144,6 +1281,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_dockyard"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1157,6 +1296,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_dockyard"
+			
 			custom_effect_tooltip = strike_to_dockyard_tt
 			hidden_effect = {
 				set_country_flag = strike_to_dockyard
@@ -1214,6 +1355,8 @@ resistance_movements = {
 		}
 		
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_infrastructure"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1275,6 +1418,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_infrastructure"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1288,6 +1433,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_infrastructure"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1301,6 +1448,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_infrastructure"
+			
 			custom_effect_tooltip = strike_to_infrastructure_tt
 			hidden_effect = {
 				set_country_flag = strike_to_infrastructure
@@ -1361,6 +1510,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_aviabase"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1425,6 +1576,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_aviabase"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1438,6 +1591,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_aviabase"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1451,6 +1606,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_aviabase"
+			
 			custom_effect_tooltip = strike_to_aviabase_tt
 			hidden_effect = {
 				set_country_flag = strike_to_aviabase
@@ -1510,6 +1667,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_nuclear"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1574,6 +1733,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_nuclear"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1587,6 +1748,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_nuclear"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1600,6 +1763,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_nuclear"
+			
 			custom_effect_tooltip = strike_to_nuclear_tt
 			hidden_effect = {
 				set_country_flag = strike_to_nuclear
@@ -1659,6 +1824,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_anti_air_building"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1723,6 +1890,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_anti_air_building"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1736,6 +1905,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_anti_air_building"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1749,6 +1920,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_anti_air_building"
+			
 			custom_effect_tooltip = strike_to_anti_air_building_tt
 			hidden_effect = {
 				set_country_flag = strike_to_anti_air_building
@@ -1808,6 +1981,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_synthetic_refinery"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -1872,6 +2047,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_synthetic_refinery"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1885,6 +2062,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_synthetic_refinery"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -1898,6 +2077,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_synthetic_refinery"
+			
 			custom_effect_tooltip = strike_to_synthetic_refinery_tt
 			hidden_effect = {
 				set_country_flag = strike_to_synthetic_refinery
@@ -1957,6 +2138,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_fuel_silo"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -2021,6 +2204,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_fuel_silo"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2034,6 +2219,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_fuel_silo"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2047,6 +2234,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_fuel_silo"
+			
 			custom_effect_tooltip = strike_to_fuel_silo_tt
 			hidden_effect = {
 				set_country_flag = strike_to_fuel_silo
@@ -2106,6 +2295,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_radar_station"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -2170,6 +2361,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_radar_station"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2183,6 +2376,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_radar_station"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2196,6 +2391,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_radar_station"
+			
 			custom_effect_tooltip = strike_to_radar_station_tt
 			hidden_effect = {
 				set_country_flag = strike_to_radar_station
@@ -2255,6 +2452,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision undermining_the_rocket_site"
+			
 			add_command_power = -10
 			hidden_effect = {
 				random_state = {
@@ -2319,6 +2518,8 @@ resistance_movements = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision resist_undermining_the_rocket_site"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2332,6 +2533,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision resist_undermining_the_rocket_site"
+			
 			hidden_effect = {
 				every_state = {
 					limit = { 
@@ -2345,6 +2548,8 @@ resistance_movements = {
 		}
 
 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName]: timeout decision resist_undermining_the_rocket_site"
+			
 			custom_effect_tooltip = strike_to_rocket_site_tt
 			hidden_effect = {
 				set_country_flag = strike_to_rocket_site
@@ -2390,6 +2595,7 @@ resistance_movements = {
 				is_owned_by = ROOT
 				NOT = { is_controlled_by = ROOT }
 			}
+			has_country_flag = dont_worry_be_happy
 		}
 
 		modifier = { 
@@ -2397,11 +2603,13 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision sabotage_in_fortifications"
+			
 			add_command_power = -10
 		}
 
 		remove_effect = {
-			
+			log = "[GetDateText]: [Root.GetName]: remove decision sabotage_in_fortifications"
 		}
 	}
 	
@@ -2451,16 +2659,21 @@ resistance_movements = {
 		modifier = {
 			encryption_factor = 0.2
 			decryption_factor = 0.2
-			partisan_effect = 0.5
+			resistance_target_on_our_occupied_states = 0.5
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision airborne_special_forces_on_the_occupied_territory"
+			
 			add_command_power = -10
 			air_experience = -10
+			set_country_flag = airborne_special_forces
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision airborne_special_forces_on_the_occupied_territory"
 			
+			clr_country_flag = airborne_special_forces
 		}
 	}
 	
@@ -2501,6 +2714,8 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision reserve_division"
+			
 			army_experience = -5
 			add_to_variable = { var = rebel_infantry_equipment@ROOT value = -610 }
 			add_to_variable = { var = rebel_support_equipment@ROOT value = -30 }
@@ -2508,6 +2723,7 @@ resistance_movements = {
 			add_to_variable = { var = rebel_manpower@ROOT value = -6600 }
 			
 			add_to_variable = { var = num_division@ROOT value = 1 }
+			add_to_variable = { var = num_all_division@ROOT value = 1 }
 		}
 	}
 	
@@ -2546,11 +2762,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision reserve_small_division"
+			
 			army_experience = -5
 			add_to_variable = { var = rebel_infantry_equipment@ROOT value = -400 }
 			add_to_variable = { var = rebel_manpower@ROOT value = -4000 }
 			
 			add_to_variable = { var = num_small_division@ROOT value = 1 }
+			add_to_variable = { var = num_all_division@ROOT value = 1 }
 		}
 	}
 	
@@ -2566,6 +2785,12 @@ resistance_movements = {
 			custom_trigger_tooltip = {
 				tooltip = num_division_tt	
 				check_variable = { num_division@ROOT > 0 } 
+			}
+		}
+		
+		cancel_trigger = {
+			custom_trigger_tooltip = {
+				check_variable = { num_division@ROOT < 1 } 
 			}
 		}
 
@@ -2591,10 +2816,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision train_division_1"
+			
 			army_experience = -5
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision train_division_1"
+			
 			add_to_variable = { var = num_division@ROOT value = -1 }
 			add_to_variable = { var = num_division_trained_1@ROOT value = 1 }
 		}
@@ -2614,7 +2843,13 @@ resistance_movements = {
 				check_variable = { num_division_trained_1@ROOT > 0 } 
 			}
 		}
-
+		
+		cancel_trigger = {
+			custom_trigger_tooltip = {
+				check_variable = { num_division_trained_1@ROOT < 1 } 
+			}
+		}
+		
 		cost = 0
 		
 		days_remove = 60
@@ -2637,10 +2872,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision train_division_2"
+			
 			army_experience = -10
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision train_division_2"
+			
 			add_to_variable = { var = num_division_trained_1@ROOT value = -1 }
 			add_to_variable = { var = num_division_trained_2@ROOT value = 1 }
 		}
@@ -2660,7 +2899,13 @@ resistance_movements = {
 				check_variable = { num_small_division@ROOT > 0 } 
 			}
 		}
-
+		
+		cancel_trigger = {
+			custom_trigger_tooltip = {
+				check_variable = { num_small_division@ROOT < 1 } 
+			}
+		}
+		
 		cost = 0
 		
 		days_remove = 60
@@ -2683,10 +2928,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision train_small_division_1"
+			
 			army_experience = -5
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision train_small_division_1"
+			
 			add_to_variable = { var = num_small_division@ROOT value = -1 }
 			add_to_variable = { var = num_small_division_trained_1@ROOT value = 1 }
 		}
@@ -2706,7 +2955,13 @@ resistance_movements = {
 				check_variable = { num_small_division_trained_1@ROOT > 0 } 
 			}
 		}
-
+		
+		cancel_trigger = {
+			custom_trigger_tooltip = {
+				check_variable = { num_small_division_trained_1@ROOT < 1 } 
+			}
+		}
+		
 		cost = 0
 		
 		days_remove = 60
@@ -2729,10 +2984,14 @@ resistance_movements = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision train_small_division_2"
+			
 			army_experience = -5
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision train_small_division_2"
+			
 			add_to_variable = { var = num_small_division_trained_1@ROOT value = -1 }
 			add_to_variable = { var = num_small_division_trained_2@ROOT value = 1 }
 		}
@@ -2764,8 +3023,28 @@ resistance_movements = {
 			has_country_flag = Form_rebel_army
 			has_capitulated = no
 		}
-
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 100
+				has_war = no
+			}
+			modifier = {
+				factor = 1
+				has_war = yes
+				NOT = {
+					any_state = {
+						is_owned_by = ROOT
+						is_core_of = ROOT
+						NOT = { is_controlled_by = ROOT }
+					}
+				}
+			}
+		}
+		
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision the_return_home"
 			if = {
 				limit = {
 					original_tag = POL
@@ -2801,12 +3080,12 @@ resistance_movements = {
 			}
 			set_variable = { var = rebel_infantry_equipment@ROOT value = 0 }
 			add_equipment_to_stockpile = {
-				type = infantry_equipment
+				type = support_equipment
 				amount = rebel_support_equipment@ROOT
 			}
 			set_variable = { var = rebel_support_equipment@ROOT value = 0 }
 			add_equipment_to_stockpile = {
-				type = infantry_equipment
+				type = artillery_equipment
 				amount = rebel_artillery_equipment@ROOT
 			}
 			set_variable = { var = rebel_artillery_equipment@ROOT value = 0 }
@@ -2873,7 +3152,8 @@ resistance_movements = {
 					news_event = { id = news.1945 days = 1 }
 				}
 			}
-			add_political_power = 120
+			add_political_power = 360
+			add_stability = 0.2
 		}
 	}
 }
@@ -2897,24 +3177,25 @@ country_in_exiled_dec = {
 
 		days_remove = 90
 
-		cost = 50
+		cost = 40
 
 		fire_only_once = no
 
 		visible = {
 			has_capitulated = yes
-			NOT = { has_completed_focus = HOL_request_allied_favors }
 		}
 
 		modifier = {
 			war_support_weekly = 0.01
-			partisan_effect = 0.5
+			resistance_target_on_our_occupied_states = 0.5
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision propaganda"
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision propaganda"
 		}
 	}
 
@@ -2932,23 +3213,31 @@ country_in_exiled_dec = {
 
 		days_remove = 30
 
-		cost = 75
+		cost = 100
 
 		fire_only_once = no
 
 		visible = {
 			has_capitulated = yes
-			check_variable = { var = obtain_dockyard_counter@ROOT value = 3 compare = less_than }
-			NOT = { has_completed_focus = HOL_request_allied_favors }
+			OR = {
+				AND = {
+					check_variable = { var = obtain_dockyard_counter@ROOT value = 3 compare = less_than }
+					NOT = { has_completed_focus = HOL_request_allied_favors }
+				}
+				check_variable = { var = obtain_dockyard_counter@ROOT value = 4 compare = less_than }
+			}
 		}
 
 		modifier = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision obtain_dockyard_access"
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision obtain_dockyard_access"
+			
 			add_offsite_building = { type = dockyard level = 2 }
 			if = {
 				limit = {
@@ -3004,39 +3293,60 @@ country_in_exiled_dec = {
 
 		days_remove = 45
 
-		cost = 50
+		cost = 75
 
 		fire_only_once = no
 
 		visible = {
 			has_capitulated = yes
-			NOT = { has_completed_focus = HOL_request_allied_favors }
 		}
 
 		modifier = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision assemble_air_squadron"
 		}
 
 		remove_effect = {
-			custom_effect_tooltip = bedzie_dodano_samolot_tt
-			hidden_effect = {
-				random_country = {
-					limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
-					add_equipment_to_stockpile = {
-						type = fighter_equipment
-						amount = 50
+			log = "[GetDateText]: [Root.GetName]: remove decision assemble_air_squadron"
+			
+			if = {
+				limit = { has_completed_focus = HOL_request_allied_favors }
+				custom_effect_tooltip = bedzie_dodano_samolot_hol_tt
+				hidden_effect = {
+					random_country = {
+						limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
+						add_equipment_to_stockpile = {
+							type = fighter_equipment
+							amount = 75
+						}
+						send_equipment = {
+							equipment = fighter_equipment
+							amount = 75
+							target = ROOT
+						}
 					}
-					send_equipment = {
-						equipment = fighter_equipment
-						amount = 50
-						target = ROOT
+				}
+			}
+			else = {
+				custom_effect_tooltip = bedzie_dodano_samolot_tt
+				hidden_effect = {
+					random_country = {
+						limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
+						add_equipment_to_stockpile = {
+							type = fighter_equipment
+							amount = 50
+						}
+						send_equipment = {
+							equipment = fighter_equipment
+							amount = 50
+							target = ROOT
+						}
 					}
 				}
 			}
 		}
-
 	}
 
 	request_infantry_equipment = {
@@ -3053,53 +3363,94 @@ country_in_exiled_dec = {
 
 		days_remove = 60
 
-		cost = 50
+		cost = 40
 
 		fire_only_once = no
 
 		visible = {
 			has_capitulated = yes
-			NOT = { has_completed_focus = HOL_request_allied_favors }
 		}
 
 		modifier = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision request_infantry_equipment"
 		}
 
 		remove_effect = {
-			custom_effect_tooltip = bedzie_dodano_bron_tt
-			hidden_effect = {
-				random_country = {
-					limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
-				
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 2400
+			log = "[GetDateText]: [Root.GetName]: remove decision request_infantry_equipment"
+			
+			if = { 
+				limit = { has_completed_focus = HOL_request_allied_favors }
+				custom_effect_tooltip = bedzie_dodano_bron_hol_tt
+				hidden_effect = {
+					random_country = {
+						limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
+					
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 3200
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 400
+						}
+						add_equipment_to_stockpile = {
+							type = artillery_equipment
+							amount = 140
+						}
+						send_equipment = {
+							equipment = infantry_equipment
+							amount = 3200
+							target = ROOT
+						}
+						send_equipment = {
+							equipment = support_equipment
+							amount = 400
+							target = ROOT
+						}
+						send_equipment = {
+							equipment = artillery_equipment
+							amount = 140
+							target = ROOT
+						}
 					}
-					add_equipment_to_stockpile = {
-						type = support_equipment
-						amount = 300
-					}
-					add_equipment_to_stockpile = {
-						type = artillery_equipment
-						amount = 100
-					}
-					send_equipment = {
-						equipment = infantry_equipment
-						amount = 2400
-						target = ROOT
-					}
-					send_equipment = {
-						equipment = support_equipment
-						amount = 300
-						target = ROOT
-					}
-					send_equipment = {
-						equipment = artillery_equipment
-						amount = 100
-						target = ROOT
+				}
+			}
+			else = {
+				custom_effect_tooltip = bedzie_dodano_bron_tt
+				hidden_effect = {
+					random_country = {
+						limit = { is_in_faction_with = ROOT is_faction_leader = yes } 
+					
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 2400
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 300
+						}
+						add_equipment_to_stockpile = {
+							type = artillery_equipment
+							amount = 100
+						}
+						send_equipment = {
+							equipment = infantry_equipment
+							amount = 2400
+							target = ROOT
+						}
+						send_equipment = {
+							equipment = support_equipment
+							amount = 300
+							target = ROOT
+						}
+						send_equipment = {
+							equipment = artillery_equipment
+							amount = 100
+							target = ROOT
+						}
 					}
 				}
 			}
@@ -3127,8 +3478,13 @@ country_in_exiled_dec = {
 
 		visible = {
 			has_capitulated = yes
-			check_variable = { var = industrialists_counter@ROOT value = 3 compare = less_than }
-			NOT = { has_completed_focus = HOL_request_allied_favors }
+			OR = {
+				AND = { 
+					check_variable = { var = industrialists_counter@ROOT value = 3 compare = less_than }
+					NOT = { has_completed_focus = HOL_request_allied_favors }
+				}
+				check_variable = { var = industrialists_counter@ROOT value = 5 compare = less_than }
+			}
 		}
 
 		modifier = {
@@ -3171,13 +3527,14 @@ country_in_exiled_dec = {
 
 		visible = {
 			has_capitulated = yes
-			NOT = { has_completed_focus = HOL_request_allied_favors }
 		}
 
 		modifier = {
 		}
 		
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision request_aid_for_the_engelandvaarders"
+			
 			hidden_effect = {
 				set_variable = { add_mans_weekly@ROOT = 0 }
 				every_state = {
@@ -3186,6 +3543,10 @@ country_in_exiled_dec = {
 						is_core_of = ROOT
 					}
 					ROOT = { add_to_variable = { add_mans_weekly@ROOT = 150 } }
+				}
+				if = {
+					limit = { has_completed_focus = HOL_request_allied_favors }
+					ROOT = { multiply_variable = { add_mans_weekly@ROOT = 3 } }
 				}
 				clamp_variable = {
 					var = add_mans_weekly@ROOT
@@ -3196,6 +3557,8 @@ country_in_exiled_dec = {
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision request_aid_for_the_engelandvaarders"
+			
 			if = {
 				limit = { check_variable = { add_mans_weekly@ROOT = 0 } }
 				custom_effect_tooltip = bedzie_dodano_manpower_tt
@@ -3224,22 +3587,24 @@ country_in_exiled_dec = {
 
 		days_remove = 90
 
-		cost = 50
+		cost = 100
 
 		fire_only_once = no
 
 		visible = {
 			has_capitulated = yes
-			NOT = { has_completed_focus = HOL_request_allied_favors }
 		}
 
 		modifier = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision purchase_of_convoys"
 		}
 
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision purchase_of_convoys"
+			
 			custom_effect_tooltip = bedzie_dodano_konwoj_tt
 			hidden_effect = {
 				random_country = {
@@ -3302,9 +3667,10 @@ country_in_exiled_dec = {
 		}
 
 		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision decryption_technology_exchange"
 			effect_tooltip = {
 				add_tech_bonus = {
-					bonus = 1.0
+					bonus = 3.0
 					uses = 1
 					category = decryption_tech
 				}
@@ -3322,7 +3688,7 @@ country_in_exiled_dec = {
 		}
 
 		remove_effect = {
-			
+			log = "[GetDateText]: [Root.GetName]: remove decision decryption_technology_exchange"
 		}
 		
 		ai_will_do = {
@@ -3373,6 +3739,9 @@ political_actions = {
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision crush_warszawa"
+			
+			add_political_power = 30
 			10 = {
 				remove_building = {
 					type = infrastructure
@@ -3426,9 +3795,12 @@ political_actions = {
 		
 		complete_effect = {
 			hidden_effect = { set_country_flag = POL_active_decision }
+			log = "[GetDateText]: [Root.GetName]: complete decision rebuild_warszawa"
 		}
 		
 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision rebuild_warszawa"
+			
 			10 = {
 				set_building_level = {
 					type = infrastructure
@@ -3443,7 +3815,123 @@ political_actions = {
 		}
 
 		ai_will_do = {
-			factor = 1000
+			factor = 0
+			modifier = {
+				factor = 10
+				has_government = democratic
+			}
+			modifier = {
+				factor = 1000
+				10 = { is_core_of = ROOT }
+			}
+		}
+	}
+}
+
+contr_resistance_movements = {
+	raids_on_the_occupied_territory = {
+
+		icon = generic_ignite_civil_war
+
+		days_remove = 120
+		
+		allowed = { always = yes }
+
+		visible = {
+			has_war = yes
+		}
+		
+		cancel_trigger = {
+			NOT = {
+				FROM = {
+					has_war_with = ROOT
+					has_country_flag = Form_rebel_army
+				}
+				OR = {
+					any_state = {
+						is_controlled_by = ROOT
+						is_owned_by = FROM
+						NOT = { is_core_of = ROOT }
+					}
+					any_state = {
+						is_owned_and_controlled_by = ROOT
+						NOT = { is_core_of = ROOT }
+						is_core_of = FROM
+					}
+				}
+			}
+		}
+		
+		fixed_random_seed = no
+		
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				has_country_flag = Form_rebel_army
+			}
+			OR = {
+				any_state = {
+					is_controlled_by = ROOT
+					is_owned_by = FROM
+					NOT = { is_core_of = ROOT }
+				}
+				any_state = {
+					is_owned_and_controlled_by = ROOT
+					NOT = { is_core_of = ROOT }
+					is_core_of = FROM
+				}
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision raids_on_the_occupied_territory (From [From.GetTag])"
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: remove decision raids_on_the_occupied_territory (From [From.GetTag])"
+			hidden_effect = {
+				random_list = {
+					30 = {
+						# FROM = {
+						#	set_variable = { var_second = 0 }			# Расчёт потерь оккупанта
+						#	set_variable = { var_third = 0 }
+						#	every_state = {
+						#		limit = {
+						#			is_owned_by = THIS
+						#			is_core_of = THIS
+						#			NOT = { is_controlled_by = THIS }
+						#		}
+						#		PREV = { add_to_variable = { var_second = PREV.resistance } }
+						#		PREV = { add_to_variable = { var = var_third value = 1 } }
+						#	}
+						#	divide_variable = { var = var_second value = var_third }
+						#	multiply_variable = { var = var_second value = 100 }
+						# }
+						
+						FROM = { save_event_target_as = NW_target_hunt }
+
+						country_event = { id = resistance.23 }
+					}
+					70 = {
+						country_event = { id = resistance.24 }
+					}
+				}
+			}
+		}
+
+		modifier = {
+			political_power_cost = 0.5
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				FROM = {
+					check_variable = { var = rebel_infantry_equipment@THIS value < 200 }
+					check_variable = { var = rebel_manpower@THIS value < 2000 }
+				}
+			}
 		}
 	}
 }

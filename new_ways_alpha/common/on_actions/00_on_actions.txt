@@ -216,7 +216,7 @@ on_actions = {
 						NOT = { has_dlc = "Together for Victory" }
 					}
 				}
-				drop_cosmetic_tag = yes
+				abandon_colony_tag = yes
 			}
 			FROM = {
 				add_opinion_modifier = {
@@ -387,11 +387,78 @@ on_actions = {
 	#FROM is war target
 	on_declare_war = {
 		effect = {
+			#make sure Germany doesn't force ideology on France for the achievement
+			if = {
+				limit = {
+					FROM = { original_tag = FRA }
+					tag = GER
+				}
+				set_country_flag = invalid_for_danzig_achievement
+			}
+			#make sure warlords don't use the same guy
+			if = {
+				limit = {
+					OR = {
+						original_tag = YUN
+						original_tag = SIK
+						original_tag = GXC
+						original_tag = SHX
+						original_tag = XSM
+						original_tag = SIK
+						original_tag = SIH
+						original_tag = XIK
+						original_tag = SHA
+						original_tag = TNG
+						original_tag = NEA
+					}
+				}
+				if = {
+					limit = {
+						ROOT = {
+							original_tag = FROM
+							NOT = { has_country_flag = warlord_replaced }
+						}
+					}
+					ROOT = {
+						retire_country_leader = yes
+						set_country_flag = warlord_replaced
+					}
+					FROM = {
+						warlord_rule_all_parties = yes
+					}
+				}
+			}
+			#make sure Dominions lose the dominion tag
+			if = {
+				limit = {
+					OR = {
+						original_tag = CAN
+						original_tag = RAJ
+						original_tag = MAL
+						original_tag = INS
+						original_tag = NFL
+						original_tag = BPL
+						original_tag = LKA
+					}
+				}
+				if = {
+					limit = {
+						ROOT = {
+							original_tag = FROM
+						}
+					}
+					abandon_colony_tag = yes
+					FROM = {
+						abandon_colony_tag = yes
+					}
+				}
+			}
 			if = {
 				limit = {
 					FROM = {
 						OR = {
 							has_idea = american_protection_drift_democratic
+							has_idea = american_protection_drift_trozkism
 							has_idea = american_protection_drift_communism
 							has_idea = american_protection_drift_fascism
 							has_idea = american_protection_defence_democratic
@@ -408,6 +475,7 @@ on_actions = {
 					OR = {
 						has_idea = american_protection_drift_democratic
 						has_idea = american_protection_drift_communism
+						has_idea = american_protection_drift_trozkism
 						has_idea = american_protection_drift_fascism
 						has_idea = american_protection_defence_democratic
 						has_idea = american_protection_defence_communism
@@ -584,8 +652,12 @@ on_actions = {
 
 			if = {
 				limit = {
-					FROM = { tag = SPR }
-					tag = SPA
+					FROM = {
+						has_civil_war = yes
+						original_tag = SPR
+					}
+					has_civil_war = yes
+					original_tag = SPR
 
 				}
 				random_country = {
@@ -614,9 +686,38 @@ on_actions = {
 					NOT = { original_tag = GER }
 					NOT = { has_government = fascism }
 					NOT = { has_civil_war = yes }
+					NOT = {
+						AND = {
+							FROM = {
+								original_tag = SPR
+							}
+							original_tag = SPR
+						}
+					}
 				}
+				news_event = { id = country_capitulated.0 days = 0 }
 			}
-			news_event = { id = country_capitulated.0 days = 0 }
+			
+			if = {
+				limit = { tag = FRA }
+				set_global_flag = FRA_already_surrendered
+				set_variable = { global.FRA_capitulation_days = global.num_days }
+			}
+			if = {
+				limit = {
+					FROM = { tag = JAP }
+					ROOT = { tag = CHI }
+				}
+				JAP = { JAP_intervene_in_china_remove = yes }
+			}
+			
+			if = {
+				limit = { 
+					original_tag = POL
+					has_government = neutrality
+				}
+				retire_country_leader = yes
+			}
 			if = {
 				limit = {
 					original_tag = YUG
@@ -627,14 +728,69 @@ on_actions = {
 				limit = {
 					original_tag = DEN
 				}
-				if = {
-					limit = { DEN = { is_ai = yes } }
-					country_event = { id = wtt_denmark.1 days = 1 }
-					country_event = { id = wtt_denmark.2 days = 1 }
-					else = {
-						country_event = { id = wtt_denmark.3 }
+				country_event = { id = wtt_denmark.1 days = 1 }
+			}
+			#if = {
+			#	limit = {
+			#		original_tag = FRA
+			#		has_government = democratic
+			#		NOT = { has_global_flag = achievement_france_surrender } #might as well use the achievement flag to check if france.10 fired
+			#		is_subject = no
+			#		is_in_faction_with = ENG
+			#		has_war_with = GER
+			#	}
+			#	country_event = france.10
+			#}
+			if = {
+				limit = {
+					tag = FRA
+					is_subject = no
+					OR = {
+						has_government = democratic
+						has_government = neutrality
+					}
+					NOT = { has_war_with = FRC }
+					OR = {
+						AND = {
+							has_war_with = GER
+							GER = { has_government = fascism }
+							NOT = { has_war_with = ITA }
+						}
+						AND = {
+							has_war_with = ITA
+							ITA = { has_government = fascism }
+							NOT = { has_war_with = GER }
+						}
+						AND = {
+							GER = {
+								has_war_with = FRA
+								has_government = fascism
+							}
+							ITA = {
+								has_war_with = FRA
+								is_in_faction_with = GER
+								has_government = fascism
+							}
+						}
+					}
+					NOT = {
+						any_state = {
+							NOT = { state = 114 }
+							is_controlled_by = FRA
+							OR = {
+								is_core_of = GER
+								is_core_of = ITA
+							}
+						}
+					}
+					16 = {
+						OR = {
+							is_controlled_by = GER
+							is_controlled_by = ITA
+						}
 					}
 				}
+				country_event = NWfrance.101
 			}
 		}
 	}
@@ -770,6 +926,7 @@ on_actions = {
 					original_tag = ROOT
 				}
 				set_politics = {
+					ruling_party = democratic
 					elections_allowed = yes
 				}
 			}
@@ -779,6 +936,37 @@ on_actions = {
 	#ROOT is winner #FROM gets annexed - This will also fire on_annex
 	on_civil_war_end = {
 		effect = {
+			#End of SCW
+			if = {
+				limit = {
+					NOT = { has_dlc = "La Resistance" }
+					FROM = {
+						original_tag = SPR
+					}
+					ROOT = {
+						original_tag = SPR
+						has_government = fascism
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							is_historical_focus_on = no
+							#has_completed_focus = SPA_supremacy_of_the_communion
+						}
+					}
+					add_timed_idea = { idea = SPA_recovering_from_civil_war days = 1825 }
+				}
+				if = {
+					limit = {
+						is_historical_focus_on = yes
+						#NOT = {
+						#	has_completed_focus = SPA_supremacy_of_the_communion
+						#}
+					}
+					add_ideas = SPA_recovering_from_civil_war #keep the spirit on historical mode, keeping them out of the war
+				}
+			}
 			#End of SCW
 			if = {
 				limit = {
@@ -792,9 +980,10 @@ on_actions = {
 			}
 			if = {
 				limit = {
-					has_government = democratic			
+					has_government = democratic
 				}
 				set_politics = {
+					ruling_party = democratic
 					elections_allowed = yes
 				}
 			}
@@ -838,7 +1027,7 @@ on_actions = {
 						has_government = fascism
 					}
 				}
-				news_event = { id = mtg_news.7 days = 4 random = 5 }
+				news_event = { id = mtg_news.7 days = 4 random_days = 5 }
 			}
 			#End of ideology Civil War
 			if = {
@@ -874,6 +1063,16 @@ on_actions = {
 				}
 				add_country_leader_trait = stalins_puppet
 			}
+			if = {
+				limit = {
+					NOT = { has_elections = yes }
+					has_government = democratic
+				}
+				set_politics = {
+					ruling_party = democratic
+					elections_allowed = yes
+				}
+			}
 		}
 	}
 	
@@ -899,13 +1098,37 @@ on_actions = {
 				}
 				add_country_leader_trait = stalins_puppet
 			}
+			if = {
+				limit = {
+					NOT = { has_elections = yes }
+					has_government = democratic
+				}
+				set_politics = {
+					ruling_party = democratic
+					elections_allowed = yes
+				}
+			}
 		}
 	}
 	
 	#ROOT is winner #FROM gets annexed - For civil wars on_civil_war_end is also fired
 	on_annex = {
 		effect = {
-			
+			every_country = {
+				limit = {
+					OR = {
+						original_tag = RAJ
+						original_tag = CAN
+						original_tag = MAL
+						original_tag = INS
+						original_tag = NFL
+						original_tag = BPL
+						original_tag = LKA
+					}
+					is_puppet = no
+				}
+				abandon_colony_tag = yes
+			}
 		}
 	}
 
@@ -1592,7 +1815,18 @@ on_actions = {
 						15 = { set_country_flag = MEX_AI_THEOCRATIC_ORDER }
 						15 = { set_country_flag = MEX_AI_SOVIET_REPUBLIC }
 						15 = { set_country_flag = MEX_AI_CARDENISMO }
+						15 = { set_country_flag = NW_MEX_AI_TROZKISM }
 					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = MEX_ai_behavior
+							option = TROZKISM
+						}
+					}
+					MEX = { set_country_flag = NW_MEX_AI_TROZKISM }
 				}
 			}
 			BRA = {
@@ -1854,6 +2088,28 @@ on_actions = {
 				}
 			}
 			TUR = {
+				#if = {
+				#	limit = {
+				#		has_dlc = "Waking the Tiger"
+				#		has_game_rule = {
+				#			rule = TUR_focus_tree
+				#			option = NEW
+				#		}
+				#	}
+				#	set_global_flag = NW_TUR_NEW_FOCUS_TREE
+				#	TUR = { load_focus_tree = nw_turkish_focus }
+				#}
+				#if = {
+				#	limit = {
+				#		has_dlc = "Waking the Tiger"
+				#		has_game_rule = {
+				#			rule = TUR_focus_tree
+				#			option = OLD
+				#		}
+				#	}
+				#	set_global_flag = NW_TUR_OLD_FOCUS_TREE
+				#	TUR = { load_focus_tree = turkish_focus }
+				#}
 				if = {
 					limit = {
 						has_game_rule = {
@@ -1941,6 +2197,475 @@ on_actions = {
 						}
 					}
 					TUR = { set_country_flag = NW_TUR_AI_MONARCHY }
+				}
+			}
+			AFG = {
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = RANDOM
+						}
+					}
+					random_list = {
+						20 = { AFG = { set_country_flag = NW_AFG_AI_STRENGTHEN_TIES_WITH_MIDDLE_EAST } }
+						20 = { AFG = { set_country_flag = NW_AFG_AI_FASCIST } }
+						20 = { AFG = { set_country_flag = NW_AFG_AI_FASCIST_ALTERNATE } }
+						20 = { AFG = { set_country_flag = NW_AFG_AI_MONARCHY } }
+						20 = { AFG = { set_country_flag = NW_AFG_AI_DEMOCRATIC } }
+						
+					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = STRENGTHEN_TIES_WITH_MIDDLE_EAST
+						}
+					}
+					AFG = { set_country_flag = NW_AFG_AI_STRENGTHEN_TIES_WITH_MIDDLE_EAST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = FASCIST
+						}
+					}
+					AFG = { set_country_flag = NW_AFG_AI_FASCIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = FASCIST_ALTERNATE
+						}
+					}
+					AFG = { set_country_flag = NW_AFG_AI_FASCIST_ALTERNATE }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = MONARCHY
+						}
+					}
+					AFG = { set_country_flag = NW_AFG_AI_MONARCHY }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = AFG_ai_behavior
+							option = DEMOCRATIC
+						}
+					}
+					AFG = { set_country_flag = NW_AFG_AI_DEMOCRATIC }
+				}
+			}
+			PER = {
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = RANDOM
+						}
+					}
+					random_list = {
+						15 = { PER = { set_country_flag = NW_PER_AI_PER_PRO_SOVIET_GOVERNMENT } }
+						15 = { PER = { set_country_flag = NW_PER_AI_PER_CONCESSIONS_TO_GERMANOPHILES } }
+						15 = { PER = { set_country_flag = NW_PER_AI_PER_ISLAMIC_REVOLUTION } }
+						15 = { PER = { set_country_flag = NW_PER_AI_MONARCHY } }
+						15 = { PER = { set_country_flag = NW_PER_AI_TROZKIST } }
+						15 = { PER = { set_country_flag = NW_PER_AI_COMMUNIST } }
+						15 = { PER = { set_country_flag = NW_PER_AI_DEMOCRATIC } }
+						15 = { PER = { set_country_flag = NW_PER_AI_TECHNOCRAT } }
+					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = PER_PRO_SOVIET_GOVERNMENT
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_PER_PRO_SOVIET_GOVERNMENT }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = PER_CONCESSIONS_TO_GERMANOPHILES
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_PER_CONCESSIONS_TO_GERMANOPHILES }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = PER_ISLAMIC_REVOLUTION
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_PER_ISLAMIC_REVOLUTION }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = MONARCHY
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_MONARCHY }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = TROZKIST
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_TROZKIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = COMMUNIST
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_COMMUNIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = DEMOCRATIC
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_DEMOCRATIC }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = PER_ai_behavior
+							option = TECHNOCRAT
+						}
+					}
+					PER = { set_country_flag = NW_PER_AI_TECHNOCRAT }
+				}
+			}
+			IRQ = {
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = RANDOM
+						}
+					}
+					random_list = {
+						15 = { IRQ = { set_country_flag = NW_IRQ_AI_DEMOCRATIC } }
+						10 = { IRQ = { set_country_flag = NW_IRQ_AI_COMMUNIST } }
+						10 = { IRQ = { set_country_flag = NW_IRQ_AI_TROZKIST } }
+						5 = { IRQ = { set_country_flag = NW_IRQ_AI_CABINET_OF_JAMIL_AL_MIDFA } }
+						5 = { IRQ = { set_country_flag = CABINET_OF_RASHID_ALI_AL_GAILANIS } }
+						10 = { IRQ = { set_country_flag = NW_IRQ_AI_OFFICE_OF_HIKMAT_SULEIMAN } }
+						25 = { IRQ = { set_country_flag = NW_IRQ_AI_MAKE_CONCESSIONS } }
+						
+					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = DEMOCRATIC
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_DEMOCRATIC }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = COMMUNIST
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_COMMUNIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = TROZKIST
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_TROZKIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = CABINET_OF_JAMIL_AL_MIDFA
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_CABINET_OF_JAMIL_AL_MIDFA }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = CABINET_OF_RASHID_ALI_AL_GAILANIS
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_CABINET_OF_RASHID_ALI_AL_GAILANIS }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = OFFICE_OF_HIKMAT_SULEIMAN
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_OFFICE_OF_HIKMAT_SULEIMAN }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = IRQ_ai_behavior
+							option = MAKE_CONCESSIONS
+						}
+					}
+					IRQ = { set_country_flag = NW_IRQ_AI_MAKE_CONCESSIONS }
+				}
+			}
+			YEM = {
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = YEM_ai_behavior
+							option = RANDOM
+						}
+					}
+					random_list = {
+						25 = { YEM = { set_country_flag = NW_YEM_AI_MONARCHY_IMAM } }
+						25 = { YEM = { set_country_flag = NW_YEM_AI_DEMOCRATIC } }
+						25 = { YEM = { set_country_flag = NW_YEM_AI_FASCIST } }
+						25 = { YEM = { set_country_flag = NW_YEM_AI_INDEPENDENT } }
+					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = YEM_ai_behavior
+							option = YEM_MONARCHY_IMAM
+						}
+					}
+					YEM = { set_country_flag = NW_YEM_AI_MONARCHY_IMAM }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = YEM_ai_behavior
+							option = DEMOCRATIC
+						}
+					}
+					YEM = { set_country_flag = NW_YEM_AI_DEMOCRATIC }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = YEM_ai_behavior
+							option = FASCIST
+						}
+					}
+					YEM = { set_country_flag = NW_YEM_AI_FASCIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = YEM_ai_behavior
+							option = INDEPENDENT
+						}
+					}
+					YEM = { set_country_flag = NW_YEM_AI_INDEPENDENT }
+				}
+			}
+			BPL = {
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = RANDOM
+						}
+					}
+					random_list = {
+						10 = { BPL = { set_country_flag = NW_BPL_AI_COMMUNIST_JEWS } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_TECHNOCRAT } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_ANARCHIST_JEWS } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_FASCIST_JEWS } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_NEUTRALITY } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_COMMUNIST_ARAB } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_TROZKIST } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_FASCIST_ARAB } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB } }
+						10 = { BPL = { set_country_flag = NW_BPL_AI_MONARCHY_ARAB } }
+					}
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = COMMUNIST_JEWS
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_COMMUNIST_JEWS }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = TECHNOCRAT
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_TECHNOCRAT }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = ANARCHIST_JEWS
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_ANARCHIST_JEWS }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = DEMOCRATIC_JEWS
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = FASCIST_JEWS
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_FASCIST_JEWS }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = NEUTRALITY
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_NEUTRALITY }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = COMMUNIST_ARAB
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_COMMUNIST_ARAB }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = TROZKIST
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_TROZKIST }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = FASCIST_ARAB
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_FASCIST_ARAB }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = DEMOCRATIC_ARAB
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB }
+				}
+				else_if = {
+					limit = {
+						has_dlc = "Waking the Tiger"
+						has_game_rule = {
+							rule = BPL_ai_behavior
+							option = MONARCHY_ARAB
+						}
+					}
+					BPL = { set_country_flag = NW_BPL_AI_MONARCHY_ARAB }
 				}
 			}
 			BEL = {
@@ -2258,12 +2983,13 @@ on_actions = {
 						TAG = ENG
 						TAG = USA
 						TAG = AST
-						TAG = FRA
+						TAG = event_target:NW_france_scope
 						TAG = CAN
 						TAG = NZL
 						TAG = SAF
 					}
 					FROM = { original_tag = GER }
+					FROM = { has_war_with = ROOT }
 					FROM.FROM = { state = 16 }
 				}
 				news_event = news.134
@@ -2275,6 +3001,7 @@ on_actions = {
 						TAG = USA
 					}
 					FROM = { original_tag = GER }
+					FROM = { has_war_with = ROOT }
 					FROM.FROM = { state = 126 }
 				}
 				news_event = news.137
@@ -2287,6 +3014,7 @@ on_actions = {
 					}
 					NOT = { SOV = { has_war_with = POL } }
 					FROM = { original_tag = GER }
+					FROM = { has_war_with = ROOT }
 					FROM.FROM = { state = 10 }
 				}
 				news_event = news.139
@@ -2327,8 +3055,9 @@ on_actions = {
 				limit = {
 					tag = GER
 					64 = { is_controlled_by = GER }
-					any_other_country = {
-						original_tag = GER
+					any_country_with_original_tag = {
+						original_tag_to_check = GER
+						NOT = { tag = ROOT }
 						has_government = fascism
 						has_civil_war = yes
 						owns_state = 64
@@ -2336,7 +3065,7 @@ on_actions = {
 					NOT = { has_global_flag = fall_of_berlin_civil_war }
 				}
 				set_global_flag = fall_of_berlin_civil_war
-				country_event = { id = wtt_germany.50 days = 1 random = 3 }
+				country_event = { id = wtt_germany.50 days = 1 random_hours = 3 }
 			}
 			if = {
 				limit = {
@@ -2500,7 +3229,34 @@ on_actions = {
 		}
 	}
 	
-	# Scope is the country owner of the PotF, FROM is the country of the killer
-	on_pride_of_the_fleet_sunk = {
+	# root country that invades
+	# scope state that is invaded
+	# from scope state that the invasion started
+	# on_naval_invasion = {
+	# 	effect = {
+	# 	}
+	# }
+	
+	
+	# root country that paradrops
+	# scope state that is paradroped into
+	# from scope state that the paradrop started
+	on_paradrop = {
+	    effect = {
+		    set_country_flag = has_paradropped_flag
+		}
+	}
+	on_ruling_party_change = { 
+		# temp var old_ideology_token is available for effects
+		effect = {
+			every_controlled_state = {
+				limit = {
+					has_resistance = yes
+				}
+				set_temp_variable = { new_compliance = compliance }
+				multiply_temp_variable = { new_compliance = 0.5 }
+				set_compliance = new_compliance
+			}
+		}
 	}
 }

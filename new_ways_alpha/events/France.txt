@@ -47,6 +47,14 @@ country_event = {
 				tag = event_target:NW_france_scope
 				16 = { NOT = { is_controlled_by = event_target:NW_france_scope } } #Paris	
 			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_government = anarchism
+					has_government = trozkism
+					has_government = communism
+				}
+			}
 		} 
 		JAP = {
 			country_event = { days = 5 id = japan.6 }
@@ -191,68 +199,10 @@ country_event = {
 	title = france.10.t
 	desc = france.10.d
 	picture = GFX_report_event_german_parade_paris
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event france.10" }
 	
 	fire_only_once = yes
 	
-	trigger = {
-		always = no
-		tag = FRA
-		has_war_with = GER
-		16 = { is_controlled_by = GER }
-		is_in_faction_with = ENG
-		ENG = { has_war_with = GER }
-		surrender_progress > 0.7
-		GER = {
-			OR = {
-				is_faction_leader = yes
-				has_government = neutrality
-			}
-		}
-		has_civil_war = no
-		
-		#Don't fire if France has pushed pretty far into ITA or GER
-		NOT = {
-			any_state = {
-				is_on_continent = europe
-				NOT = { state = 158 }
-				NOT = { state = 114 }
-				NOT = { state = 50 }
-				NOT = { state = 42 }
-				is_controlled_by = ROOT
-				OR = {
-					is_owned_by = GER
-					AND = {
-						FRA = { has_War_with = ITA }
-						is_owned_by = ITA
-					}
-				}
-			}
-		}		
-
-		#Don't fire if any states in France are controlled by a different human player
-		NOT = {
-			any_country = {
-				is_ai = no
-				NOT = { tag = GER }
-				NOT = { is_in_faction_with = GER }
-				has_war_with = ROOT
-				any_state = {
-					is_on_continent = europe
-					NOT = { state = 1 }
-					NOT = { state = 735 }
-					NOT = { state = 21 }
-					NOT = { state = 31 }
-					is_owned_by = ROOT
-					is_controlled_by = PREV
-				}
-			}
-		}
-	}
-	
-	mean_time_to_happen = {
-		days = 2
-	}
+	is_triggered_only = yes
 
 	immediate = {
 		set_global_flag = achievement_france_surrender
@@ -262,6 +212,7 @@ country_event = {
 		name = france.10.a
 		trigger = { is_ai = no }
 		set_country_flag = become_vichy
+		save_global_event_target_as = vichy_france
 		set_global_flag = fall_of_france
 		GER = { country_event = france.14 }
 		custom_effect_tooltip = france.10.a_tt
@@ -273,6 +224,7 @@ country_event = {
 			factor = 85
 		}
 		set_global_flag = fall_of_france
+		save_global_event_target_as = free_france
 		GER = { country_event = france.14 }
 		custom_effect_tooltip = france.10.b_tt
 	}
@@ -292,6 +244,18 @@ country_event = {
 			}
 		}
 		custom_effect_tooltip = GAME_OVER_TT
+	}
+	option = { # decide to fight on
+		name = france.10.e
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = { has_war_support > 0.7 }
+		add_stability = -0.05
 	}
 }
 

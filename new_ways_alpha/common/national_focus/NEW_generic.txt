@@ -1,17 +1,44 @@
+search_filter_prios = {
+	FOCUS_FILTER_POLITICAL = 1010
+	FOCUS_FILTER_RESEARCH = 522
+	FOCUS_FILTER_INDUSTRY = 509
+	FOCUS_FILTER_STABILITY = 500
+	FOCUS_FILTER_WAR_SUPPORT = 499
+	FOCUS_FILTER_MANPOWER = 498
+	FOCUS_FILTER_ANNEXATION = 497
+	#search_filters = { FOCUS_FILTER_POLITICAL }
+}
+
 focus_tree = {
 	id = generic_focus
 	
 	country = {
 		factor = 1
+		modifier = {
+			add = 100
+			OR = {
+				has_global_flag = WORLD_OF_SPLIT_FLAG
+				has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			}
+			NOT = { has_focus_tree = generic_anarchism_focus }
+		}
+	}
+	
+	initial_show_position = {
+		x = 12
 	}
 	
 	default = yes
 	reset_on_civilwar = yes
 	
-	shared_focus = army_effort
-	shared_focus = aviation_effort
-	shared_focus = naval_effort
-	shared_focus = industrial_effort
+	shared_focus = army_reform
+	shared_focus = aviation_development
+	shared_focus = naval_development
+	shared_focus = industrial_innovations
+	shared_focus = colonial_department
+	shared_focus = order_in_country
+	
+	continuous_focus_position = { x = 50 y = 1350 }
 
 	
 	## POLITICAL BLOCK ##
@@ -19,16 +46,206 @@ focus_tree = {
 	focus = {
 		id = political_effort
 		icon = GFX_z_goal_diplomacy_1
-		x = 30
+		mutually_exclusive = { focus = generic_AUS_discuss_establishment_monarchy }
+		x = 12
 		y = 0
 		cost = 10
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		allow_branch = {
+			NOT = { check_variable = { current_nw_national_focus_polical_icon_frame = 2 } }
+		}
+		
+		available = {
+			if = {
+				limit = { is_subject = yes }
+				OR = {
+					has_autonomy_state = autonomy_dominion
+					has_autonomy_state = autonomy_satellite
+					has_autonomy_state = autonomy_condominium
+					has_completed_focus = guard_of_empire
+					has_completed_focus = control_over_internal_affairs
+					OVERLORD = {
+						OR = {
+							has_completed_focus = project_of_union_constitution
+							has_completed_focus = consolidation_empire
+						}
+					}
+				}
+			}
+		}
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_political_power = 120
 		}
 	}
+	
+	### AUS BLOCK ###
+	
+	focus = {
+		id = generic_AUS_discuss_establishment_monarchy
+		icon = GFX_focus_generic_home_defense
+		mutually_exclusive = { focus = political_effort }
+		available = {
+			has_government = neutrality
+			is_in_faction = no
+			any_other_country = {
+				NOT = { has_guaranteed = ROOT }
+			}
+			GER = { has_government = fascism }
+			if = {
+				limit = { is_subject = yes }
+				OR = {
+					has_autonomy_state = autonomy_dominion
+					has_autonomy_state = autonomy_satellite
+					has_autonomy_state = autonomy_condominium
+					has_completed_focus = guard_of_empire
+					has_completed_focus = control_over_internal_affairs
+					OVERLORD = { has_completed_focus = project_of_union_constitution }
+					OVERLORD = { has_completed_focus = consolidation_empire }
+				}
+			}
+		}
+		allow_branch = {
+			tag = AUS
+			NOT = { has_global_flag = WORLD_OF_SPLIT_FLAG }
+			NOT = { check_variable = { current_nw_national_focus_polical_icon_frame = 2 } }
+		}
+		x = 4
+		y = 0
+		relative_position_id = political_effort
+		cost = 15
+		
+		ai_will_do = {
+			factor = 0.5
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+
+		available_if_capitulated = yes
+
+		select_effect = {
+			country_event = { id = NWhohenberg.100 days = 5 }
+		}
+		
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus generic_AUS_discuss_establishment_monarchy"
+			add_political_power = 120
+			add_timed_idea = { idea = generic_AUS_discuss_establishment_monarchy_idea days = 300 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_country_flag = nobles_imposed_restrictions_on_otto } }
+					country_event = { id = NWhohenberg.101 }
+				}
+			}
+		}
+	}
+	
+	
+	focus = {
+		id = generic_AUS_restore_habsburg_empire
+		icon = GFX_focus_hun_elect_a_king
+		prerequisite = { focus = generic_AUS_discuss_establishment_monarchy }
+		available = {
+			
+		}
+		
+		x = 0
+		y = 1
+		relative_position_id = generic_AUS_discuss_establishment_monarchy
+		cost = 15
+
+		available_if_capitulated = yes
+
+
+		ai_will_do = {
+			factor = 500
+		}
+		
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName]: Focus generic_AUS_restore_habsburg_empire"
+			save_global_event_target_as = NW_hbbrg_scope
+			create_country_leader = {
+				name = "Otto von Habsburg"
+				desc = "POLITICS_OTTO_VON_HABSBURG_DESC"
+				picture = GFX_Portrait_hungary_otto_von_hapsburg
+				expire = "1965.1.1"
+				ideology = monarchy_ideology
+				traits = {
+					kingAUS
+				}
+			}
+			set_country_flag = kingAUS_flag
+			add_ideas = HUN_habsburg_restored
+			#set_rule = { can_create_factions = yes }
+			hidden_effect = {
+				news_event = { id = news.290 }
+			}
+			set_cosmetic_tag = HABSBURGS
+			set_major = yes
+			if = {
+				limit = {
+					OR = {
+						NOT = { event_target:NW_france_scope = { has_completed_focus = FRA_little_entente_new } } 
+						event_target:NW_france_scope = { exists = no }
+						event_target:NW_france_scope = { is_subject = yes }
+					}
+					OR = {
+						has_idea = HUN_treaty_of_triannon
+						has_idea = HUN_treaty_of_triannon_2
+						has_idea = HUN_treaty_of_triannon_3
+					}
+				} #Romania gets the event if France not engaged in Balkans
+				ROM = { country_event = { id = DOD_hungary.40 } }
+			}
+			hidden_effect = {
+				load_focus_tree = hbbrg_focus
+				set_country_flag = hbbrg_flag
+				set_politics = {
+					ruling_party = monarchy
+					elections_allowed = no
+				}
+				set_political_party = {
+					ideology = monarchy
+					popularity = 50
+				}
+				if = {
+					limit = { NOT = { has_global_flag = anti_hbbrg_flag } }
+					ROM = { country_event = { id = NWmonarchy.40 } }
+				}
+				set_party_name = { ideology = democratic long_name = habsburg_democratic_party name = habsburg_democratic_party }
+				set_party_name = { ideology = communism long_name = habsburg_communism_party name = habsburg_communism_party }
+				set_party_name = { ideology = fascism long_name = habsburg_fascism_party name = habsburg_fascism_party }
+				set_party_name = { ideology = monarchy long_name = habsburg_monarchy_party name = habsburg_monarchy_party }
+				GER = { country_event = { id = TRpolitical.104 } }
+				CZE = { country_event = { id = TRpolitical.104 } }
+				AUS = { country_event = { id = TRpolitical.104 } }
+				YUG = { country_event = { id = TRpolitical.104 } }
+				ROM = { country_event = { id = TRpolitical.104 } }
+				TUR = { country_event = { id = TRpolitical.104 } }
+				if = {
+					limit = { SPA = { has_idea = SPA_otto_von_habsburg } }
+					set_autonomy = {
+						target = SPA
+						autonomy_state = autonomy_dominion
+					}
+					add_country_leader_trait = kingSPA
+				}
+			}
+		}
+	}
+	
+
+	
+	## COLLECTIVIST BLOCK ##
 
 	focus = {
 		id = collectivist_ethos
@@ -51,7 +268,6 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
 
 		ai_will_do = {
 			factor = 5
@@ -111,6 +327,22 @@ focus_tree = {
 				factor = 0
 				tag = VAT
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = {
+					OR = {
+						has_government = communism
+						has_government = fascism
+						has_government = trozkism
+					}
+				}
+			}
+			modifier = {
+				add = 500
+				has_global_flag = WORLD_OF_SPLIT_FLAG
+				tag = MEX
+			}
 		}
 
 		completion_reward = {
@@ -124,6 +356,9 @@ focus_tree = {
 		}
 	}
 
+	
+	## FASCISM BLOCK ##
+	
 	focus = {
 		id = nationalism_focus
 		icon = GFX_goal_support_fascism #icon = GFX_goal_tripartite_pact
@@ -140,7 +375,7 @@ focus_tree = {
 				has_global_flag = generic_all_flag
 			}
 		}
-		x = -10
+		x = -9
 		y = 1
 		relative_position_id = collectivist_ethos
 
@@ -190,6 +425,21 @@ focus_tree = {
 					tag = LIT
 				}
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = fascism }
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = fascism }
+				}
+				country_event = { id = NWgeneric.23 days = 20 }
+			}
 		}
 
 		completion_reward = {
@@ -219,6 +469,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			if = {
 				limit = { has_idea = neutrality_idea }
@@ -242,7 +493,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			add_ideas = military_youth_focus
 			add_popularity = {
@@ -282,13 +534,15 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_ethics_for_war
 		}
 	}
 	
 	
+	## COMMUNISM BLOCK ##
 	
 	focus = {
 		id = internationalism_focus
@@ -306,7 +560,7 @@ focus_tree = {
 				has_global_flag = generic_all_flag
 			}
 		}
-		x = -8
+		x = -7
 		y = 1
 		relative_position_id = collectivist_ethos
 		cost = 10
@@ -347,6 +601,20 @@ focus_tree = {
 				factor = 10
 				has_country_flag = want_communism
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = communism }
+			}
+		}
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = communism }
+				}
+				country_event = { id = NWgeneric.26 days = 20 }
+			}
 		}
 
 		completion_reward = {
@@ -375,7 +643,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			if = {
 				limit = { has_idea = neutrality_idea }
@@ -400,6 +669,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
 		completion_reward = {
 			add_ideas = indoctrination_focus
 			add_political_power = 150
@@ -420,6 +690,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
 
 		completion_reward = {
 			add_ideas = political_commissars_focus
@@ -444,12 +716,15 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_civil_factory
 		}	
 	}
 	
+	
+	## TROZKISM BLOCK ##
 	
 	focus = {
 		id = revolution_focus
@@ -459,7 +734,7 @@ focus_tree = {
 			focus = nationalism_focus
 			focus = internationalism_focus
 		}
-		x = -6
+		x = -5
 		y = 1
 		relative_position_id = collectivist_ethos
 		cost = 10
@@ -517,6 +792,26 @@ focus_tree = {
 				factor = 0
 				is_in_faction_with = SOV
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = trozkism }
+			}
+			modifier = {
+				add = 500
+				has_global_flag = WORLD_OF_SPLIT_FLAG
+				tag = MEX
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = trozkism }
+				}
+				country_event = { id = NWgeneric.26 days = 20 }
+			}
 		}
 
 		completion_reward = {
@@ -544,6 +839,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			if = {
 				limit = { has_idea = neutrality_idea }
@@ -564,7 +860,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			add_ideas = idea_socmilitarism
 		}
@@ -580,7 +877,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_resourse
 		}
@@ -597,13 +895,15 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = idea_permrevolt
+			set_temp_variable = { troz_threat_temp_var = 1 }
+			add_to_variable = { global.troz_threat_var = troz_threat_temp_var }
+			custom_effect_tooltip = troz_threat_tt1
+			set_var_for_troz_threat_dyn = yes
 		}
 	}
-	
-	
-	
 	
 	focus = {
 		id = generic_promotion_science
@@ -615,7 +915,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_ideas = generic_promotion_science
 		}
@@ -632,9 +933,30 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 		completion_reward = {
 			add_stability = 0.1
 			add_war_support = 0.1
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -649,6 +971,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_ideas = generic_political_dominant
 		}
@@ -661,6 +984,43 @@ focus_tree = {
 		prerequisite = { focus = generic_promotion_science }
 		prerequisite = { focus = generic_union_country }
 		prerequisite = { focus = generic_political_dominant }
+		mutually_exclusive = {
+			focus = ideological_enthusiasm
+			focus = ideological_expansion
+		}
+		x = -2
+		y = 1
+		relative_position_id = generic_union_country
+
+		cost = 10
+
+		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 6
+		}
+		
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MANPOWER }
+		completion_reward = {
+			add_ideas = ideological_fanaticism_focus
+			hidden_effect = {
+				set_rule = { can_use_kamikaze_pilots = yes }
+			}
+			custom_effect_tooltip = kamikaze_focus_tooltip
+			unlock_decision_category_tooltip = generic_ideological_fanaticism_category
+		}
+	}
+	
+	focus = {
+		id = ideological_enthusiasm
+		icon = GFX_z_goal_ideological_enthusiasm
+		prerequisite = { focus = generic_promotion_science }
+		prerequisite = { focus = generic_union_country }
+		prerequisite = { focus = generic_political_dominant }
+		mutually_exclusive = {
+			focus = ideological_fanaticism
+			focus = ideological_expansion
+		}
 		x = 0
 		y = 1
 		relative_position_id = generic_union_country
@@ -668,22 +1028,73 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_government = communism
+					has_completed_focus = internationalism_focus
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
-			add_ideas = ideological_fanaticism_focus
-			set_rule = {
-				can_create_factions = yes
+			add_ideas = ideological_enthusiasm
+			unlock_decision_category_tooltip = generic_ideological_enthusiasm_category
+		}
+	}
+	
+	focus = {
+		id = ideological_expansion
+		icon = GFX_z_goal_flames_of_rebellion
+		prerequisite = { focus = generic_promotion_science }
+		prerequisite = { focus = generic_union_country }
+		prerequisite = { focus = generic_political_dominant }
+		mutually_exclusive = {
+			focus = ideological_fanaticism
+			focus = ideological_enthusiasm
+		}
+		x = 2
+		y = 1
+		relative_position_id = generic_union_country
+
+		cost = 10
+
+		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
 			}
-			hidden_effect = {
-				set_rule = { can_use_kamikaze_pilots = yes }
+			modifier = {
+				factor = 4
+				OR = {
+					has_government = trozkism
+					has_completed_focus = revolution_focus
+				}
 			}
-			custom_effect_tooltip = kamikaze_focus_tooltip
+		}
+		
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			add_ideas = ideological_expansion
+			unlock_decision_category_tooltip = generic_policy_interventions_category
+			unlock_decision_category_tooltip = generic_interventions_start_civil_war_category
 		}
 	}
 	
 	
 	
-	## Individual tree ##
+	## INDIVIDUAL BLOCK ##
 	
 	focus = {
 		id = individual_ethos
@@ -694,6 +1105,7 @@ focus_tree = {
 			OR = {
 				has_government = democratic
 				has_government = neutrality
+				has_government = technocracy
 				has_government = monarchy
 				has_global_flag = generic_all_flag
 			}
@@ -715,6 +1127,7 @@ focus_tree = {
 						has_government = communism
 						has_government = fascism
 						has_government = trozkism
+						has_government = anarchism
 					}
 				}
 				NOT = {
@@ -723,6 +1136,7 @@ focus_tree = {
 						OR = {
 							has_government = democratic
 							has_government = monarchy
+							has_government = technocracy
 						}
 					}
 					has_global_flag = generic_all_flag
@@ -730,11 +1144,15 @@ focus_tree = {
 			}
 			modifier = {
 				factor = 2
-				original_tag = AUS
+				original_tag = FLA
+			}
+			modifier = {
+				factor = 10
+				original_tag = IOM
 			}
 			modifier = {
 				factor = 2
-				original_tag = FLA
+				capital_scope = { is_on_continent = south_america }
 			}
 			
 			modifier = {
@@ -743,6 +1161,7 @@ focus_tree = {
 				OR = {
 					has_government = democratic
 					has_government = neutrality
+					has_government = technocracy
 					has_government = monarchy
 				}
 			}
@@ -754,6 +1173,7 @@ focus_tree = {
 					OR = {
 						has_government = democratic
 						has_government = neutrality
+						has_government = technocracy
 						has_government = monarchy
 					}
 				}
@@ -765,6 +1185,7 @@ focus_tree = {
 					OR = {
 						has_government = democratic
 						has_government = neutrality
+						has_government = technocracy
 						has_government = monarchy
 					}
 				}
@@ -772,6 +1193,23 @@ focus_tree = {
 			modifier = {
 				factor = 0
 				has_country_flag = want_communism
+			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = {
+					OR = {
+						has_government = democratic
+						has_government = neutrality
+						has_government = technocracy
+						has_government = monarchy
+					}
+				}
+			}
+			modifier = {
+				add = 500
+				has_global_flag = WORLD_OF_SPLIT_FLAG
+				tag = USA
 			}
 		}
 		
@@ -790,12 +1228,18 @@ focus_tree = {
 	}
 	
 	
+	## DEMOCRATIC BLOCK ##
+	
 	focus = {
 		id = democratic_focus
 		icon = GFX_goal_support_democracy
 		prerequisite = { focus = individual_ethos }
-		mutually_exclusive = { focus = neutrality_focus focus = monarchism_focus }
-		x = 7
+		mutually_exclusive = {
+			focus = technocracy_focus
+			focus = neutrality_focus
+			focus = monarchism_focus
+		}
+		x = 6
 		y = 1
 		relative_position_id = individual_ethos
 		cost = 10
@@ -804,11 +1248,6 @@ focus_tree = {
 		
 		ai_will_do = {
 			factor = 5
-			modifier = {
-				factor = 1.5
-				original_tag = AUS
-			}
-			
 			modifier = {
 				factor = 3
 				any_neighbor_country = {
@@ -836,6 +1275,11 @@ focus_tree = {
 					has_government = democratic
 				}
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = democratic }
+			}
 		}
 		
 		available = {
@@ -843,6 +1287,16 @@ focus_tree = {
 				has_government = democratic
 				has_government = neutrality
 				has_global_flag = generic_all_flag
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = democratic }
+				}
+				country_event = { id = NWgeneric.29 days = 20 }
 			}
 		}
 
@@ -873,8 +1327,13 @@ focus_tree = {
 		
 		available = {
 		}
-
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
+			}	
 			add_popularity = {
 				ideology = democratic
 				popularity = 0.1
@@ -899,6 +1358,16 @@ focus_tree = {
 
 		completion_reward = {
 			add_ideas = generic_bonus_same_ideology
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -916,8 +1385,39 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_social_guarantee
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -936,7 +1436,8 @@ focus_tree = {
 		
 		available = {
 		}
-
+		
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_subsidies_heavy_industries
 		}
@@ -958,6 +1459,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_subsidies_medium_industries
 		}
@@ -978,6 +1480,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_immigrants_workforce
 		}
@@ -998,6 +1501,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_ideas = generic_interception_brain_drain
 		}
@@ -1023,12 +1527,17 @@ focus_tree = {
 	}
 	
 	
+	## TECHNOCRACY BLOCK ##
 	
 	focus = {
-		id = neutrality_focus
-		icon = GFX_goal_generic_neutrality_focus
+		id = technocracy_focus
+		icon = GFX_z_goal_support_technocracy
 		prerequisite = { focus = individual_ethos }
-		mutually_exclusive = { focus = democratic_focus focus = monarchism_focus }
+		mutually_exclusive = {
+			focus = democratic_focus
+			focus = neutrality_focus
+			focus = monarchism_focus
+		}
 		x = 11
 		y = 1
 		relative_position_id = individual_ethos
@@ -1038,13 +1547,420 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 1
+
 			modifier = {
-				factor = 6
+				factor = 3
+				has_global_flag = generic_all_flag
+				any_neighbor_country = {
+					is_major = yes
+					has_government = technocracy
+				}
+			}
+			modifier = {
+				factor = 5
+				has_global_flag = generic_all_flag
+				has_government = technocracy
+			}
+			modifier = {
+				factor = 1.5
+				has_global_flag = generic_all_flag
+				any_neighbor_country = {
+					has_government = technocracy
+				}
+			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = technocracy }
+			}
+			modifier = {
+				factor = 0
+				AND = {
+					is_historical_focus_on = yes
+					NOT = { has_government = technocracy }
+				}
+			}
+			modifier = {
+				add = 500
+				has_global_flag = WORLD_OF_SPLIT_FLAG
+				tag = USA
+			}
+		}
+		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = technocracy
+				has_government = neutrality
+				has_global_flag = generic_all_flag
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = technocracy }
+				}
+				country_event = { id = NWgeneric.32 days = 20 }
+			}
+		}
+
+		completion_reward = {
+			hidden_effect = {
+				if = {
+					limit = { has_idea = technocracy_focus }
+					remove_ideas = technocracy_focus
+				}
+			}
+			add_timed_idea = {
+				idea = technocracy_focus
+				days = 720
+			}
+		}
+	}
+	
+	focus = {
+		id = government_engineers
+		icon = GFX_z_goal_government_engineers_2
+		prerequisite = { focus = technocracy_focus }
+		mutually_exclusive = { focus = government_humanitarians }
+		x = -1
+		y = 1
+		relative_position_id = technocracy_focus
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+		
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
+			}	
+			add_ideas = government_engineers
+		}
+	}
+	
+	focus = {
+		id = government_humanitarians
+		icon = GFX_z_goal_government_humanitarians
+		prerequisite = { focus = technocracy_focus }
+		mutually_exclusive = {  focus = government_engineers }
+		x = 1
+		y = 1
+		relative_position_id = technocracy_focus
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				original_tag = USA
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
+			}	
+			add_ideas = government_humanitarians
+		}
+	}
+	
+	focus = {
+		id = scientific_and_technical_elite
+		icon = GFX_z_goal_technocracy
+		prerequisite = { focus = government_engineers }
+		x = -1
+		y = 1
+		relative_position_id = government_engineers
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = scientific_and_technical_elite
+		}
+	}
+	
+	focus = {
+		id = resource_security
+		icon = GFX_z_goal_excavations
+		prerequisite = { focus = scientific_and_technical_elite }
+		x = -1
+		y = 1
+		relative_position_id = scientific_and_technical_elite
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = limited_exports
+			add_ideas = resource_security
+		}
+	}
+	
+	focus = {
+		id = new_industry_standard
+		icon = GFX_z_goal_new_industry_standard
+		prerequisite = { focus = scientific_and_technical_elite }
+		x = 1
+		y = 1
+		relative_position_id = scientific_and_technical_elite
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = new_industry_standard
+		}
+	}
+	
+	focus = {
+		id = technological_industrialization
+		icon = GFX_z_goal_generic_construct_public_housing
+		prerequisite = { focus = resource_security }
+		prerequisite = { focus = new_industry_standard }
+		x = 1
+		y = 1
+		relative_position_id = resource_security
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = technological_industrialization
+		}
+	}
+	
+	focus = {
+		id = cult_of_science
+		icon = GFX_z_goal_brain
+		prerequisite = {
+			focus = government_engineers
+			focus = government_humanitarians
+		}
+		x = 1
+		y = 1
+		relative_position_id = government_engineers
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			add_ideas = cult_of_science
+		}
+	}
+	
+	focus = {
+		id = grant_allocation
+		icon = GFX_z_goal_great_science
+		prerequisite = { focus = cult_of_science }
+		x = 0
+		y = 2
+		relative_position_id = cult_of_science
+		cost = 10
+
+		available_if_capitulated = yes
+		
+		available = {
+			num_of_factories > 24
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			add_research_slot = 1
+			swap_ideas = {
+				remove_idea = cult_of_science
+				add_idea = cult_of_science_2
+			}
+		}
+	}
+	
+	focus = {
+		id = compulsory_education
+		icon = GFX_z_goal_generic_technology_sharing_tmo
+		prerequisite = { focus = government_humanitarians }
+		x = 1
+		y = 1
+		relative_position_id = government_humanitarians
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			add_research_slot = 1
+		}
+	}
+	
+	focus = {
+		id = benefits_for_students
+		icon = GFX_focus_generic_military_academy
+		prerequisite = { focus = compulsory_education }
+		x = -1
+		y = 1
+		relative_position_id = compulsory_education
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = benefits_for_students
+		}
+	}
+	
+	focus = {
+		id = autonomy_for_universities
+		icon = GFX_z_goal_vienna_circle
+		prerequisite = { focus = compulsory_education }
+		x = 1
+		y = 1
+		relative_position_id = compulsory_education
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = autonomy_for_universities
+		}
+	}
+	
+	focus = {
+		id = employment_after_learning
+		icon = GFX_z_goal_generic_industrial_production2
+		prerequisite = { focus = benefits_for_students }
+		prerequisite = { focus = autonomy_for_universities }
+		x = 1
+		y = 1
+		relative_position_id = benefits_for_students
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = employment_after_learning
+		}
+	}
+	
+	focus = {
+		id = concept_of_technate
+		icon = GFX_z_goal_concept_of_technate
+		prerequisite = { focus = grant_allocation }
+		prerequisite = {
+			focus = technological_industrialization
+			focus = employment_after_learning
+		}
+		x = 0
+		y = 1
+		relative_position_id = grant_allocation
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MANPOWER FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			add_ideas = concept_of_technate
+		}
+	}
+	
+	
+	## NEUTRALITY BLOCK ##
+	
+	focus = {
+		id = neutrality_focus
+		icon = GFX_goal_generic_neutrality_focus
+		prerequisite = { focus = individual_ethos }
+		mutually_exclusive = {
+			focus = democratic_focus
+			focus = technocracy_focus
+			focus = monarchism_focus
+		}
+		x = 18
+		y = 1
+		relative_position_id = individual_ethos
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
 				original_tag = AUS
 			}
 			modifier = {
 				factor = 20
 				original_tag = FLA
+			}
+			modifier = {
+				factor = 10
+				original_tag = IOM
+			}
+			modifier = {
+				factor = 2
+				capital_scope = { is_on_continent = south_america }
 			}
 			
 			modifier = {
@@ -1074,6 +1990,21 @@ focus_tree = {
 					tag = LAT
 					tag = LIT
 				}
+			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = neutrality }
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = neutrality }
+				}
+				country_event = { id = NWgeneric.35 days = 20 }
 			}
 		}
 
@@ -1168,12 +2099,12 @@ focus_tree = {
 				add_ideas = authoritarian_democracy_focus
 			}
 			set_country_flag = authoritarian_democracy
-			hidden_effect = {
-				if = {
-					limit = { has_government = neutrality }
-					set_country_leader_ideology = authoritarian_democracy
-				}
+			if = {
+				limit = { has_government = neutrality }
+				set_country_leader_ideology = authoritarian_democracy
+				custom_effect_tooltip = set_country_leader_ideology_authoritarian_democracy
 			}
+			else = { custom_effect_tooltip = set_country_leader_ideology_future_authoritarian_democracy }
 		}
 	}
 	
@@ -1218,12 +2149,12 @@ focus_tree = {
 				add_ideas = neut_militarism_focus
 			}
 			set_country_flag = militarism
-			hidden_effect = {
-				if = {
-					limit = { has_government = neutrality }
-					set_country_leader_ideology = militarism
-				}
+			if = {
+				limit = { has_government = neutrality }
+				set_country_leader_ideology = militarism
+				custom_effect_tooltip = set_country_leader_ideology_militarism
 			}
+			else = { custom_effect_tooltip = set_country_leader_ideology_future_militarism }
 		}
 	}
 	
@@ -1243,6 +2174,7 @@ focus_tree = {
 			factor = 1
 		}
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = deterrence
 		}
@@ -1263,7 +2195,8 @@ focus_tree = {
 		ai_will_do = {
 			factor = 1
 		}
-
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			if = {
 				limit = { has_idea = neutrality_idea }
@@ -1285,9 +2218,30 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_stability = 0.1
 			add_war_support = -0.1
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -1336,6 +2290,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_improved_repair
 		}
@@ -1370,8 +2325,29 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_weapons_into_plows
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -1395,6 +2371,7 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 		completion_reward = {
 			add_ideas = why_we_fight_focus
 			custom_effect_tooltip = why_we_fight_effect
@@ -1419,20 +2396,25 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		search_filters = { FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			add_ideas = generic_danger_game
 		}
 	}
 	
 	
-	#Monarchist tree
+	## MONARCHY BLOCK ##
 	
 	focus = {
 		id = monarchism_focus
 		icon = GFX_z_goal_monarchism_1
 		prerequisite = { focus = individual_ethos }
-		mutually_exclusive = { focus = democratic_focus focus = neutrality_focus }
-		x = 15
+		mutually_exclusive = {
+			focus = democratic_focus
+			focus = technocracy_focus
+			focus = neutrality_focus
+		}
+		x = 24
 		y = 1
 		relative_position_id = individual_ethos
 		cost = 10
@@ -1457,10 +2439,6 @@ focus_tree = {
 				}
 			}
 			modifier = {
-				factor = 3
-				original_tag = AUS
-			}
-			modifier = {
 				factor = 0
 				AND = {
 					is_historical_focus_on = yes
@@ -1480,6 +2458,27 @@ focus_tree = {
 					has_government = monarchy
 				}
 			}
+			modifier = {
+				add = 500
+				is_subject = yes
+				OVERLORD = { has_government = monarchy }
+			}
+			modifier = {
+				factor = 0
+				NOT = { has_global_flag = generic_all_flag }
+				is_subject = no
+				has_government = technocracy
+			}
+		}
+		
+		select_effect = {
+			if = {
+				limit = {
+					is_subject = no
+					NOT = { has_government = monarchy }
+				}
+				country_event = { id = NWgeneric.38 days = 20 }
+			}
 		}
 
 		completion_reward = {
@@ -1497,10 +2496,129 @@ focus_tree = {
 	}
 	
 	focus = {
-		id = dinasty_union
-		icon = GFX_goal_tfv_strengthen_commonwealth_ties
+		id = principles_of_dualism
+		icon = GFX_z_goal_monarchism_principles_of_dualism
 		prerequisite = { focus = monarchism_focus }
+		mutually_exclusive = { focus = generic_power_monarch }
+		x = -1
+		y = 1
+		relative_position_id = monarchism_focus
+		cost = 10
+
+		available_if_capitulated = yes
+		
+		available = {
+			monarchy < 0.8
+		}
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			add_ideas = principles_of_dualism
+		}
+	}
+	
+	focus = {
+		id = popular_representation
+		icon = GFX_z_goal_popular_representation
+		prerequisite = { focus = principles_of_dualism }
+		mutually_exclusive = { focus = bet_on_aristocracy }
+		x = -1
+		y = 1
+		relative_position_id = principles_of_dualism
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		completion_reward = {
+			add_ideas = popular_representation
+			custom_effect_tooltip = popular_representation_tt
+		}
+	}
+	
+	focus = {
+		id = patriotic_organizations
+		icon = GFX_focus_generic_monarchy_2
+		prerequisite = { focus = popular_representation }
+		x = 0
+		y = 1
+		relative_position_id = popular_representation
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		completion_reward = {
+			add_ideas = patriotic_organizations
+		}
+	}
+	
+	focus = {
+		id = bet_on_aristocracy
+		icon = GFX_z_goal_monarchism_14
+		prerequisite = { focus = principles_of_dualism }
+		mutually_exclusive = { focus = popular_representation }
 		x = 1
+		y = 1
+		relative_position_id = principles_of_dualism
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			add_ideas = bet_on_aristocracy
+			custom_effect_tooltip = bet_on_aristocracy_tt
+		}
+	}
+	
+	focus = {
+		id = influential_landowners
+		icon = GFX_z_goal_monarchism_13
+		prerequisite = { focus = bet_on_aristocracy }
+		x = 0
+		y = 1
+		relative_position_id = bet_on_aristocracy
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = influential_landowners
+			every_owned_state = {
+				add_extra_state_shared_building_slots = 2
+			}
+		}
+	}
+	
+	
+	focus = {
+		id = generic_power_monarch
+		icon = GFX_z_goal_generic_king_power
+		prerequisite = { focus = monarchism_focus }
+		mutually_exclusive = { focus = principles_of_dualism }
+		x = 2
 		y = 1
 		relative_position_id = monarchism_focus
 		cost = 10
@@ -1511,59 +2629,19 @@ focus_tree = {
 			factor = 5
 		}
 
-		completion_reward = {
-			add_ideas = dinasty_union
-		}
-	}
-	
-	focus = {
-		id = holy_trone
-		icon = GFX_z_goal_monarchism_9
-		prerequisite = { focus = dinasty_union }
-		x = -1
-		y = 1
-		relative_position_id = dinasty_union
-		cost = 10
-
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		completion_reward = {
-			add_ideas = holy_trone
-		}
-	}
-	
-	focus = {
-		id = generic_power_monarch
-		icon = GFX_z_goal_national_council
-		prerequisite = { focus = dinasty_union }
-		x = 1
-		y = 1
-		relative_position_id = dinasty_union
-		cost = 10
-
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 5
-		}
-
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
 		completion_reward = {
 			add_ideas = generic_power_monarch
 		}
 	}
 	
 	focus = {
-		id = generic_educated_priesthood
-		icon = GFX_z_goal_monarchism_12
-		prerequisite = { focus = holy_trone }
+		id = royal_assent
+		icon = GFX_z_goal_generic_royal_assent
 		prerequisite = { focus = generic_power_monarch }
-		x = 1
+		x = 0
 		y = 1
-		relative_position_id = holy_trone
+		relative_position_id = generic_power_monarch
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1572,6 +2650,28 @@ focus_tree = {
 			factor = 5
 		}
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = royal_assent
+		}
+	}
+	
+	focus = {
+		id = generic_educated_priesthood
+		icon = GFX_z_goal_generic_priesthood
+		prerequisite = { focus = royal_assent }
+		x = 0
+		y = 1
+		relative_position_id = royal_assent
+		cost = 10
+
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_ideas = generic_educated_priesthood
 		}
@@ -1580,11 +2680,15 @@ focus_tree = {
 	focus = {
 		id = generic_imperial_agro
 		icon = GFX_z_goal_agrarian_reform
-		prerequisite = { focus = generic_educated_priesthood }
+		prerequisite = {
+			focus = patriotic_organizations
+			focus = influential_landowners
+			focus = generic_educated_priesthood
+		}
 		mutually_exclusive = { focus = generic_imperial_factory }
 		x = -1
 		y = 1
-		relative_position_id = generic_educated_priesthood
+		relative_position_id = influential_landowners
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1593,6 +2697,7 @@ focus_tree = {
 			factor = 5
 		}
 
+		search_filters = { FOCUS_FILTER_STABILITY }
 		completion_reward = {
 			add_ideas = generic_imperial_agro
 		}
@@ -1600,12 +2705,16 @@ focus_tree = {
 	
 	focus = {
 		id = generic_imperial_factory
-		icon = GFX_z_goal_monarchists_factories
-		prerequisite = { focus = generic_educated_priesthood }
+		icon = GFX_z_goal_generic_king_factory
+		prerequisite = {
+			focus = patriotic_organizations
+			focus = influential_landowners
+			focus = generic_educated_priesthood
+		}
 		mutually_exclusive = { focus = generic_imperial_agro }
 		x = 1
 		y = 1
-		relative_position_id = generic_educated_priesthood
+		relative_position_id = influential_landowners
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1614,11 +2723,12 @@ focus_tree = {
 			factor = 5
 		}
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_imperial_factory
 		}
 	}
-	
+
 	focus = {
 		id = imperial_ambition
 		icon = GFX_z_goal_authority
@@ -1634,39 +2744,125 @@ focus_tree = {
 			factor = 5
 		}
 
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MANPOWER FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
 			add_ideas = imperial_ambition
 		}
 	}
-	
-	
-	
+
 	focus = {
 		id = patriotism_fury
 		icon = GFX_z_national_liber
-		prerequisite = { focus = generic_war_departament focus = why_we_fight focus = imperial_ambition }
-
-		x = 0
+		prerequisite = { focus = generic_war_departament focus = concept_of_technate focus = why_we_fight focus = imperial_ambition }
+		mutually_exclusive = {
+			focus = patriotic_inspiration
+			focus = patriotism_zeal
+		}
+		x = 1
 		y = 1
-		relative_position_id = why_we_fight
+		relative_position_id = concept_of_technate
 		cost = 10
 
 		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 6
+		}
 
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			add_ideas = patriotism_fury
-			set_rule = {
-				can_create_factions = yes
-			}
 			hidden_effect = {
 				set_rule = { can_use_kamikaze_pilots = yes }
 			}
 			custom_effect_tooltip = kamikaze_focus_tooltip
+			unlock_decision_category_tooltip = generic_ideological_fanaticism_category
+		}
+	}
+	
+	focus = {
+		id = patriotic_inspiration
+		icon = GFX_z_goal_brain
+		prerequisite = { focus = generic_war_departament focus = concept_of_technate focus = why_we_fight focus = imperial_ambition }
+		mutually_exclusive = {
+			focus = patriotism_fury
+			focus = patriotism_zeal
+		}
+		x = 2
+		y = 0
+		relative_position_id = patriotism_fury
+
+		cost = 10
+
+		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					has_government = technocracy
+					has_completed_focus = concept_of_technate
+				}
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_ideas = patriotic_inspiration
+			if = {
+				limit = { focus_progress = { focus = technocracy_focus progress < 0.0 } }
+				unlock_decision_category_tooltip = generic_ideological_enthusiasm_category
+			}
+			else = { unlock_decision_category_tooltip = generic_technocracy_category }
+		}
+	}
+	
+	focus = {
+		id = patriotism_zeal
+		icon = GFX_z_goal_generic_communists_soldiers2
+		prerequisite = { focus = generic_war_departament focus = concept_of_technate focus = why_we_fight focus = imperial_ambition }
+		mutually_exclusive = {
+			focus = patriotism_fury
+			focus = patriotic_inspiration
+		}
+		x = 4
+		y = 0
+		relative_position_id = patriotism_fury
+		cost = 10
+		
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 1.5
+				has_government = democratic
+			}
+			modifier = {
+				factor = 2
+				has_government = technocracy
+			}
+		}
+
+		available_if_capitulated = yes
+
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			add_ideas = patriotism_zeal
+			unlock_decision_category_tooltip = generic_policy_interventions_category
+			unlock_decision_category_tooltip = generic_interventions_start_civil_war_category
 		}
 	}
 	
 	
-	## CENTRAL TREE ##
+	## CENTRAL BLOCK ##
 	
 	focus = {
 		id = generic_state_focus
@@ -1676,12 +2872,17 @@ focus_tree = {
 		y = 2
 		relative_position_id = collectivist_ethos
 		cost = 10
+		
+		ai_will_do = {
+			factor = 2
+		}
 
 		available_if_capitulated = yes
 		
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_political_power = 200
 		}
@@ -1690,13 +2891,17 @@ focus_tree = {
 	focus = {
 		id = generic_democratic_side
 		icon = GFX_z_goal_democratic_side
-		prerequisite = { focus = democratic_focus focus = neutrality_focus focus = monarchism_focus }
+		prerequisite = { focus = democratic_focus focus = technocracy_focus focus = neutrality_focus focus = monarchism_focus }
 		x = 0
 		y = 2
 		relative_position_id = individual_ethos
 		cost = 10
 
 		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 2
+		}
 		
 		available = {
 		}
@@ -1732,12 +2937,20 @@ focus_tree = {
 		x = 1
 		y = 1
 		relative_position_id = generic_state_focus
-		cost = 10
+		cost = 5
 
 		available_if_capitulated = yes
 		
+		ai_will_do = {
+			factor = 5
+		}
+		
 		available = {
 			is_puppet = no
+		}
+		
+		bypass = {
+			has_rule = can_create_factions
 		}
 
 		completion_reward = {
@@ -1779,6 +2992,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
 			add_ideas = generic_war_justify
 		}
@@ -1799,6 +3013,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = generic_mobilization_national_resources
 		}
@@ -1818,6 +3033,7 @@ focus_tree = {
 		available = {
 		}
 
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_research_slot = 1
 		}
@@ -1827,7 +3043,15 @@ focus_tree = {
 	focus = {
 		id = technology_sharing
 		icon = GFX_goal_generic_scientific_exchange
-		prerequisite = { focus = ideological_fanaticism focus = extra_tech_slot focus = patriotism_fury }
+		prerequisite = {
+			focus = ideological_fanaticism
+			focus = ideological_enthusiasm
+			focus = ideological_expansion
+			focus = extra_tech_slot
+			focus = patriotism_fury
+			focus = patriotic_inspiration
+			focus = patriotism_zeal
+		}
 		available = {
 			has_war = yes
 			is_in_faction = yes
@@ -1846,7 +3070,8 @@ focus_tree = {
 		cost = 10
 
 		available_if_capitulated = yes
-
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			if = {
 				limit = {
@@ -1869,18 +3094,16 @@ focus_tree = {
 					bonus = 1.0
 					uses = 1
 					category = industry
-				}	
+				}
 				add_tech_bonus = {
 					name = infantry_artillery_bonus #@#
 					bonus = 1.0
 					uses = 1
 					category = infantry_weapons
 					category = artillery
-				}				
+				}
 			}			
 		}
 	}
 	
-	
-
 }

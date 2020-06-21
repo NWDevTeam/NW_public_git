@@ -481,6 +481,35 @@ foreign_influence = {
 		}
 	}
 	
+	instantiate_collaboration = {
+		icon = generic_prepare_civil_war
+		
+		cost = 0
+
+		available = {
+			has_core_occupation_modifier = {
+				occupied_country_tag = FROM
+				modifier = compliance_80
+			}
+		}
+        visible = {
+			has_rule = can_create_collaboration_government
+			is_available_to_collaboration_government = yes
+			has_core_occupation_modifier = {
+				occupied_country_tag = FROM
+				modifier = compliance_60
+			}
+        }
+
+		complete_effect = {
+			set_temp_variable = { country_to_initiate = FROM }
+			instantiate_collaboration_government = yes
+		}
+		
+		target_non_existing = yes
+		target_array = occupied_countries
+	}
+	
 	
 	
 	#NEW_WAYS#
@@ -808,7 +837,7 @@ foreign_influence = {
 
 		complete_effect = {
 			FROM = {
-				add_timed_idea = { idea = trozkism_education days = 120 }
+				add_timed_idea = { idea = anarchism_education days = 120 }
 			}
 		}
 		modifier = {
@@ -880,6 +909,142 @@ foreign_influence = {
 			FROM = {
 				set_politics = {
 					ruling_party = anarchism
+					elections_allowed = no
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	
+	technocracy_education = {
+
+		icon = eng_propaganda_campaigns
+
+		days_remove = 120
+		
+		available = {
+			FROM = {
+				is_puppet_of = ROOT
+			}
+			FROM = {
+				technocracy < 0.9
+			}
+			OR = {
+				political_power_daily > 0.5
+				has_political_power > 60
+			}
+		}
+
+		visible = {
+			has_government = technocracy
+			NOT = {
+				AND = {
+					tag = ENG
+					has_completed_focus = ENG_concessions_to_the_trade_unions
+					FROM = {
+						OR = {
+							tag = CAN
+							tag = SAF
+							tag = RAJ
+							tag = AST
+							tag = NZL
+						}
+						has_government = technocracy
+					}
+				}
+			}
+			FROM = {
+				is_puppet_of = ROOT
+				technocracy < 0.99
+			}
+		}
+		
+		target_array = subjects
+
+		target_trigger = {
+			FROM = {
+				is_puppet_of = ROOT
+			}
+		}
+
+		complete_effect = {
+			FROM = {
+				add_timed_idea = { idea = technocracy_education days = 120 }
+			}
+		}
+		modifier = {
+			political_power_cost = 0.5
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	fraternal_technocracy_republic = {
+
+		icon = generic_prepare_civil_war
+		
+		cost = 50
+		
+		available = {
+			FROM = {
+				is_puppet_of = ROOT
+			}
+			FROM = {
+				technocracy > 0.6
+			}
+			FROM = {
+				NOT = { has_government = technocracy }
+			}
+		}
+
+		visible = {
+			has_government = technocracy
+			FROM = {
+				is_puppet_of = ROOT
+				NOT = { has_government = technocracy }
+			}
+			NOT = {
+				AND = {
+					tag = ENG
+					has_completed_focus = ENG_concessions_to_the_trade_unions
+					FROM = {
+						OR = {
+							tag = CAN
+							tag = SAF
+							tag = RAJ
+							tag = AST
+							tag = NZL
+						}
+					}
+				}
+			}
+		}
+		
+		target_array = subjects
+
+		target_trigger = {
+			FROM = {
+				is_puppet_of = ROOT
+			}
+		}
+
+		complete_effect = {
+			FROM = { country_event = { id = mtg_generic.1 } }
+			FROM = {
+				add_timed_idea = {
+					idea = political_turmoil
+					days = 365
+				}
+			}
+			FROM = {
+				set_politics = {
+					ruling_party = technocracy
 					elections_allowed = no
 				}
 			}

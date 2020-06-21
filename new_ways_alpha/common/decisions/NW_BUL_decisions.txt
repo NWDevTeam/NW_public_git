@@ -15,6 +15,7 @@ BUL_block_radiostation_desicions = {
 
 		modifier = {
 			drift_defence_factor = 0.25
+			communism_drift = -0.07
 		}
 
 		days_remove = 90
@@ -32,9 +33,9 @@ BUL_block_radiostation_desicions = {
 		}
 
 		ai_will_do = {
-			factor = 20
+			factor = 100
 			modifier = {
-				add = 10
+				add = 2
 				has_stability < 0.6
 			}
 		}
@@ -54,7 +55,7 @@ BUL_block_radiostation_desicions = {
 
 		fire_only_once = yes
 
-		cost = 150
+		cost = 100
 
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision BUL_block_radiostation2"
@@ -62,17 +63,17 @@ BUL_block_radiostation_desicions = {
 		}
 
 		ai_will_do = {
-			factor = 20
+			factor = 100
 			modifier = {
-				add = 20
+				add = 2
 				has_stability < 0.6
 			}
 			modifier = {
-				add = 20
-				communism > 0.3
+				add = 2
+				communism > 0.2
 			}
 			modifier = {
-				add = 50
+				add = 5
 				communism > 0.4
 			}
 		}
@@ -95,7 +96,7 @@ BUL_block_fatherland_front_desicions = {
 
 		fire_only_once = yes
 
-		cost = 100
+		cost = 125
 		
 		days_remove = 90
 
@@ -105,17 +106,17 @@ BUL_block_fatherland_front_desicions = {
 		}
 
 		ai_will_do = {
-			factor = 30
+			factor = 100
 			modifier = {
 				add = 10
 				has_stability < 0.6
 			}
 			modifier = {
-				add = 20
-				communism > 0.3
+				add = 2
+				communism > 0.2
 			}
 			modifier = {
-				add = 50
+				add = 5
 				communism > 0.4
 			}
 		}
@@ -422,7 +423,11 @@ BUL_buy_tanks_desicions = {
 		icon = generic_propaganda
 
 		visible = {
-			ENG = { has_capitulated = no }
+			NOT = { has_war_with = ENG }
+			ENG = {
+				has_capitulated = no
+				has_tech = basic_light_tank
+			}
 		}
 		
 		fire_only_once = yes
@@ -431,7 +436,10 @@ BUL_buy_tanks_desicions = {
 
 		available = {
             NOT = { has_war_with = ENG }
-			ENG = { has_capitulated = no }
+			ENG = {
+				has_capitulated = no
+				has_tech = basic_light_tank
+			}
         }
 		
 		complete_effect = {
@@ -444,22 +452,73 @@ BUL_buy_tanks_desicions = {
 		icon = generic_propaganda
 
 		visible = {
-			NOT = {  country_exists = CZE }
-			GER = { has_capitulated = no }
+			OR = {
+				AND = {
+					country_exists = CZE
+					NOT = { has_war_with = CZE }
+					CZE = {
+						has_capitulated = no
+						has_tech = improved_light_tank
+					}
+				}
+				AND = {
+					NOT = {
+						country_exists = CZE
+						has_war_with = GER
+					}
+					GER = {
+						has_capitulated = no
+						has_tech = improved_light_tank
+					}
+				}
+			}
 		}
 		
 		fire_only_once = yes
 
-		cost = 80
+		cost = 50
 
 		available = {
-           NOT = { has_war_with = GER }
-		   GER = { has_capitulated = no }
-		   NOT = { country_exists = CZE }
+			if = {
+				limit = { country_exists = CZE }
+				OR = {
+					AND = {
+						country_exists = CZE
+						NOT = { has_war_with = CZE }
+						CZE = {
+							has_capitulated = no
+							has_tech = improved_light_tank
+						}
+					}
+					AND = {
+						NOT = {
+							country_exists = CZE
+							has_war_with = GER
+						}
+						GER = {
+							controls_state = 9
+							has_capitulated = no
+							has_tech = improved_light_tank
+						}
+					}
+				}
+			}
+			else = {
+				NOT = { has_war_with = GER }
+				GER = {
+					controls_state = 9
+					has_capitulated = no
+					has_tech = improved_light_tank
+				}
+			}
         }
 		
 		complete_effect = {
-			add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 26 producer = CZE }
+			if = {
+				limit = { country_exists = CZE }
+				add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 26 producer = CZE }
+			}
+			else = { add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 26 producer = GER } }
 		}
 	}
 	
@@ -468,8 +527,26 @@ BUL_buy_tanks_desicions = {
 		icon = generic_propaganda
 
 		visible = {
-			GER = { has_capitulated = no }
-			NOT = { country_exists = CZE }
+			OR = {
+				AND = {
+					country_exists = CZE
+					NOT = { has_war_with = CZE }
+					CZE = {
+						has_capitulated = no
+						has_tech = improved_light_tank
+					}
+				}
+				AND = {
+					NOT = {
+						country_exists = CZE
+						has_war_with = GER
+					}
+					GER = {
+						has_capitulated = no
+						has_tech = improved_light_tank
+					}
+				}
+			}
 		}
 		
 		fire_only_once = yes
@@ -477,16 +554,46 @@ BUL_buy_tanks_desicions = {
 		cost = 30
 
 		available = {
-			NOT = { has_war_with = GER }
-			GER = {
-				has_capitulated = no
-				has_tech = improved_light_tank
+			if = {
+				limit = { country_exists = CZE }
+				OR = {
+					AND = {
+						country_exists = CZE
+						NOT = { has_war_with = CZE }
+						CZE = {
+							has_capitulated = no
+							has_tech = improved_light_tank
+						}
+					}
+					AND = {
+						NOT = {
+							country_exists = CZE
+							has_war_with = GER
+						}
+						GER = {
+							controls_state = 9
+							has_capitulated = no
+							has_tech = improved_light_tank
+						}
+					}
+				}
 			}
-		   
+			else = {
+				NOT = { has_war_with = GER }
+				GER = {
+					controls_state = 9
+					has_capitulated = no
+					has_tech = improved_light_tank
+				}
+			}
         }
 		
 		complete_effect = {
-			add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 10 producer = CZE }
+			if = {
+				limit = { country_exists = CZE }
+				add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 10 producer = CZE }
+			}
+			else = { add_equipment_to_stockpile = { type = light_tank_equipment_2 amount = 10 producer = GER } }
 		}
 	}
 	
@@ -495,6 +602,7 @@ BUL_buy_tanks_desicions = {
 		icon = generic_propaganda
 		
 		visible = {
+			NOT = { has_war_with = AFG }
 			AFG = { has_capitulated = no }
 		}
 		
@@ -535,7 +643,10 @@ BUL_buy_tanks_desicions = {
 			NOT = { has_war_with = GER }
 			GER = { has_capitulated = no }
 			OR = {
-				event_target:NW_france_scope = { has_capitulated = yes }
+				event_target:NW_france_scope = {
+					has_capitulated = yes
+					has_tech = basic_light_tank
+				}
 				NOT = { country_exists = event_target:NW_france_scope }
 			}
         }
@@ -563,12 +674,15 @@ BUL_buy_tanks_desicions = {
 		cost = 30
 
 		available = {
-           NOT = { has_war_with = GER }
-		   GER = { has_capitulated = no }
-		   OR = {
-				event_target:NW_france_scope = { has_capitulated = yes }
+			NOT = { has_war_with = GER }
+			GER = { has_capitulated = no }
+			OR = {
+				event_target:NW_france_scope = {
+					has_capitulated = yes
+					has_tech = basic_light_tank
+				}
 				NOT = { country_exists = event_target:NW_france_scope }
-		   }
+			}
         }
 		
 		complete_effect = {
@@ -582,7 +696,7 @@ BUL_buy_tanks_desicions = {
 
 		visible = {
 			NOT = { has_war_with = GER }
-		    GER = { has_capitulated = no }
+			GER = { has_capitulated = no }
 		}
 		
 		fire_only_once = yes
@@ -590,8 +704,11 @@ BUL_buy_tanks_desicions = {
 		cost = 100
 
 		available = {
-           NOT = { has_war_with = GER }
-		   GER = { has_capitulated = no }
+			NOT = { has_war_with = GER }
+			GER = {
+				has_capitulated = no
+				has_tech = basic_medium_td
+			}
         }
 		
 		complete_effect = {
@@ -613,8 +730,11 @@ BUL_buy_tanks_desicions = {
 		cost = 150
 
 		available = {
-           NOT = { has_war_with = GER }
-		   GER = { has_capitulated = no }
+			NOT = { has_war_with = GER }
+			GER = {
+				has_capitulated = no
+				has_tech = improved_medium_tank
+			}
         }
 		
 		complete_effect = {
@@ -630,9 +750,11 @@ BUL_buy_tanks_desicions = {
 			NOT = { has_war_with = GER }
 		    GER = { has_capitulated = no }
 			OR = {
-				event_target:NW_france_scope = { has_capitulated = yes }
+				event_target:NW_france_scope = {
+					has_capitulated = yes
+				}
 				NOT = { country_exists = event_target:NW_france_scope }
-		   }
+			}
 		}
 		
 		fire_only_once = yes
@@ -643,7 +765,10 @@ BUL_buy_tanks_desicions = {
 			NOT = { has_war_with = GER }
 			GER = { has_capitulated = no }
 		    OR = {
-				event_target:NW_france_scope = { has_capitulated = yes }
+				event_target:NW_france_scope = {
+					has_capitulated = yes
+					has_tech = improved_light_tank
+				}
 				NOT = { country_exists = event_target:NW_france_scope }
 			}
         }
@@ -674,7 +799,10 @@ BUL_buy_tanks_desicions = {
            NOT = { has_war_with = GER }
 		   GER = { has_capitulated = no }
 		    OR = {
-				event_target:NW_france_scope = { has_capitulated = yes }
+				event_target:NW_france_scope = {
+					has_capitulated = yes
+					has_tech = basic_medium_tank
+				}
 				NOT = { country_exists = event_target:NW_france_scope }
 		   }
         }
@@ -698,8 +826,11 @@ BUL_buy_tanks_desicions = {
 		cost = 160
 
 		available = {
-           NOT = { has_war_with = GER }
-		   GER = { has_capitulated = no }
+			NOT = { has_war_with = GER }
+			GER = {
+				has_capitulated = no
+				has_tech = improved_medium_tank
+			}
         }
 		
 		complete_effect = {

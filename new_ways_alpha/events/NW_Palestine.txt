@@ -1,0 +1,4125 @@
+﻿###########################
+# Ветка Ирака
+###########################
+
+add_namespace = NWpalestine
+
+#Арабское восстание // BPL
+country_event = {
+	id = NWpalestine.1
+	title = NWpalestine.1.t
+	desc = NWpalestine.1.desc
+	picture = GFX_report_event_generic_rally_3
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.1" }
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		NOT = {
+			has_idea = BPL_arab_strikes
+			has_idea = BPL_arab_revolt
+			has_completed_focus = BPL_jewish_arab_compromise
+		}
+		check_variable = { BPL_arab_tensions_total > 50 }
+	}
+	
+	option = {
+		name = NWpalestine.1.a
+		add_ideas = BPL_arab_strikes
+		add_ideas = BPL_arab_revolt
+		custom_effect_tooltip = NWpalestine_1_tt
+	}
+}
+
+#Еврейское восстание // BPL
+country_event = {
+	id = NWpalestine.2
+	title = NWpalestine.2.t
+	desc = NWpalestine.2.desc
+	picture = GFX_report_event_generic_rally_3
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.2" }
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		NOT = {
+			has_idea = BPL_jews_strikes
+			has_idea = BPL_jews_revolt
+			has_completed_focus = BPL_concessions_jewish_leaders
+		}
+		check_variable = { BPL_jews_tensions_total > 50 }
+	}
+	
+	option = {
+		name = NWpalestine.1.a
+		add_ideas = BPL_jews_strikes
+		add_ideas = BPL_jews_revolt
+		custom_effect_tooltip = NWpalestine_2_tt
+	}
+}
+
+#Провозглашение независимого арабского государства // BPL
+country_event = {
+	id = NWpalestine.3
+	title = NWpalestine.3.t
+	desc = NWpalestine.3.desc
+	picture = GFX_report_event_bpl_3
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.3" }
+	immediate = {
+		set_country_flag = BPL_arab_declare_indepandance_flag
+		hidden_effect = {
+			every_state = {
+				limit = {
+					OR = {
+						state = 1055
+						state = 454
+						state = 978
+					}
+				}
+				PAL = {
+					transfer_state = PREV
+					add_state_core = PREV
+				}
+			}
+			if = {
+				limit = { PAL = { num_divisions < 1 } }
+				PAL = {
+					if = {
+						limit = { NOT = { has_template = "Arab Divisions" } }
+						division_template = {
+							name = "Arab Divisions"
+							is_locked = no
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								infantry = { x = 0 y = 2 }
+								infantry = { x = 1 y = 0 }
+								infantry = { x = 1 y = 1 }
+								infantry = { x = 1 y = 2 }
+							}
+						}
+					}
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"Arab Divisions\" division_template = \"Arab Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+						create_unit = {
+							division = "name = \"Arab Divisions\" division_template = \"Arab Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+						create_unit = {
+							division = "name = \"Arab Divisions\" division_template = \"Arab Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+					}
+				}
+			}
+			clear_variable = BPL_arab_tensions_total
+		}
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		NOT = {
+			has_country_flag = BPL_arab_declare_indepandance_flag
+			has_completed_focus = BPL_concessions_arab_leaders
+		}
+		check_variable = { BPL_arab_tensions_total > 99.99 }
+	}
+	
+	option = {
+		name = NWpalestine.3.a
+		ai_chance = {
+			factor = 75
+		}
+		PAL = {
+			declare_war_on = {
+				target = ROOT
+				type = civil_war
+			}
+			add_civil_war_target = ROOT
+			hidden_effect = { add_ideas = generic_civil_war }
+		}
+		add_civil_war_target = PAL
+		hidden_effect = { add_ideas = generic_civil_war }
+		effect_tooltip = { unlock_national_focus = BPL_jewish_arab_compromise }
+		effect_tooltip = { unlock_national_focus = BPL_concessions_jewish_leaders }
+	}
+	
+	option = {
+		name = NWpalestine.3.b
+		ai_chance = {
+			factor = 25
+		}
+		effect_tooltip = { unlock_national_focus = BPL_jewish_arab_compromise }
+		effect_tooltip = { unlock_national_focus = BPL_concessions_jewish_leaders }
+	}
+	
+	option = {
+		name = NWpalestine.3.c
+		trigger = {
+			is_ai = no
+		}
+		PAL = { change_tag_from = ROOT }
+		hidden_effect = {
+			add_ideas = generic_civil_war
+			random_list = {
+				75 = {
+					PAL = {
+						declare_war_on = {
+							target = ROOT
+							type = civil_war
+						}
+						add_civil_war_target = ROOT
+						add_ideas = generic_civil_war
+					}
+					add_civil_war_target = PAL
+				}
+				25 = { }
+			}
+		}
+	}
+}
+
+#Провозглашение независимого еврейского государства // BPL
+country_event = {
+	id = NWpalestine.4
+	title = NWpalestine.4.t
+	desc = NWpalestine.4.desc
+	picture = GFX_report_event_bpl_4
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.4" }
+	immediate = {
+		set_country_flag = BPL_jews_declare_indepandance_flag
+		hidden_effect = {
+			every_state = {
+				limit = {
+					OR = {
+						state = 979
+						state = 980
+					}
+				}
+				ISR = {
+					transfer_state = PREV
+					add_state_core = PREV
+				}
+			}
+			if = {
+				limit = { ISR = { num_divisions < 1 } }
+				ISR = {
+					if = {
+						limit = { NOT = { has_template = "Jews Divisions" } }
+						division_template = {
+							name = "Jews Divisions"
+							is_locked = no
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								infantry = { x = 0 y = 2 }
+								infantry = { x = 1 y = 0 }
+								infantry = { x = 1 y = 1 }
+								infantry = { x = 1 y = 2 }
+							}
+						}
+					}
+					random_owned_controlled_state = {
+						create_unit = {
+							division = "name = \"Jews Divisions\" division_template = \"Jews Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+						create_unit = {
+							division = "name = \"Jews Divisions\" division_template = \"Jews Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+						create_unit = {
+							division = "name = \"Jews Divisions\" division_template = \"Jews Divisions\" start_experience_factor = 0.2" 
+							owner = PREV
+						}
+					}
+				}
+			}
+			clear_variable = BPL_jews_tensions_total
+		}
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		NOT = {
+			has_country_flag = BPL_jews_declare_indepandance_flag
+			has_completed_focus = BPL_concessions_jewish_leaders
+		}
+		check_variable = { BPL_jews_tensions_total > 99.99 }
+	}
+	
+	option = {
+		name = NWpalestine.3.a
+		ai_chance = {
+			factor = 75
+		}
+		ISR = {
+			declare_war_on = {
+				target = ROOT
+				type = civil_war
+			}
+			add_civil_war_target = ROOT
+			hidden_effect = { add_ideas = generic_civil_war }
+		}
+		add_civil_war_target = ISR
+		hidden_effect = { add_ideas = generic_civil_war }
+		effect_tooltip = { unlock_national_focus = BPL_jewish_arab_compromise }
+		effect_tooltip = { unlock_national_focus = BPL_concessions_arab_leaders }
+	}
+	
+	option = {
+		name = NWpalestine.3.b
+		ai_chance = {
+			factor = 25
+		}
+		effect_tooltip = { unlock_national_focus = BPL_jewish_arab_compromise }
+		effect_tooltip = { unlock_national_focus = BPL_concessions_arab_leaders }
+	}
+	
+	option = {
+		name = NWpalestine.4.c
+		trigger = {
+			is_ai = no
+		}
+		ISR = { change_tag_from = ROOT }
+		hidden_effect = {
+			random_list = {
+				75 = {
+					ISR = {
+						declare_war_on = {
+							target = ROOT
+							type = civil_war
+						}
+						add_civil_war_target = ROOT
+						add_ideas = generic_civil_war
+					}
+					add_civil_war_target = ISR
+					add_ideas = generic_civil_war
+				}
+				25 = { }
+			}
+		}
+	}
+}
+
+#Еврейские беженцы из нацистской Германии // BPL
+country_event = {
+	id = NWpalestine.5
+	title = NWpalestine.5.t
+	desc = NWpalestine.5.desc
+	picture = GFX_report_event_bpl_5
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.5" }
+	
+	mean_time_to_happen = { months = 1 }
+	
+	trigger = {
+		tag = BPL
+		country_exists = GER
+		GER = { has_government = fascism }
+		NOT = { has_completed_focus = BPL_stop_jewish_immigration }
+	}
+	
+	option = {
+		name = NWpalestine.5.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		if = {
+			limit = {
+				any_state = {
+					OR = {
+						is_core_of = SOV
+						is_core_of = POL
+					}
+					is_controlled_by = GER
+				}
+			}
+			add_manpower = 500
+		}
+		else = { add_manpower = 200 }
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 2 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+	
+	option = {
+		name = NWpalestine.5.b
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }	
+			set_temp_variable = { BPL_jews_tensions = 2 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+}
+
+#Еврейские беженцы из фашистской Франции // BPL
+country_event = {
+	id = NWpalestine.6
+	title = NWpalestine.6.t
+	desc = NWpalestine.6.desc
+	picture = GFX_report_event_bpl_6
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.6" }
+	
+	mean_time_to_happen = { months = 1 }
+	
+	trigger = {
+		tag = BPL
+		country_exists = event_target:NW_france_scope
+		event_target:NW_france_scope = { has_government = fascism }
+		NOT = { has_completed_focus = BPL_stop_jewish_immigration }
+	}
+	
+	option = {
+		name = NWpalestine.6.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_manpower = 100
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 1 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+	
+	option = {
+		name = NWpalestine.6.b
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }	
+			set_temp_variable = { BPL_jews_tensions = 1 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+}
+
+#Еврейские мигранты из России // BPL
+country_event = {
+	id = NWpalestine.7
+	title = NWpalestine.7.t
+	desc = NWpalestine.7.desc
+	picture = GFX_report_event_bpl_7
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.7" }
+	
+	mean_time_to_happen = { months = 1 }
+	
+	trigger = {
+		tag = BPL
+		has_completed_focus = BPL_announce_new_aliyah
+		country_exists = SOV
+		SOV = {
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.7.a
+		add_manpower = 1000
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 2 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+}
+
+#Артур Ваучоп уходит на пенсию пульсар // BPL // 3 марта 1938 года
+country_event = {
+	id = NWpalestine.8
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.8" }
+	
+	option = {
+		name = NWpalestine.8.a
+		if = {
+			limit = { has_government = neutrality }
+			country_event = { id = NWpalestine.9 }
+		}
+	}
+}
+
+#Артур Ваучоп уходит на пенсию // BPL // 3 марта 1938 года
+country_event = {
+	id = NWpalestine.9
+	title = NWpalestine.9.t
+	desc = NWpalestine.9.desc
+	picture = GFX_report_event_bpl_9
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.9" }
+	
+	option = {
+		name = NWpalestine.9.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = BPL_creation_of_arab_state_flag
+			}
+		}
+		create_country_leader = {
+			name = "Roy Godfrey Bullen"
+			desc = "POLITICS_ROY_GODFREY_BULLEN_DESC"
+			picture = "gfx/leaders/BPL/Portrait_British_Palestine_Roy_Godfrey_Bullen.dds"
+			expire = "1965.1.1"
+			ideology = despotism
+			traits = {
+				BPL_antiarabist
+				order_controller
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.9.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = BPL_creation_of_jewish_state_flag
+			}
+		}
+		create_country_leader = {
+			name = "Harold MacMichael"
+			desc = "POLITICS_HAROLD_MACMICHAEL_DESC"
+			picture = "gfx/leaders/BPL/Portrait_British_Palestine_Harold_MacMichael.dds"
+			expire = "1965.1.1"
+			ideology = centrism
+			traits = {
+				experienced_colonial_administrator
+				BPL_antisemite
+			}
+		}
+		hidden_effect = { country_event = { id = NWpalestine.10 days = 2435 } }
+	}
+}
+
+#Гарольд МакМайкл уходит с поста пульсар // BPL // 1 ноября 1944 года
+country_event = {
+	id = NWpalestine.10
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.10" }
+	
+	option = {
+		name = NWpalestine.10.a
+		if = {
+			limit = {
+				has_government = neutrality
+				check_variable = { BPL_jews_tensions_total > 5 }
+			}
+			country_event = { id = NWpalestine.11 }
+		}
+	}
+}
+
+#Гарольд МакМайкл уходит с поста // BPL // 1 ноября 1944 года
+country_event = {
+	id = NWpalestine.11
+	title = NWpalestine.11.t
+	desc = NWpalestine.11.desc
+	picture = GFX_report_event_bpl_11
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.11" }
+	
+	option = {
+		name = NWpalestine.11.a
+		create_country_leader = {
+			name = "John Vereker"
+			desc = "POLITICS_JOHN_VEREKER_DESC"
+			picture = "gfx/leaders/ENG/Portrait_Britain_John_Vereker.dds"
+			expire = "1965.1.1"
+			ideology = centrism
+			traits = {
+				fieldmarshal
+			}
+		}
+		hidden_effect = { country_event = { id = NWpalestine.12 days = 369 } }
+	}
+}
+
+#Джон Верекер уходит с поста пульсар // BPL // 5 ноября 1945 года
+country_event = {
+	id = NWpalestine.12
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.12" }
+	
+	option = {
+		name = NWpalestine.12.a
+		if = {
+			limit = { has_government = neutrality }
+			country_event = { id = NWpalestine.13 }
+		}
+	}
+}
+
+#Джон Верекер уходит с поста // BPL // 5 ноября 1945 года
+country_event = {
+	id = NWpalestine.13
+	title = NWpalestine.13.t
+	desc = NWpalestine.13.desc
+	picture = GFX_report_event_bpl_13
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.13" }
+	
+	option = {
+		name = NWpalestine.13.a
+		create_country_leader = {
+			name = "Alan Cunningham"
+			desc = "POLITICS_ALAN_CUNNINGHAM_DESC"
+			picture = "gfx/leaders/ENG/Portrait_Britain_Alan_Cunningham.dds"
+			expire = "1965.1.1"
+			ideology = centrism
+			traits = {
+			}
+		}
+	}
+}
+
+#Причины напряжённой обстановки в Палестине // BPL // 20
+country_event = {
+	id = NWpalestine.14
+	title = NWpalestine.14.t
+	desc = NWpalestine.14.desc
+	picture = GFX_report_event_bpl_14
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.14" }
+	immediate = { hidden_effect = { country_event = { id = NWpalestine.15 days = 20 } } }
+	
+	option = {
+		name = NWpalestine.14.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			subtract_from_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_minus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }		
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		custom_effect_tooltip = BPL_sympathies_of_arabs_tt
+		add_to_variable = { BPL_arabs_sympathies = 1 }
+	}
+	
+	option = {
+		name = NWpalestine.14.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			subtract_from_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_minus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		custom_effect_tooltip = BPL_sympathies_of_jews_tt
+		add_to_variable = { BPL_jews_sympathies = 1 }
+	}
+}
+
+#Евреи и добрая земля // BPL // 40
+country_event = {
+	id = NWpalestine.15
+	title = NWpalestine.15.t
+	desc = NWpalestine.15.desc
+	picture = GFX_report_event_bpl_15
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.15" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_autonomy_state = associated_state } }
+				country_event = { id = NWpalestine.16 days = 20 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.15.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }	
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			subtract_from_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_minus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		custom_effect_tooltip = BPL_sympathies_of_jews_tt
+		add_to_variable = { BPL_jews_sympathies = 1 }
+	}
+	
+	option = {
+		name = NWpalestine.15.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			subtract_from_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_minus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		custom_effect_tooltip = BPL_sympathies_of_arabs_tt
+		add_to_variable = { BPL_arabs_sympathies = 1 }
+	}
+}
+
+#Роль британской колониальной администрации // BPL // 60
+country_event = {
+	id = NWpalestine.16
+	title = NWpalestine.16.t
+	desc = NWpalestine.16.desc
+	picture = GFX_report_event_bpl_16
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.16" }
+	
+	option = {
+		name = NWpalestine.16.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 5000
+				BPL = {
+					has_country_flag = NW_BPL_AI_NEUTRALITY
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+		}
+		custom_effect_tooltip = NWpalestine_16_tt1
+	}
+	
+	option = {
+		name = NWpalestine.16.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					has_country_flag = NW_BPL_AI_NEUTRALITY
+				}
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+		}
+		add_political_power = -150
+		custom_effect_tooltip = NWpalestine_16_tt2
+		set_country_flag = NWpalestine_16_b_flag
+	}
+}
+
+#Комиссия Вудхеда // OR OVERLORD-BPL
+country_event = {
+	id = NWpalestine.17
+	title = NWpalestine.17.t
+	desc = NWpalestine.17.desc
+	picture = GFX_report_event_bpl_17
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.17" }
+	
+	option = {
+		name = NWpalestine.17.a
+		country_event = { id = NWpalestine.20 hours = 6 }
+		if = {
+			limit = {
+				NOT = { tag = BPL }
+				JOR = {
+					is_subject_of = ENG
+					is_subject_of = BPL
+				}
+			}
+			JOR = { country_event = { id = NWpalestine.18 hours = 6  } }
+		}
+	}
+}
+
+#Наше мнение о разделе Палестины // JOR
+country_event = {
+	id = NWpalestine.18
+	title = NWpalestine.18.t
+	desc = NWpalestine.18.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.18" }
+	
+	option = {
+		name = NWpalestine.18.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -50
+		custom_effect_tooltip = NWpalestine_18_tt1
+		hidden_effect = { FROM = { country_event = { id = NWpalestine.19 hours = 6  } } }
+	}
+	
+	option = {
+		name = NWpalestine.18.b
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+#Трансиордания выразила заинтересованность принять участие в разделе Палестины // OR OVERLORD-BPL
+country_event = {
+	id = NWpalestine.19
+	title = NWpalestine.19.t
+	desc = NWpalestine.19.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.19" }
+	
+	option = {
+		name = NWpalestine.19.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -50
+		custom_effect_tooltip = NWpalestine_19_tt
+	}
+	
+	option = {
+		name = NWpalestine.19.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		add_opinion_modifier = { target = FROM modifier = diplomatic_affront }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = diplomatic_affront } }
+	}
+}
+
+#Арабы высказывают своё мнение // OR OVERLORD-BPL
+country_event = {
+	id = NWpalestine.20
+	title = NWpalestine.20.t
+	desc = {
+		text = NWpalestine.20.desc1
+		trigger = { BPL = { check_variable = { BPL_arab_tensions_total > 49.999 } } }
+	}
+	desc = {
+		text = NWpalestine.20.desc2
+		trigger = {
+			BPL = { 
+				check_variable = { BPL_arab_tensions_total < 50 }
+				check_variable = { BPL_arab_tensions_total > 9.999 }
+			}
+		}
+	}
+	desc = {
+		text = NWpalestine.20.desc3
+		trigger = { BPL = { check_variable = { BPL_arab_tensions_total < 10 } } }
+	}
+	picture = GFX_report_event_bpl_20
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.20" }
+	
+	option = {
+		name = NWpalestine.20.a
+		if = {
+			limit = { BPL = { check_variable = { BPL_arab_tensions_total > 49.999 } } }
+			custom_effect_tooltip = NWpalestine_20_tt1
+			set_country_flag = NWpalestine_20_a_1
+		}
+		else_if = {
+			limit = {
+				BPL = { 
+					check_variable = { BPL_arab_tensions_total < 50 }
+					check_variable = { BPL_arab_tensions_total > 9.999 }
+				}
+			}
+			custom_effect_tooltip = NWpalestine_20_tt2
+			set_country_flag = NWpalestine_20_a_2
+		}
+		else = { custom_effect_tooltip = NWpalestine_20_tt3 }
+		country_event = { id = NWpalestine.21 hours = 6 }
+	}
+}
+
+#Евреи высказывают своё мнение // OR OVERLORD-BPL
+country_event = {
+	id = NWpalestine.21
+	title = NWpalestine.21.t
+	desc = {
+		text = NWpalestine.21.desc1
+		trigger = { BPL = { check_variable = { BPL_jews_tensions_total > 49.999 } } }
+	}
+	desc = {
+		text = NWpalestine.21.desc2
+		trigger = {
+			BPL = { 
+				check_variable = { BPL_jews_tensions_total < 50 }
+				check_variable = { BPL_jews_tensions_total > 9.999 }
+			}
+		}
+	}
+	desc = {
+		text = NWpalestine.21.desc3
+		trigger = { BPL = { check_variable = { BPL_jews_tensions_total < 10 } } }
+	}
+	picture = GFX_report_event_bpl_21
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.21" }
+	
+	option = {
+		name = NWpalestine.21.a
+		if = {
+			limit = { BPL = { check_variable = { BPL_jews_tensions_total > 49.999 } } }
+			custom_effect_tooltip = NWpalestine_21_tt1
+			set_country_flag = NWpalestine_21_a_1
+		}
+		else_if = {
+			limit = {
+				BPL = { 
+					check_variable = { BPL_jews_tensions_total < 50 }
+					check_variable = { BPL_jews_tensions_total > 9.999 }
+				}
+			}
+			custom_effect_tooltip = NWpalestine_21_tt2
+			set_country_flag = NWpalestine_21_a_2
+		}
+		else = { custom_effect_tooltip = NWpalestine_21_tt3 }
+		country_event = { id = NWpalestine.22 hours = 6 }
+	}
+}
+
+#Определение судьбы подмандатной Палестины // OR OVERLORD-BPL
+country_event = {
+	id = NWpalestine.22
+	title = {
+		text = NWpalestine.22.t1
+		trigger = { NOT = { has_country_flag = BPL_no_transfer_ownership_of_mandate } }
+	}
+	title = {
+		text = NWpalestine.22.t2
+		trigger = { has_country_flag = BPL_no_transfer_ownership_of_mandate }
+	}
+	desc = {
+		text = NWpalestine.22.desc1
+		trigger = { NOT = { has_country_flag = BPL_no_transfer_ownership_of_mandate } }
+	}
+	desc = {
+		text = NWpalestine.22.desc2
+		trigger = { has_country_flag = BPL_no_transfer_ownership_of_mandate }
+	}
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.22" }
+	
+	option = {
+		name = NWpalestine.22.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+		}
+		trigger = {
+			always = no
+			NOT = {
+				country_exists = PAL
+				country_exists = ISR
+			}
+		}
+		add_political_power = -50
+		#country_event = { id = NWpalestine.000 hours = 6 }
+	}
+	
+	option = {
+		name = NWpalestine.22.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					has_country_flag = NWpalestine_16_b_flag
+					check_variable = { BPL_jews_sympathies > BPL_arabs_sympathies }
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					has_country_flag = NWpalestine_16_b_flag
+					check_variable = { BPL_jews_sympathies < BPL_arabs_sympathies }
+				}
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+		}
+		trigger = {
+			NOT = { country_exists = ISR }
+		}
+		if = {
+			limit = { NOT = { tag = event_target:NW_france_scope } }
+			if = {
+				limit = { BPL = { check_variable = { BPL_arabs_sympathies = 1 } } }
+				add_political_power = -50
+			}
+			else_if = {
+				limit = { BPL = { check_variable = { BPL_arabs_sympathies = 2 } } }
+				add_political_power = -100
+			}
+		}
+		BPL = { country_event = { id = NWpalestine.23 hours = 6 } }
+		every_country = {
+			limit = {
+				OR = {
+					tag = IRQ
+					tag = PER
+					tag = SAU
+					tag = JOR
+					tag = SYR
+					tag = LEB
+				}
+			}
+			add_war_support = 0.1
+			add_opinion_modifier = { target = ROOT modifier = diplomatic_affront }
+			ROOT = { add_opinion_modifier = { target = PREV modifier = diplomatic_affront } }
+		}
+	}
+	
+	option = {
+		name = NWpalestine.22.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					has_country_flag = NWpalestine_16_b_flag
+					check_variable = { BPL_arabs_sympathies > BPL_jews_sympathies }
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					has_country_flag = NWpalestine_16_b_flag
+					check_variable = { BPL_arabs_sympathies < BPL_jews_sympathies }
+				}
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+					}
+				}
+			}
+		}
+		trigger = {
+			NOT = { country_exists = PAL }
+		}
+		if = {
+			limit = { NOT = { tag = event_target:NW_france_scope } }
+			if = {
+				limit = { BPL = { check_variable = { BPL_jews_sympathies = 0 } } }
+				add_political_power = -50
+			}
+			else_if = {
+				limit = { BPL = { check_variable = { BPL_jews_sympathies = 1 } } }
+				add_political_power = -100
+			}
+			else_if = {
+				limit = { BPL = { check_variable = { BPL_jews_sympathies = 2 } } }
+				add_political_power = -150
+			}
+		}
+		BPL = { country_event = { id = NWpalestine.24 hours = 6 } }
+		custom_effect_tooltip = NWpalestine_22_c_tt
+	}
+	
+	option = {
+		name = NWpalestine.22.d
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 5000
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+			modifier = {
+				factor = 0
+				BPL = { has_country_flag = NWpalestine_16_b_flag }
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					has_country_flag = NW_BPL_AI_NEUTRALITY
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+		}
+		add_stability = -0.05
+		if = {
+			limit = { NOT = { tag = event_target:NW_france_scope } }
+			if = {
+				limit = { NOT = { BPL = { has_country_flag = NWpalestine_16_b_flag } } }
+				add_political_power = -20
+			}
+			else = {
+				add_political_power = -100
+			}
+		}
+		BPL = { country_event = { id = NWpalestine.25 hours = 6 } }
+	}
+	
+	option = {
+		name = NWpalestine.22.e
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+			modifier = {
+				add = 5000
+				BPL = {
+					has_country_flag = NWpalestine_16_b_flag
+					check_variable = { BPL_arabs_sympathies = BPL_jews_sympathies }
+				}
+			}
+			modifier = {
+				factor = 0
+				BPL = {
+					OR = {
+						has_country_flag = NW_BPL_AI_NEUTRALITY
+						has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+						has_country_flag = NW_BPL_AI_TECHNOCRAT
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+						has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+						has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+						has_country_flag = NW_BPL_AI_FASCIST_JEWS
+						has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+						has_country_flag = NW_BPL_AI_TROZKIST
+						has_country_flag = NW_BPL_AI_FASCIST_ARAB
+						has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+						has_country_flag = NW_BPL_AI_MONARCHY_ARAB
+					}
+				}
+			}
+		}
+		trigger = {
+			tag = ENG
+			event_target:NW_france_scope = {
+				NOT = {
+					has_war_with = ENG
+					has_government = communism
+					has_government = trozkism
+				}
+			}
+			BPL = { NOT = { has_autonomy_state = associated_state } }
+			NOT = { has_country_flag = BPL_no_transfer_ownership_of_mandate }
+		}
+		event_target:NW_france_scope = {
+			country_event = { id = NWpalestine.26 hours = 6 }
+			custom_effect_tooltip = NWpalestine_22_e_tt
+		}
+	}
+	
+	option = {
+		name = NWpalestine.22.g
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				BPL = { has_country_flag = NWpalestine_16_b_flag }
+			}
+			modifier = {
+				factor = 0
+				BPL = { NOT = { has_country_flag = NWpalestine_16_b_flag } }
+			}
+		}
+		trigger = { has_country_flag = BPL_no_transfer_ownership_of_mandate }
+		set_autonomy = {
+			target = BPL
+			autonomy_state = autonomy_free
+		}
+		BPL = { country_event = { id = NWpalestine.27 hours = 6 } }
+	}
+}
+
+#Создание еврейского государства // BPL
+country_event = {
+	id = NWpalestine.23
+	title = NWpalestine.23.t
+	desc = NWpalestine.23.desc
+	picture = GFX_report_event_bpl_23_28
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.23" }
+	
+	option = {
+		name = NWpalestine.23.a
+		set_country_flag = BPL_creation_of_jewish_state_flag
+		effect_tooltip = { unlock_national_focus = BPL_concessions_jewish_leaders }
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			if = {
+				limit = { has_country_flag = NWpalestine_20_a_1 }
+				set_temp_variable = { BPL_arab_tensions = 90 }
+				add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+				custom_effect_tooltip = BPL_arab_tensions_plus_tt
+				clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+				clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+			}
+			if = {
+				limit = { has_country_flag = NWpalestine_20_a_2 }
+				set_temp_variable = { BPL_arab_tensions = 40 }
+				add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+				custom_effect_tooltip = BPL_arab_tensions_plus_tt
+				clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+				clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+			}
+		}
+	}
+}
+
+#Создание арабского государства // BPL
+country_event = {
+	id = NWpalestine.24
+	title = NWpalestine.24.t
+	desc = NWpalestine.24.desc
+	picture = GFX_report_event_bpl_24
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.24" }
+	
+	option = {
+		name = NWpalestine.24.a
+		set_country_flag = BPL_creation_of_arab_state_flag
+		effect_tooltip = { unlock_national_focus = BPL_concessions_arab_leaders }
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			if = {
+				limit = { has_country_flag = NWpalestine_21_a_1 }
+				set_temp_variable = { BPL_jews_tensions = 90 }
+				add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+				custom_effect_tooltip = BPL_jews_tensions_plus_tt
+				clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+				clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+			}
+			if = {
+				limit = { has_country_flag = NWpalestine_21_a_2 }
+				set_temp_variable = { BPL_jews_tensions = 40 }
+				add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+				custom_effect_tooltip = BPL_jews_tensions_plus_tt
+				clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+				clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+			}
+		}
+	}
+}
+
+#Сохранение статуса-кво // BPL
+country_event = {
+	id = NWpalestine.25
+	title = NWpalestine.25.t
+	desc = NWpalestine.25.desc
+	picture = GFX_report_event_bpl_25
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.25" }
+	
+	option = {
+		name = NWpalestine.25.a
+		set_country_flag = BPL_jewish_arab_compromise_flag
+		effect_tooltip = { unlock_national_focus = BPL_jewish_arab_compromise }
+		if = {
+			limit = {
+				has_variable = BPL_jews_tensions_total
+				has_country_flag = NWpalestine_21_a_1
+			}
+			set_temp_variable = { BPL_jews_tensions = 20 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		else_if = {
+			limit = {
+				has_variable = BPL_arab_tensions_total
+				has_country_flag = NWpalestine_20_a_1
+			}
+			set_temp_variable = { BPL_arab_tensions = 20 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+}
+
+#Британия хочет передать нам мандат на Палестину // FRA
+country_event = {
+	id = NWpalestine.26
+	title = NWpalestine.26.t
+	desc = NWpalestine.26.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.26" }
+	
+	option = {
+		name = NWpalestine.26.a
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0
+				BPL = { has_country_flag = NWpalestine_16_b_flag }
+			}
+		}
+		hidden_effect = { BPL = { save_party_popularity = yes } }
+		add_political_power = 50
+		add_opinion_modifier = { target = FROM modifier = BPL_transfer_ownership_of_mandate }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = BPL_transfer_ownership_of_mandate } }
+		set_autonomy = {
+			target = BPL
+			autonomy_state = autonomy_colony
+		}
+		BPL = {
+			set_cosmetic_tag = BPL_FRA
+			create_country_leader = {
+				name = "André Spire"
+				desc = "POLITICS_ANDRE_SPIRE_DESC"
+				picture = "gfx/leaders/BPL/Portrait_French_Palestine_Andre_Spire.dds"
+				expire = "1965.1.1"
+				ideology = centrism
+				traits = {
+				}
+			}
+		}
+		country_event = { id = NWpalestine.22 hours = 6 }
+		hidden_effect = { BPL = { load_party_popularity = yes } }
+	}
+	
+	option = {
+		name = NWpalestine.26.b
+		ai_chance = {
+			factor = 25
+		}
+		add_opinion_modifier = { target = FROM modifier = BPL_no_transfer_ownership_of_mandate }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = BPL_no_transfer_ownership_of_mandate } }
+		hidden_effect = {
+			FROM = {
+				set_country_flag = BPL_no_transfer_ownership_of_mandate
+				country_event = { id = NWpalestine.22 hours = 6 }
+			}
+		}
+	}
+}
+
+#Британия отказывается от мандата на Палестину // BPL
+country_event = {
+	id = NWpalestine.27
+	title = NWpalestine.27.t
+	desc = NWpalestine.27.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.27" }
+	
+	option = {
+		name = NWpalestine.27.a
+		ai_chance = {
+			factor = 50
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.5
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		complete_national_focus = BPL_concessions_arab_leaders
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 90 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+	
+	option = {
+		name = NWpalestine.27.b
+		ai_chance = {
+			factor = 50
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.5
+		}
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = yes
+		}
+		complete_national_focus = BPL_concessions_jewish_leaders
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 90 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+	}
+}
+
+#Победа еврейства в Палестине // IRQ, SYR, PER, EGY, TUR (при фашизме), JOR, LEB, SAU, MOR, TUN, YEM, OMA, IOM, UAE, QAT, BHR и KUW 
+country_event = {
+	id = NWpalestine.28
+	title = NWpalestine.28.t
+	desc = NWpalestine.28.desc
+	picture = GFX_report_event_bpl_23_28
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.28" }
+	
+	option = {
+		name = NWpalestine.28.a
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0
+				OR = {
+					has_government = democratic
+					has_government = trozkism
+				}
+			}
+		}
+		add_stability = -0.03
+		add_threat = 1
+		add_opinion_modifier = { target = FROM modifier = BPL_concessions_jewish_leaders_2 }
+		FROM = {
+			add_opinion_modifier = { target = ROOT modifier = BPL_concessions_jewish_leaders_2 }
+			OVERLORD = { ROOT = { add_opinion_modifier = { target = PREV modifier = BPL_concessions_jewish_leaders_2 } } }
+		}
+	}
+	
+	option = {
+		name = NWpalestine.28.b
+		ai_chance = {
+			factor = 1
+		}
+		add_stability = -0.1
+		add_opinion_modifier = { target = FROM modifier = BPL_concessions_jewish_leaders_3 }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = BPL_concessions_jewish_leaders_3 } }
+	}
+}
+
+#Общественный энтузиазм создания кибуцев // BPL
+country_event = {
+	id = NWpalestine.29
+	title = NWpalestine.29.t
+	desc = NWpalestine.29.desc
+	picture = GFX_report_event_bpl_29
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.29" }
+	
+	mean_time_to_happen = { days = 30 }
+	
+	trigger = {
+		tag = BPL
+		has_completed_focus = BPL_concessions_jewish_leaders
+		OR = {
+			has_completed_focus = BPL_bet_on_alum
+			has_completed_focus = BPL_support_ha_kibbutz_ha_meuhad
+		}
+		check_variable = { BPL_arab_tensions_total > 50 }
+	}
+	
+	option = {
+		name = NWpalestine.29.a
+		ai_chance = {
+			factor = 50
+		}
+		add_timed_idea = { idea = BPL_growth_of_kibbutz_movement days = 360 }
+	}
+	
+	option = {
+		name = NWpalestine.29.b
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -10
+	}
+}
+
+#Представители Еврейского университета ставят на Эйнштейна // BPL
+country_event = {
+	id = NWpalestine.30
+	title = NWpalestine.30.t
+	desc = NWpalestine.30.desc
+	picture = GFX_report_event_bpl_30
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.30" }
+	immediate = { set_country_flag = NWpalestine_30_flag }
+	
+	option = {
+		name = NWpalestine.30.a
+		add_timed_idea = { idea = BPL_einsteins_growing_popularity_as_politician days = 365 }
+		add_popularity = {
+			ideology = technocracy
+			popularity = 0.05
+		}
+		if = {
+			limit = { NOT = { has_completed_focus = BPL_declare_israeli_technate } }
+			add_tech_bonus = {
+				name = NWpalestine.30.t
+				bonus = 0.5
+				uses = 1
+				category = industry
+			}
+			add_tech_bonus = {
+				name = NWpalestine.30.t
+				bonus = 0.5
+				uses = 1
+				category = support_tech
+			
+			}
+			add_tech_bonus = {
+				name = NWpalestine.30.t
+				bonus = 0.5
+				uses = 1
+				category = artillery
+			
+			}
+			add_tech_bonus = {
+				name = NWpalestine.30.t
+				bonus = 0.5
+				uses = 1
+				category = motorized_equipment
+			}
+		}
+	}
+}
+
+#Израиль налаживает связи с кланом Ротшильдов // USA
+country_event = {
+	id = NWpalestine.31
+	title = NWpalestine.31.t
+	desc = NWpalestine.31.desc
+	picture = GFX_report_event_bpl_31
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.31" }
+	
+	option = {
+		name = NWpalestine.31.a
+		ai_chance = {
+			factor = 75
+		}
+		random_owned_controlled_state = {
+			limit = { industrial_complex > 0 }
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		FROM = {
+			random_owned_controlled_state = {
+				limit = { 
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = BPL_connections_with_jewish_bankers }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = BPL_connections_with_jewish_bankers } }
+		add_ideas = BPL_connections_with_jewish_bankers
+	}
+	
+	option = {
+		name = NWpalestine.31.b
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Исчезновение дешёвой рабочей силы // BPL
+country_event = {
+	id = NWpalestine.32
+	title = NWpalestine.32.t
+	desc = NWpalestine.32.desc
+	picture = GFX_report_event_bpl_32
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.32" }
+	
+	option = {
+		name = NWpalestine.32.a
+		add_timed_idea = { idea = BPL_negative_consequences_of_expulsion_arabs days = 280 }
+		set_country_flag = NWpalestine_32_flag
+	}
+}
+
+#Митинги левых // BPL
+country_event = {
+	id = NWpalestine.33
+	title = NWpalestine.33.t
+	desc = NWpalestine.33.desc
+	picture = GFX_report_event_bpl_33
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.33" }
+	
+	mean_time_to_happen = {
+		days = 140
+		modifier = {
+			factor = 0.01 # If true multiply 140 by 0.01 = 1.4
+			communism > 0.499
+		}
+	}
+	
+	trigger = {
+		tag = BPL
+		has_country_flag = NWpalestine_32_flag
+		NOT = { has_government = communism }
+		OR = {
+			has_idea = BPL_negative_consequences_of_expulsion_arabs
+			communism > 0.499
+		}
+	}
+	
+	option = {
+		name = NWpalestine.33.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+			}
+		}
+		add_stability = -0.1
+		add_political_power = -50
+		add_popularity = {
+			ideology = communism
+			popularity = -0.1
+		}
+	}
+	
+	option = {
+		name = NWpalestine.33.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_BPL_AI_TECHNOCRAT
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+					has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+					has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+					has_country_flag = NW_BPL_AI_FASCIST_JEWS
+				}
+			}
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = communism
+			elections_allowed = no
+		}
+	}
+}
+
+#Сионисты-ревизионисты требуют вернуть Жаботинского в еврейское агентство // BPL
+country_event = {
+	id = NWpalestine.34
+	title = NWpalestine.34.t
+	desc = NWpalestine.34.desc
+	picture = GFX_report_event_bpl_34
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.34" }
+	
+	option = {
+		name = NWpalestine.34.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+					has_country_flag = NW_BPL_AI_TECHNOCRAT
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+					has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+					has_country_flag = NW_BPL_AI_FASCIST_JEWS
+				}
+			}
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.05
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		add_political_power = -20
+		effect_tooltip = { unlock_national_focus = BPL_revision_zionism }
+		set_country_flag = BPL_revision_zionism_flag
+	}
+	
+	option = {
+		name = NWpalestine.34.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.03
+		add_political_power = -10
+		custom_effect_tooltip = NWpalestine_34_b_tt
+		hidden_effect = { country_event = { id = NWpalestine.35 days = 10 } }
+	}
+}
+
+#Союз бунтарей устраивает митинги в Иерусалиме // BPL
+country_event = {
+	id = NWpalestine.35
+	title = NWpalestine.35.t
+	desc = NWpalestine.35.desc
+	picture = GFX_report_event_bpl_35
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.35" }
+	
+	option = {
+		name = NWpalestine.35.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+					has_country_flag = NW_BPL_AI_TECHNOCRAT
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+					has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+					has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+					has_country_flag = NW_BPL_AI_FASCIST_JEWS
+				}
+			}
+		}
+		add_timed_idea = { idea = BPL_meetings_of_rebel_union days = 30 }
+	}
+	
+	option = {
+		name = NWpalestine.35.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_FASCIST_JEWS
+			}
+		}
+		add_political_power = -100
+	}
+	
+	option = {
+		name = NWpalestine.35.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_BPL_AI_COMMUNIST_JEWS
+					has_country_flag = NW_BPL_AI_TECHNOCRAT
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+					has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+					has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+					has_country_flag = NW_BPL_AI_DEMOCRATIC_JEWS
+				}
+			}
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.1
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		set_country_flag = BPL_radical_revisionism_flag
+		add_ideas = BPL_zeev_jabotinsky
+	}
+}
+
+#Эмиграция Мартина Бубера в Палестину // BPL
+country_event = {
+	id = NWpalestine.36
+	title = NWpalestine.36.t
+	desc = NWpalestine.36.desc
+	picture = GFX_report_event_bpl_36
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.36" }
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		date > 1938.2.27
+		NOT = { has_completed_focus = BPL_concessions_arab_leaders }
+	}
+	
+	option = {
+		name = NWpalestine.36.a
+		ai_chance = {
+			factor = 90
+		}
+		set_country_flag = BPL_martin_buber_flag
+		add_political_power = -20
+		add_popularity = {
+			ideology = anarchism
+			popularity = 0.03
+		}
+	}
+	
+	option = {
+		name = NWpalestine.36.b
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_ANARCHIST_JEWS
+			}
+		}
+	}
+}
+
+#Израильский технат предлагает нам «подтолкнуть» наш научный прогресс // NOT BPL
+country_event = {
+	id = NWpalestine.37
+	title = NWpalestine.37.t
+	desc = NWpalestine.37.desc
+	picture = GFX_report_event_bpl_37
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.37" }
+	
+	option = {
+		name = NWpalestine.37.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.9
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.8
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.7
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.6
+				}
+			}
+			modifier = {
+				add = 50
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.5
+				}
+			}
+			modifier = {
+				add = 15
+				has_war = yes
+			}
+			modifier = {
+				add = 50
+				has_government = FROM
+			}
+		}
+		FROM = {
+			set_autonomy = {
+				target = ROOT
+				autonomy_state = autonomy_dominion
+			}
+		}
+		add_ideas = PER_cooperation_with_israel_technocrats
+	}
+	
+	option = {
+		name = NWpalestine.37.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 15
+				FROM = { has_war = yes }
+			}
+			modifier = {
+				add = 25
+				strength_ratio = {
+					tag = FROM
+					ratio > 1
+				}
+			}
+		}
+		FROM = { country_event = { id = NWpalestine.38 days = 1 } }
+	}
+}
+
+#FROM отказ в соглашении // BPL
+country_event = {
+	id = NWpalestine.38
+	title = NWpalestine.38.t
+	desc = NWpalestine.38.desc
+	picture = GFX_report_event_bpl_38
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.38" }
+	
+	option = {
+		name = NWpalestine.38.a
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = FROM
+		}
+		add_ai_strategy = {
+			type = antagonize
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = FROM
+			value = 200
+		}
+	}
+}
+
+#Глава Иудейского царства // BPL
+country_event = {
+	id = NWpalestine.39
+	title = NWpalestine.39.t
+	desc = NWpalestine.39.desc
+	picture = GFX_report_event_bpl_39
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.39" }
+	
+	option = {
+		name = NWpalestine.39.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_MONARCHY_JEWS_RELIGIOUS_ZIONISM
+			}
+		}
+		set_party_name = { ideology = monarchy long_name = BPL_ginzburg_dynasty name = BPL_ginzburg_dynasty }
+		add_popularity = {
+			ideology = monarchy
+			popularity = 0.2
+		}
+		set_politics = {
+			ruling_party = monarchy
+			elections_allowed = no
+		}
+		create_country_leader = {
+			name = "Nicolas de Gunzburg"
+			desc = "POLITICS_NICOLAS_DE_GUNZBURG_DESC"
+			picture = "gfx/leaders/BPL/Portrait_Israel_Nicolas_de_Gunzburg.dds"
+			expire = "1965.1.1"
+			ideology = monarchy_ideology
+			traits = {
+				secular_lion
+				cultural_figure
+				banker
+			}
+		}
+		set_country_flag = BPL_modernizing_concept_of_zionism_flag
+		effect_tooltip = { unlock_national_focus = BPL_modernizing_concept_of_zionism }
+	}
+	
+	option = {
+		name = NWpalestine.39.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_MONARCHY_JEWS_MODERNIZING_CONCEPT_OF_ZIONISM
+			}
+		}
+		add_popularity = {
+			ideology = monarchy
+			popularity = 0.3
+		}
+		set_politics = {
+			ruling_party = monarchy
+			elections_allowed = no
+		}
+		set_country_flag = BPL_religious_zionism_flag
+		effect_tooltip = { unlock_national_focus = BPL_religious_zionism }
+	}
+}
+
+#Иудея требует передать синайский полуостров // 453 owner
+country_event = {
+	id = NWpalestine.40
+	title = NWpalestine.40.t
+	desc = NWpalestine.40.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.40" }
+	
+	option = {
+		name = NWpalestine.40.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = { transfer_state = 453 }
+	}
+	
+	option = {
+		name = NWpalestine.40.b
+		ai_chance = {
+			factor = 25
+		}
+		FROM = { country_event = { id = NWpalestine.41 days = 1 } }
+	}
+}
+
+#Нам отказали в синайской земле // BPL
+country_event = {
+	id = NWpalestine.41
+	title = NWpalestine.41.t
+	desc = NWpalestine.41.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.41" }
+	
+	option = {
+		name = NWpalestine.41.a
+		create_wargoal = {
+			type = take_state_focus
+			target = FROM
+			generator = { 453 }
+		}
+		add_ai_strategy = {
+			type = antagonize
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = FROM
+			value = 200
+		}
+	}
+}
+
+#Палестинские фашисты желают создать военный союз // ITA
+country_event = {
+	id = NWpalestine.42
+	title = NWpalestine.42.t
+	desc = NWpalestine.42.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.42" }
+	
+	option = {
+		name = NWpalestine.42.a
+		ai_chance = {
+			factor = 90
+		}
+		if = {
+			limit = { is_faction_leader = no }
+			set_rule = { can_create_factions = yes }
+			set_faction_name = ITA_fascist_international
+		}
+		add_to_faction = FROM
+		hidden_effect = {
+			if = {
+				limit = { GER = { has_government = fascism } }
+				add_ai_strategy = {
+					type = alliance
+					id = "GER"
+					value = -200
+				}
+				GER = {
+					add_ai_strategy = {
+						type = alliance
+						id = ROOT
+						value = -200
+					}
+				}
+			}
+			if = {
+				limit = { event_target:NW_france_scope = { has_government = fascism } }
+				event_target:NW_france_scope = {
+					add_ai_strategy = {
+						type = alliance
+						id = ROOT
+						value = -200
+					}
+					ROOT = {
+						add_ai_strategy = {
+							type = alliance
+							id = PREV
+							value = -200
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.42.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = NWpalestine.43 days = 1 } }
+	}
+}
+
+#Итальянский отказ // BPL
+country_event = {
+	id = NWpalestine.43
+	title = NWpalestine.43.t
+	desc = NWpalestine.43.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.43" }
+	
+	option = {
+		name = NWpalestine.43.a
+	}
+}
+
+#Потеря лидерства на рынке цитрусовых // SPR
+country_event = {
+	id = NWpalestine.44
+	title = NWpalestine.44.t
+	desc = NWpalestine.44.desc
+	picture = GFX_report_event_bpl_44
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.44" }
+	
+	option = {
+		name = NWpalestine.44.a
+		add_timed_idea = { idea = BPL_remove_spain_from_position_of_leader_of_citrus_market_idea_2 days = 180 }
+	}
+}
+
+#Смерть Отто Варбурга // BPL
+country_event = {
+	id = NWpalestine.45
+	title = NWpalestine.45.t
+	desc = NWpalestine.45.desc
+	picture = GFX_report_event_bpl_45
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.45" }
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = BPL
+		date > 1938.1.10
+	}
+	
+	option = {
+		name = NWpalestine.45.a
+		add_political_power = -10
+		capital_scope = { add_manpower = -1 }
+		set_country_flag = BPL_otto_warburg_death_flag
+		if = {
+			limit = { has_idea = BPL_otto_warburg }
+			remove_ideas = BPL_otto_warburg
+		}
+	}
+}
+
+#Арабские рабочие недовольны падением уровня жизни // BPL
+country_event = {
+	id = NWpalestine.46
+	title = NWpalestine.46.t
+	desc = NWpalestine.46.desc
+	picture = GFX_report_event_bpl_46_48
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.46" }
+	
+	option = {
+		name = NWpalestine.46.a
+		add_ideas = BPL_negative_consequences_of_expulsion_jews
+		hidden_effect = {
+			country_event = { id = NWpalestine.47 days = 140 }
+		}
+	}
+}
+
+#Коммунистическая партия требует сформировать левое правительство пульсар // BPL // +140
+country_event = {
+	id = NWpalestine.47
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.47" }
+	
+	option = {
+		name = NWpalestine.47.a
+		if = {
+			limit = { has_idea = BPL_negative_consequences_of_expulsion_jews }
+			country_event = { id = NWpalestine.48 }
+		}
+	}
+}
+
+#Коммунистическая партия требует сформировать левое правительство // BPL
+country_event = {
+	id = NWpalestine.48
+	title = NWpalestine.48.t
+	desc = NWpalestine.48.desc
+	picture = GFX_report_event_bpl_46_48
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.48" }
+	
+	option = {
+		name = NWpalestine.48.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+					has_country_flag = NW_BPL_AI_TROZKIST
+				}
+			}
+		}
+		add_political_power = -100
+		add_stability = -0.1
+	}
+	
+	option = {
+		name = NWpalestine.48.b
+		ai_chance = {
+			factor = 50
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.1
+		}
+		set_politics = {
+			ruling_party = communism
+			elections_allowed = no
+		}
+		swap_ideas = {
+			remove_idea = BPL_negative_consequences_of_expulsion_jews
+			add_idea = BPL_negative_consequences_of_expulsion_jews_2
+		}
+	}
+}
+
+#Конфликт кланов Хусейни и Нашишиби // BPL
+country_event = {
+	id = NWpalestine.49
+	title = NWpalestine.49.t
+	desc = NWpalestine.49.desc
+	picture = GFX_report_event_bpl_49
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.49" }
+	
+	option = {
+		name = NWpalestine.49.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_FASCIST_ARAB
+			}
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.05
+		}
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		add_timed_idea = { idea = BPL_exile_of_husseini_clan days = 360 }
+	}
+	
+	option = {
+		name = NWpalestine.49.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_DEMOCRATIC_ARAB
+			}
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		add_timed_idea = { idea = BPL_exile_of_nashashibi_clan days = 90 }
+	}
+}
+
+#Раскол коммунистической партии // BPL
+country_event = {
+	id = NWpalestine.50
+	title = NWpalestine.50.t
+	desc = NWpalestine.50.desc
+	picture = GFX_report_event_bpl_50
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.50" }
+	
+	option = {
+		name = NWpalestine.50.a
+		add_political_power = -50
+		add_stability = -0.05
+	}
+}
+
+#Троцкисты во главе с Яброй Николой набирают популярность // BPL
+country_event = {
+	id = NWpalestine.51
+	title = NWpalestine.51.t
+	desc = NWpalestine.51.desc
+	picture = GFX_report_event_bpl_51
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.51" }
+	
+	option = {
+		name = NWpalestine.51.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+			}
+		}
+		add_timed_idea = { idea = BPL_trotskyist_propaganda days = 180 }
+	}
+	
+	option = {
+		name = NWpalestine.51.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_TROZKIST
+			}
+		}
+		add_political_power = -100
+	}
+}
+
+#Митинг за утверждение Ябры Николы главой государства // BPL
+country_event = {
+	id = NWpalestine.52
+	title = NWpalestine.52.t
+	desc = NWpalestine.52.desc
+	picture = GFX_report_event_bpl_52
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.52" }
+	
+	option = {
+		name = NWpalestine.52.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_COMMUNIST_ARAB
+			}
+		}
+		add_popularity = {
+			ideology = trozkism
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = trozkism
+			elections_allowed = yes
+		}
+	}
+	
+	option = {
+		name = NWpalestine.52.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_BPL_AI_TROZKIST
+			}
+		}
+		add_political_power = -50
+		add_stability = -0.1
+	}
+}
+
+#Выбор палестинского монарха // BPL
+country_event = {
+	id = NWpalestine.53
+	title = NWpalestine.53.t
+	desc = NWpalestine.53.desc
+	picture = GFX_report_event_bpl_53
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.53" }
+	
+	option = {
+		name = NWpalestine.53.a
+		ai_chance = {
+			factor = 50
+		}
+		complete_national_focus = BPL_invite_abdullah_to_throne
+	}
+	
+	option = {
+		name = NWpalestine.53.b
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			IRQ = {
+				has_government = monarchy
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		IRQ = { country_event = { id = NWpalestine.54 hours = 8 } }
+	}
+}
+
+#Палестина предлагает личную унию // IRQ
+country_event = {
+	id = NWpalestine.54
+	title = NWpalestine.54.t
+	desc = NWpalestine.54.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.54" }
+	
+	option = {
+		name = NWpalestine.54.a
+		ai_chance = {
+			factor = 90
+		}
+		FROM = { complete_national_focus = BPL_union_with_iraq }
+		custom_effect_tooltip = NWpalestine_54a_tt
+	}
+	
+	option = {
+		name = NWpalestine.54.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = NWpalestine.55 hours = 8 } }
+	}
+}
+
+#Иракский отказ // BPL
+country_event = {
+	id = NWpalestine.55
+	title = NWpalestine.55.t
+	desc = NWpalestine.55.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.55" }
+	
+	option = {
+		name = NWpalestine.55.a
+		complete_national_focus = BPL_invite_abdullah_to_throne
+	}
+}
+
+#Королевство Палестина принуждает нас к объединению // IRQ
+country_event = {
+	id = NWpalestine.56
+	title = NWpalestine.56.t
+	desc = NWpalestine.56.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.56" }
+	
+	option = {
+		name = NWpalestine.56.a
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0
+				OR = {
+					has_government = trozkism
+					has_government = communism
+					has_government = democratic
+				}
+			}
+		}
+		FROM = { puppet = ROOT }
+		create_country_leader = {
+			name = "Abdullah bin al-Hussein"
+			desc = "POLITICS_ABDULLAH_BIN_AL_HUSSEIN_DESC"
+			picture = "gfx/leaders/JOR/Portrait_Abdullah_I.dds"
+			expire = "1965.1.1"
+			ideology = monarchy_ideology
+			traits = {
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.56.b
+		ai_chance = {
+			factor = 25
+		}
+		FROM = { country_event = { id = NWpalestine.57 hours = 8 } }
+	}
+}
+
+#Ирак отказал в объединении // BPL
+country_event = {
+	id = NWpalestine.57
+	title = NWpalestine.57.t
+	desc = NWpalestine.57.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.57" }
+	
+	option = {
+		name = NWpalestine.57.a
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = FROM
+		}
+		add_ai_strategy = {
+			type = antagonize
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = FROM
+			value = 200
+		}
+	}
+}
+
+#Палестины требует передать Кувейт // ENG
+country_event = {
+	id = NWpalestine.58
+	title = NWpalestine.58.t
+	desc = NWpalestine.58.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.58" }
+	
+	option = {
+		name = NWpalestine.58.a
+		ai_chance = {
+			factor = 90
+		}
+		if = {
+			limit = {
+				656 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_puppet_of = ROOT
+						}
+					}
+				}
+				IRQ = {
+					OR = {
+						is_subject = no
+						is_subject_of = FROM
+					}
+					is_in_faction_with = FROM
+				}
+			}
+			IRQ = {
+				transfer_state = 656
+				add_state_core = 656
+			}
+		}
+		else_if = {
+			limit = {
+				656 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_puppet_of = ROOT
+						}
+					}
+				}
+				IRQ = {
+					is_subject = yes
+					NOT = { is_subject_of = FROM }
+				}
+			}
+			FROM = {
+				transfer_state = 656
+				add_state_core = 656
+			}
+		}
+		else_if = {
+			limit = {
+				KUW = {
+					owns_state = 656
+					has_autonomy_state = autonomy_dominion
+				}
+			}
+			KUW = { country_event = { id = NWpalestine.60 hours = 8 } }
+		}
+	}
+	
+	option = {
+		name = NWpalestine.58.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = NWpalestine.59 hours = 8 } }
+	}
+}
+
+#Британский отказ // BPL
+country_event = {
+	id = NWpalestine.59
+	title = NWpalestine.59.t
+	desc = NWpalestine.59.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.59" }
+	
+	option = {
+		name = NWpalestine.59.a
+		add_state_claim = 656
+		hidden_effect = {
+			656 = {
+				owner = {
+					ROOT = {
+						add_ai_strategy = {
+							type = antagonize
+							id = PREV
+							value = 200
+						}
+						add_ai_strategy = {
+							type = conquer
+							id = PREV
+							value = 200
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#Британия отдала нас Палестине // KUW
+country_event = {
+	id = NWpalestine.60
+	title = NWpalestine.60.t
+	desc = NWpalestine.60.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.60" }
+	
+	option = {
+		name = NWpalestine.60.a
+		ai_chance = {
+			factor = 40
+		}
+		BPL = {
+			set_autonomy = {
+				target = ROOT
+				autonomy_state = autonomy_dominion
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.60.b
+		ai_chance = {
+			factor = 60
+		}
+		hidden_effect = {
+			if = {
+				limit = { is_ai = yes }
+				set_rule = { can_join_factions = no }
+			}
+		}
+		if = {
+			limit = { is_subject = yes }
+			OVERLORD = {
+				set_autonomy = {
+					target = ROOT
+					autonomy_state = autonomy_free
+				}
+			}
+		}
+		if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		declare_war_on = {
+			target = BPL
+			type = annex_everything
+		}
+	}
+}
+
+#Палестина требует возродить монархию в Сирии // event_target:NW_france_scope
+country_event = {
+	id = NWpalestine.61
+	title = NWpalestine.61.t
+	desc = NWpalestine.61.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.61" }
+	
+	option = {
+		name = NWpalestine.61.a
+		ai_chance = {
+			factor = 50
+		}
+		FROM = { country_event = { id = NWpalestine.62 hours = 8 } }
+	}
+	
+	option = {
+		name = NWpalestine.61.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		every_owned_state = {
+			limit = {
+				OR = {
+					is_core_of = SYR
+					is_core_of = JDS
+				}
+			}
+			FROM = { transfer_state = PREV }
+		}
+	}
+	
+	option = {
+		name = NWpalestine.61.c
+		ai_chance = {
+			factor = 35
+			modifier = {
+				factor = 0
+				OR = {
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		every_state = {
+			limit = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+				OR = {
+					is_core_of = SYR
+					is_core_of = JDS
+					is_core_of = ALW
+					is_core_of = LEB
+				}
+			}
+			FROM = { transfer_state = PREV }
+		}
+	}
+}
+
+#Создание ЦАХАЛ // BPL
+country_event = {
+	id = NWpalestine.63
+	title = NWpalestine.63.t
+	desc = NWpalestine.63.desc
+	picture = GFX_report_event_bpl_63
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.63" }
+	
+	option = {
+		name = NWpalestine.63.a
+		ai_chance = {
+			factor = 50
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Jewish legion" } }
+				division_template = {
+					name = "Jewish legion"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+						infantry = { x = 3 y = 0 }
+					}
+					priority = 2
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"11. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"26. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"42. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+		}
+		create_corps_commander = {
+			name = "Yaakov Dori"
+			portrait_path = "gfx/leaders/BPL/Portrait_Israel_Yaakov_Dori.dds"
+			traits = { organizer skilled_staffer }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 2
+		}
+		create_corps_commander = {
+			name = "Yitzhak Sadeh"
+			portrait_path = "gfx/leaders/BPL/Portrait_Israel_Yitzhak_Saadeh.dds"
+			traits = { panzer_leader }
+			skill = 3
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 2
+		}
+	}
+	
+	option = {
+		name = NWpalestine.63.b
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -20
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Jewish legion" } }
+				division_template = {
+					name = "Jewish legion"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+						infantry = { x = 3 y = 0 }
+					}
+					priority = 2
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"11. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.3" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"26. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.3" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"42. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.3" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"56. Jewish legion\" division_template = \"Jewish legion\" start_experience_factor = 0.6" 
+				owner = ROOT
+			}
+		}
+		create_corps_commander = {
+			name = "Yaakov Dori"
+			portrait_path = "gfx/leaders/BPL/Portrait_Israel_Yaakov_Dori.dds"
+			traits = { organizer skilled_staffer }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 2
+		}
+		create_corps_commander = {
+			name = "Yitzhak Sadeh"
+			portrait_path = "gfx/leaders/BPL/Portrait_Israel_Yitzhak_Saadeh.dds"
+			traits = { panzer_leader }
+			skill = 3
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 2
+		}
+		create_corps_commander = {
+			name = "David Raziel"
+			portrait_path = "gfx/leaders/Europe/Portrait_Europe_Generic_land_1.dds"
+			traits = { commando }
+			skill = 2
+			attack_skill = 2
+			defense_skill = 1
+			planning_skill = 3
+			logistics_skill = 2
+		}
+	}
+}
+
+#Создание Армии Священной Войны // BPL
+country_event = {
+	id = NWpalestine.64
+	title = NWpalestine.64.t
+	desc = NWpalestine.64.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.64" }
+	
+	option = {
+		name = NWpalestine.64.a
+		ai_chance = {
+			factor = 50
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Arab Division" } }
+				division_template = {
+					name = "Arab Division"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+						infantry = { x = 3 y = 0 }
+					}
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"11. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"26. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"49. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"15. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+		}
+		create_corps_commander = {
+			name = "Hassan Salamah"
+			portrait_path = "gfx/leaders/SYR/Portrait_Arabia_Generic_land_3.dds"
+			traits = { organizer commando politically_connected }
+			skill = 3
+			attack_skill = 3
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 3
+		}
+		create_corps_commander = {
+			name = "Abd al-Qadir al-Hussayni"
+			portrait_path = "gfx/leaders/SYR/Portrait_Arabia_Generic_land_2.dds"
+			traits = { politically_connected trait_reckless }
+			skill = 1
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 2
+			logistics_skill = 1
+		}
+	}
+	
+	option = {
+		name = NWpalestine.64.b
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -40
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Arab Division" } }
+				division_template = {
+					name = "Arab Division"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+						infantry = { x = 2 y = 0 }
+						infantry = { x = 2 y = 1 }
+						infantry = { x = 2 y = 2 }
+						infantry = { x = 3 y = 0 }
+					}
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"11. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"26. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"49. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"15. Arab Division\" division_template = \"Arab Division\" start_experience_factor = 0.2" 
+				owner = ROOT
+			}
+		}
+		create_corps_commander = {
+			name = "Hassan Salamah"
+			portrait_path = "gfx/leaders/SYR/Portrait_Arabia_Generic_land_3.dds"
+			traits = { organizer commando politically_connected }
+			skill = 3
+			attack_skill = 3
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 3
+		}
+		create_corps_commander = {
+			name = "Abd al-Qadir al-Hussayni"
+			portrait_path = "gfx/leaders/SYR/Portrait_Arabia_Generic_land_2.dds"
+			traits = { politically_connected trait_reckless }
+			skill = 1
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 2
+			logistics_skill = 1
+		}
+		create_corps_commander = {
+			name = "Fawzi al-Qawuqji"
+			portrait_path = "gfx/leaders/BPL/Portrait_Palestine_Fawzi_al-Qawuqji_military.dds"
+			traits = { media_personality infantry_officer }
+			skill = 3
+			attack_skill = 4
+			defense_skill = 2
+			planning_skill = 4
+			logistics_skill = 2
+		}
+	}
+}
+
+#Обстрел поезда в Тель-Авиве пульсар // BPL // 17 августа 1936 года
+country_event = {
+	id = NWpalestine.65
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.65" }
+	
+	option = {
+		name = NWpalestine.65.a
+		if = {
+			limit = {
+				NOT = {
+					has_completed_focus = BPL_begin_migration_of_arabs_to_transjordan
+					has_completed_focus = BPL_destruction_of_jewish_population
+				}
+			}
+			country_event = { id = NWpalestine.66 }
+			country_event = { id = NWpalestine.68 days = 201 }
+		}
+	}
+}
+
+#Обстрел поезда в Тель-Авиве // BPL // 17 августа 1936 года
+country_event = {
+	id = NWpalestine.66
+	title = NWpalestine.66.t
+	desc = NWpalestine.66.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.66" }
+	
+	option = {
+		name = NWpalestine.66.a
+		add_stability = -0.01
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 2 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = {
+			add_manpower = -1
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+		}
+		hidden_effect = {
+			country_event = { id = NWpalestine.67 days = 1 }
+		}
+	}
+}
+
+#Теракт в Тель-Авиве // BPL
+country_event = {
+	id = NWpalestine.67
+	title = NWpalestine.67.t
+	desc = NWpalestine.67.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.67" }
+	
+	option = {
+		name = NWpalestine.67.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -40
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = {
+			add_manpower = -1
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+		}
+	}
+	
+	option = {
+		name = NWpalestine.67.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_stability = -0.05
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = {
+			add_manpower = -1
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+		}
+	}
+}
+
+#Убийство еврея у Стены Плача пульсар // BPL // 6 марта 1937 года
+country_event = {
+	id = NWpalestine.68
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.68" }
+	
+	option = {
+		name = NWpalestine.68.a
+		if = {
+			limit = {
+				NOT = {
+					has_completed_focus = BPL_begin_migration_of_arabs_to_transjordan
+					has_completed_focus = BPL_destruction_of_jewish_population
+				}
+			}
+			country_event = { id = NWpalestine.69 }
+			country_event = { id = NWpalestine.71 days = 411 }
+		}
+	}
+}
+
+#Убийство еврея у Стены Плача // BPL // 6 марта 1937 года
+country_event = {
+	id = NWpalestine.69
+	title = NWpalestine.69.t
+	desc = NWpalestine.69.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.69" }
+	
+	option = {
+		name = NWpalestine.69.a
+		add_stability = -0.01
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 2 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -1 }
+		hidden_effect = {
+			country_event = { id = NWpalestine.70 hours = 2 }
+		}
+	}
+}
+
+#Обстрел в Рехавии // BPL
+country_event = {
+	id = NWpalestine.70
+	title = NWpalestine.70.t
+	desc = NWpalestine.70.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.70" }
+	
+	option = {
+		name = NWpalestine.70.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -40
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -1 }
+	}
+	
+	option = {
+		name = NWpalestine.70.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_stability = -0.05
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -1 }
+	}
+}
+
+#Неудавшаяся попытка нападения на автобус пульсар // BPL // 21 апреля 1938 года
+country_event = {
+	id = NWpalestine.71
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.71" }
+	
+	option = {
+		name = NWpalestine.71.a
+		if = {
+			limit = {
+				NOT = {
+					has_completed_focus = BPL_begin_migration_of_arabs_to_transjordan
+					has_completed_focus = BPL_destruction_of_jewish_population
+				}
+			}
+			country_event = { id = NWpalestine.72 }
+			country_event = { id = NWpalestine.75 days = 77 }
+		}
+	}
+}
+
+#Неудавшаяся попытка нападения на автобус // BPL // 21 апреля 1938 года
+country_event = {
+	id = NWpalestine.72
+	title = NWpalestine.72.t
+	desc = NWpalestine.72.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.72" }
+	
+	option = {
+		name = NWpalestine.72.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			subtract_from_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_minus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		hidden_effect = { country_event = { id = NWpalestine.73 days = 76 } }
+	}
+	
+	option = {
+		name = NWpalestine.72.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_political_power = -60
+	}
+	
+	option = {
+		name = NWpalestine.72.c
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 5 }
+			subtract_from_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_minus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+		}
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 5 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		hidden_effect = { country_event = { id = NWpalestine.74 days = 76 } }
+	}
+}
+
+#Взрыв на рынке в Тель-Авиве // BPL // 6 июля 1938 года 
+country_event = {
+	id = NWpalestine.73
+	title = NWpalestine.73.t
+	desc = NWpalestine.73.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.73" }
+	
+	option = {
+		name = NWpalestine.73.a
+		add_stability = -0.03
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 2 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -20 }
+	}
+}
+
+#Взрыв на рынке в Хайфе // BPL // 6 июля 1938 года 
+country_event = {
+	id = NWpalestine.74
+	title = NWpalestine.74.t
+	desc = NWpalestine.74.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.74" }
+	
+	option = {
+		name = NWpalestine.74.a
+		add_stability = -0.03
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 2 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		979 = { add_manpower = -23 }
+	}
+}
+
+#Обстрел евреев в Иерусалиме, Тулькареме и Рош-Пине // BPL // 6+1 июля 1938 года
+country_event = {
+	id = NWpalestine.75
+	title = NWpalestine.75.t
+	desc = NWpalestine.75.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.75" }
+	immediate = { hidden_effect = { country_event = { id = NWpalestine.76 days = 19 } } }
+	
+	option = {
+		name = NWpalestine.75.a
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.01
+		if = {
+			limit = { has_variable = BPL_jews_tensions_total }
+			set_temp_variable = { BPL_jews_tensions = 3 }
+			add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions }
+			custom_effect_tooltip = BPL_jews_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -5 }
+	}
+	
+	option = {
+		name = NWpalestine.75.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.01
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 3 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		980 = { add_manpower = -5 }
+	}
+}
+
+#Взрыв на рынке в Хайфе // BPL // 25 июля 1938 года 
+country_event = {
+	id = NWpalestine.76
+	title = NWpalestine.76.t
+	desc = NWpalestine.76.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.76" }
+	
+	option = {
+		name = NWpalestine.76.a
+		add_stability = -0.04
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 2 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		979 = { add_manpower = -39 }
+		hidden_effect = { country_event = { id = NWpalestine.77 days = 32 } }
+	}
+}
+
+#Взрыв на рынке в Яффо // BPL // 26 августа 1938 года 
+country_event = {
+	id = NWpalestine.77
+	title = NWpalestine.77.t
+	desc = NWpalestine.77.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.77" }
+	
+	option = {
+		name = NWpalestine.77.a
+		add_stability = -0.03
+		if = {
+			limit = { has_variable = BPL_arab_tensions_total }
+			set_temp_variable = { BPL_arab_tensions = 2 }
+			add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions }
+			custom_effect_tooltip = BPL_arab_tensions_plus_tt
+			clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
+			log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
+		}
+		978 = { add_manpower = -24 }
+	}
+}
+
+#Беспорядке на почве появления Израиля // ближневосточные страны
+country_event = {
+	id = NWpalestine.78
+	title = NWpalestine.78.t
+	desc = NWpalestine.78.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.78" }
+	
+	option = {
+		name = NWpalestine.78.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				has_opinion = { target = BPL value < 0 }
+			}
+		}
+		add_timed_idea = { idea = BPL_suppression_of_anti_semitic_riots days = 365 } 
+	}
+	
+	option = {
+		name = NWpalestine.78.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_opinion = { target = BPL value > 0 }
+			}
+		}
+		add_ideas = BPL_anti_semitic_riots
+		custom_effect_tooltip = NWpalestine_78b_tt
+		add_ai_strategy = {
+			type = antagonize
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = declare_war
+			id = FROM
+			value = 200
+		}
+		hidden_effect = {
+			country_event = { id = NWpalestine.79 days = 250 }
+			FROM = {
+				add_to_variable = { BPL_reaction_to_arab_anti_semitism_var = 0.05 }
+				clamp_variable = { var = BPL_reaction_to_arab_anti_semitism_var min = 0 max = 0.3 }
+				if = {
+					limit = { NOT = { has_dynamic_modifier = { modifier = BPL_reaction_to_arab_anti_semitism_dyn } } }
+					add_dynamic_modifier = { modifier = BPL_reaction_to_arab_anti_semitism_dyn }
+				}
+			}
+		}
+	}
+}
+
+#Усиление антисемитских беспорядков пульсар
+country_event = {
+	id = NWpalestine.79
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.79" }
+	
+	option = {
+		if = {
+			limit = {
+				NOT = {
+					has_war_with = BPL
+					has_idea = BPL_anti_semitic_riots_2
+				}
+			}
+			country_event = { id = NWpalestine.80 }
+		}
+	}
+}
+
+#Усиление антисемитских беспорядков
+country_event = {
+	id = NWpalestine.80
+	title = NWpalestine.80.t
+	desc = NWpalestine.80.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.80" }
+	
+	option = {
+		name = NWpalestine.80.a
+		add_stability = -0.2
+		add_war_support = 0.1
+	}
+}
+
+#Война за независимость // BPL
+country_event = {
+	id = NWpalestine.81
+	title = NWpalestine.81.t
+	desc = NWpalestine.81.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.81" }
+	
+	option = {
+		name = NWpalestine.81.a
+		add_timed_idea = { idea = BPL_war_of_independence days = 300 } 
+	}
+}
+
+
+
+#TEST
+country_event = {
+	id = NWpalestine.999
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpalestine.999" }
+	
+	option = {
+		clear_variable = BPL_arab_tensions_total
+	}
+	option = {
+		clear_variable = BPL_jews_tensions_total
+	}
+	option = {
+		add_to_variable = { BPL_arab_tensions_total = 55 }
+	}
+	option = {
+		every_country = {
+			limit = {
+				OR = {
+					tag = PER
+					tag = SAU
+					tag = IRQ
+					tag = AFG
+					tag = TUR
+				}
+			}
+			set_politics = {
+				ruling_party = trozkism
+				elections_allowed = yes
+			}
+			add_popularity = {
+				ideology = trozkism
+				popularity = 1
+			}
+		}
+	}
+}

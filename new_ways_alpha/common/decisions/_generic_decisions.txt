@@ -67,6 +67,14 @@ political_actions = {
 
 		available = {
 			has_stability < 1.0
+			if = {
+				limit = {
+					tag = SPR
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
 		}
 
 		visible = {
@@ -76,15 +84,16 @@ political_actions = {
 		fire_only_once = no
 
 		modifier = {
+			political_power_cost = 0.3
 			stability_weekly = 0.005
 			consumer_goods_factor = 0.05
 			industrial_capacity_factory = -0.1
 		}
 
 		days_remove = 180
-		days_re_enable = 540
+		days_re_enable = 180
 
-		cost = 100
+		cost = 50
 
 		complete_effect = {
 
@@ -93,8 +102,17 @@ political_actions = {
 		ai_will_do = {
 			base = 0
 			modifier = {
-				add = 1
+				add = 5
 				has_stability < 0.6
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0.3
+			}
+			modifier = {
+				factor = 0
+				original_tag = SPR
+				NOT = { has_global_flag = spanish_civil_war }
 			}
 		}
 	}
@@ -107,6 +125,14 @@ political_actions = {
 			has_war = no
 			has_war_support > 0.2
 			has_stability < 1.0
+			if = {
+				limit = {
+					tag = SPR
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
 		}
 
 		visible = {
@@ -123,7 +149,7 @@ political_actions = {
 		modifier = {
 			stability_weekly = 0.005
 			war_support_weekly = -0.01
-			political_power_gain = -0.5
+			political_power_cost = 0.5
 		}
 
 		days_remove = 90
@@ -141,6 +167,11 @@ political_actions = {
 				add = 1
 				has_stability < 0.4
 			}
+			modifier = {
+				factor = 0
+				original_tag = SPR
+				NOT = { has_global_flag = spanish_civil_war }
+			}
 		}
 	}
 }
@@ -152,7 +183,7 @@ economy_decisions = {
 		icon = generic_construction
 
 		allowed = {
-			NOT = { OR = { tag = GER tag = event_target:NW_france_scope } }
+			NOT = { OR = { tag = GER tag = event_target:NW_france_scope original_tag = GER original_tag = event_target:NW_france_scope } }
 		}
 
 		cost = 50
@@ -221,14 +252,6 @@ economy_decisions = {
 				}
 			}
 		}
-		
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				factor = 1
-				FRA = { has_completed_focus = FRA_appeasement_of_germany }
-			}
-		}
 	}		
 }
 
@@ -243,6 +266,22 @@ propaganda_efforts = {
 			threat > 0.5
 			has_war_support < 0.5
 			has_offensive_war = no
+			if = {
+				limit = {
+					original_tag = SPR
+					has_dlc = "La Resistance"
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
+			if = {
+				limit = {
+					original_tag = SPA
+					has_dlc = "La Resistance"
+				}
+				has_global_flag = scw_over
+			}
 		}
 
 		visible = {
@@ -293,6 +332,22 @@ propaganda_efforts = {
 					}
 					has_offensive_war = yes
 				}
+			}
+			if = {
+				limit = {
+					original_tag = SPR
+					has_dlc = "La Resistance"
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
+			if = {
+				limit = {
+					original_tag = SPA
+					has_dlc = "La Resistance"
+				}
+				has_global_flag = scw_over
 			}
 		}
 
@@ -911,13 +966,9 @@ operations = {
 			has_dlc = "Waking the Tiger"
 		}
 		available = {
-			controls_state = 446
-			controls_state = 453
+			controls_state = 1064
 			OR = {
-				NOT = {
-					owns_state = 446
-					owns_state = 453
-				}
+				NOT = { owns_state = 1064 }
 				any_enemy_country = {
 					OR = {
 						controls_state = 452
@@ -926,6 +977,14 @@ operations = {
 						controls_state = 457
 						controls_state = 454
 						controls_state = 455
+						controls_state = 446
+						controls_state = 453
+						controls_state = 1053
+						controls_state = 1054
+						controls_state = 1055
+						controls_state = 978
+						controls_state = 979
+						controls_state = 980
 					}
 				}
 			}
@@ -934,8 +993,7 @@ operations = {
 		visible = {
 			has_war = yes
 			NOT = { has_global_flag = SUEZ_CANAL_BLOCKED }
-			any_state = {
-				is_controlled_by = ROOT
+			any_controlled_state = {
 				OR = {
 					region = 28
 					region = 128
@@ -958,14 +1016,12 @@ operations = {
 				if = {
 					limit = {
 						NOT = {
-							owns_state = 446
-							owns_state = 453
+							owns_state = 1064
 						}
 					}
 					random_country = {
 						limit = {
-							owns_state = 446
-							owns_state = 453
+							owns_state = 1064
 						}
 						country_event = { id = generic.12 days = 1 }
 					}
@@ -976,21 +1032,17 @@ operations = {
 		remove_effect = {
 			if = {
 				limit = {
-					OR = {
-						has_full_control_of_state = 446
-						has_full_control_of_state = 453
-					}
+					has_full_control_of_state = 1064
 				}
 				set_country_flag = blew_up_suez
 				set_global_flag = SUEZ_CANAL_BLOCKED
-				country_event = { id = wtt_news.40 hours = 6}
+				hidden_effect = { country_event = { id = wtt_news.40 hours = 6 } }
 			}
 			effect_tooltip = {
 				if = {
 					limit = {
 						ENG = {
-							owns_state = 446
-							owns_state = 453
+							owns_state = 1064
 						}
 					}
 					add_war_support = -0.05
@@ -1067,8 +1119,7 @@ operations = {
 		visible = {
 			has_war = yes
 			NOT = { has_global_flag = PANAMA_CANAL_BLOCKED }
-			any_state = {
-				is_controlled_by = ROOT
+			any_controlled_state = {
 				OR = {
 					region = 34
 					region = 124
@@ -1114,7 +1165,7 @@ operations = {
 				}
 				set_country_flag = blew_up_panama
 				set_global_flag = PANAMA_CANAL_BLOCKED
-				country_event = { id = wtt_news.41 hours = 6}
+				hidden_effect = { country_event = { id = wtt_news.41 hours = 6 } }
 			}
 			effect_tooltip = {
 				if = {
@@ -1164,8 +1215,7 @@ special_projects = {
 		icon = GFX_decision_generic_special_project
 
 		available = {
-			has_full_control_of_state = 446
-			has_full_control_of_state = 453
+			has_full_control_of_state = 1064
 			num_of_civilian_factories > 15
 		}
 	
@@ -1186,12 +1236,11 @@ special_projects = {
 		remove_effect = {
 			if = {
 				limit = {
-					has_full_control_of_state = 446
-					has_full_control_of_state = 453
+					has_full_control_of_state = 1064
 				}
 				set_country_flag = rebuilt_suez
 				clr_global_flag = SUEZ_CANAL_BLOCKED
-				country_event = { id = wtt_news.42 hours = 6}
+				hidden_effect = { country_event = { id = wtt_news.42 hours = 6 } }
 			}
 		}
 
@@ -1214,7 +1263,9 @@ special_projects = {
 				}
 				has_war_with = ITA
 				ITA = { surrender_progress > 0.1 }
+				has_full_control_of_state = 446
 				has_full_control_of_state = 447
+				has_full_control_of_state = 453
 				has_full_control_of_state = 454
 				has_full_control_of_state = 452
 				has_full_control_of_state = 456
@@ -1272,7 +1323,7 @@ special_projects = {
 				}
 				set_country_flag = rebuilt_panama
 				clr_global_flag = PANAMA_CANAL_BLOCKED
-				country_event = { id = wtt_news.43 hours = 6 }
+				hidden_effect = { country_event = { id = wtt_news.43 hours = 6 } }
 			}
 		}
 		ai_will_do = {
@@ -1423,6 +1474,10 @@ war_measures = {
                     has_government = monarchy
                     has_war_support > 0.79
                 }
+				AND = {
+                    has_government = technocracy
+                    has_war_support > 0.79
+                }
                 AND = {
                     has_government = fascism
                     OR = {
@@ -1495,6 +1550,10 @@ war_measures = {
                 }
 				AND = {
                     has_government = monarchy
+                    has_war_support > 0.79
+                }
+				AND = {
+                    has_government = technocracy
                     has_war_support > 0.79
                 }
                 AND = {
@@ -1610,6 +1669,7 @@ foreign_politics = {
         days_re_enable = 30
 
         available = {
+			hidden_trigger = { NOT = { has_government = anarchism } }
         }
 
         visible = {
@@ -1624,11 +1684,13 @@ foreign_politics = {
         	any_enemy_country = {
 				has_attache_from = FROM
 			}
+			NOT = { has_government = anarchism }
 		}
 		
 		target_root_trigger = {
 			has_war = yes
 			has_capitulated = no
+			NOT = { has_government = anarchism }
 		}
 
 		target_trigger = {
@@ -1637,6 +1699,7 @@ foreign_politics = {
 			any_enemy_country = {
 				has_attache_from = FROM
 			}
+			NOT = { has_government = anarchism }
 		}
 
         complete_effect = {
@@ -1674,6 +1737,7 @@ economy_decisions = {
 					size < 1
 				}
             }
+			hidden_trigger = { NOT = { has_government = anarchism } }
         }
 
         visible = {
@@ -1685,6 +1749,7 @@ economy_decisions = {
 					size < 1
 				}
             }
+			NOT = { has_government = anarchism }
 		}
 
         complete_effect = {
@@ -1733,6 +1798,7 @@ economy_decisions = {
             	NOT = { has_state_flag = war_building_slot_flag }
             	is_fully_controlled_by = ROOT
             }
+			hidden_trigger = { NOT = { has_government = anarchism } }
         }
 
         visible = {
@@ -1741,6 +1807,7 @@ economy_decisions = {
 				NOT = { has_state_flag = war_building_slot_flag }
 				is_fully_controlled_by = ROOT
 			}
+			NOT = { has_government = anarchism }
 		}
 
         complete_effect = {
@@ -1919,10 +1986,9 @@ foreign_support = {
 					}
 				}
 			}
-			any_country = {
+			any_other_country = {
 				check_variable = { CHI_burma_road_current_level > 0 }
 				NOT = { is_in_faction_with = ROOT }
-				NOT = { tag = ROOT }
 			}
 		}
 
@@ -2267,10 +2333,9 @@ foreign_support = {
 					}
 				}
 			}
-			any_country = {
+			any_other_country = {
 				check_variable = { CHI_ledo_road_current_level > 0 }
 				NOT = { is_in_faction_with = ROOT }
-				NOT = { tag = ROOT }
 			}
 		}
 
@@ -2607,10 +2672,9 @@ foreign_support = {
 					}
 				}
 			}
- 			any_country = {
+ 			any_other_country = {
  				check_variable = { CHI_the_hump_current_level > 0 }
  				NOT = { is_in_faction_with = ROOT }
- 				NOT = { tag = ROOT }
  			}
  		}
 
@@ -2908,10 +2972,9 @@ foreign_support = {
 					}
 				}
 			}
-			any_country = {
+			any_other_country = {
 				check_variable = { CHI_hanoi_route_current_level > 0 }
 				NOT = { is_in_faction_with = ROOT }
-				NOT = { tag = ROOT }
 			}
 		}
 

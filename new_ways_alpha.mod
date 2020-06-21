@@ -1,4 +1,6 @@
-version="1.8.*"
+version="0.3"
+replace_path="common/national_focus"
+replace_path="map/"
 tags={
 	"Alternative History"
 	"Map"
@@ -6,5 +8,6 @@ tags={
 	"Events"
 }
 picture="nw.jpg"
-name="New Ways 0.2.2 [alpha]"
-path="mod/new_ways_alpha/"
+name="New Ways alpha 0.3"
+supported_version="1.9.*"
+path="mod/new_ways_alpha"

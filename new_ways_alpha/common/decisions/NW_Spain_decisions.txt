@@ -1,0 +1,594 @@
+spain_civil_war_north_category = {
+
+	SPR_north_asu = {
+
+		icon = generic_operation
+
+		available = {
+			ASU = { exists = no }
+			SPA = { NOT = { has_full_control_of_state = 790 } }
+		}
+
+		highlight_states = { state = 790 }
+
+		#on_map_mode = map_only
+
+		cost = 10
+
+		fire_only_once = yes
+
+		visible = {
+			ASU = { exists = no }
+		}
+
+		cancel_if_not_visible = yes
+
+		complete_effect = {
+			release_puppet = ASU
+			hidden_effect = {
+				174 = { add_core_of = ASU }
+				if = {
+					limit = { SPR = { controls_state = 174 } }
+					ASU = { transfer_state = 174 }
+				}
+				ASU = {
+					transfer_state = 790
+					set_popularities = {
+						democratic = 40
+						fascism = 40
+						communism = 20
+					}
+					set_politics = {
+						ruling_party = democratic
+						last_election = "1935.1.1"
+						election_frequency = 36
+						elections_allowed = yes
+					}
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					ASU = { country_event = { id = NWspain.904 } }
+					set_cosmetic_tag = ASU_interprov
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				num_of_controlled_states > 12
+			}
+		}
+	}
+	
+	SPR_north_snt = {
+
+		icon = generic_operation
+
+		available = {
+			SNT = { exists = no }
+			SPA = { NOT = { has_full_control_of_state = 982 } }
+		}
+
+		highlight_states = { state = 982 }
+
+		#on_map_mode = map_only
+
+		cost = 10
+
+		fire_only_once = yes
+
+		visible = {
+			SNT = { exists = no }
+		}
+
+		cancel_if_not_visible = yes
+
+		complete_effect = {
+			release_puppet = SNT
+			hidden_effect = {
+				SNT = {
+					transfer_state = 982
+					set_popularities = {
+						democratic = 40
+						fascism = 40
+						communism = 20
+					}
+					set_politics = {
+						ruling_party = democratic
+						last_election = "1935.1.1"
+						election_frequency = 36
+						elections_allowed = yes
+					}
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					SNT = { country_event = { id = NWspain.905 } }
+					set_cosmetic_tag = SNT_interprov
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				num_of_controlled_states > 12
+			}
+		}
+	}
+}
+
+spain_civil_war_category = {
+
+	#Предложить националистам мир // ARA
+	ARA_SPA_make_peace = {
+
+		icon = decision_hol_exchange_intelligence_data
+		
+		allowed = {
+			original_tag = ARA
+		}
+
+		available = {
+			has_war_with = SPA
+			is_subject = no
+			OR = {
+				has_government = democratic
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
+
+		visible = {
+			has_war_with = SPA
+		}
+		
+		days_re_enable = 30
+		
+		cost = 10
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions ARA_SPA_make_peace"
+			SPA = { country_event = { id = NWspain.206 } }
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+	
+	#Предложить националистам мир // CAT
+	CAT_SPA_make_peace = {
+
+		icon = decision_hol_exchange_intelligence_data
+		
+		allowed = {
+			original_tag = CAT
+		}
+
+		available = {
+			has_war_with = SPA
+			is_subject = no
+			OR = {
+				has_government = democratic
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
+
+		visible = {
+			has_war_with = SPA
+		}
+		
+		days_re_enable = 30
+		
+		cost = 10
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions CAT_SPA_make_peace"
+			SPA = { country_event = { id = NWspain.307 } }
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+	
+	#Активизировать Пятую колонну // SPA
+	SPA_activate_fifth_column = {
+
+		icon = decision_eng_propaganda_campaigns
+		
+		allowed = {
+			original_tag = SPA
+		}
+
+		available = {
+			has_war_with = SPR
+			SPR = { surrender_progress < 0.5 }
+		}
+
+		visible = {
+			has_war_with = SPR
+		}
+		
+		days_re_enable = 30
+		cost = 25
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPA_activate_fifth_column"
+			SPR = { add_war_support = -0.04 }
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+		
+	#Организация народной милиции // SPR
+	SPR_organization_peoples_militia = {
+
+		icon = decision_generic_prepare_civil_war
+		
+		allowed = {
+			original_tag = SPR
+		}
+
+		available = {
+			has_war_with = SPA
+		}
+
+		visible = {
+			has_war_with = SPA
+		}
+		
+		fire_only_once = yes
+		cost = 75
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPR_organization_peoples_militia"
+			add_war_support = 0.1
+			hidden_effect = {
+				if = {
+					limit = { NOT = {  has_template = "People Militia" } }
+					division_template = {
+						name = "People Militia"
+						is_locked = yes
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+						}
+					}
+				}
+			}
+			random_owned_controlled_state = {
+				create_unit = {
+					division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+					owner = ROOT
+				}
+				create_unit = {
+					division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+					owner = ROOT
+				}
+				create_unit = {
+					division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+					owner = ROOT
+				}
+				create_unit = {
+					division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+					owner = ROOT
+				}
+				create_unit = {
+					division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+					owner = ROOT
+				}
+			}
+			
+			if = {
+				limit = { num_subjects > 0 }
+				every_other_country = {
+					limit = {
+						is_subject_of = ROOT
+					}
+					hidden_effect = {
+						if = {
+							limit = { NOT = {  has_template = "People Militia" } }
+							division_template = {
+								name = "People Militia"
+								is_locked = yes
+								regiments = {
+									infantry = { x = 0 y = 0 }
+									infantry = { x = 0 y = 1 }
+									infantry = { x = 0 y = 2 }
+								}
+							}
+						}
+					}
+					add_war_support = 0.1
+					random_owned_state = {
+						create_unit = {
+							division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+							owner = PREV
+						}
+						create_unit = {
+							division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
+							owner = PREV
+						}
+					}
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				factor = 10
+				surrender_progress > 0.5
+			}
+		}
+	}
+}
+
+spain_decision_category = {
+
+	#Возродить Испанскую империю // SPA
+	SPA_revive_spanish_empire = {
+
+		icon = decision_generic_form_nation
+		
+		allowed = {
+			original_tag = SPA
+		}
+
+		available = {
+			all_state = {
+				OR = {
+					NOT = {
+						is_core_of = VEN
+						is_core_of = COL
+					}
+					is_controlled_by = ROOT
+				}
+			}
+		}
+		
+		fire_only_once = yes
+		cost = 200
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPA_revive_spanish_empire"
+			set_cosmetic_tag = SPA_empire
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = VEN
+						is_core_of = COL
+					}
+				}
+				add_core_of = ROOT
+			}
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	#Создание Священной Римской империи // SPA
+	SPA_creation_holy_roman_empire = {
+
+		icon = decision_generic_form_nation
+		
+		allowed = {
+			original_tag = SPA
+		}
+
+		available = {
+			all_state = {
+				OR = {
+					NOT = {
+						is_core_of = AUS
+					}
+					is_controlled_by = ROOT
+				}
+			}
+			OR = {
+				has_country_leader = {
+					name = "Xavier of Bourbon-Parma"
+					ruling_only = yes
+				}
+				has_country_leader = {
+					name = "Otto von Habsburg"
+					ruling_only = yes
+				}
+			}
+		}
+
+		visible = {
+		}
+		
+		fire_only_once = yes
+		cost = 100
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPA_creation_holy_roman_empire"
+			set_cosmetic_tag = SPA_hre
+			every_state = {
+				limit = {
+					is_core_of = AUS
+				}
+				add_core_of = ROOT
+			}
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+	
+	#Оккупировать Танжер // Оба
+	SPR_occupy_tangier = {
+
+		icon = decision_oppression
+		
+		available = {
+			1042 = { is_fully_controlled_by = TNR }
+			OR = {
+				event_target:NW_france_scope = { is_subject = yes }
+				event_target:NW_france_scope = { has_capitulated = yes }
+				NOT = { country_exists = event_target:NW_france_scope }
+			}
+			threat > 0.4
+		}
+
+		visible = {
+			country_exists = TNR
+			OR = {
+				has_government = neutrality
+				has_government = fascism
+				has_government = monarchy
+			}
+		}
+		
+		fire_only_once = yes
+		cost = 0
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPR_occupy_tangier"
+			annex_country = {
+				target = TNR
+				transfer_troops = yes
+			}
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+	
+	#Обменять Примо де Риверу // SPA
+	SPR_exchange_primo_de_rivera = {
+
+		icon = hol_exchange_intelligence_data
+		
+		allowed = {
+			original_tag = SPA
+		}
+
+		available = {
+			NOT = { has_country_flag = SPA_edilas_presidency_flag }
+		}
+
+		visible = {
+			has_completed_focus = SPA_nationalists
+			NOT = { has_completed_focus = SPA_dictatorship_of_franco }
+		}
+		
+		fire_only_once = yes
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPR_exchange_primo_de_rivera"
+			SPR = { add_manpower = 500 }
+			SPA = { add_manpower = -500 }
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			}
+			add_war_support = 0.03
+			effect_tooltip = {
+				unlock_national_focus = SPA_edilas_presidency
+			}
+			set_country_flag = SPR_exchange_primo_de_rivera_flag
+		}
+		
+		ai_will_do = {
+			factor = 0.5
+			modifier = {
+				factor = 0
+				NOT = { has_country_flag = NW_SPR_AI_FASCIST_ALTERNATE }
+				OR = {
+					is_historical_focus_on = yes
+					has_country_flag = NW_SPR_AI_FASCIST
+				}
+			}
+			modifier = {
+				add = 500
+				has_country_flag = NW_SPR_AI_FASCIST_ALTERNATE
+			}
+		}
+	}
+
+}
+
+spain_liberal_loyality_category = {
+
+	SPR_infotable_liberal_loyality = {
+
+		icon = decision_generic_decision
+
+		available = {
+			always = no
+		}
+
+		fire_only_once = yes
+		cost = 0
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions SPR_infotable_liberal_loyality"
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+catalon_decision_category = {
+
+	CAT_integrate_catalon_lands = {
+
+		icon = decision_generic_civil_support
+		
+		available = {
+			has_full_control_of_state = 1043
+			has_full_control_of_state = 167
+			has_full_control_of_state = 177
+		}
+
+		visible = {
+		}
+		
+		fire_only_once = yes
+		cost = 100
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decisions CAT_integrate_catalon_lands"
+			set_cosmetic_tag = CAT_great
+			every_state = {
+				limit = {
+					state = 1043
+					state = 167
+					state = 177					
+				}
+				add_core_of = ROOT
+			}
+		}
+		
+		ai_will_do = {
+			factor = 200
+		}
+	}
+}
+
+

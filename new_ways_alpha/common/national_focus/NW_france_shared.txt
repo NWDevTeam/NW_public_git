@@ -171,7 +171,7 @@
 			create_country_leader = {
 				name = "Léon Blum"
 				desc = "POLITICS_LEON_BLUM_DESC"
-				picture = "gfx/leaders/FRA/Portrait_Leon_Blum.dds"
+				picture = "gfx/leaders/FRA/portrait_fra_leon_blum.dds"
 				expire = "1965.1.1"
 				ideology = socialism
 				traits = {
@@ -275,6 +275,10 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_reform_paris_police"
 			add_stability = 0.05
+			if = {
+				limit = { has_idea = FRA_tensions_among_fascists }
+				remove_ideas = FRA_tensions_among_fascists
+			}
 		}
 	}
 	
@@ -343,6 +347,11 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_create_national_department"
 			add_stability = 0.05
+			unlock_decision_tooltip = FRA_reorganize_aviation_industry_north
+			unlock_decision_tooltip = FRA_reorganize_aviation_industry_west
+			unlock_decision_tooltip = FRA_reorganize_aviation_industry_center
+			unlock_decision_tooltip = FRA_reorganize_aviation_industry_south_east
+			unlock_decision_tooltip = FRA_reorganize_aviation_industry_south_west
 		}
 	}
 	
@@ -763,6 +772,29 @@
 			}
 			if = {
 				limit = {
+					NOT = { country_exists = ALW }
+					any_state = {
+						is_core_of = ALW
+						is_owned_by = ROOT
+					}
+				}
+				release = ALW
+				hidden_effect = {
+					ALW = { drop_cosmetic_tag = yes }
+				}
+			}
+			else_if = {
+				limit = { ALW = { is_subject_of = ROOT } }
+				set_autonomy = {
+					target = ALW
+					autonomy_state = autonomy_free
+				}
+				hidden_effect = {
+					ALW = { drop_cosmetic_tag = yes }
+				}
+			}
+			if = {
+				limit = {
 					NOT = { country_exists = SYR }
 					any_state = {
 						is_core_of = SYR
@@ -771,7 +803,10 @@
 				}
 				release = SYR
 				hidden_effect = {
-					SYR = { drop_cosmetic_tag = yes }
+					SYR = {
+						drop_cosmetic_tag = yes
+						transfer_state = 1101
+					}
 				}
 			}
 			else_if = {
@@ -1027,6 +1062,7 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_creation_of_communes"
 			add_political_power = 100
+			add_popularity = { ideology = communism popularity = 0.05 }
 		}
 	}
 	
@@ -1121,9 +1157,12 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_transforming_france_into_peoples_republic"
 			add_political_power = 50
-			set_politics = {
-				ruling_party = communism
-				elections_allowed = no
+			if = {
+				limit = { NOT = { has_government = communism } }
+				set_politics = {
+					ruling_party = communism
+					elections_allowed = no
+				}
 			}
 			if = {
 				limit = { has_idea = FRA_disjointed_government }
@@ -2057,7 +2096,7 @@
 		}
 		bypass = {
 		}
-
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_development_of_modern_doctrine"
 			add_tech_bonus = {
@@ -2165,6 +2204,13 @@
 			modifier = {
 				factor = 0.1
 				has_country_flag = FRA_commi_revolt_flag
+			}
+			modifier = {
+				factor = 0.33
+				has_country_leader = {
+					name = "Philippe Pétain"
+					ruling_only = yes
+				}
 			}
 		}
 		available = {
@@ -2428,6 +2474,7 @@
 			factor = 6
 		}
 		available = {
+			is_subject = no
 			hidden_trigger = {
 				NOT = { has_completed_focus = FRA_support_maurras }
 			}
@@ -2518,6 +2565,13 @@
 				factor = 0
 				has_completed_focus = FRA_antisoviet_union
 				ENG = { NOT = { has_war_with = GER } }
+			}
+			modifier = {
+				factor = 0.5
+				has_country_leader = {
+					name = "Philippe Pétain"
+					ruling_only = yes
+				}
 			}
 		}
 		available = {
@@ -2963,7 +3017,7 @@
 			factor = 6
 		}
 		available = {
-	 		is_puppet = no	 		
+	 		is_subject = no		
 		}
 		bypass = {
 		}
@@ -3567,7 +3621,6 @@
 			}
 		}
 		available = {
-			
 		}
 		bypass = {
 		}
@@ -3581,7 +3634,10 @@
 			}
 			set_party_name = { ideology = monarchy name = FRA_orleans long_name = FRA_orleans }
 			set_rule = { can_create_factions = yes }
-			create_faction = FRA_counter_revolutionary_union
+			if = {
+				limit = { is_subject = no }
+				create_faction = FRA_counter_revolutionary_union
+			}
 			set_cosmetic_tag = FRA_bourbon
 			if = {
                 limit = { date > 1940.08.25 }
@@ -3665,6 +3721,10 @@
 							}
 						}
 					}
+					every_state = {
+						limit = { is_core_of = SPA }
+						add_claim_by = ROOT
+					}
 					create_wargoal = {
 						type = puppet_wargoal_focus
 						target = SPA
@@ -3673,6 +3733,10 @@
 				else_if = {
 					limit = {
 						NOT = { country_exists = SPA }
+					}
+					every_state = {
+						limit = { is_core_of = SPR }
+						add_claim_by = ROOT
 					}
 					create_wargoal = {
 						type = puppet_wargoal_focus
@@ -4424,13 +4488,27 @@
 	shared_focus = {
 		id = FRA_program_daladier
 		icon = GFX_goal_generic_position_armies
-		x = 33
+		x = 40
 		y = 0
 		offset = {
-			x = -21
+			x = -22
 			y = 0
 			trigger = {
 				original_tag = FRR
+			}
+		}
+		offset = {
+			x = -3
+			y = 0
+			trigger = {
+				original_tag = FRF
+			}
+		}
+		offset = {
+			x = 7
+			y = 0
+			trigger = {
+				original_tag = FRC
 			}
 		}
 		
@@ -4462,6 +4540,14 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 25 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			hidden_trigger = {
 				OR = {
 					AND = {
@@ -4474,12 +4560,25 @@
 					NOT = { tag = FRA }
 				}
 			}
+			if = {
+				limit = { original_tag = FRC }
+				NOT = { has_idea = FRC_economic_crisis }
+			}
 		}
-		bypass = {
+		
+		search_filters = {
+			FOCUS_FILTER_INDUSTRY
+			FOCUS_FILTER_RESEARCH
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_program_daladier"
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
 			army_experience = 5
 			navy_experience = 5
 			air_experience = 5
@@ -4491,13 +4590,36 @@
 				category = air_doctrine
 				category = naval_doctrine
 			}
+			random_owned_state = {
+				limit = {
+					is_controlled_by = ROOT
+					is_core_of = ROOT
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = {
+					is_controlled_by = ROOT
+					is_core_of = ROOT
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
 	shared_focus = {
-		id = FRA_budget_allocation_infantry_equipment
-		icon = GFX_goal_generic_allies_build_infantry
+		id = FRA_defensive_focus
+		icon = GFX_goal_generic_defence
 		prerequisite = { focus = FRA_program_daladier }
+		mutually_exclusive = { focus = FRA_aggressive_focus }
 		x = -3
 		y = 1
 		relative_position_id = FRA_program_daladier
@@ -4529,180 +4651,556 @@
 				}
 			}
 		}
+		
 		available = {
-			
-		}
-		bypass = {
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_budget_allocation_infantry_equipment"
-			army_experience = 5
-			add_tech_bonus = {
-				name = FRA_budget_allocation_infantry_equipment
-				bonus = 1.0
-				uses = 1
-				category = infantry_weapons
-			}
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_introduction_of_new_equipment
-		icon = GFX_goal_generic_military_sphere
-		prerequisite = { focus = FRA_budget_allocation_infantry_equipment }
-		x = 0
-		y = 1
-		relative_position_id = FRA_budget_allocation_infantry_equipment
-		
-		cost = 7.2
-		
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
 				}
 			}
 		}
-		available = {
-			
-		}
-		bypass = {
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_introduction_of_new_equipment"
-			army_experience = 5
-			add_tech_bonus = {
-				name = FRA_introduction_of_new_equipment
-				bonus = 1.0
-				uses = 1
-				category = infantry_weapons
-			}
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_introduction_of_mas_rifle
-		icon = GFX_goal_generic_small_arms
-		prerequisite = { focus = FRA_introduction_of_new_equipment }
-		x = 0
-		y = 1
-		relative_position_id = FRA_introduction_of_new_equipment
 		
-		cost = 7.2
-		
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
-				}
-			}
-		}
-		available = {
-			
-		}
-		bypass = {
-		}
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_introduction_of_mas_rifle"
-			add_ideas = FRA_infantry_focus
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_defensive_focus
-		icon = GFX_goal_generic_defence
-		prerequisite = { focus = FRA_program_daladier }
-		mutually_exclusive = { focus = FRA_aggressive_focus }
-		x = -1
-		y = 1
-		relative_position_id = FRA_program_daladier
-		
-		cost = 7.2
-		
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
-				}
-			}
-		}
-		available = {
-			
-		}
-		bypass = {
-		}
-
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_defensive_focus"
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = 5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
 			custom_effect_tooltip = available_chief_of_army
 			show_ideas_tooltip = maxime_weygand
 		}
 	}
 	
 	shared_focus = {
-		id = FRA_fortification_focus
-		icon = GFX_goal_generic_construction2
+		id = FRA_firepower_kills
+		icon = GFX_goal_generic_army_artillery
 		prerequisite = { focus = FRA_defensive_focus }
+		mutually_exclusive = { focus = FRA_methodical_battle }
+		x = -4
+		y = 1
+		relative_position_id = FRA_defensive_focus
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_firepower_kills"
+			add_ideas = { FRA_firepower }
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_infantry_focus
+		icon = GFX_goal_generic_allies_build_infantry
+		prerequisite = { focus = FRA_firepower_kills }
+		x = 0
+		y = 1
+		relative_position_id = FRA_firepower_kills
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_infantry_focus"
+			army_experience = 5
+			add_ideas = FRA_infantry_focus
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_artillery_focus
+		icon = GFX_goal_generic_army_artillery2
+		prerequisite = { focus = FRA_infantry_focus }
+		x = 0
+		y = 1
+		relative_position_id = FRA_infantry_focus
+		
+		cost = 7.2
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_artillery_focus"
+			army_experience = 5
+			add_tech_bonus = {
+				name = FRA_artillery_focus
+				bonus = 1.0
+				uses = 1
+				category = artillery
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_heavy_armor_focus
+		icon = GFX_goal_generic_army_tanks
+		prerequisite = { focus = FRA_artillery_focus }
+		x = 0
+		y = 1
+		relative_position_id = FRA_artillery_focus
+		cost = 7.2
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_heavy_armor_focus"
+			army_experience = 5
+			add_tech_bonus = {
+				name = FRA_heavy_armor_focus
+				bonus = 1.0
+				uses = 1
+				category = cat_heavy_armor
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_division_cuirassee
+		icon = GFX_focus_generic_army_tanks2
+		prerequisite = { focus = FRA_heavy_armor_focus }
+		x = 0
+		y = 1
+		relative_position_id = FRA_heavy_armor_focus
+		cost = 7.2
+
+		available = {
+			has_tech = basic_heavy_tank
+			has_tech = basic_medium_tank
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 25 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+	
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_heavy_armor_focus"
+			division_template = {
+				name = "Division Cuirassée" 	
+				division_names_group = FRA_ARM_01
+
+				regiments = {
+					medium_armor = { x = 0 y = 0 }		
+					heavy_armor = { x = 0 y = 1 }		
+					medium_armor = { x = 1 y = 0 }		
+					medium_armor = { x = 1 y = 1 }		
+					motorized = { x = 2 y = 0 }			
+					motorized = { x = 2 y = 1 }
+					motorized = { x = 2 y = 2 }
+				}
+				support = {
+					recon = { x = 0 y = 0 }      		
+					artillery = { x = 0 y = 1 }
+					engineer = { x = 0 y = 2 }
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"1re Division Cuirassée\" division_template = \"Division Cuirassée\" start_experience_factor = 0.7"  
+					owner = ROOT
+				}
+				create_unit = {
+					division = "name = \"2me Division Cuirassée\" division_template = \"Division Cuirassée\" start_experience_factor = 0.7"  
+					owner = ROOT
+				}
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_infantry_tanks
+		icon = GFX_focus_generic_combined_arms
+		prerequisite = { focus = FRA_firepower_kills focus = FRA_methodical_battle }
+		x = 2
+		y = 1
+		relative_position_id = FRA_firepower_kills
+		
+		cost = 7.2
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+		
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 25 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_defensive_focus"
+			custom_effect_tooltip = available_designer
+			show_ideas_tooltip = FRA_hotchkiss
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_special_forces
+		icon = GFX_goal_generic_special_forces
+		prerequisite = { focus = FRA_infantry_tanks }
+		x = 0
+		y = 1
+		relative_position_id = FRA_infantry_tanks
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_special_forces"
+			add_ideas = { special_forces }
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_fusiliers_marine
+		icon = GFX_goal_generic_amphibious_assault
+		prerequisite = { focus = FRA_special_forces }
+		x = 0
+		y = 1
+		relative_position_id = FRA_special_forces
+		
+		cost = 7.2
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_fusiliers_marine"
+			add_tech_bonus = {
+				name = FRA_fusiliers_marine
+				category = tp_tech
+				category = marine_tech
+				uses = 2
+				bonus = 1
+			}
+		}
+	}
+
+	shared_focus = {
+		id = FRA_methodical_battle
+		icon = GFX_goal_generic_cavalry
+		prerequisite = { focus = FRA_defensive_focus }
+		mutually_exclusive = { focus = FRA_firepower_kills }
 		x = 0
 		y = 1
 		relative_position_id = FRA_defensive_focus
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_methodical_battle"
+			add_tech_bonus = {
+				name = FRA_methodical_battle
+				category = land_doctrine
+				uses = 2
+				bonus = 2
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_fortification_focus
+		icon = GFX_goal_generic_construction2
+		prerequisite = { focus = FRA_methodical_battle }
+		x = 0
+		y = 1
+		relative_position_id = FRA_methodical_battle
 		cost = 7.2
 
 		cancel_if_invalid = yes
@@ -4730,15 +5228,27 @@
 				}
 			}
 		}
+		
 		available = {
-			
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 		}
-		bypass = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_fortification_focus"
 			add_ideas = FRA_fortification_focus
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -2 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
 		}
 	}
 	
@@ -4746,7 +5256,7 @@
 		id = FRA_alpine_forts
 		icon = GFX_goal_generic_construct_military
 		prerequisite = { focus = FRA_fortification_focus }
-		x = 0
+		x = 1
 		y = 1
 		relative_position_id = FRA_fortification_focus
 		cost = 7.2
@@ -4777,14 +5287,28 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 10 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			735 = { is_controlled_by = ROOT }
 		}
-		bypass = {
-		}
-
+		
+		
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_alpine_forts"
-			ROOT = { country_event = { id = france.3 } }
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -1.5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
+			country_event = { id = france.3 }
 			ITA = {
 				add_opinion_modifier = {
 					target = ROOT
@@ -4799,7 +5323,7 @@
 		icon = GFX_focus_generic_coastal_fort
 		prerequisite = { focus = FRA_alpine_forts }
 		mutually_exclusive = { focus = FRA_extend_the_maginot_line }
-		x = -2
+		x = -1
 		y = 1
 		relative_position_id = FRA_alpine_forts
 		cost = 7.2
@@ -4830,15 +5354,27 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 25 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			15 = { is_controlled_by = ROOT }
 			29 = { is_controlled_by = ROOT }
 			1037 = { is_controlled_by = ROOT }
 		}
-		bypass = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_protection_from_britain"
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -3.5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
 			15 = {
 				add_building_construction = {
 					type = coastal_bunker
@@ -4909,7 +5445,7 @@
 		icon = GFX_goal_generic_fortify_city
 		prerequisite = { focus = FRA_alpine_forts }
 		mutually_exclusive = { focus = FRA_protection_from_britain }
-		x = 0
+		x = 1
 		y = 1
 		relative_position_id = FRA_alpine_forts
 		cost = 7.2
@@ -4940,6 +5476,14 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			18 = { is_controlled_by = ROOT }
 			29 = { is_controlled_by = ROOT }
 			28 = { is_controlled_by = ROOT }
@@ -4949,7 +5493,13 @@
 		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_extend_the_maginot_line"
-			ROOT = { country_event = { id = france.2 } }
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -2 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
+			country_event = { id = france.2 }
 			BEL = {
 				add_opinion_modifier = {
 					target = ROOT
@@ -4964,72 +5514,15 @@
 	}
 	
 	shared_focus = {
-		id = FRA_aggressive_focus
-		icon = GFX_goal_generic_major_war
+		id = FRA_budget_allocation_infantry_equipment
+		icon = GFX_goal_generic_small_arms
 		prerequisite = { focus = FRA_program_daladier }
-		mutually_exclusive = { focus = FRA_defensive_focus }
-		x = 1
-		y = 1
+		x = -1
+		y = 2
 		relative_position_id = FRA_program_daladier
+		
 		cost = 7.2
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 10
-				has_government = fascism
-			}
-			modifier = {
-				factor = 0.2
-				is_historical_focus_on = yes
-			}
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
-				}
-			}
-		}
-		available = {
-			18 = { is_controlled_by = ROOT }
-			29 = { is_controlled_by = ROOT }
-			28 = { is_controlled_by = ROOT }
-		}
-		bypass = {
-		}
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_aggressive_focus"
-			# add_ideas = maurice_gamelin
-			custom_effect_tooltip = available_chief_of_army
-			show_ideas_tooltip = maurice_gamelin
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_study_german_experience
-		icon = GFX_goal_rhineland
-		prerequisite = { focus = FRA_aggressive_focus }
-		x = 0
-		y = 1
-		relative_position_id = FRA_aggressive_focus
-		cost = 7.2
-
+		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = yes
@@ -5056,80 +5549,40 @@
 			}
 		}
 		available = {
-		}
-		bypass = {
-		}
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_study_german_experience"
-			add_tech_bonus = {
-				name = FRA_study_german_experience
-				bonus = 2.0
-				uses = 1
-				category = land_doctrine
-			}
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_allocation_additional_budget_for_armoured_vehicles
-		icon = GFX_goal_generic_build_tank
-		prerequisite = { focus = FRA_study_german_experience }
-		x = 0
-		y = 1
-		relative_position_id = FRA_study_german_experience
-		cost = 7.2
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
 				}
 			}
 		}
-		available = {
-		}
 		bypass = {
 		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_additional_budget_for_armoured_vehicles"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_budget_allocation_infantry_equipment"
 			army_experience = 5
 			add_tech_bonus = {
-				name = FRA_allocation_additional_budget_for_armoured_vehicles
+				name = FRA_budget_allocation_infantry_equipment
 				bonus = 1.0
 				uses = 1
-				category = cat_mechanized_equipment
+				category = infantry_weapons
 			}
 		}
 	}
 	
 	shared_focus = {
-		id = FRA_allocation_of_additional_budget_for_heavy_tanks
-		icon = GFX_focus_generic_army_tanks2
-		prerequisite = { focus = FRA_allocation_additional_budget_for_armoured_vehicles }
-		mutually_exclusive = { focus = FRA_allocation_of_additional_budget_for_light_tanks }
+		id = FRA_introduction_of_new_equipment
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = FRA_budget_allocation_infantry_equipment }
 		x = 0
 		y = 1
-		relative_position_id = FRA_allocation_additional_budget_for_armoured_vehicles
+		relative_position_id = FRA_budget_allocation_infantry_equipment
+		
 		cost = 7.2
-
+		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = yes
@@ -5156,70 +5609,26 @@
 			}
 		}
 		available = {
-		}
-		bypass = {
-		}
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_of_additional_budget_for_heavy_tanks"
-			army_experience = 5
-			add_tech_bonus = {
-				name = FRA_allocation_of_additional_budget_for_heavy_tanks
-				bonus = 1.0
-				uses = 1
-				category = cat_heavy_armor
-				category = cat_medium_armor
-			}
-		}
-	}
-	
-	shared_focus = {
-		id = FRA_allocation_of_additional_budget_for_light_tanks
-		icon = GFX_goal_generic_army_tanks
-		prerequisite = { focus = FRA_allocation_additional_budget_for_armoured_vehicles }
-		mutually_exclusive = { focus = FRA_allocation_of_additional_budget_for_heavy_tanks }
-		x = 2
-		y = 1
-		relative_position_id = FRA_allocation_additional_budget_for_armoured_vehicles
-		cost = 7.2
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
-
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
 				}
 			}
 		}
-		available = {
-		}
 		bypass = {
 		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_of_additional_budget_for_light_tanks"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_introduction_of_new_equipment"
 			army_experience = 5
 			add_tech_bonus = {
-				name = FRA_allocation_of_additional_budget_for_light_tanks
+				name = FRA_introduction_of_new_equipment
 				bonus = 1.0
 				uses = 1
-				category = cat_light_armor
-				category = cat_medium_armor
+				category = infantry_weapons
 			}
 		}
 	}
@@ -5228,8 +5637,8 @@
 		id = FRA_budget_allocation_for_military_equipment
 		icon = GFX_goal_generic_army_artillery2
 		prerequisite = { focus = FRA_program_daladier }
-		x = 3
-		y = 1
+		x = 1
+		y = 2
 		relative_position_id = FRA_program_daladier
 		cost = 7.2
 
@@ -5259,9 +5668,18 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 		}
 		bypass = {
 		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_budget_allocation_for_military_equipment"
 			army_experience = 5
@@ -5309,9 +5727,18 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 		}
 		bypass = {
 		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_transport_development"
 			army_experience = 5
@@ -5328,10 +5755,11 @@
 	shared_focus = {
 		id = FRA_providing_army_with_tanks
 		icon = GFX_focus_generic_tank_production
+		prerequisite = { focus = FRA_introduction_of_new_equipment }
 		prerequisite = { focus = FRA_transport_development }
-		x = 0
+		x = 1
 		y = 1
-		relative_position_id = FRA_transport_development
+		relative_position_id = FRA_introduction_of_new_equipment
 		cost = 7.2
 
 		cancel_if_invalid = yes
@@ -5360,9 +5788,18 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 25 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 		}
 		bypass = {
 		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_providing_army_with_tanks"
 			army_experience = 5
@@ -5378,17 +5815,598 @@
 	}
 	
 	shared_focus = {
+		id = FRA_aggressive_focus
+		icon = GFX_goal_generic_major_war
+		prerequisite = { focus = FRA_program_daladier }
+		mutually_exclusive = { focus = FRA_defensive_focus }
+		x = 3
+		y = 1
+		relative_position_id = FRA_program_daladier
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 10
+				has_government = fascism
+			}
+			modifier = {
+				factor = 0.2
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 35 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+			18 = { is_controlled_by = ROOT }
+			29 = { is_controlled_by = ROOT }
+			28 = { is_controlled_by = ROOT }
+		}
+		bypass = {
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_aggressive_focus"
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -7.5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = maurice_gamelin
+			army_experience = 25
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_battle_of_maneuver
+		icon = GFX_goal_generic_position_armies
+		prerequisite = { focus = FRA_aggressive_focus }
+		x = 0
+		y = 1
+		relative_position_id = FRA_aggressive_focus
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_battle_of_maneuver"
+			custom_effect_tooltip = available_theorist
+			show_ideas_tooltip = charles_de_gaulle
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_study_german_experience
+		icon = GFX_goal_rhineland
+		prerequisite = { focus = FRA_battle_of_maneuver }
+		x = 0
+		y = 1
+		relative_position_id = FRA_battle_of_maneuver
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_study_german_experience"
+			add_tech_bonus = {
+				name = FRA_study_german_experience
+				bonus = 2.0
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_allocation_additional_budget_for_armoured_vehicles
+		icon = GFX_goal_generic_build_tank
+		prerequisite = { focus = FRA_study_german_experience }
+		x = -1
+		y = 1
+		relative_position_id = FRA_study_german_experience
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_additional_budget_for_armoured_vehicles"
+			army_experience = 5
+			add_tech_bonus = {
+				name = FRA_allocation_additional_budget_for_armoured_vehicles
+				bonus = 1.0
+				uses = 1
+				category = cat_mechanized_equipment
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_allocation_of_additional_budget_for_heavy_tanks
+		icon = GFX_focus_generic_army_tanks2
+		prerequisite = { focus = FRA_allocation_additional_budget_for_armoured_vehicles }
+		mutually_exclusive = { focus = FRA_allocation_of_additional_budget_for_light_tanks }
+		x = -1
+		y = 1
+		relative_position_id = FRA_allocation_additional_budget_for_armoured_vehicles
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_of_additional_budget_for_heavy_tanks"
+			army_experience = 5
+			add_tech_bonus = {
+				name = FRA_allocation_of_additional_budget_for_heavy_tanks
+				bonus = 1.0
+				uses = 1
+				category = cat_heavy_armor
+				category = cat_medium_armor
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_allocation_of_additional_budget_for_light_tanks
+		icon = GFX_goal_generic_army_tanks
+		prerequisite = { focus = FRA_allocation_additional_budget_for_armoured_vehicles }
+		mutually_exclusive = { focus = FRA_allocation_of_additional_budget_for_heavy_tanks }
+		x = 1
+		y = 1
+		relative_position_id = FRA_allocation_additional_budget_for_armoured_vehicles
+		cost = 7.2
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 17.5 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_allocation_of_additional_budget_for_light_tanks"
+			army_experience = 5
+			add_tech_bonus = {
+				name = FRA_allocation_of_additional_budget_for_light_tanks
+				bonus = 1.0
+				uses = 1
+				category = cat_light_armor
+				category = cat_medium_armor
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_air_dominance
+		icon = GFX_goal_generic_air_fighter2
+		prerequisite = { focus = FRA_aggressive_focus }
+		x = 2
+		y = 1
+		relative_position_id = FRA_aggressive_focus
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 10 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_air_dominance"
+			add_ideas = { FRA_air_dominance }
+		}
+	}
+	shared_focus = {
+		id = FRA_cas_focus
+		icon = GFX_goal_generic_CAS
+	 	prerequisite = { 
+	 		focus = FRA_air_dominance
+	 	}
+		x = 0
+		y = 1
+		relative_position_id = FRA_air_dominance
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 10 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_cas_focus"
+			add_tech_bonus = {
+				name = FRA_cas_focus
+				bonus = 1.0
+				uses = 2
+				category = cas_bomber
+			}
+		}
+	}
+	shared_focus = {
+		id = FRA_air_ground_cooperation
+		icon = GFX_goal_generic_air_bomber
+		prerequisite = { focus = FRA_cas_focus }
+		x = 0
+		y = 1
+		relative_position_id = FRA_cas_focus
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 10 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_air_ground_cooperation"
+			add_tech_bonus = {
+				name = FRA_air_ground_cooperation
+				category = air_doctrine
+				uses = 2
+				bonus = 1
+			}
+		}
+	}
+	
+	shared_focus = {
+		id = FRA_flying_artillery
+		icon = GFX_goal_poland_goal
+		prerequisite = { focus = FRA_air_ground_cooperation }
+		x = 0
+		y = 1
+		relative_position_id = FRA_air_ground_cooperation
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2
+				OR = {
+					has_war = yes
+					any_country = {
+						OR = {
+							has_wargoal_against = ROOT
+							is_justifying_wargoal_against = ROOT
+						}
+					}
+					AND = {
+						date > 1939.01.01
+						any_neighbor_country = {
+							has_offensive_war = yes
+						}
+					}
+				}
+			}
+		}
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 10 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_flying_artillery"
+			add_ideas = FRA_flying_artillery
+		}
+	}
+	
+	
+	shared_focus = {
 		id = FRA_army_reform
 		icon = GFX_goal_generic_army_doctrines
 		prerequisite = {
-			focus = FRA_allocation_of_additional_budget_for_heavy_tanks 
-			focus = FRA_allocation_of_additional_budget_for_light_tanks
+			focus = FRA_heavy_armor_focus 
 			focus = FRA_extend_the_maginot_line
 			focus = FRA_protection_from_britain
+			focus = FRA_allocation_of_additional_budget_for_heavy_tanks 
+			focus = FRA_allocation_of_additional_budget_for_light_tanks
+			focus = FRA_flying_artillery
 		}
-		x = 1
-		y = 1
-		relative_position_id = FRA_extend_the_maginot_line
+		x = 0
+		y = 2
+		relative_position_id = FRA_providing_army_with_tanks
 		cost = 7.2
 
 		cancel_if_invalid = yes
@@ -5417,6 +6435,14 @@
 			}
 		}
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 50 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			OR = {
 				AND = {
 					threat > 0.4
@@ -5432,12 +6458,20 @@
 				}
 			}
 		}
-		bypass = {
-		}
 		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRA_army_reform"
-			remove_ideas = FRA_victors_of_wwi
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_add_var = -5 }
+				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+				custom_effect_tooltip = anarchism_unity_add_effect
+			}
+			if = {
+				limit = { has_idea = FRA_victors_of_wwi }
+				remove_ideas = FRA_victors_of_wwi
+			}
 			army_experience = 10
 			add_tech_bonus = {
 				name = FRA_army_reform
@@ -5456,15 +6490,9 @@
 	shared_focus = {
 		id = FRA_navy_focus
 		icon = GFX_goal_generic_build_navy
-		x = 8
+		x = 10
 		y = 0
-		offset = {
-			x = 8
-			y = 0
-			trigger = {
-				original_tag = FRC
-			}
-		}
+		
 		relative_position_id = FRA_program_daladier
 		cost = 7.2
 
@@ -5495,6 +6523,17 @@
 		}
 		
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+			any_owned_state = {
+				is_coastal = yes
+			}
 			hidden_trigger = {
 				OR = {
 					AND = {
@@ -5506,6 +6545,10 @@
 					}
 					NOT = { tag = FRA }
 				}
+			}
+			if = {
+				limit = { original_tag = FRC }
+				NOT = { has_idea = FRC_economic_crisis }
 			}
 		}
 		bypass = {
@@ -5591,7 +6634,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			navy_experience = 25
 			add_tech_bonus = {
@@ -5637,7 +6692,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_capital_ship_focus
@@ -5682,7 +6749,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_carrier_focus
@@ -5696,10 +6775,10 @@
 	shared_focus = {
 		id = FRA_naval_doctrine
 		icon = GFX_goal_generic_navy_doctrines_tactics
-	 	prerequisite = { 
+	 	prerequisite = { focus = FRA_improved_screen_ships }
+	 	prerequisite = {
 	 		focus = FRA_carrier_focus
 	 		focus = FRA_capital_ship_focus
-	 		focus = FRA_improved_screen_ships
 	 	}
 		x = -1
 		y = 1
@@ -5729,7 +6808,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			navy_experience = 25
 			add_tech_bonus = {
@@ -5741,59 +6832,13 @@
 		}
 	}
 
-	shared_focus = {
-		id = FRA_cas_focus
-		icon = GFX_goal_generic_CAS
-	 	prerequisite = { 
-	 		focus = FRA_carrier_focus
-	 		focus = FRA_fighter_focus
-	 	}
-		x = 1
-		y = 1
-		relative_position_id = FRA_carrier_focus
-		cost = 7.2
-
-		available_if_capitulated = yes
-		
-		ai_will_do = {
-			factor = 3
-			modifier = {
-				factor = 2
-				OR = {
-					has_war = yes
-					any_country = {
-						OR = {
-							has_wargoal_against = ROOT
-							is_justifying_wargoal_against = ROOT
-						}
-					}
-					AND = {
-						date > 1939.01.01
-						any_neighbor_country = {
-							has_offensive_war = yes
-						}
-					}
-				}
-			}
-		}
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = FRA_cas_focus
-				bonus = 1.0
-				uses = 2
-				category = cas_bomber
-			}
-		}
-	}
-	
 	
 	### AVIA SECTION ###
 	
 	shared_focus = {
 		id = FRA_air_focus
 		icon = GFX_goal_generic_build_airforce
-		x = 6
+		x = 5
 		y = 0
 		relative_position_id = FRA_navy_focus
 		cost = 7.2
@@ -5823,6 +6868,14 @@
 		}
 		
 		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 20 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
 			hidden_trigger = {
 				OR = {
 					AND = {
@@ -5834,6 +6887,10 @@
 					}
 					NOT = { tag = FRA }
 				}
+			}
+			if = {
+				limit = { original_tag = FRC }
+				NOT = { has_idea = FRC_economic_crisis }
 			}
 		}
 		
@@ -5944,7 +7001,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_fighter_focus
@@ -5987,7 +7056,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_heavy_fighter_focus
@@ -6031,7 +7112,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_bomber_focus
@@ -6077,10 +7170,21 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			air_experience = 50
-
 			add_tech_bonus = {
 				name = FRA_air_doctrine
 				bonus = 1.0
@@ -6122,7 +7226,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_heavy_bomber_focus
@@ -6165,7 +7281,19 @@
 				}
 			}
 		}
-
+		
+		available = {
+			if = {
+				limit = { has_government = anarchism }
+				set_temp_variable = { anarchism_unity_trigger_var = 15 }
+				custom_trigger_tooltip = {
+					check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+					tooltip = anarchism_unity_trigger_more
+				}
+			}
+		}
+		
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
 			add_tech_bonus = {
 				name = FRA_naval_bomber_focus

@@ -14,15 +14,17 @@ country_event = {
 	trigger = {
 		tag = SIK
 		date > 1937.03.25
+		NOT = { has_country_flag = SIK_muhiti_increased_influence_1 }
 	}
 	
-	immediate = {log = "[GetDateText]: [Root.GetName]: event NWsinkiang.1 "}
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.1"}
 	
 	option = {
 		name = NWsinkiang.1.a
 		add_stability = -0.05
 		set_country_flag = SIK_mahmud_muhiti_escaped
-		remove_unit_leader = 60001
+		remove_unit_leader = 15555
+		capital_scope = { add_manpower = -1 }
 	}
 }
 
@@ -30,100 +32,270 @@ country_event = {
 	id = NWsinkiang.2
 	title = NWsinkiang.2.t
 	desc = NWsinkiang.2.desc
-	picture = GFX_report_event_chinese_army_training
+	picture = GFX_report_event_chinese_soldiers
 	fire_only_once = yes
 	
 	trigger = {
-		has_country_flag = SIK_mahmud_muhiti_escaped
-	}
-	
-	mean_time_to_happen = {	days = 1 }
-	
-	immediate = { log = "[GetDateText]: [Root.GetName]: event NWsinkiang.2 " }
-	
-	option = {
-		name = NWsinkiang.2.a
-		every_state = {
-			limit = { is_core_of = SIK }
-			add_core_of = UYG
-		}
-		UYG = { transfer_state = 619 }
-		UYG = { 
-		    create_country_leader = {
-				name = "Abdullah Niyaz"
-				desc = ""
-				picture = "gfx/leaders/Asia/Portrait_Asia_Generic_land_4.dds"
-				expire = "1965.1.1"
-				ideology = militarism
-				traits = {
-				    #
-				}
+		tag = SIK
+	    if = {
+		    limit = {
+		     	AND = {
+    				has_country_flag = SIK_muhiti_increased_influence_1
+			        has_country_flag = SIK_muhiti_bought_rifles
+                }		    
 			}
-			declare_war_on = {
-				target = SIK
-				type = civil_war
-		    }
+		    date > 1936.10.05
 		}
-		619 = {
-			create_unit = {
-				division = "name = \"6th Uyghur Division\" division_template = \"Juntuán\" start_experience_factor = 0.4" 
-				owner = UYG
+        else_if = {
+            limit = {
+                OR = {
+				    has_country_flag = SIK_muhiti_increased_influence_1
+			        has_country_flag = SIK_muhiti_bought_rifles
+	            }
+	        }
+			date > 1937.01.05
+		}
+        else = {
+ 		    date > 1937.04.05
+		}
+    }		
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.2" }
+	immediate = {
+	    UYG = {
+			transfer_state = 619
+		    inherit_technology = SIK
+		    load_oob = "UYG_1936"
+		}
+	    every_unit_leader = {
+		    limit = {
+			    OR = {
+				    has_id = 15555
+			        has_id = 15556
+					has_id = 15557
+		        }
 			}
-		}
-		619 = {
-			create_unit = {
-				division = "name = \"Uyghur Militia\" division_template = \"Juntuán\" start_experience_factor = 0.2" 
-				owner = UYG
+		    set_nationality = UYG
+	    }
+		if = {
+		    limit = {
+		     	AND = {
+    				has_country_flag = SIK_muhiti_increased_influence_1
+			        has_country_flag = SIK_muhiti_bought_rifles
+                }		    
 			}
+		    capital_scope = {
+			    create_unit = {
+			    	division = "name = \"Uyghur Militia\" division_template = \"Juntuán\" start_experience_factor = 0.4 start_equipment_factor = 0.8"
+			        owner = UYG
+					count = 2
+					allow_spawning_on_enemy_provs = yes 
+			    }
+			}	
 		}
+        else_if = {
+            limit = {
+                OR = {
+				    has_country_flag = SIK_muhiti_increased_influence_1
+			        has_country_flag = SIK_muhiti_bought_rifles
+	            }
+	        }
+			capital_scope = {
+			    create_unit = {
+			    	division = "name = \"Uyghur Militia\" division_template = \"Juntuán\" start_experience_factor = 0.4 start_equipment_factor = 0.8"
+			        owner = UYG
+					allow_spawning_on_enemy_provs = yes
+			    }
+			}	
+		}
+		declare_war_on = {
+			target = UYG
+			type = civil_war
+		}
+		add_civil_war_target = UYG
 		hidden_effect = {
 			617 = {
 				create_unit = {
-					division = "name = \"Kirgiz Brigade\" division_template = \"Juntuán\" start_experience_factor = 0.4" 
-					owner = SIK
+					division = "name = \"Kirgiz Brigade\" division_template = \"Juntuán\" start_experience_factor = 0.45" 
+					owner = ROOT
+					count = 3
+					allow_spawning_on_enemy_provs = yes 
 				}
 			}
 		}
+	}
+	option = {
+		name = NWsinkiang.2.a
 	}	
 	option = {
 		name = NWsinkiang.2.b
-		every_state = {
-			limit = { is_core_of = SIK }
-			add_core_of = UYG
-		}
-		UYG = { transfer_state = 619 }
-		UYG = { 
-		    create_country_leader = {
-				name = "Abdullah Niyaz"
-				desc = ""
-				picture = "gfx/leaders/Asia/Portrait_Asia_Generic_land_4.dds"
-				expire = "1965.1.1"
-				ideology = militarism
-				traits = {
-				    #
-				}
-			}
-			
-			declare_war_on = {
-				target = SIK
-				type = civil_war
-		    }
-			
-		}
-		619 = {
-			create_unit = {
-				division = "name = \"6th Uyghur Division\" division_template = \"Juntuán\" start_experience_factor = 0.4" 
-				owner = UYG
-			}
-		}
-		hidden_effect = {
-			617 = {
-				create_unit = {
-					division = "name = \"Kirgiz Brigade\" division_template = \"Juntuán\" start_experience_factor = 0.4" 
-					owner = SIK
-				}
-			}
-		}
+		trigger = { is_ai = no }
         UYG = { change_tag_from = ROOT }		
     }
+}
+
+country_event = {
+	id = NWsinkiang.3
+	title = NWsinkiang.3.t
+	desc = NWsinkiang.3.desc
+	picture = GFX_report_event_japanese_reply
+	
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.4" }
+	
+	option = {
+		name = NWsinkiang.3.a
+		ai_chance = {
+			factor = 2
+			modifier = {
+				add = -1
+				communism > 0.3
+			}
+			modifier = {
+				has_government = communism
+				factor = 0
+			}
+		}
+		add_manpower = -5000
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -500
+		}
+		FROM = { country_event = { id = NWsinkiang.311 days = 5 } }
+	}
+	
+	option = {
+		name = NWsinkiang.3.b
+		ai_chance = {
+			factor = 1
+		}
+		
+		FROM = { country_event = { id = NWsinkiang.312 days = 10 } }
+		
+	}
+}
+
+country_event = {
+	id = NWsinkiang.311
+	immediate = {log = "[GetDateText]: [Root.GetName]: event NWsinkiang.311"}
+	title = NWsinkiang.40.t
+	desc = NWsinkiang.40.d
+	picture = GFX_report_event_indian_soldiers
+
+	is_triggered_only = yes
+	option = { ## yes
+		name = NWsinkiang.311.a
+		add_manpower = 4000
+		custom_effect_tooltip = UYG_volunteers_will_spawn
+		add_opinion_modifier = { target = AFG modifier = UYG_AFG_agreed }
+		hidden_effect = {
+			division_template = {
+				name = "Afghan Volunteers"
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 1 y = 0 }
+					infantry = { x = 1 y = 1 }
+				}
+			}
+            capital_scope = {
+				create_unit = {
+			    	division = "name = \"Afghan Volunteers\" division_template = \"Afghan Volunteers\" start_experience_factor = 0.4 start_equipment_factor = 1.0"
+			        owner = ROOT
+					allow_spawning_on_enemy_provs = yes 
+			    }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = NWsinkiang.312
+	immediate = {log = "[GetDateText]: [Root.GetName]: event NWsinkiang.312"}
+	title = NWsinkiang.312.t
+	desc = NWsinkiang.312.d
+	picture = GFX_report_event_japanese_reply
+
+	is_triggered_only = yes
+	option = { ## yes
+		name = NWsinkiang.312.a
+		add_opinion_modifier = { target = AFG modifier = UYG_AFG_disagreed }
+	}
+}
+
+country_event = {
+	id = NWsinkiang.4
+	title = NWsinkiang.4.t
+	desc = NWsinkiang.4.desc
+	picture = GFX_report_event_generic_rifles
+	
+	trigger = {
+		tag = SIK
+		date > 1936.04.01
+	}
+	
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.4" }
+	immediate = { hidden_effect = { country_event = { id = NWsinkiang.5 months = 1 } } }
+	
+	option = {
+		name = NWsinkiang.4.a
+		ai_chance = {
+			factor = 60
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 600
+		}
+		set_country_flag = SIK_muhiti_bought_rifles
+	}
+	
+	option = {
+		name = NWsinkiang.4.b
+		ai_chance = {
+			factor = 40
+		}
+		add_stability = -0.05
+	    add_political_power = -50
+	}
+}
+
+country_event = {
+	id = NWsinkiang.5
+	title = NWsinkiang.5.t
+	desc = NWsinkiang.5.desc
+	picture = GFX_report_event_generic_funeral
+	
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.5" }
+	
+	option = {
+		name = NWsinkiang.5.a
+		ai_chance = {
+			factor = 60
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_political_power = 50
+		set_country_flag = SIK_muhiti_increased_influence_1
+	}
+	
+	option = {
+		name = NWsinkiang.5.b
+		ai_chance = {
+			factor = 40
+		}
+		add_stability = -0.05
+	    add_political_power = -50
+	}
 }

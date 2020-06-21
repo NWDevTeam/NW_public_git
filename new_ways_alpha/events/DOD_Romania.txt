@@ -333,6 +333,14 @@ country_event = {
 				is_in_faction = no
 				factor = 0.5
 			}
+			modifier = {
+				alliance_strength_ratio > 1
+				factor = 5
+			}
+			modifier = {
+				is_in_faction = yes
+				factor = 1.5
+			}
 		}
 		ROM = { country_event = DOD_romania.42 }	
 	}
@@ -350,10 +358,23 @@ country_event = {
 
 	option = { #cool
 		name = DOD_romania.41.a
-		puppet = BUL
 		hidden_effect = {
 			news_event = { id = news.318 days = 1 }
+			if = {
+				limit = {
+					FROM = {
+						is_in_faction_with = HUN
+						num_faction_members < 3
+					}
+				}
+				if = {
+					limit = { FROM = { is_faction_leader = yes } }
+					FROM = { dismantle_faction = yes }
+				}
+				else = { HUN = { dismantle_faction = yes } }
+			}
 		}
+		puppet = BUL
 	}
 
 }
@@ -395,7 +416,9 @@ country_event = {
 			type = puppet_wargoal_focus
 			target = BUL
 		}
-		news_event = { id = news.319 days = 1 }
+		hidden_effect = {
+			news_event = { id = news.319 days = 1 }
+		}
 	}
 
 }
@@ -778,10 +801,31 @@ country_event = {
 		}
 		puppet = BOS
 		
-		hidden_effect = {
-			annex_country = { target = YUG }
+		if = {
+			limit = {
+				825 = { is_owned_by = YUG }
+			}
+			MAC = { transfer_state = 825 }
 		}
-		news_event = { id = news.324 days = 1 }
+		if = {
+			limit = {
+				106 = { is_owned_by = YUG }
+			}
+			MAC = { transfer_state = 106 }
+		}
+		if = {
+			limit = {
+				812 = { is_owned_by = YUG }
+			}
+			MAC = { transfer_state = 812 }
+		}
+		puppet = MAC
+		
+		hidden_effect = {
+			MAC = { kill_country_leader = yes } # Ибо при власти находится принц Пауль (Югославский монарх)
+			annex_country = { target = YUG }
+			news_event = { id = news.324 days = 1 }
+		}
 	}
 
 }
@@ -805,7 +849,9 @@ country_event = {
 			type = annex_everything
 			target = YUG
 		}
-		news_event = { id = news.320 days = 1 }
+		hidden_effect = {
+			news_event = { id = news.320 days = 1 }
+		}
 	}
 
 	option = { # approach Germans and Italians for joint action
@@ -997,7 +1043,9 @@ country_event = {
 			type = annex_everything
 			target = YUG
 		}
-		news_event = { id = news.320 days = 1 }
+		hidden_effect = {
+			news_event = { id = news.320 days = 1 }
+		}
 	}
 
 }
@@ -1434,7 +1482,9 @@ country_event = {
 				}	
 			}
 		}
-		news_event = { id = news.320 days = 1 }
+		hidden_effect = {
+			news_event = { id = news.320 days = 1 }
+		}
 	}
 }
 
@@ -1449,16 +1499,16 @@ country_event = {
 
 	immediate = {
 		random_list = {
-			20 = { country_event = { id = DOD_romania.81 days = 160 random = 30 } } #villa
-			20 = { country_event = { id = DOD_romania.82 days = 160 random = 30 } } #book
-			20 = { country_event = { id = DOD_romania.83 days = 160 random = 30 } } #party
-			20 = { country_event = { id = DOD_romania.86 days = 160 random = 30 } } #êmbezzlement
+			20 = { country_event = { id = DOD_romania.81 days = 160 random_days = 30 } } #villa
+			20 = { country_event = { id = DOD_romania.82 days = 160 random_days = 30 } } #book
+			20 = { country_event = { id = DOD_romania.83 days = 160 random_days = 30 } } #party
+			20 = { country_event = { id = DOD_romania.86 days = 160 random_days = 30 } } #êmbezzlement
 			20 = {
 				if = {
 					limit = {
 						event_target:NW_france_scope = { has_war = no }
 					}
-					country_event = { id = DOD_romania.84 days = 160 random = 30 }
+					country_event = { id = DOD_romania.84 days = 160 random_days = 30 }
 					else = {
 						country_event = { id = DOD_romania.80 }
 					}
@@ -1469,7 +1519,7 @@ country_event = {
 					limit = {
 						event_target:NW_france_scope = { NOT = { has_war_with = ITA } }
 					}
-					country_event = { id = DOD_romania.85 days = 160 random = 30 }
+					country_event = { id = DOD_romania.85 days = 160 random_days = 30 }
 					else = {
 						country_event = { id = DOD_romania.80 }
 					}
@@ -2102,7 +2152,6 @@ country_event = {
 		}
 		add_state_claim = 70
 		add_state_claim = 71
-		add_state_claim = 72
 		add_state_claim = 73
 		add_state_claim = 990
 	}
@@ -2143,10 +2192,18 @@ country_event = {
 			transfer_state = 847
 			transfer_state = 848
 			transfer_state = 849
+			
+			add_state_core = 69
+			add_state_core = 74
+			add_state_core = 847
+			add_state_core = 848
 		}
 		if = {
 			limit = {
 				country_exists = HUN
+				NOT = {
+					has_war_with = ROM
+				}
 			}
 			HUN = {
 				transfer_state = 664 #might as well throw them a bone
@@ -2157,15 +2214,28 @@ country_event = {
 				SLO = { transfer_state = 815 }
 			}
 		}
+		if = {
+			limit = {
+				country_exists = POL
+				NOT = {
+					has_war_with = ROM
+				}
+			}
+			POL = {
+				transfer_state = 72
+				add_state_core = 72
+			}
+			else = {
+				GER = { transfer_state = 72 }
+			}
+		}
 		SLO = {
 			transfer_state = 70
 			transfer_state = 71
-			transfer_state = 72
 			transfer_state = 73
 			transfer_state = 990
 			add_state_core = 70
 			add_state_core = 71
-			add_state_core = 72
 			add_state_core = 73
 			add_state_core = 990
 

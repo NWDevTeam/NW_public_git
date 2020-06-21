@@ -346,6 +346,26 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -727,6 +747,26 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					hospital < 5
+				}
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	
@@ -839,12 +879,13 @@ focus_tree = {
 				elections_allowed = no
 			}
 			custom_effect_tooltip = TUR_focus_autocomplete_tt
+			custom_effect_tooltip = CAT_winning_kpi_tt
 		}
 	}
 	
 	focus = {
 		id = CAT_repression_against_anarchists
-		icon = GFX_z_goal_repression_against_anarchists
+		icon = GFX_focus_spr_crush_the_revolution
 		prerequisite = { focus = CAT_winning_kpi }
 		x = -2
 		y = 1
@@ -1091,13 +1132,15 @@ focus_tree = {
 				ruling_party = anarchism
 				elections_allowed = yes
 			}
+			set_country_flag = anarchism_left_flag
 			custom_effect_tooltip = TUR_focus_autocomplete_tt
+			custom_effect_tooltip = CAT_winning_iwa_tt
 		}
 	}
 	
 	focus = {
 		id = CAT_repression_against_marxists
-		icon = GFX_z_goal_getting_rid_marxists
+		icon = GFX_z_goal_orange_menace
 		prerequisite = { focus = CAT_winning_kpi focus = CAT_winning_iwa }
 		x = -2
 		y = 1
@@ -1277,7 +1320,14 @@ focus_tree = {
 			}
 		}
 		available = {
-			
+			if = {
+				limit = { country_exists = SPR }
+				SPR = { NOT = { has_government = ROOT } }
+			}
+			if = {
+				limit = { country_exists = SPA }
+				SPA = { NOT = { has_government = ROOT } }
+			}
 		}
 		bypass = {
 			SPR = { exists = no }
@@ -1286,19 +1336,28 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus CAT_new_revolution"
-			OVERLORD = {
-				set_autonomy = {
-					target = ROOT
-					autonomy_state = autonomy_free
+			if = {
+				limit = { is_subject = yes }
+				OVERLORD = {
+					set_autonomy = {
+						target = ROOT
+						autonomy_state = autonomy_free
+					}
 				}
 			}
-			create_wargoal = {
-				type = annex_everything
-				target = SPR
+			if = {
+				limit = { country_exists = SPR }
+				create_wargoal = {
+					type = annex_everything
+					target = SPR
+				}
 			}
-			create_wargoal = {
-				type = annex_everything
-				target = SPA
+			if = {
+				limit = { country_exists = SPA }
+				create_wargoal = {
+					type = annex_everything
+					target = SPA
+				}
 			}
 			hidden_effect = {
 				if = {
@@ -1388,12 +1447,13 @@ focus_tree = {
 				elections_allowed = yes
 			}
 			custom_effect_tooltip = TUR_focus_autocomplete_tt
+			custom_effect_tooltip = CAT_winning_poum_tt
 		}
 	}
 	
 	focus = {
 		id = CAT_repression_against_communists
-		icon = GFX_z_goal_getting_rid_left
+		icon = GFX_z_goal_generic_political_commissars
 		prerequisite = { focus = CAT_winning_poum focus = CAT_winning_iwa }
 		x = -2
 		y = 1
@@ -1517,6 +1577,7 @@ focus_tree = {
 						type = civil_war
 						target = SPR
 					}
+					add_civil_war_target = SPR
 				}
 			}
 			if = {
@@ -1630,6 +1691,7 @@ focus_tree = {
 				elections_allowed = yes
 			}
 			custom_effect_tooltip = TUR_focus_autocomplete_tt
+			custom_effect_tooltip = CAT_save_power_jeneralitet_tt
 		}
 	}
 	
@@ -1771,9 +1833,19 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName]: Focus CAT_free_aragonese"
-			166 = { add_claim_by = ROOT }
+			every_state = {
+				limit = {
+					OR = {
+						state = 166
+						state = 794
+						state = 790
+						state = 792
+					}
+				}
+				add_claim_by = ROOT
+			}
 			if = {
-				limit = { ARA = { NOT = { has_government = democratic } } }
+				limit = { ARA = { NOT = { has_government = ROOT } } }
 				create_wargoal = {
 					type = annex_everything
 					target = ARA
@@ -1880,7 +1952,7 @@ focus_tree = {
 	
 	focus = {
 		id = CAT_repression_against_monarchists
-		icon = GFX_z_goal_repression_against_monarchists
+		icon = GFX_focus_rom_abdicate
 		prerequisite = { focus = CAT_save_power_jeneralitet }
 		x = 2
 		y = 1
