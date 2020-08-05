@@ -2628,30 +2628,73 @@ country_event = {
 	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.26"}
 	
 	trigger = {
-		tag = ITA
-		NOT = {
-			OR = {
-				ITA = {
-					controls_state = 158
-					controls_state = 987
-				}
-				ITA = {
-					controls_state = 160
-					controls_state = 159
-				}
-				ITA = {
-					controls_state = 115
-					controls_state = 156
-				}
-				controls_state = 2
+		OR = {
+			AND = {
+				controls_state = 158
+				controls_state = 987
 			}
-			has_war_with = RSI
+			AND = {
+				controls_state = 160
+				controls_state = 159
+			}
+			AND = {
+				controls_state = 115
+				controls_state = 156
+			}
+			controls_state = 2
 		}
-		ITA = { casualties > 300000 }
+		NOT = {
+			tag = ITA
+			country_exists = RSI
+		}
+		ITA = {
+			has_government = fascism
+			casualties > 300000
+		}
 	}
 
 	option = {
 		name = duce.26.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_government = fascism
+					has_government = monarchy
+					has_government = anarchism
+				}
+			}
+		}
+		ITA = { country_event = duce.260 }
+	}
+	
+	option = {
+		name = duce.26.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		ITA = {
+			country_event = duce.260
+			set_country_flag = duce26b_flag
+		}
+	}
+}
+
+country_event = {
+	id = duce.260
+	title = duce.260.t
+	desc = duce.260.d
+	picture = GFX_report_event_italian_rise2
+	is_triggered_only = yes
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.260"}
+
+	option = {
+		name = duce.260.a
 		ai_chance = {
 			factor = 50
 		}
@@ -2661,6 +2704,7 @@ country_event = {
 		set_country_flag = ITA_salo_republic_flag
 		hidden_effect = {
 			load_focus_tree = Salo_focus
+			kill_country_leader = yes
 		}
 		set_party_name = { ideology = fascism long_name = ITA_republican_fashist_long name = ITA_republican_fashist }
 		create_country_leader = {
@@ -2771,67 +2815,73 @@ country_event = {
 			limit = { is_in_faction = yes }
 			leave_faction = yes
 		}
-		hidden_effect = {
-			RSI = {
-				transfer_state = 156
-				transfer_state = 117
-				transfer_state = 157
-				transfer_state = 115
-				transfer_state = 114
-				load_oob = "Italian_rise"
-				declare_war_on = {
-					target = ITA
-					type = civil_war
+		if = {
+			limit = { NOT = { has_country_flag = duce26b_flag } }
+			hidden_effect = {
+				RSI = {
+					transfer_state = 156
+					transfer_state = 117
+					transfer_state = 157
+					transfer_state = 115
+					transfer_state = 114
+					load_oob = "Italian_rise"
+					declare_war_on = {
+						target = ITA
+						type = civil_war
+					}
+					add_civil_war_target = ITA
 				}
-				add_civil_war_target = ITA
+				add_ideas = ITA_partisans_idea
+				every_state = {
+					limit = { is_core_of = ITA}
+					add_core_of = RSI
+					set_state_flag = italian_partisans_flag
+				}
+				every_state = {
+					limit = { is_owned_by = ITA}
+					add_claim_by = RSI
+				}
+				IF = {
+					limit = { has_idea = ITA_logistics_idea }
+					RSI = { add_ideas = ITA_logistics_idea }
+				}
+				IF = {
+					limit = { has_idea = ITA_logistics_idea2 }
+					RSI = { add_ideas = ITA_logistics_idea2 }
+				}
+				IF = {
+					limit = { has_idea = ITA_generals_idea }
+					RSI = { add_ideas = ITA_generals_idea }
+				}
+				IF = {
+					limit = { has_idea = ITA_generals_idea1 }
+					RSI = { add_ideas = ITA_generals_idea1 }
+				}
+				IF = {
+					limit = { has_idea = ITA_generals_idea2 }
+					RSI = { add_ideas = ITA_generals_idea2 }
+				}
+				IF = {
+					limit = { has_idea = victor_emmanuel }
+					RSI = { add_ideas = victor_emmanuel }
+				}
+				remove_ideas = victor_emmanuel
+				IF = {
+					limit = { is_in_faction_with = GER }
+					country_event = { hours = 6 id = duce.28 }
+				}
+				RSI = { inherit_technology = ITA }
+				news_event = { hours = 6 id = duce_news.12 }
 			}
-			add_ideas = ITA_partisans_idea
-			every_state = {
-				limit = { is_core_of = ITA}
-				add_core_of = RSI
-				set_state_flag = italian_partisans_flag
-			}
-			every_state = {
-				limit = { is_owned_by = ITA}
-				add_claim_by = RSI
-			}
-			IF = {
-				limit = { has_idea = ITA_logistics_idea }
-				RSI = { add_ideas = ITA_logistics_idea }
-			}
-			IF = {
-				limit = { has_idea = ITA_logistics_idea2 }
-				RSI = { add_ideas = ITA_logistics_idea2 }
-			}
-			IF = {
-				limit = { has_idea = ITA_generals_idea }
-				RSI = { add_ideas = ITA_generals_idea }
-			}
-			IF = {
-				limit = { has_idea = ITA_generals_idea1 }
-				RSI = { add_ideas = ITA_generals_idea1 }
-			}
-			IF = {
-				limit = { has_idea = ITA_generals_idea2 }
-				RSI = { add_ideas = ITA_generals_idea2 }
-			}
-			IF = {
-				limit = { has_idea = victor_emmanuel }
-				RSI = { add_ideas = victor_emmanuel }
-			}
-			remove_ideas = victor_emmanuel
-			IF = {
-				limit = { is_in_faction_with = GER }
-				country_event = { hours = 6 id = duce.28 }
-			}
-			RSI = { inherit_technology = ITA }
-			news_event = { hours = 6 id = duce_news.12 }
 		}
 	}
 	
 	option = {
-		name = duce.26.b
-		trigger = { is_ai = no }
+		name = duce.260.b
+		trigger = {
+			is_ai = no
+			NOT = { has_country_flag = duce26b_flag }
+		}
 		ai_chance = {
 			factor = 50
 		}
@@ -2841,6 +2891,7 @@ country_event = {
 		set_country_flag = ITA_salo_republic_flag
 		hidden_effect = {
 			load_focus_tree = Salo_focus
+			kill_country_leader = yes
 		}
 		set_party_name = { ideology = fascism long_name = ITA_republican_fashist_long name = ITA_republican_fashist }
 		create_country_leader = {
@@ -3273,7 +3324,7 @@ country_event = {
 			traits = {
 				duce
 			}
-}
+		}
 	}
 }
 

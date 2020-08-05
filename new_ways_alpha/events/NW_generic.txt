@@ -156,6 +156,14 @@ country_event = {
 		name = NWgeneric.5.b
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 3
+				has_focus_tree = hbbrg_focus
+			}
+			modifier = {
+				factor = 2
+				has_government = monarchy
+			}
 		}
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event choosen NWgeneric.5.b"
 		FROM = {
@@ -551,12 +559,22 @@ country_event = {
 			target = FROM
 			autonomy_state = autonomy_free
 		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM		
+			value = -1000
+		}
 		FROM = {
 			if = {
 				limit = { is_in_faction = yes }
 				leave_faction = yes
 			}
 			clear_gem_flag = yes
+			add_ai_strategy = {
+				type = alliance
+				id = ROOT		
+				value = -1000
+			}
 		}
 		if = {
 			limit = { FROM = { has_war = yes } }
@@ -601,6 +619,18 @@ country_event = {
 					has_country_flag = accept_call_to_fight_for_independence
 				}
 				OVERLORD = {
+					PREV = {
+						add_ai_strategy = {
+							type = alliance
+							id = ROOT		
+							value = -1000
+						}
+					}
+					add_ai_strategy = {
+						type = alliance
+						id = PREV		
+						value = -1000
+					}
 					set_autonomy = {
 						target = PREV
 						autonomy_state = autonomy_free
@@ -650,6 +680,11 @@ country_event = {
 			target = FROM
 			autonomy_state = autonomy_free
 		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM		
+			value = -200
+		}
 		FROM = {
 			if = {
 				limit = { is_in_faction = yes }
@@ -660,6 +695,11 @@ country_event = {
 				country = ROOT
 				relation = non_aggression_pact
 				active = yes
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = ROOT		
+				value = -200
 			}
 		}
 		diplomatic_relation = {
@@ -769,7 +809,8 @@ country_event = {
 				limit = {
 					has_country_flag = flag_is_revolter_of_shard_@ROOT
 				}
-				save_event_target_as = is_revolter_of_shard_@ROOT
+				save_event_target_as = is_revolter_of_shard
+				clr_country_flag = flag_is_revolter_of_shard_@ROOT
 			}
 		}
 	}
@@ -782,7 +823,7 @@ country_event = {
 		ai_chance = {
 			factor = 90
 		}
-		event_target:is_revolter_of_shard_@ROOT = {
+		event_target:is_revolter_of_shard = {
 			country_event = { id = NWgeneric.12 days = 1 }
 		}
 	}
@@ -804,26 +845,28 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.12 from [From.GetName] ([From.GetTag])" }
-	immediate = {
-		hidden_effect = {
-			random_other_country = {
-				limit = {
-					has_war_with = FROM
-					has_country_flag = flag_revolter_of_base_is_@ROOT
-				}
-				save_event_target_as = revolter_of_base_is_@ROOT
-			}
-		}
-	}
 
 	option = {
 		name = NWgeneric.12.a
 		ai_chance = {
 			factor = 90
 		}
-		declare_war_on = {
-			target = event_target:revolter_of_base_is_@ROOT
-			type = annex_everything
+		#declare_war_on = {
+		#	target = event_target:revolter_of_base
+		#	type = annex_everything
+		#}
+		random_other_country = {
+			limit = {
+				original_tag = FROM
+				NOT = { tag = FROM }
+			}
+			ROOT = {
+				add_to_war = {
+					targeted_alliance = FROM
+					enemy = PREV
+					hostility_reason = asked_to_join
+				}
+			}
 		}
 	}
 	
@@ -893,7 +936,7 @@ country_event = {
 				limit = {
 					has_country_flag = flag_is_revolter_of_base_@ROOT
 				}
-				save_event_target_as = target_to_revenge_from_@ROOT
+				save_event_target_as = target_to_revenge
 			}
 		}
 	}
@@ -907,16 +950,16 @@ country_event = {
 		}
 		create_wargoal = {
 			type = annex_everything
-			target = event_target:target_to_revenge_from_@ROOT
+			target = event_target:target_to_revenge
 		}
 		add_ai_strategy = {
 			type = antagonize
-			id = event_target:target_to_revenge_from_@ROOT
+			id = event_target:target_to_revenge
 			value = 100
 		}
 		add_ai_strategy = {
 			type = conquer
-			id = event_target:target_to_revenge_from_@ROOT
+			id = event_target:target_to_revenge
 			value = 100
 		}
 	}
@@ -1368,11 +1411,13 @@ country_event = {
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.19" }
 	immediate = {
-		random_other_country = {
-			limit = {
-				has_country_flag = { flag = outcast_@FROM value > 0 }
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					has_country_flag = { flag = outcast_@FROM value > 0 }
+				}
+				save_event_target_as = is_outcast	#Держава
 			}
-			save_event_target_as = is_outcast	#Держава
 		}
 	}
 	
@@ -1418,11 +1463,13 @@ country_event = {
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.20" }
 	immediate = {
-		random_other_country = {
-			limit = {
-				has_country_flag = { flag = call_canceler_@FROM value > 0 }
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					has_country_flag = { flag = call_canceler_@FROM value > 0 }
+				}
+				save_event_target_as = is_call_canceler	#Держава
 			}
-			save_event_target_as = is_call_canceler	#Держава
 		}
 	}
 	
@@ -1454,11 +1501,13 @@ country_event = {
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.21" }
 	immediate = {
-		random_other_country = {
-			limit = {
-				has_country_flag = { flag = demender_@FROM value > 0 }
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					has_country_flag = { flag = demender_@FROM value > 0 }
+				}
+				save_event_target_as = is_demender	#Страна
 			}
-			save_event_target_as = is_demender	#Страна
 		}
 	}
 	
@@ -1578,6 +1627,10 @@ country_event = {
 		name = NWgeneric.23.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_war_support = 0.025
 		add_popularity = {
@@ -1593,6 +1646,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = 0.025
@@ -1615,6 +1672,10 @@ country_event = {
 		name = NWgeneric.24.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = fascism
@@ -1629,6 +1690,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_political_power = 25
@@ -1650,6 +1715,10 @@ country_event = {
 		name = NWgeneric.25.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		every_owned_state = {
 			limit = {
@@ -1671,6 +1740,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = 0.025
@@ -1701,6 +1774,10 @@ country_event = {
 		name = NWgeneric.26.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		if = {
 			limit = { focus_progress = { focus = internationalism_focus progress > 0 } }
@@ -1725,6 +1802,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = 0.025
@@ -1747,6 +1828,10 @@ country_event = {
 		name = NWgeneric.26.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		if = {
 			limit = { focus_progress = { focus = internationalism_focus progress > 0 } }
@@ -1772,6 +1857,10 @@ country_event = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = 25
 		add_to_variable = { abort_reform = 1 }
@@ -1792,6 +1881,10 @@ country_event = {
 		name = NWgeneric.26.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		if = {
 			limit = { focus_progress = { focus = internationalism_focus progress > 0 } }
@@ -1818,6 +1911,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_political_power = 25
@@ -1849,6 +1946,10 @@ country_event = {
 		name = NWgeneric.29.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_stability = 0.03
 		add_popularity = {
@@ -1864,6 +1965,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = -0.01
@@ -1890,6 +1995,10 @@ country_event = {
 		name = NWgeneric.30.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = democratic
@@ -1904,6 +2013,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_political_power = 25
@@ -1925,6 +2038,10 @@ country_event = {
 		name = NWgeneric.31.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = 25
 		add_popularity = {
@@ -1941,6 +2058,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = -0.025
@@ -1971,6 +2092,10 @@ country_event = {
 		name = NWgeneric.32.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		random_owned_controlled_state = {
 			limit = {
@@ -1997,6 +2122,10 @@ country_event = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = -10
 		add_stability = -0.01
@@ -2019,6 +2148,10 @@ country_event = {
 		name = NWgeneric.33.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		random_owned_controlled_state = {
 			limit = {
@@ -2050,6 +2183,10 @@ country_event = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = -15
 		add_to_variable = { abort_reform = 1 }
@@ -2070,10 +2207,14 @@ country_event = {
 		name = NWgeneric.34.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_tech_bonus = {
 			name = industrial_bonus
-			bonus = 0.5
+			bonus = 0.35
 			uses = 1
 			category = electronics
 			category = industry
@@ -2089,6 +2230,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = -0.03
@@ -2120,6 +2265,10 @@ country_event = {
 		name = NWgeneric.35.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = neutrality
@@ -2135,6 +2284,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_popularity = {
@@ -2161,6 +2314,10 @@ country_event = {
 		name = NWgeneric.36.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = 25
 		add_popularity = {
@@ -2176,6 +2333,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_political_power = -15
@@ -2197,6 +2358,10 @@ country_event = {
 		name = NWgeneric.37.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = 15
 		add_popularity = {
@@ -2213,6 +2378,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_stability = -0.05
@@ -2244,6 +2413,10 @@ country_event = {
 		name = NWgeneric.38.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = monarchy
@@ -2259,6 +2432,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_popularity = {
@@ -2285,6 +2462,10 @@ country_event = {
 		name = NWgeneric.39.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = monarchy
@@ -2300,6 +2481,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_popularity = {
@@ -2325,6 +2510,10 @@ country_event = {
 		name = NWgeneric.40.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_popularity = {
 			ideology = monarchy
@@ -2341,6 +2530,10 @@ country_event = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
 			}
 		}
 		add_popularity = {
@@ -2374,6 +2567,10 @@ country_event = {
 		name = NWgeneric.41.a
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = -50
 		add_stability = -0.05
@@ -2383,6 +2580,10 @@ country_event = {
 		name = NWgeneric.41.b
 		ai_chance = {
 			factor = 50
+			modifier = {
+				add = 500
+				has_country_flag = generic_spawn_anarchists_flag
+			}
 		}
 		add_political_power = -25
 		hidden_effect = {
@@ -2488,7 +2689,7 @@ country_event = {
 					###
 					modifier = {
 						factor = 0
-						check_variable = { owned_states < 2 }
+						check_variable = { num_owned_states < 2 }
 					}
 					modifier = {
 						factor = 0
@@ -2623,6 +2824,13 @@ country_event = {
 			ruling_party = anarchism
 			elections_allowed = no
 		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = first_anarchist_spawn_peace } }
+				set_global_flag = first_anarchist_spawn_peace
+				news_event = { id = trworldnews.134 hours = 3 }
+			}
+		}
 	}
 }
 
@@ -2642,7 +2850,7 @@ country_event = {
 		add_stability = -0.05
 		if = {
 			limit = {
-				check_variable = { owned_states > 2 }
+				check_variable = { num_owned_states > 2 }
 				OR = {
 					AND = {
 						has_government = fascism
@@ -2916,6 +3124,13 @@ country_event = {
 				}
 			}
 		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = first_anarchist_spawn_war } }
+				set_global_flag = first_anarchist_spawn_war
+				news_event = { id = trworldnews.135 hours = 3 }
+			}
+		}
 	}
 	
 	option = {
@@ -2925,7 +3140,7 @@ country_event = {
 		add_stability = -0.05
 		if = {
 			limit = {
-				check_variable = { owned_states > 2 }
+				check_variable = { num_owned_states > 2 }
 				OR = {
 					AND = {
 						has_government = fascism
@@ -3180,6 +3395,11 @@ country_event = {
 						PREV = { add_civil_war_target = PREV }
 					}
 					add_civil_war_target = ROOT
+					if = {
+						limit = { NOT = { has_global_flag = first_anarchist_spawn_war } }
+						set_global_flag = first_anarchist_spawn_war
+						news_event = { id = trworldnews.135 hours = 3 }
+					}
 				}
 				clr_country_flag = will_be_fascism
 				clr_country_flag = will_be_communism
@@ -3201,6 +3421,19 @@ country_event = {
 				}
 			}
 			add_popularity = { ideology = anarchism popularity = 0.4 }
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_global_flag = first_anarchist_spawn_war } }
+					set_global_flag = first_anarchist_spawn_war
+					random_other_country = {
+						limit = {
+							original_tag = ROOT
+							NOT = { has_government = anarchism }
+						}
+						news_event = { id = trworldnews.135 hours = 3 }
+					}
+				}
+			}
 		}
 	}
 }
@@ -3646,21 +3879,21 @@ country_event = {
 	desc = {
 		text = NWgeneric.107.desc1
 		trigger = {
-			check_variable = { var = anarcho_collectivism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_collectivism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_transgumanism compare = greater_than }
 		}
 	}
 	desc = {
 		text = NWgeneric.107.desc2
 		trigger = {
-			check_variable = { var = anarcho_individualism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_individualism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_transgumanism compare = greater_than }
 		}
 	}
 	desc = {
@@ -3676,31 +3909,31 @@ country_event = {
 	desc = {
 		text = NWgeneric.107.desc4
 		trigger = {
-			check_variable = { var = anarcho_monarchism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_monarchism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_transgumanism compare = greater_than }
 		}
 	}
 	desc = {
 		text = NWgeneric.107.desc5
 		trigger = {
-			check_variable = { var = anarcho_nationalism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_nationalism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_transgumanism compare = greater_than }
 		}
 	}
 	desc = {
 		text = NWgeneric.107.desc6
 		trigger = {
-			check_variable = { var = anarcho_transgumanism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_nationalism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_transgumanism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_nationalism compare = greater_than }
 		}
 	}
 	picture = GFX_report_event_generic_rally
@@ -3715,11 +3948,11 @@ country_event = {
 			factor = 50
 		}
 		trigger = {
-			check_variable = { var = anarcho_collectivism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_collectivism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_collectivism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_collectivism value = anarcho_transgumanism compare = greater_than }
 		}
 		set_country_flag = anarchism_left_flag
 		effect_tooltip = { unlock_national_focus = social_anarchism_focus }
@@ -3730,11 +3963,11 @@ country_event = {
 			factor = 50
 		}
 		trigger = {
-			check_variable = { var = anarcho_individualism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_individualism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_individualism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_individualism value = anarcho_transgumanism compare = greater_than }
 		}
 		set_country_flag = anarchism_right_flag
 		effect_tooltip = { unlock_national_focus = anarcho_individualism_focus }
@@ -3761,11 +3994,11 @@ country_event = {
 		}
 		trigger = {
 			always = no
-			check_variable = { var = anarcho_monarchism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_nationalism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_monarchism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_monarchism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_nationalism compare = greater_than }
+			check_variable = { var = anarcho_monarchism value = anarcho_transgumanism compare = greater_than }
 		}
 		set_country_leader_ideology = anarcho_monarchism
 		set_country_flag = anarchism_monarchism_flag
@@ -3777,11 +4010,11 @@ country_event = {
 		}
 		trigger = {
 			always = no
-			check_variable = { var = anarcho_nationalism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_nationalism value = anarcho_transgumanism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_nationalism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_nationalism value = anarcho_transgumanism compare = greater_than }
 		}
 		set_country_leader_ideology = anarcho_nationalism
 		set_country_flag = anarchism_nationalism_flag
@@ -3793,11 +4026,11 @@ country_event = {
 		}
 		trigger = {
 			always = no
-			check_variable = { var = anarcho_transgumanism value = anarcho_collectivism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_individualism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarchism_group compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_monarchism compare = greater_than_or_equals }
-			check_variable = { var = anarcho_transgumanism value = anarcho_nationalism compare = greater_than_or_equals }
+			check_variable = { var = anarcho_transgumanism value = anarcho_collectivism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_individualism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarchism_group compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_monarchism compare = greater_than }
+			check_variable = { var = anarcho_transgumanism value = anarcho_nationalism compare = greater_than }
 		}
 		set_country_leader_ideology = anarcho_transgumanism
 		set_country_flag = anarchism_transgumanism_flag
@@ -4429,7 +4662,7 @@ country_event = {
 			factor = 50
 		}
 		add_to_variable = { libertarian_score_var = 1 }
-		custom_effect_tooltip = anarcho_libertarian_score_tt
+		custom_effect_tooltip = ancap_score_tt
 	}
 }
 
@@ -4458,7 +4691,7 @@ country_event = {
 			factor = 50
 		}
 		add_to_variable = { libertarian_score_var = 1 }
-		custom_effect_tooltip = anarcho_libertarian_score_tt
+		custom_effect_tooltip = ancap_score_tt
 	}
 }
 
@@ -4478,7 +4711,7 @@ country_event = {
 			factor = 50
 		}
 		add_to_variable = { libertarian_score_var = 1 }
-		custom_effect_tooltip = anarcho_libertarian_score_tt
+		custom_effect_tooltip = ancap_score_tt
 	}
 	
 	option = {
@@ -4973,6 +5206,14 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.202" }
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = alliance_applicant
+			FROM = {
+				save_event_target_as = alliance_inviter
+			}
+		}
+	}
 	
 	option = {
 		name = NWgeneric.202.a
@@ -5031,7 +5272,7 @@ country_event = {
 	mean_time_to_happen = { days = 30 }
 	
 	option = {
-		name = NWgeneric.203.b
+		name = NWgeneric.203.a
 		country_event = { id = NWgeneric.204 days = 1 }
 	}
 }
@@ -5050,6 +5291,14 @@ country_event = {
 		name = NWgeneric.204.a
 		ai_chance = {
 			factor = 75
+		}
+		trigger = {
+			NOT = {
+				AND = {
+					tag = SAF
+					has_country_leader = { name = "Isaac Bangani Tabata" ruling_only = yes }
+				}
+			}
 		}
 		add_political_power = 100
 		add_stability = 0.2
@@ -5090,6 +5339,22 @@ country_event = {
 		add_political_power = -50
 		set_global_flag = NO_INVITE_LEON_TROTSKY_FLAG
 		save_global_event_target_as = no_invite_leon_trotsky_scope
+		#hidden_effect = {
+		#	random_other_country = {
+		#		limit = {
+		#			has_government = trozkism
+		#			NOT = {
+		#				has_country_flag = looser_flag
+		#				has_country_flag = NOT_WANT_LEADER_FLAG
+		#				has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+		#				tag = event_target:no_invite_leon_trotsky_scope
+		#			}
+		#		}
+		#		set_variable = { global.current_leader = num_of_factories }
+		#		add_to_variable = { global.current_leader = num_battalions }
+		#		get_best_alliance_match_trozkism_international_effect = yes
+		#	}
+		#}
 	}
 }
 
@@ -5141,6 +5406,13 @@ country_event = {
 				size = 0.5
 			}
 		}
+		every_other_country = {
+			limit = {
+				has_government = trozkism
+				is_in_faction_with = ROOT
+			}
+			country_event = { id = NWgeneric.206 hours = 3 }
+		}
 		hidden_effect = {
 			start_civil_war = {
 				ideology = fascism
@@ -5170,19 +5442,89 @@ country_event = {
 						exiled_revolutionary
 					}
 				}
+				set_cosmetic_tag = TRO_cosmetic
 				add_ideas = generic_adviser_to_revolution
 				set_country_flag = INVITE_LEON_TROTSKY_FLAG
+				set_rule = { can_create_factions = yes }
+				random_country = {
+					limit = { is_in_faction_with = ROOT }
+					set_faction_leader = yes
+					ROOT = { leave_faction = yes }
+					add_to_faction = PREV
+				}
+				set_faction_leader = yes
+			}
+			set_global_flag = fifth_international_flag
+			set_rule = { can_create_factions = yes }
+			create_faction = international5
+		}
+	}
+	
+	option = {
+		name = NWgeneric.205.b
+		trigger = { is_ai = no }
+		set_country_flag = same_ideology_civil_war_flag
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = trozkism
+				size = 0.5
+			}
+		}
+		every_other_country = {
+			limit = {
+				has_government = trozkism
+				is_in_faction_with = ROOT
+			}
+			country_event = { id = NWgeneric.206 hours = 3 }
+		}
+		hidden_effect = {
+			set_country_flag = DEFEND_ON_GOVERNMENT_CHANGE_FLAG
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = yes
+			}
+			start_civil_war = {
+				ideology = trozkism
+				size = 0.5
+			}
+			set_politics = {
+				ruling_party = trozkism
+				elections_allowed = yes
+			}
+			add_popularity = {
+				ideology = trozkism
+				popularity = 1
+			}
+			random_other_country = {
+				limit = {
+					original_tag = ROOT
+					has_government = trozkism
+				}
+				set_country_flag = same_ideology_civil_war_flag
+				add_popularity = {
+					ideology = trozkism
+					popularity = 1
+				}
 				set_rule = { can_create_factions = yes }
 				create_faction = international5
 				set_global_flag = fifth_international_flag
 			}
-			every_other_country = {
-				limit = {
-					has_government = trozkism
-					is_in_faction_with = ROOT
+			create_country_leader = {
+				name = "Leon Trotsky"
+				desc = "POLITICS_LEON_TROTSKY_DESC"
+				picture = "gfx/leaders/SOV/Portrait_Leon_Trotsky.dds"
+				expire = "1965.1.1"
+				ideology = trozkism1
+				traits = {
+					exiled_revolutionary
 				}
-				country_event = { id = NWgeneric.206 hours = 3 }
 			}
+			set_cosmetic_tag = TRO_cosmetic
+			if = {
+				limit = { NOT = { has_idea = generic_adviser_to_revolution } }
+				add_ideas = generic_adviser_to_revolution
+			}
+			clr_country_flag = DEFEND_ON_GOVERNMENT_CHANGE_FLAG
 		}
 	}
 }
@@ -5201,6 +5543,10 @@ country_event = {
 		name = NWgeneric.206.a
 		ai_chance = {
 			factor = 66
+			modifier = {
+				factor = 2
+				is_neighbor_of = var:troz_id
+			}
 		}
 		hidden_effect = {
 			random_other_country = {
@@ -5209,12 +5555,35 @@ country_event = {
 					NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
 				}
 				set_temp_variable = { enemy_troz_id = THIS.id }
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): enemy_troz_id is [This.GetName] ([This.GetTag])"
+			}
+			random_other_country = {
+				limit = {
+					original_tag = FROM
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+				}
+				set_temp_variable = { troz_id = THIS.id }
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): troz_id is [This.GetName] ([This.GetTag])"
 			}
 		}
-		add_to_war = {
-			targeted_alliance = FROM
-			enemy = var:enemy_troz_id
-			hostility_reason = asked_to_join
+		random_other_country = {
+			limit = {
+				original_tag = FROM
+				NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = FROM
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+				}
+				ROOT = {
+					add_to_war = {
+						targeted_alliance = PREV
+						enemy = PREV.PREV
+						hostility_reason = asked_to_join
+					}
+				}
+			}
 		}
 		hidden_effect = {
 			var:enemy_troz_id = {
@@ -5238,18 +5607,42 @@ country_event = {
 		name = NWgeneric.206.b
 		ai_chance = {
 			factor = 33
-		}
-		add_ai_strategy = {
-			type = alliance
-			id = FROM		
-			value = -1000
-		}
-		add_ai_strategy = {
-			type = antagonize
-			id = FROM	
-			value = 200
+			modifier = {
+				factor = 2
+				is_neighbor_of = var:enemy_troz_id
+			}
 		}
 		leave_faction = yes
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					original_tag = FROM
+					NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
+				}
+				set_temp_variable = { enemy_troz_id = THIS.id }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = FROM
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+				}
+				set_temp_variable = { troz_id = THIS.id }
+			}
+			var:troz_id = {
+				ROOT = {
+					add_ai_strategy = {
+						type = alliance
+						id = PREV		
+						value = -1000
+					}
+					add_ai_strategy = {
+						type = antagonize
+						id = PREV		
+						value = 200
+					}
+				}
+			}
+		}
 		every_other_country = {
 			limit = {
 				has_war_with = ROOT
@@ -5259,11 +5652,7 @@ country_event = {
 			}
 			white_peace = ROOT
 		}
-		random_other_country = {
-			limit = {
-				original_tag = FROM
-				NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
-			}
+		var:enemy_troz_id = {
 			add_to_faction = ROOT
 			ROOT = {
 				add_ai_strategy = {
@@ -5271,10 +5660,24 @@ country_event = {
 					id = PREV	
 					value = 200
 				}
-				add_to_war = {
-					targeted_alliance = PREV
-					enemy = FROM
-					hostility_reason = asked_to_join
+			}
+		}
+		random_other_country = {
+			limit = {
+				original_tag = FROM
+				NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = FROM
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+				}
+				ROOT = {
+					add_to_war = {
+						targeted_alliance = PREV.PREV
+						enemy = PREV
+						hostility_reason = asked_to_join
+					}
 				}
 			}
 		}
@@ -5301,7 +5704,7 @@ country_event = {
 		}
 		NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
 		has_government = trozkism
-		has_global_flag = four_international_flag
+		has_global_flag = NO_INVITE_LEON_TROTSKY_FLAG
 		is_faction_leader = no
 	}
 	
@@ -5350,7 +5753,7 @@ country_event = {
 	option = {
 		name = NWgeneric.208.b
 		ai_chance = {
-			factor = 50
+			factor = 0
 		}
 		add_political_power = -50
 	}
@@ -5374,11 +5777,12 @@ country_event = {
 		trigger = {
 			has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
 		}
-		every_other_country = {
+		every_neighbor_country = {
 			limit = {
 				NOT = {
 					is_in_faction_with = ROOT
 					has_government = ROOT
+					has_war_with = ROOT
 				}
 			}
 			ROOT = {
@@ -5503,11 +5907,23 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.211" }
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = alliance_applicant
+			FROM = {
+				save_event_target_as = alliance_inviter
+			}
+		}
+	}
 	
 	option = {
 		name = NWgeneric.211.a
 		ai_chance = {
-			factor = 100
+			factor = 50
+			modifier = {
+				factor = 2
+				is_neighbor_of = FROM
+			}
 		}
 		FROM = {
 			add_to_faction = ROOT
@@ -5528,7 +5944,15 @@ country_event = {
 	option = {
 		name = NWgeneric.211.b
 		ai_chance = {
-			factor = 0
+			factor = 50
+			modifier = {
+				factor = 2
+				any_other_country = {
+					is_faction_leader = yes
+					is_in_faction_with = ROOT
+					is_neighbor_of = ROOT
+				}
+			}
 		}
 		FROM = { 
 			country_event = { id = generic.7 hours = 6 }
@@ -6805,7 +7229,7 @@ country_event = {
 	option = {
 		name = NWgeneric_stories.11.a
 		ai_chance = {
-			factor = 50
+			factor = 15
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
@@ -6829,7 +7253,7 @@ country_event = {
 	option = {
 		name = NWgeneric_stories.11.b
 		ai_chance = {
-			factor = 50
+			factor = 85
 		}
 	}
 }
@@ -7192,4 +7616,14 @@ country_event = {
 		clear_variable = middle_east_var
 	}
 	
+	option = {
+		name = LOG2
+		every_country = {
+			limit = {
+				has_country_flag = generic_spawn_anarchists_flag
+			}
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): выбран анархистом"
+			add_political_power = 1
+		}
+	}
 }

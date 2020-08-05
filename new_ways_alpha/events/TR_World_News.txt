@@ -5734,7 +5734,7 @@ news_event = {
 	id = trworldnews.132
 	title = trworldnews.132.t
 	desc = trworldnews.132.desc
-	picture = GFX_news_event_023
+	picture = GFX_news_event_024
 	is_triggered_only = yes
 	major = yes
 	
@@ -5751,40 +5751,391 @@ news_event = {
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.c
 		trigger = {
 			has_government = anarchism
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.d
 		trigger = {
 			has_government = technocracy
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.e
 		trigger = {
 			has_government = democratic
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.f
 		trigger = {
 			has_government = fascism
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.g
 		trigger = {
 			has_government = monarchy
 		}
 	}
 	option = {
-		name = trworldnews.132.b
+		name = trworldnews.132.h
 		trigger = {
 			has_government = neutrality
 		}
 	}
 }
 
+#Апогей мировой революции
+news_event = {
+	id = trworldnews.133
+	title = trworldnews.133.t
+	desc = trworldnews.133.desc
+	picture = GFX_news_event_023
+	fire_only_once = yes
+	major = yes
+	
+	trigger = {
+		check_variable = { global.troz_threat_var > 99.999 }
+	}
+	
+	option = {
+		name = trworldnews.133.a
+		trigger = {
+			has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+		}
+		every_other_country = {
+			limit = {
+				NOT = {
+					is_in_faction_with = ROOT
+					has_government = ROOT
+					has_war_with = ROOT
+				}
+			}
+			ROOT = {
+				create_wargoal = {
+					type = annex_everything
+					target = PREV
+				}
+			}
+		}
+	}
+	option = {
+		name = trworldnews.133.b
+		trigger = {
+			NOT = { has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG }
+			has_government = trozkism
+		}
+	}
+	option = {
+		name = trworldnews.133.c
+		trigger = {
+			NOT = {
+				has_government = trozkism
+				has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+			}
+		}
+	}
+}
+
+#Мирный перекат в анархисты
+news_event = {
+	id = trworldnews.134
+	title = trworldnews.134.t
+	desc = trworldnews.134.desc
+	picture = GFX_news_event_gathering_protest
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = trworldnews.133.b
+		trigger = {
+			has_government = anarchism
+		}
+	}
+	option = {
+		name = trworldnews.132.h
+		trigger = {
+			NOT = { has_government = anarchism }
+		}
+	}
+}
+
+#Военный перекат в анархисты
+news_event = {
+	id = trworldnews.135
+	title = trworldnews.135.t
+	desc = trworldnews.135.desc
+	picture = GFX_news_event_spr_spanish_civil_war2
+	is_triggered_only = yes
+	major = yes
+	
+	option = {
+		name = trworldnews.133.b
+		trigger = {
+			has_government = anarchism
+		}
+	}
+	option = {
+		name = trworldnews.132.h
+		trigger = {
+			NOT = { has_government = anarchism }
+		}
+	}
+}
+
+#Первая социалистическая война
+news_event = {
+	id = trworldnews.136
+	title = trworldnews.136.t
+	desc = trworldnews.136.desc
+	picture = GFX_news_event_hungarian_soldiers
+	major = yes
+	
+	trigger = {
+		NOT = { has_global_flag = FSW_flag }
+		any_country = {
+			has_government = communism
+			has_defensive_war = yes
+			any_enemy_country = {
+				has_government = communism
+				has_offensive_war_with = PREV
+			}
+		}
+	}
+	
+	mean_time_to_happen = { days = 5 }
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event trworldnews.136" }
+	immediate = {
+		hidden_effect = {
+			set_global_flag = FSW_flag
+			random_country = {
+				limit = {
+					has_government = communism
+					has_defensive_war = yes
+					any_enemy_country = {
+						has_government = communism
+						has_offensive_war_with = PREV
+					}
+				}
+				save_event_target_as = is_attacked
+				random_enemy_country = {
+					limit = {
+						has_government = communism
+						has_offensive_war_with = PREV
+					}
+					save_event_target_as = is_attacker_from
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = trworldnews.136.a
+		trigger = {
+			OR = {
+				tag = event_target:is_attacked
+				tag = event_target:is_attacker_from
+			}
+		}
+	}
+	option = {
+		name = trworldnews.136.b
+		trigger = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+				has_government = anarchism
+			}
+			NOT = {
+				tag = event_target:is_attacked
+				tag = event_target:is_attacker_from
+			}
+		}
+	}
+	option = {
+		name = trworldnews.136.c
+		trigger = {
+			NOT = {
+				has_government = communism
+				has_government = trozkism
+				has_government = anarchism
+			}
+		}
+	}
+}
+
+#Первая анархическая война
+news_event = {
+	id = trworldnews.137
+	title = trworldnews.137.t
+	desc = trworldnews.137.desc
+	picture = GFX_news_event_034
+	major = yes
+	
+	trigger = {
+		NOT = { has_global_flag = FAW_flag }
+		any_country = {
+			has_government = anarchism
+			has_defensive_war = yes
+			any_enemy_country = {
+				has_government = anarchism
+				has_offensive_war_with = PREV
+			}
+		}
+	}
+	
+	mean_time_to_happen = { days = 5 }
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event trworldnews.137" }
+	immediate = {
+		hidden_effect = {
+			set_global_flag = FAW_flag
+			random_country = {
+				limit = {
+					has_government = anarchism
+					has_defensive_war = yes
+					any_enemy_country = {
+						has_government = anarchism
+						has_offensive_war_with = PREV
+					}
+				}
+				save_event_target_as = is_attacked
+				random_enemy_country = {
+					limit = {
+						has_government = anarchism
+						has_offensive_war_with = PREV
+					}
+					save_event_target_as = is_attacker_from
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = trworldnews.136.a
+		trigger = {
+			OR = {
+				tag = FROM
+				tag = event_target:is_attacker_from
+			}
+		}
+	}
+	option = {
+		name = trworldnews.136.b
+		trigger = {
+			NOT = {
+				tag = FROM
+				tag = event_target:is_attacker_from
+			}
+		}
+	}
+}
+
+
+
+#В МИРЕ ОДНА ИДЕОЛОГИЯ
+news_event = {
+	id = trworldnews.999
+	title = trworldnews.999.t
+	desc = {
+		text = trworldnews.999.desc1
+		trigger = { all_country = { has_government = democratic } }
+	}
+	desc = {
+		text = trworldnews.999.desc2
+		trigger = { all_country = { has_government = communism } }
+	}
+	desc = {
+		text = trworldnews.999.desc3
+		trigger = { all_country = { has_government = fascism } }
+	}
+	desc = {
+		text = trworldnews.999.desc4
+		trigger = { all_country = { has_government = neutrality } }
+	}
+	desc = {
+		text = trworldnews.999.desc5
+		trigger = { all_country = { has_government = technocracy } }
+	}
+	desc = {
+		text = trworldnews.999.desc6
+		trigger = { all_country = { has_government = trozkism } }
+	}
+	desc = {
+		text = trworldnews.999.desc7
+		trigger = { all_country = { has_government = monarchy } }
+	}
+	desc = {
+		text = trworldnews.999.desc8
+		trigger = { all_country = { has_government = anarchism } }
+	}
+	picture = GFX_news_event_german_speech
+	fire_only_once = yes
+	major = yes
+	
+	trigger = {
+		OR = {
+			all_country = { has_government = democratic }
+			all_country = { has_government = communism }
+			all_country = { has_government = fascism }
+			all_country = { has_government = neutrality }
+			all_country = { has_government = technocracy }
+			all_country = { has_government = trozkism }
+			all_country = { has_government = monarchy }
+			all_country = { has_government = anarchism }
+		}
+	}
+	
+	option = {
+		name = trworldnews.999.a
+		trigger = {
+			NOT = {
+				all_country = { has_government = monarchy }
+				all_country = { has_government = anarchism }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					all_country = { has_government = communism }
+					all_country = { has_government = trozkism }
+					all_country = { has_government = technocracy }
+				}
+				is_ai = no
+				all_other_country = { is_ai = yes }
+				all_country = { has_war = no }
+			}
+			every_other_country = {
+				ROOT = {
+					annex_country = {
+						target = PREV
+						transfer_troops = yes
+					}
+				}
+			}
+			set_cosmetic_tag = EARTH
+			custom_effect_tooltip = form_earth_cores
+			hidden_effect = {
+				every_state = {
+					limit = { NOT = { is_core_of = ROOT } }
+					add_core_of = ROOT
+				}
+			}
+			set_global_flag = form_earth_flag
+		}
+	}
+	
+	option = {
+		name = trworldnews.999.b
+		trigger = { all_country = { has_government = monarchy } }
+	}
+	
+	option = {
+		name = trworldnews.999.c
+		trigger = { all_country = { has_government = anarchism } }
+	}
+}

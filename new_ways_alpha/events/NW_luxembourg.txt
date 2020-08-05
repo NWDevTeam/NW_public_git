@@ -17,21 +17,44 @@ country_event = {
 	
 	option = {
 		name = luxembourg.1.a
-		ai_chance = { factor = 90 }
-			random_list = { 
-				50 = { country_event = { id = luxembourg.2 hours = 6 } }
-				50 = { country_event = { id = luxembourg.3 hours = 6 } }
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				has_country_flag = NW_LUX_AI_FASCIST
 			}
 		}
+		random_list = {
+			50 = { country_event = { id = luxembourg.2 hours = 6 } }
+			50 = {
+				modifier = {
+					factor = 0
+					has_country_flag = NW_LUX_AI_COMMUNIST
+				}
+				country_event = { id = luxembourg.3 hours = 6 }
+			}
+		}
+	}
 
 	option = {
 		name = luxembourg.1.b
-		ai_chance = { factor = 10 } 
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_country_flag = NW_LUX_AI_COMMUNIST
+			}
+		}
 		country_event = { id = luxembourg.2 hours = 6 }
 		hidden_effect = {
 			random_list = {
 				60 = { country_event = { id = luxembourg.4 hours = 24 } }
-				40 = { }
+				40 = {
+					modifier = {
+						factor = 0
+						has_country_flag = NW_LUX_AI_FASCIST
+					}
+				}
 			}
 		}
 	}
@@ -83,9 +106,9 @@ country_event = {
 	option = {
 		name = luxembourg.4.a
 		ai_chance = { factor = 90 }
-			add_stability = -0.15
-			add_popularity = { ideology = communism popularity = 0.20 }
-			add_popularity = { ideology = fascism popularity = 0.15 }
+		add_stability = -0.15
+		add_popularity = { ideology = communism popularity = 0.15 }
+		add_popularity = { ideology = fascism popularity = 0.25 }
 	}
 }
 
@@ -102,17 +125,19 @@ country_event = {
 	
 	option = {
 		name = luxembourg.5.a
-		ai_chance = { factor = 90 }
-			add_stability = -0.15
-			if = { limit = { has_country_flag = LUX_muzzle_law_yes_flag }
-				add_popularity = { ideology = fascism popularity = 0.35 }
-			}
-			if = { limit = { has_country_flag = LUX_muzzle_law_yes_flag }
-				add_popularity = { ideology = fascism popularity = 0.05 }
-				add_popularity = { ideology = communism popularity = 0.30 }
-			}
+		add_stability = -0.15
+		if = {
+			limit = { has_country_flag = LUX_muzzle_law_no_flag }
+			add_popularity = { ideology = fascism popularity = 0.35 }
+			add_popularity = { ideology = communism popularity = 0.1 }
+		}
+		if = {
+			limit = { has_country_flag = LUX_muzzle_law_yes_flag }
+			add_popularity = { ideology = communism popularity = 0.35 }
+			add_popularity = { ideology = fascism popularity = 0.1 }
 		}
 	}
+}
 
 #################выборы президента 1937##################
 
@@ -165,7 +190,7 @@ country_event = {
 		ai_chance = { factor = 50 }
 		trigger = {
 			event_target:NW_france_scope = { 
-				is_puppet = no
+				is_subject = no
 				NOT = { has_war_with = LUX }
 				exists = yes
 			}
@@ -178,7 +203,7 @@ country_event = {
 		ai_chance = { factor = 50 } 
 		trigger = {
 			GER = { 
-				is_puppet = no
+				is_subject = no
 				NOT = { has_war_with = LUX }
 				exists = yes
 			}
@@ -360,18 +385,28 @@ country_event = {
 	
 	option = {
 		name = luxembourg.14.a
-		ai_chance = { factor = 90 }
-			give_guarantee = LUX
-			hidden_effect = {
-				LUX = { country_event = { id = luxembourg.15 hours = 6 } }
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				OR = {
+					has_civil_war = yes
+					has_government = anarchism
+					has_government = fascism
+				}
 			}
 		}
+		give_guarantee = FROM
+		hidden_effect = {
+			FROM = { country_event = { id = luxembourg.15 hours = 6 } }
+		}
+	}
 
 	option = {
 		name = luxembourg.14.b
 		ai_chance = { factor = 10 } 
 		hidden_effect = {
-			LUX = { country_event = { id = luxembourg.16 hours = 6 } }
+			FROM = { country_event = { id = luxembourg.16 hours = 6 } }
 		}
 	}
 }
@@ -421,14 +456,33 @@ country_event = {
 	
 	option = {
 		name = luxembourg.17.a
-		ai_chance = { factor = 90 }
-			transfer_state = 8
+		ai_chance = {
+			factor = 90
 		}
+		if = {
+			limit = { FROM = { is_ai = yes } }
+			every_state = {
+				limit = { is_core_of = FROM }
+				add_core_of = ROOT
+			}
+			FROM = {
+				every_unit_leader = {
+					set_nationality = ROOT
+				}
+			}
+			annex_country = {
+				target = FROM
+				transfer_troops = yes
+			}
+		}
+		else = {
+			puppet = FROM
+		}
+	}
 
 	option = {
 		name = luxembourg.17.b
 		ai_chance = { factor = 10 } 
-		
 	}
 }
 
@@ -445,24 +499,28 @@ country_event = {
 	
 	option = {
 		name = luxembourg.18.a
-		ai_chance = { factor = 40 }
-		LUX = {
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 3
+				strength_ratio = {
+					tag = FROM
+					ratio < 1
+				}
+			}
+		}
+		FROM = {
 			transfer_state = 973
 		}
-		hidden_effect = { LUX = { country_event = { id = luxembourg.19 hours = 6 } } }
+		hidden_effect = { FROM = { country_event = { id = luxembourg.19 hours = 6 } } }
 	}
 
 	option = {
 		name = luxembourg.18.b
-		ai_chance = { factor = 60 } 
-		LUX = {
-			create_wargoal = {
-				type = take_state_focus
-				target = BEL
-				generator = { 973 }
-			}
+		ai_chance = {
+			factor = 60
 		}
-		hidden_effect = { LUX = { country_event = { id = luxembourg.20 hours = 6 } } }
+		hidden_effect = { FROM = { country_event = { id = luxembourg.20 hours = 6 } } }
 	}
 }
 
@@ -493,5 +551,10 @@ country_event = {
 	
 	option = {
 		name = luxembourg.20.a
+		create_wargoal = {
+			type = take_state_focus
+			target = FROM
+			generator = { 973 }
+		}
 	}
 }

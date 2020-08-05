@@ -125,6 +125,7 @@ country_event = { #коммунисты восстают
 		tag = POR
 		has_country_flag = POR_salazar_dead
 		has_completed_focus = POR_rebirth_of_catolic_centre
+		has_civil_war = no
 	}
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_portugal.3" }
@@ -273,6 +274,7 @@ country_event = { #мануэль и стронники
 	trigger = {
 		original_tag = POR
 		focus_progress = { focus = POR_politic_anticrelicarism progress > 0.1 }
+		has_civil_war = no
 	}
 	option = {
 		name = NW_portugal.5.a
@@ -672,6 +674,15 @@ country_event = { #угнетёныенароды
 		original_tag = POR
 		has_civil_war = yes
 		has_government = communism
+		#ANG
+		owns_state = 1044
+		owns_state = 1045
+		owns_state = 1056
+		owns_state = 540
+		#MZB
+		owns_state = 544
+		owns_state = 983
+		owns_state = 983
 	}
 	option = {
 		name = NW_portugal.18.a
@@ -681,6 +692,39 @@ country_event = { #угнетёныенароды
 		release_puppet = MZB
 		release_puppet = ANG
 		add_war_support = 0.05
+		hidden_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						tag = MZB
+						tag = ANG
+					}
+				}
+				if = {
+					limit = { NOT = { has_template = "National battalion" } }
+					division_template = {
+						name = "National battalion"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"National battalion\" division_template = \"National battalion\" start_experience_factor = 0.2" 
+						owner = PREV
+						count = 4
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+		}
 	}
 	option = {
 		name = NW_portugal.18.b
@@ -768,8 +812,11 @@ country_event = {
 	
 	option = {
 		name = NW_portugal.21.a
+		trigger = {
+			NOT = { has_completed_focus = POR_catholic_portugal }
+		}
 		ai_chance = {
-			factor = 50
+			factor = 75
 		}
 		create_country_leader = {
 			name = "Duarte Nuno"
@@ -782,16 +829,13 @@ country_event = {
 		}
 		add_war_support = -0.15
 		set_country_flag = POR_all_portugal_flag
-		if = {
-			limit = { NOT = { has_completed_focus = POR_catholic_portugal } }
-			complete_national_focus = POR_all_portugal
-		}
+		effect_tooltip = { unlock_national_focus = POR_all_portugal }
 	}
 	
 	option = {
 		name = NW_portugal.21.b
 		ai_chance = {
-			factor = 50
+			factor = 25
 		}
 		release = ANG
 		ANG = {
@@ -806,9 +850,32 @@ country_event = {
 			}
 			transfer_state = 544
 			declare_war_on = { target = ROOT type = annex_everything }
+			if = {
+				limit = { NOT = { has_template = "National battalion" } }
+				division_template = {
+					name = "National battalion"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+						infantry = { x = 1 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"National battalion\" division_template = \"National battalion\" start_experience_factor = 0.2" 
+					owner = PREV
+					count = 4
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
 		}
 		if = {
-			limit = { ROOT = { has_civil_war = yes } }
+			limit = { has_civil_war = yes }
 			random_other_country = {
 				limit = {
 					original_tag = ROOT
@@ -819,9 +886,6 @@ country_event = {
 		}
 		hidden_effect = {
 			ANG = {
-				set_popularities = {
-					monarchy = 100
-				}
 				set_politics = {
 					ruling_party = monarchy
 					elections_allowed = no
@@ -831,7 +895,6 @@ country_event = {
 		}
 	}
 }
-
 
 # Португалия просит винтовки
 country_event = {
@@ -1809,6 +1872,7 @@ country_event = {
 		}
 		has_idea = POR_fascist_influence_idea
 		NOT = { has_government = fascism }
+		has_civil_war = no
 	}
 	
 	mean_time_to_happen = {

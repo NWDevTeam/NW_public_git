@@ -26,7 +26,7 @@ country_event = {
 			desc = "POLITICS_OTTO_VON_HABSBURG_DESC"
 			picture = GFX_Portrait_hungary_otto_von_hapsburg
 			expire = "1965.1.1"
-			ideology = monarchy_ideology
+			ideology = absolute_monarchy
 			traits = {
 			}
 		}
@@ -2026,6 +2026,7 @@ country_event = {
 		every_state = {
 			limit = {
 				is_core_of = GER
+				NOT = { is_core_of = PRS }
 			}
 			add_claim_by = ROOT
 		}
@@ -2855,7 +2856,9 @@ country_event = {
 				factor = 0
 			}
 		}
-		FROM = { clr_country_flag = flag_a }
+		hidden_effect = {
+			FROM = { clr_country_flag = flag_a }
+		}
 		if = {
 			limit = {
 				FROM = {
@@ -2894,8 +2897,9 @@ country_event = {
 		ai_chance = {
 			factor = 90
 		}
-		
-		FROM = { clr_country_flag = flag_b }
+		hidden_effect = {
+			FROM = { clr_country_flag = flag_b }
+		}
 		every_state = {
 			limit = {
 				is_core_of = GAL
@@ -2953,9 +2957,10 @@ country_event = {
 				factor = 1000
 			}
 		}
-		
-		FROM = { clr_country_flag = flag_c }
-		ROOT = { transfer_state = 72 }
+		hidden_effect = {
+			FROM = { clr_country_flag = flag_c }
+		}
+		transfer_state = 72
 		72 = {
 			add_core_of = ROOT
 			remove_core_of = FROM
@@ -3071,6 +3076,7 @@ country_event = {
 		ai_chance = {
 			factor = 25
 		}
+		FROM = { set_country_flag = kingPOL_flag }
 		if = {
 			limit = { FROM = { has_government = monarchy } }
 			create_country_leader = {
@@ -3078,11 +3084,11 @@ country_event = {
 				desc = "POLITICS_OTTO_VON_HABSBURG_DESC"
 				picture = GFX_Portrait_hungary_otto_von_hapsburg
 				expire = "1965.1.1"
-				ideology = monarchy_ideology
+				ideology = dual_monarchy
 				traits = {
 				}
 			}
-			hidden_effect = { load_all_traits = yes }
+			hidden_effect = { FROM = { load_all_traits = yes } }
 		}
 		if = {
 			limit = { FROM = { has_government = fascism } }
@@ -3095,7 +3101,38 @@ country_event = {
 				traits = {
 				}
 			}
-			hidden_effect = { load_all_traits = yes }
+			hidden_effect = { FROM = { load_all_traits = yes } }
+		}
+		
+		every_other_country = {
+			limit = { is_subject_of = ROOT }
+			if = {
+				limit = { FROM = { has_government = fascism } }
+				FROM = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_reichsprotectorate
+					}
+				}
+			}
+			if = {
+				limit = { FROM = { has_government = monarchy } }
+				FROM = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_habs_imperial_uniate
+					}
+				}
+			}
+			if = {
+				limit = { FROM = { NOT = { has_government = fascism has_government = monarchy } } }
+				FROM = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_puppet
+					}
+				}
+			}
 		}
 		
 		if = {
@@ -3256,6 +3293,36 @@ country_event = {
 			factor = 75
 		}
 		FROM = { clr_country_flag = flag_b }
+		every_other_country = {
+			limit = { is_subject_of = FROM }
+			if = {
+				limit = { ROOT = { has_government = fascism } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_reichsprotectorate
+					}
+				}
+			}
+			if = {
+				limit = { ROOT = { has_government = monarchy } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_habs_imperial_uniate
+					}
+				}
+			}
+			if = {
+				limit = { ROOT = { NOT = { has_government = fascism has_government = monarchy } } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_puppet
+					}
+				}
+			}
+		}
 		if = {
 			limit = { has_government = fascism }
 			set_autonomy = {
@@ -3289,6 +3356,8 @@ country_event = {
 			transfer_state = 66
 			transfer_state = 67
 		}
+		set_country_flag = kingPOL_flag
+		add_country_leader_trait = kingPOL
 	}
 	
 	option = {
@@ -3300,6 +3369,82 @@ country_event = {
 		ai_chance = {
 			factor = 75
 		}
+		FROM = { clr_country_flag = flag_c }
+		every_other_country = {
+			limit = { is_subject_of = FROM }
+			if = {
+				limit = { ROOT = { has_government = fascism } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_reichsprotectorate
+					}
+				}
+			}
+			if = {
+				limit = { ROOT = { has_government = monarchy } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_habs_imperial_uniate
+					}
+				}
+			}
+			if = {
+				limit = { ROOT = { NOT = { has_government = fascism has_government = monarchy } } }
+				ROOT = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_puppet
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_government = fascism }
+			set_autonomy = {
+				target = FROM
+				autonomy_state = autonomy_reichsprotectorate
+			}
+		}
+		if = {
+			limit = { has_government = monarchy }
+			set_autonomy = {
+				target = FROM
+				autonomy_state = autonomy_habs_imperial_uniate
+			}
+		}
+		if = {
+			limit = { NOT = { has_government = fascism has_government = monarchy } }
+			set_autonomy = {
+				target = FROM
+				autonomy_state = autonomy_puppet
+			}
+		}
+		66 = {
+			add_core_of = POL
+			remove_core_of = owner
+		}
+		67 = {
+			add_core_of = POL
+			remove_core_of = owner
+		}
+		800 = {
+			add_core_of = POL
+			remove_core_of = owner
+		}
+		62 = {
+			add_core_of = POL
+			remove_core_of = owner
+		}
+		POL = {
+			transfer_state = 66
+			transfer_state = 67
+			transfer_state = 800
+			transfer_state = 62
+		}
+		set_country_flag = kingPOL_flag
+		add_country_leader_trait = kingPOL
 	}
 }
 
@@ -4597,9 +4742,11 @@ country_event = {
 			factor = 10
 		}
 		add_political_power = 15
-		every_other_country = {
-			limit = { has_country_flag = USE_accept }
-			clr_country_flag = USE_accept
+		hidden_effect = {
+			every_other_country = {
+				limit = { has_country_flag = USE_accept }
+				clr_country_flag = USE_accept
+			}
 		}
 	}
 }
@@ -4905,14 +5052,12 @@ country_event = {
 			target = event_target:NW_france_scope
 			modifier = HBBRG_france_market_1
 		}
-		hidden_effect = {
-			random_list = {
-				75 = {
-					country_event = { id = NWmonarchy.71 days = 5 }
-				}
-				25 = {
-					country_event = { id = NWmonarchy.69 days = 5 }
-				}
+		random_list = {
+			75 = {
+				country_event = { id = NWmonarchy.71 days = 5 }
+			}
+			25 = {
+				country_event = { id = NWmonarchy.69 days = 5 }
 			}
 		}
 	}
@@ -5158,9 +5303,11 @@ country_event = {
 			factor = 10
 		}
 		add_political_power = 15
-		every_other_country = {
-			limit = { has_country_flag = benelux_trade_accept }
-			clr_country_flag = benelux_trade_accept
+		hidden_effect = {
+			every_other_country = {
+				limit = { has_country_flag = benelux_trade_accept }
+				clr_country_flag = benelux_trade_accept
+			}
 		}
 	}
 }
@@ -5389,7 +5536,17 @@ country_event = {
 		add_political_power = -15
 		add_stability = -0.02
 		every_state = {
-			limit = { is_core_of = PRS }
+			limit = {
+				OR = {
+					state = 188
+					state = 5
+					state = 762
+					state = 770
+					state = 981
+					state = 85
+				}
+			}
+			add_core_of = PRS
 			PRS = { transfer_state = PREV }
 		}
 		PRS = { set_cosmetic_tag = TEV_orden }
@@ -5416,7 +5573,7 @@ country_event = {
 					autonomy_state = autonomy_puppet
 				}
 			}
-			add_to_variable = { habbrg_score = 5 }
+			add_to_variable = { habbrg_score = 2.5 }
 		}
 		if = {
 			limit = { VAT = { NOT = { is_in_faction_with = ROOT } } }
@@ -5869,13 +6026,25 @@ country_event = {
 				has_full_control_of_state = 43
 			}
 		}
+		NOT = {
+			has_completed_focus = HBBRG_deus_vult
+			has_completed_focus = HBBRG_give_autonomy_slavs
+			has_completed_focus = HBBRG_adopt_democratic_constitution
+		}
 	}
 
 	option = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.87.a"
 		name = NWmonarchy.87.a
 		if = {
-			limit = { NOT = { has_idea = HBBRG_patchwork_empire_1 } }
+			limit = { has_completed_focus = HBBRG_support_church }
+			add_ideas = HBBRG_patchwork_empire_religian
+		}
+		else_if = {
+			limit = { has_completed_focus = HBBRG_confirm_dualism }
+			add_ideas = HBBRG_patchwork_empire_dualism
+		}
+		else = {
 			add_ideas = HBBRG_patchwork_empire_1
 		}
 	}
@@ -7185,12 +7354,26 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWmonarchy.101" }
+	immediate = {
+		hidden_effect = {
+			create_country_leader = {
+				name = "Otto von Habsburg"
+				desc = "POLITICS_OTTO_VON_HABSBURG_DESC"
+				picture = GFX_Portrait_hungary_otto_von_hapsburg
+				expire = "1965.1.1"
+				ideology = fascism_ideology
+				traits = {
+				}
+			}
+		}
+	}
 
 	option = {
 		name = NWmonarchy.101.a
 		ai_chance = {
 			factor = 50
 		}
+		retire_ideology_leader = fascism
 		add_political_power = 50
 		create_country_leader = {
 			name = "Josef Franz von Österreich"
@@ -7219,6 +7402,7 @@ country_event = {
 		ai_chance = {
 			factor = 50
 		}
+		retire_ideology_leader = fascism
 		add_political_power = 70
 		create_country_leader = {
 			name = "Josef Franz von Österreich"
@@ -7244,3 +7428,242 @@ country_event = {
 		custom_effect_tooltip = otto_will_be_forcibly_removed_from_throne_tt
 	}
 }
+
+# Перенос столицы
+country_event = {
+	id = NWmonarchy.102
+	title = NWmonarchy.102.t
+	desc = NWmonarchy.102.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWmonarchy.102" }
+
+	option = {
+		name = NWmonarchy.102.a
+		ai_chance = {
+			factor = 50
+		}
+		trigger = { has_full_control_of_state = 64 }
+		if = {
+			limit = { 64 = { is_capital = no } }
+			set_capital = 64
+		}
+		hidden_effect = {
+			64 = { add_core_of = ROOT }
+		}
+	}
+	
+	option = {
+		name = NWmonarchy.102.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					9 = { is_capital = yes }
+					43 = { is_capital = yes }
+				}
+			}
+		}
+		trigger = { has_full_control_of_state = 4 }
+		if = {
+			limit = { 4 = { is_capital = no } }
+			set_capital = 4
+		}
+		hidden_effect = {
+			4 = { add_core_of = ROOT }
+		}
+	}
+	
+	option = {
+		name = NWmonarchy.102.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					4 = { is_capital = yes }
+					43 = { is_capital = yes }
+				}
+			}
+		}
+		trigger = { has_full_control_of_state = 9 }
+		if = {
+			limit = { 9 = { is_capital = no } }
+			set_capital = 9
+		}
+		hidden_effect = {
+			9 = { add_core_of = ROOT }
+		}
+	}
+	
+	option = {
+		name = NWmonarchy.102.d
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					4 = { is_capital = yes }
+					9 = { is_capital = yes }
+				}
+			}
+		}
+		trigger = { has_full_control_of_state = 43 }
+		if = {
+			limit = { 43 = { is_capital = no } }
+			set_capital = 43
+		}
+		hidden_effect = {
+			43 = { add_core_of = ROOT }
+		}
+	}
+	
+	option = {
+		name = NWmonarchy.102.e
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			64 = { is_capital = no }
+			4 = { is_capital = no }
+			9 = { is_capital = no }
+			43 = { is_capital = no }
+		}
+	}
+}
+
+# Чек / фикс столицы европейского монарха
+country_event = {
+	id = NWmonarchy.103
+	hidden = yes
+	mean_time_to_happen = {
+		days = 30
+	}
+	
+	trigger = {
+		NOT = { has_focus_tree = hbbrg_focus }
+		has_government = monarchy
+		NOT = { has_country_flag = { flag = HBBRG_solution_on_root value > 0 } }
+		OR = {
+			AND = {
+				capital_scope = { is_on_continent = europe }
+				NOT = { is_in_array = { global.HBBRG_monarchy_of_europe_array = ROOT } }
+			}
+			AND = {
+				NOT = { capital_scope = { is_on_continent = europe } }
+				is_in_array = { global.HBBRG_monarchy_of_europe_array = ROOT }
+			}
+		}
+	}
+	
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWmonarchy.103"
+		if = {
+			limit = {
+				capital_scope = { is_on_continent = europe }
+				NOT = { is_in_array = { global.HBBRG_monarchy_of_europe_array = ROOT } }
+			}
+			add_to_array = { global.HBBRG_monarchy_of_europe_array = ROOT }
+		}
+		else_if = {
+			limit = {
+				NOT = {capital_scope = { is_on_continent = europe } }
+				is_in_array = { global.HBBRG_monarchy_of_europe_array = ROOT }
+			}
+			remove_from_array = { global.HBBRG_monarchy_of_europe_array = ROOT }
+		}
+	}
+}
+
+#Вмешательство в дела монархиста?
+country_event = {
+	id = NWmonarchy.104
+	title = NWmonarchy.104.t
+	desc = NWmonarchy.104.desc
+	picture = GFX_report_event_generic_rally_3
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWmonarchy.104" }
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					is_in_array = { global.HBBRG_monarchy_of_europe_array = THIS }
+					OR = {
+						NOT = { has_government = monarchy }
+						has_civil_war = yes
+					}
+				}
+				save_event_target_as = target_for_HBBRG_scope
+				remove_from_array = { global.HBBRG_monarchy_of_europe_array = THIS }
+				set_country_flag = { flag = HBBRG_solution_on_root days = 120 value = 1 }
+			}
+		}
+	}
+	
+	trigger = {
+		has_completed_focus = HBBRG_position_of_active_intervention
+		has_government = monarchy
+		any_other_country = {
+			is_in_array = { global.HBBRG_monarchy_of_europe_array = THIS }
+			OR = {
+				NOT = { has_government = monarchy }
+				has_civil_war = yes
+			}
+		}
+	}
+	
+	mean_time_to_happen = { days = 3 }
+
+	option = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.104.a"
+		name = NWmonarchy.104.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				num_divisions < 10
+			}
+		}
+		if = {
+			limit = {
+				event_target:target_for_HBBRG_scope = { has_civil_war = yes }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = event_target:target_for_HBBRG_scope
+					has_government = monarchy
+				}
+				every_other_country = {
+					limit = {
+						original_tag = event_target:target_for_HBBRG_scope
+						has_war_with = PREV
+					}
+					ROOT = {
+						add_to_war = {
+							targeted_alliance = PREV.PREV
+							enemy = PREV
+						}
+					}
+				}
+			}
+		}
+		else = {
+			create_wargoal = {
+				type = topple_government
+				target = event_target:target_for_HBBRG_scope
+				expire = 90
+			}
+		}
+	}
+	
+	option = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.104.b"
+		name = NWmonarchy.104.b
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
