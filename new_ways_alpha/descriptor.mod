@@ -1,6 +1,8 @@
 version="0.3.1"
 replace_path="common/national_focus"
+replace_path="common/difficulty_settings"
 replace_path="map/"
+replace_path="portraits/"
 tags={
 	"Alternative History"
 	"Map"
@@ -8,5 +10,5 @@ tags={
 	"Events"
 }
 supported_version="1.9.*"
-picture="nw.jpg"
+picture="thumbnail.png"
 name="New Ways alpha 0.3.1"
