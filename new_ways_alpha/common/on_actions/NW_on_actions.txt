@@ -1,7 +1,40 @@
 on_actions = {
 	on_startup = {
 		effect = {
-			set_global_flag = { flag = nw_drop_focus_tree value = 1 days = 1 }
+			set_global_flag = { flag = nw_drop_focus_tree value = 1 days = 2 }
+			#AI_DIVISION_LIMITER_DYNAMIC
+			if = {
+				limit = {
+					has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				}
+				every_country = {
+					set_variable = { ai_upper_limit = num_of_factories }
+					multiply_variable = { ai_upper_limit = 1.15 }
+					if = {
+						limit = { is_major = yes }
+						multiply_variable = { ai_upper_limit = 1.15 }
+					}
+					if = {
+						limit = { has_war = yes }
+						multiply_variable = { ai_upper_limit = 1.2 }
+					}
+					if = {
+						limit = { threat > 0.74 }
+						multiply_variable = { ai_upper_limit = 1.05 }
+					}
+					round_variable = ai_upper_limit
+				}
+			}
+			#AI_DIVISION_LIMITER SPECIAL BLOCK FOR AMERICA
+			every_country = {
+				limit = {
+					OR = {
+						capital_scope = { is_on_continent = south_america }
+						capital_scope = { is_on_continent = north_america }
+					}
+				}
+				add_to_array = { global.start_americans = THIS }
+			}
 			#volunteer_only
 			every_country = {
 				limit = {
@@ -1059,12 +1092,12 @@ on_actions = {
 						}
 					}
 				}
-				ROOT = { country_event = { id = TR.wonder.24 } }
+				ROOT = { country_event = { id = TR.wonder.23 } }
 			}
 			# Стоунхендж // Уилтшир, Великобритания // 338
 			if = {
 				limit = { FROM.FROM = { has_state_flag = stonehenge_wonder_flag } }
-				ROOT = { country_event = { id = TR.wonder.23 } }
+				ROOT = { country_event = { id = TR.wonder.24 } }
 			}
 			# Томбукту // Мали // 556
 			if = {
@@ -4255,6 +4288,27 @@ on_actions = {
 				}
 				add_named_threat = { threat = -0.15 name = call_for_international_cooperation }
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): минус 0.15 напряги"
+			}
+			#AI_DIVISION_LIMITER_DYNAMIC
+			if = {
+				limit = {
+					has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				}
+				set_variable = { ai_upper_limit = num_of_factories }
+				multiply_variable = { ai_upper_limit = 1.15 }
+				if = {
+					limit = { is_major = yes }
+					multiply_variable = { ai_upper_limit = 1.15 }
+				}
+				if = {
+					limit = { has_war = yes }
+					multiply_variable = { ai_upper_limit = 1.2 }
+				}
+				if = {
+					limit = { threat > 0.74 }
+					multiply_variable = { ai_upper_limit = 1.05 }
+				}
+				round_variable = ai_upper_limit
 			}
 		}
 	}
