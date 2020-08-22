@@ -928,6 +928,52 @@ sell_weapons = {
 			}
 		}
 	}
+	
+	sell_nuke = {
+
+		icon = generic_rocket_research
+
+		available = {
+			num_of_nukes > 0
+		}
+		
+		visible = {
+			has_government = anarchism
+		}
+		
+		days_re_enable = 90
+		#fire_only_once = yes
+
+		custom_cost_trigger = {
+			set_temp_variable = { base_weapons_sell_cost = 300 }
+		}
+		custom_cost_text = sell_weapons_cost
+		
+		#cost = 50
+		
+		complete_effect = {
+			add_nuclear_bombs = -1
+			set_temp_variable = { base_weapons_sell_cost = 300 }
+			add_political_power = base_weapons_sell_cost
+			
+			hidden_effect = {
+				add_to_variable = {
+					var = global.total_nuke
+					value = 1
+				}
+			}
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision sell_nuke // total_nuke = [?global.total_nuke]"
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				num_of_nukes > 2
+				has_war = no
+			}
+		}
+	}
 }
 
 
@@ -2062,6 +2108,47 @@ buy_weapons = {
 		}
 	}
 	
+	buy_nuke = {
+
+		icon = generic_rocket_research
+
+		available = {
+			has_tech = nukes
+			custom_trigger_tooltip = {
+				tooltip = nuke_more_than_1_tt		
+				check_variable = {
+					var = global.total_nuke
+					value = 1
+					compare = greater_than_or_equals
+				}
+			}
+		}
+		
+		visible = {
+			has_government = anarchism
+			NOT = { all_state = { is_controlled_by = ROOT } }
+		}
+		
+		days_re_enable = 90
+
+		cost = 500
+		
+		complete_effect = {
+			add_nuclear_bombs = 1
+			hidden_effect = {
+				subtract_from_variable = {
+					var = global.total_nuke
+					value = 1
+				}
+			}
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision buy_nuke // total_nuke = [?global.total_nuke]"
+		}
+		
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
 	
 	take_all_equipment_from_stock = {
 		
@@ -2108,6 +2195,10 @@ buy_weapons = {
 			if = {
 				limit = { check_variable = { global.total_air_bomber > 0 } }
 				has_tech = early_bomber
+			}
+			if = {
+				limit = { check_variable = { global.total_nuke > 0 } }
+				has_tech = nukes
 			}
 		}
 		
@@ -2228,6 +2319,14 @@ buy_weapons = {
 				subtract_from_variable = {
 					var = global.total_air_bomber
 					value = global.total_air_bomber
+				}
+			}
+			if = {
+				limit = { check_variable = { global.total_nuke > 0 } }
+				add_nuclear_bombs = global.total_nuke
+				subtract_from_variable = {
+					var = global.total_nuke
+					value = global.total_nuke
 				}
 			}
 		}
