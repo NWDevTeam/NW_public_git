@@ -2743,7 +2743,7 @@ NW_GER_garrison_atlantic_wall = {
 
 NW_rush_denmark = {
 	allowed = {
-		tag = GER
+		original_tag = GER
 	}
 	enable = {
 		AND = {
@@ -2784,7 +2784,7 @@ NW_rush_denmark = {
 
 NW_rush_norway = {
 	allowed = {
-		tag = GER
+		original_tag = GER
 	}
 	enable = {
 		has_war_with = NOR
@@ -2815,7 +2815,7 @@ NW_rush_norway = {
 }
 
 NW_wardec_BEL = {
-	allowed = { tag = GER }
+	allowed = { original_tag = GER }
 	enable = {
 		is_historical_focus_on = yes
 		has_wargoal_against = BEL
@@ -2830,7 +2830,7 @@ NW_wardec_BEL = {
 }
 
 NW_wardec_HOL = {
-	allowed = { tag = GER }
+	allowed = { original_tag = GER }
 	enable = {
 		is_historical_focus_on = yes
 		has_wargoal_against = HOL
@@ -2845,7 +2845,7 @@ NW_wardec_HOL = {
 }
 
 NW_wardec_LUX = {
-	allowed = { tag = GER }
+	allowed = { original_tag = GER }
 	enable = {
 		is_historical_focus_on = yes
 		has_wargoal_against = LUX
@@ -2860,9 +2860,7 @@ NW_wardec_LUX = {
 }
 
 NW_rush_poland = {
-	allowed = {
-		tag = GER
-	}
+	allowed = { original_tag = GER }
 	enable = {
 		has_war_with = POL
 		###
@@ -2893,7 +2891,7 @@ NW_rush_poland = {
 }
 
 NW_wardec_POL = { # ai randomly decides to not wardec POL on its own?
-	allowed = { tag = GER }
+	allowed = { original_tag = GER }
 	enable = {
 		is_historical_focus_on = yes
 		has_wargoal_against = POL
@@ -2908,9 +2906,7 @@ NW_wardec_POL = { # ai randomly decides to not wardec POL on its own?
 }
 
 NW_GER_caucasia_nym_nym = {
-	allowed = {
-		tag = GER
-	}
+	allowed = { original_tag = GER }
 	enable = {
 		has_war_with = SOV
 	}
@@ -2924,7 +2920,7 @@ NW_GER_caucasia_nym_nym = {
 }
 
 NW_GER_build_950k_army = {
-	allowed = { tag = GER }
+	allowed = { original_tag = GER }
 	enable = {
 		date < 1940.1.1
 		has_war = no
@@ -2934,4 +2930,84 @@ NW_GER_build_950k_army = {
 
 	ai_strategy = { type = build_army id = infantry value = 500 }
 	ai_strategy = { type = force_build_armies value = 500 }
+}
+
+NW_GER_you_need_to_actually_produce_tanks_noob = {
+	allowed = { original_tag = GER }
+	enable = {
+		original_tag = GER
+		has_tech = basic_medium_tank
+		date > 1939.01.01
+		has_template_ai_majority_unit = medium_armor
+		NOT = { has_template_ai_majority_unit = modern_armor }
+	}
+
+	abort = {
+		has_template_ai_majority_unit = modern_armor
+	}
+	
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_equipment
+		value = 40
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 20
+	}
+}
+
+NW_GER_reduce_heavy_fighters = {	#why have fighter:heavy fighter ratio of 1:1?
+	allowed = { original_tag = GER }
+	enable = {
+		original_tag = GER
+		num_of_military_factories > 130
+		has_war = yes
+	}
+	abort = {
+		always = no
+	}
+	
+	ai_strategy = {
+		type = air_factory_balance
+		value = 20
+	}
+	
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_fighter_equipment
+		value = -60
+	}
+}
+
+NW_GER_resume_light_production_1939 = {
+	allowed = { original_tag = GER }
+	enable = {
+		original_tag = GER
+		has_start_date > 1939.1.1
+		has_template_majority_unit = medium_armor	
+	}
+	abort = {
+		OR = {
+			date > 1941.1.1
+			has_equipment = { medium_tank_equipment > 800 }
+			has_equipment = { light_tank_equipment > 2500 }
+		}
+	}
+	
+	ai_strategy = {
+		type = template_xp_reserve 
+		value = -75
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_equipment
+		value = 90
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 100
+	}
 }

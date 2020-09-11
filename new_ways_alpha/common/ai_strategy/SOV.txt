@@ -70,13 +70,13 @@ SOV_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = armor
-		value = 5
+		value = 10 #5
 	}
 
 	ai_strategy = {
 		type = role_ratio
 		id = infantry
-		value = 40 #because doctrine 70
+		value = 35 #40 #because doctrine 70
 	}
 	
 	#Air unit factors
@@ -115,35 +115,35 @@ SOV_unit_production = {
 	ai_strategy = {
 		type = unit_ratio
 		id = capital_ship
-		value = 1
+		value = 5 #1
 	}
 	ai_strategy = {
 		type = unit_ratio
 		id = carrier
-		value = 1
+		value = 0 #1
 	}
 	ai_strategy = {
 		type = unit_ratio
 		id = submarine
-		value = 30 
+		value = 45 #30
 	}
 
 	ai_strategy = {
 		type = unit_ratio
 		id = screen_ship
-		value = 20
+		value = 30 #20
 	}
 
 	ai_strategy = {
 		type = unit_ratio
 		id = convoy
-		value = 20
+		value = 20 #20
 	}
 	
 	ai_strategy = {
 		type = equipment_production_factor
 		id = fighter
-		value = 25
+		value = 30 #25
 	}
 
 	ai_strategy = {
@@ -161,7 +161,13 @@ SOV_unit_production = {
 	ai_strategy = {
 		type = equipment_production_factor
 		id = infantry
-		value = 30
+		value = 20 #30
+	}
+	
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = support_equipment
+		value = 20	#added altogether
 	}
 	
 	ai_strategy = {
@@ -172,8 +178,14 @@ SOV_unit_production = {
 	
 	ai_strategy = {
 		type = equipment_production_factor
+		id = anti_air
+		value = 50	#added altogether
+	}
+	
+	ai_strategy = {
+		type = equipment_production_factor
 		id = armor
-		value = 5
+		value = 18 #5
 	}
 }	
 
@@ -244,8 +256,14 @@ claims_on_poland = {
 		country_exists = POL
 	}
 	abort = {
-		NOT = {
-			country_exists = POL
+		OR = {
+			AND = {
+				has_completed_focus = SOV_offer_poland_protection
+				POL = { has_country_flag = POL_accepted_soviet_protection }
+			}
+			NOT = {
+				country_exists = POL
+			}
 		}
 	}
 	
@@ -416,11 +434,11 @@ germany_ally = {
 germany_enemy = {
 	enable = {
 		tag = SOV
-		has_completed_focus = SOV_anti_fascist_diplomacy
 		country_exists = GER
 		OR = {
 			date > 1942.1.1
-			has_war_with = GER 
+			has_war_with = GER
+			has_completed_focus = SOV_anti_fascist_diplomacy
 		}
 	}
 	abort = {
@@ -524,7 +542,7 @@ SOV_template_design_1 = {
 	ai_strategy = {
 		type = template_prio
 		id = heavy_armor
-		value = -50
+		value = 10 #-50
 	}
 
 	ai_strategy = {
@@ -598,12 +616,12 @@ SOV_template_design_2 = {
 SOV_pp_spending = {
 	enable = {
 		original_tag = SOV
-		has_manpower < 100000
+		has_manpower < 250000
 		has_political_power < 200
 	}
 	abort = {
 		OR = {
-			has_manpower > 100000
+			has_manpower > 250000
 			has_political_power > 200
 			date > 1944.1.1
 		}
@@ -636,8 +654,39 @@ SOV_play_nice_with_ribbentrop_pact = {
 		type = send_volunteers_desire
 		id = "POL"
 		value = -100
-	}	
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "HOL"			
+		value = -100
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "BEL"			
+		value = -100
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "LUX"			
+		value = -100
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "FRA"			
+		value = -100
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "ENG"			
+		value = -100
+	}
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "USA"			
+		value = -100
+	}
 }
+
 SOV_naval_role_ratios_historical = {
 	enable = {
 		has_dlc = "Man the Guns"
@@ -647,7 +696,7 @@ SOV_naval_role_ratios_historical = {
 	ai_strategy = {
 		type = role_ratio
 		id = naval_capital_bb
-		value = -25
+		value = 5 #-25
 	}
 
 	ai_strategy = {
@@ -665,25 +714,25 @@ SOV_naval_role_ratios_historical = {
 	ai_strategy = {
 		type = role_ratio
 		id = naval_submarine
-		value = 150
+		value = 85 #150
 	}
 
 	ai_strategy = {
 		type = role_ratio
 		id = naval_screen
-		value = 150
+		value = 120 #150
 	}
 
 	ai_strategy = {
 		type = role_ratio
 		id = naval_cruiser_light
-		value = 15
+		value = 10 #15
 	}
 
 	ai_strategy = {
 		type = role_ratio
 		id = naval_cruiser_heavy
-		value = -15
+		value = 10 #-15
 	}
 
 	ai_strategy = {
@@ -703,16 +752,20 @@ SOV_naval_role_ratios_historical = {
 SOV_dont_upgrade_to_weapons_2_too_early = {
 	enable = {
 		original_tag = SOV
+		date < "1942.1.1" # stock up on lots of rifles, we got the manpower
+	}
+	abort = {
 		OR = {
-			date < "1943.1.1" # stock up on lots of rifles, we got the manpower
 			AND = {
-				date > "1943.8.1"
-				surrender_progress < 0.1 # if we arent losing badly its ok now
+				has_equipment = {
+					infantry_equipment > 70000
+				}
+				date > 1939.12.01
 			}
+			date > 1942.01.01
+			num_of_military_factories > 150		#we can hold for a while
 		}
 	}
-	
-	abort_when_not_enabled = yes
 	
 	ai_strategy = {
 		type = production_upgrade_desire_offset
@@ -741,9 +794,7 @@ SOV_the_nkvd_is_all_the_intel_we_need = {
 		num_of_civilian_factories > 35
 	}
 	abort = {
-		OR = {
-			num_of_civilian_factories > 90
-		}
+		num_of_civilian_factories > 90
 	}
 	ai_strategy = {
 		type = intelligence_agency_usable_factories

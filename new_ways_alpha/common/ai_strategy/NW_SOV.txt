@@ -44,13 +44,62 @@ SOV_not_has_war_to_ger_historical = {
 	ai_strategy = {
         type = declare_war
 		id = "GER"
-		value = -100
+		value = -1000
     }
 	ai_strategy = {
         type = conquer
 		id = "GER"
 		value = -100
     }
+}
+
+SOV_dont_be_dumbass_and_dow_germany = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		OR = {
+			has_completed_focus = SOV_war_with_germany
+			has_wargoal_against = GER
+		}
+		OR = {
+			AND = {
+				has_war_with = POL
+				POL = { has_capitulated = no }
+			}
+			has_war_with = JAP
+			NOT = {
+				is_neighbor_of = GER
+			}
+			surrender_progress > 0.1
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = GER
+			has_war = no
+			NOT = { has_wargoal_against = GER }
+			GER = {
+				has_war = yes
+				surrender_progress > 0.2
+			}
+			AND = {
+				num_of_military_factories > 150
+				manpower_per_military_factory > 7500
+				surrender_progress < 0.05
+			}
+		}
+	}
+	ai_strategy = {
+		type = declare_war
+		id = "GER"			
+		value = -2000 
+	}
+	ai_strategy = {
+		type = ignore
+		id = "GER"			
+		value = 100
+	}	
 }
 
 NW_ignore_pol = {
@@ -525,5 +574,793 @@ SOV_dont_mess_with_volunteers = {
 		type = send_volunteers_desire
 		id = DZH
 		value = -500
+	}
+}
+
+china_struggles_ZET_completed_SOV = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_completed_focus = SOV_operation_zet
+		has_government = communism
+		CHI = { has_war_with = JAP }
+		NOT = { has_completed_focus = SOV_reconcile_japan }
+	}
+	
+	abort = {	
+		OR = {
+			NOT = { CHI = { has_war_with = JAP } }
+			NOT = { has_government = communism }
+			has_non_aggression_pact_with = JAP
+			has_completed_focus = SOV_reconcile_japan
+			AND = {
+				has_war_with = GER
+				surrender_progress > 0.1
+			}
+		}
+	}
+	ai_strategy = {
+		type = antagonize
+		id = "JAP"			
+		value = 100
+	}
+	ai_strategy = {
+		type = befriend
+		id = "CHI"			
+		value = 50
+	}
+	ai_strategy = {
+		type = support
+		id = "CHI"			
+		value = 130
+	}
+}
+
+attack_japan_sov = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_completed_focus = SOV_war_with_japan
+		country_exists = JAP
+		JAP = { has_war_with = USA }
+	}
+	abort = {
+		NOT = {
+			country_exists = JAP
+		}
+	}
+	
+	ai_strategy = {
+		type = antagonize
+		id = "JAP"			
+		value = 300
+	}
+	ai_strategy = {
+		type = befriend
+		id = "USA"			
+		value = 100
+	}	
+}
+
+attack_man_sov = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		country_exists = MAN
+		has_wargoal_against = MAN
+		MAN = {
+			NOT = {
+				OR = {
+					is_in_faction = yes
+					is_subject_of = JAP
+				}
+				
+			}
+		}
+	}
+	abort = {
+		OR = {
+			MAN = { is_subject_of = SOV }
+			NOT = {	country_exists = MAN }
+		}
+	}
+	
+	ai_strategy = {
+		type = antagonize
+		id = "MAN"			
+		value = 200
+	}	
+}
+
+SOV_dont_take_claims_on_POL_we_got_focus = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		country_exists = POL
+		has_completed_focus = SOV_claims_on_poland
+	}
+
+	abort = {
+		OR = {
+			NOT = { country_exists = POL }
+			has_completed_focus = SOV_demand_eastern_poland
+			date > 1941.01.01
+			has_war_with = POL
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore_claim
+		id = "POL"			
+		value = 1
+	}		
+}
+
+
+##### PRODUCTION & CONSTRUCTION #####
+SOV_air_unit_production = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		surrender_progress < 0.8
+	}
+	abort = {
+		surrender_progress > 0.8
+	}
+	
+	
+	ai_strategy = {
+		type = air_factory_balance
+		value = 25
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = fighter
+		value = 50
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_fighter_equipment
+		value = -90
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = naval_bomber
+		value = -80
+	}
+}
+
+SOV_increase_that_air_count = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_war = yes
+		date > 1942.06.01
+		surrender_progress < 0.4
+		num_of_military_factories > 170
+		has_deployed_air_force_size = {
+			type = fighter
+			size < 2500
+		}
+	}
+	abort = {
+		OR = {
+			has_war = no
+			has_capitulated = yes
+			has_deployed_air_force_size = {
+					type = fighter
+					size > 4000
+			}
+			num_of_military_factories < 120
+			has_deployed_air_force_size = {
+				type = fighter
+				size < 450
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = air_factory_balance
+		value = 40
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = fighter
+		value = 120
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_fighter_equipment
+		value = -60	#up from -80 8.9
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = cas
+		value = 30
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = naval_bomber
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = strategic_bomber
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = tactical_bomber
+		value = -50
+	}
+}
+
+SOV_fighters_low = {		#light variant of VVS Destroyed Strat (stop producing bombers, make sure enough AA available)
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_war = yes
+		has_civil_war = no
+		has_deployed_air_force_size = {
+			type = fighter
+			size < 999
+		}
+	}
+	abort = {
+		OR = {
+			num_of_military_factories > 200	
+			has_deployed_air_force_size = {
+				type = fighter
+				size > 1500
+			}
+			has_war = no
+		}
+	}
+
+	#ai_strategy = {	#infantry not using antiair anymore
+	#	type = equipment_production_min_factories
+	#	id = anti_air
+	#	value = 6
+	#}
+	
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = CAS_equipment
+		value = -40
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = tac_bomber_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_fighter_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = strat_bomber_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = nav_bomber_equipment
+		value = -200
+	}
+}
+
+SOV_air_destroyed_by_luftwaffe = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_war = yes
+		has_civil_war = no
+		has_deployed_air_force_size = {
+			type = fighter
+			size < 451
+		}
+		surrender_progress > 0.4
+	}
+	abort = {
+		OR = {
+			AND = {
+				date > 1942.06.01
+				surrender_progress < 0.4
+				num_of_military_factories > 170
+				
+			}
+			AND = {
+				surrender_progress < 0.4
+				num_of_military_factories > 170
+				has_tech = fighter3
+			}
+			has_war = no
+			AND = {
+				has_war = yes
+				has_deployed_air_force_size = {
+						type = fighter
+						size > 999
+				}
+			}
+		}
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = anti_air
+		value = 4
+	}
+	ai_strategy = {
+		type = air_factory_balance
+		value = -80
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = fighter_equipment
+		value = -80
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = CAS_equipment
+		value = -100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = tac_bomber_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_fighter_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = strat_bomber_equipment
+		value = -200
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = nav_bomber_equipment
+		value = -200
+	}
+}
+
+SOV_build_civs_not_mils_faggot = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date < 1938.01.01
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = industrial_complex
+		value = 90
+	}
+}
+
+SOV_build_civs_not_mils_1939 = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_start_date > 1939.01.01
+		date < 1941.01.01
+		NOT = {
+			OR = {
+				has_war_with = GER
+				has_war_with = JAP
+				has_war_with = ENG
+				has_war_with = POL
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = industrial_complex
+		value = 95
+	}
+}
+
+SOV_still_build_more_civ = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date < 1941.01.01
+	}
+	abort = {
+		OR = {
+			has_war = yes
+			date > 1941.01.01
+			OR = {
+				date > 1940.01.01
+				NOT = { has_global_flag = sov_yes_pact }
+			}
+			any_neighbor_country = {
+				is_major = yes
+				has_wargoal_against = SOV
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = added_military_to_civilian_factory_ratio	
+		value = -30
+	}
+}
+
+SOV_now_build_your_mils = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date > 1941.1.1
+		has_war = yes
+	}
+	abort = {
+		has_war = no
+	}
+	ai_strategy = {
+		type = added_military_to_civilian_factory_ratio
+		value = 60
+	}
+}
+
+SOV_dockyards_useless_now = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_war_with = GER
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = dockyard_to_military_factory_ratio
+		value = -200
+	}
+}
+
+SOV_boost_light_armor_template = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date > 1937.01.01
+	}
+
+	abort = {
+		OR = {
+			date > 1939.01.01
+			has_war = yes
+			has_tech = basic_medium_tank
+		}
+	}
+
+	# lets do changes more often during this period too
+	ai_strategy = {
+		type = template_xp_reserve 
+		value = -100
+	}
+	ai_strategy = {
+		type = template_prio
+		id = light_armor
+		value = 100
+	}
+	ai_strategy = {
+		type = template_prio
+		id = paratrooper
+		value = -100
+	}
+}
+
+SOV_boost_med_armor_template = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_tech = basic_medium_tank
+		NOT = { has_template_ai_majority_unit = medium_armor }
+	}
+
+	abort = {
+		has_template_ai_majority_unit = medium_armor
+	}
+	
+	# lets do changes more often during this period too
+	ai_strategy = {
+		type = template_xp_reserve 
+		value = -100	#-125
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 150
+	}
+}
+
+SOV_time_to_leave_light_tanks = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_tech = improved_medium_tank
+		has_template_ai_majority_unit = medium_armor
+		OR = {
+			date > 1942.1.1
+			AND = {
+				date > 1941.1.1
+				has_equipment = { light_tank_equipment > 1500 } 
+			}
+		}
+	}
+	abort = {	#with this amount we can have few factories resupply light tank divisions (damned AI won't switch them!)
+		num_of_military_factories > 180
+		has_tech = advanced_light_tank
+	}
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_equipment
+		value = -90		#-100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_equipment
+		value = 40
+	}
+}
+
+SOV_higher_armor_tank_production = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date > 1940.1.1
+		has_tech = improved_medium_tank
+		has_template_ai_majority_unit = medium_armor
+		num_of_military_factories > 100
+	}
+	abort = {
+		OR = {
+			has_tech = main_battle_tank
+			AND = {
+				has_war = yes
+				surrender_progress > 0.5
+			}
+			num_of_military_factories < 101
+		}
+	}
+	
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 50
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 10
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = armor
+		value = 20
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 100
+	}
+}
+
+SOV_expand_navy = {	#note: while historical, it also prevents stupid soviet AI wartime behaviour, when it suddenly decides it needs 9999+ convoys and starts building dozens of useless dockyards in (to be conquered) dangerous states.
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		#is_historical_focus_on = yes
+		has_completed_focus = SOV_ocean_going_navy
+		num_of_military_factories > 70
+		date < 1941.01.01
+		has_war = no
+	}
+	abort = {
+		OR = {
+			has_war = yes
+			date > 1942.01.01
+		}
+	}
+	ai_strategy = {
+		type = building_target
+		id = dockyard
+		value = 10
+	}
+}
+
+SOV_expand_rubber_production = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_tech = rubber_processing
+		OR = {
+			JAP = { has_war_with = ENG }
+			has_war_with = ENG
+		}
+	}
+	abort = {
+		has_war = yes
+		surrender_progress > 0.5
+	}
+	ai_strategy = {
+		type = building_target
+		id = synthetic_refinery
+		value = 6
+	}
+}
+
+
+##### LATE GAME #####
+SOV_expand_rubber_production_late = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		num_of_military_factories > 220
+		has_tech = rubber_processing
+		OR = {
+			has_war_with = ENG
+			has_war_with = JAP
+		}
+	}
+	abort = {
+		surrender_progress > 0.3
+	}
+	ai_strategy = {
+		type = building_target
+		id = synthetic_refinery
+		value = 15
+	}
+}
+
+SOV_reenable_bombers = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		date > 1944.1.1
+		num_of_military_factories > 220
+		has_deployed_air_force_size = {
+			type = fighter
+			size > 5000
+		}
+	}
+	abort = {
+		num_of_military_factories < 200
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = tactical_bomber
+		value = 5
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = 50
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -10
+	}
+}
+
+SOV_lategame_stop_infantry_spam = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		has_army_manpower = {
+			size > 4500000
+		}
+		has_army_size = {
+			size > 300
+			type = infantry
+		}
+	}
+	abort = {
+		has_army_manpower = {
+			size < 3500000
+		}
+	}
+	ai_strategy = {
+		type = build_army
+		id = infantry
+		value = -100
+	}
+}
+
+SOV_lategame_tanks_more_useful_now = {
+	allowed = {
+		tag = SOV
+	}
+	enable = {
+		num_of_military_factories > 180
+		surrender_progress < 0.3
+		has_army_manpower = {
+			size > 2500000
+		}
+		has_tech = improved_medium_tank		#swarm of T-26 tanks not so useful
+	}
+	abort = {
+		OR = {
+			surrender_progress > 0.3
+			num_of_military_factories < 181
+		}
+	}
+
+	ai_strategy = {
+		type = build_army
+		id = armor
+		value = 100
+	}
+	ai_strategy = {
+		type = build_army
+		id = medium_armor
+		value = 100
+	}
+	ai_strategy = {	#tanks can kill tanks too!
+		type = role_ratio
+		id = anti_tank
+		value = -30		#-100
+	}
+	ai_strategy = {	#don't need horses with 2,5M+ army
+		type = role_ratio
+		id = suppression
+		value = -100
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = infantry
+		value = -30
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = armor
+		value = 30	#80
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_equipment
+		value = 20	#30
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_equipment
+		value = -50
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = infantry
+		value = -30
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = anti_tank
+		value = -30
 	}
 }
