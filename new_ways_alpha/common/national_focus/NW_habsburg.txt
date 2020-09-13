@@ -922,25 +922,46 @@ focus_tree = {
 		}
 		
 		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus HBBRG_divide_switzerland"
-			775 = {
-				add_claim_by = ROOT
-				add_core_of = ROOT
+			if = {
+				limit = { ITA = { is_in_faction_with = ROOT } }
+				every_state = {
+					limit = {
+						OR = {
+							state = 775
+							state = 151
+							state = 859
+						}
+					}
+					add_claim_by = ROOT
+					add_core_of = ROOT
+				}
+				every_state = {
+					limit = {
+						OR = {
+							state = 3
+							state = 861
+							state = 860
+						}
+					}
+					add_claim_by = ITA
+					add_core_of = ITA
+				}
 			}
-			151 = {
-				add_claim_by = ROOT
-				add_core_of = ROOT
-			}
-			3 = {
-				add_claim_by = ROOT
-				add_core_of = ROOT
-			}
-			861 = {
-				add_claim_by = ROOT
-				add_core_of = ROOT
-			}
-			860 = {
-				add_claim_by = ROOT
-				add_core_of = ROOT
+			else = {
+				every_state = {
+					limit = {
+						OR = {
+							state = 775
+							state = 151
+							state = 859
+							state = 3
+							state = 861
+							state = 860
+						}
+					}
+					add_claim_by = ROOT
+					add_core_of = ROOT
+				}
 			}
 		}
 	}
@@ -1043,6 +1064,7 @@ focus_tree = {
 			factor = 8
 		}
 		available = {
+			is_subject = no
 			if = {
 				limit = { country_exists = event_target:NW_hhnbrg_scope }
 				OR = {
@@ -1171,6 +1193,8 @@ focus_tree = {
 			factor = 8
 		}
 		available = {
+			country_exists = VAT
+			NOT = { has_war_with = VAT }
 		}
 		bypass = {
 		}
@@ -1258,20 +1282,39 @@ focus_tree = {
 			factor = 8
 		}
 		available = {
+			is_subject = no
 		}
 		bypass = {
 		}
 		
 		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus HBBRG_balkan_crusade"
 			if = {
-				limit = { YUG = { NOT = { is_in_faction_with = ROOT } } }
+				limit = {
+					country_exists = YUG
+					YUG = {
+						NOT = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
 				create_wargoal = {
 					type = puppet_wargoal_focus
 					target = YUG
 				}
 			}
 			if = {
-				limit = { BUL = { NOT = { is_in_faction_with = ROOT } } }
+				limit = {
+					country_exists = BUL
+					BUL = {
+						NOT = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
 				create_wargoal = {
 					type = puppet_wargoal_focus
 					target = BUL
@@ -1279,9 +1322,17 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					OR = {
-						ALB = { NOT = { is_in_faction_with = ITA } }
-						ROOT = { NOT = { is_in_faction_with = ITA } }
+					country_exists = ALB
+					ALB = {
+						NOT = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+					if = {
+						limit = { ITA = { is_in_faction_with = ROOT } }
+						ALB = { NOT = { is_subject_of = ITA } }
 					}
 				}
 				create_wargoal = {
@@ -1299,7 +1350,13 @@ focus_tree = {
 				}
 				add_claim_by = ROOT
 			}
-			country_event = { id = NWmonarchy.30 days = 1 }
+			if = {
+				limit = {
+					country_exists = GRE
+					GRE = { NOT = { is_subject_of = ROOT } }
+				}
+				country_event = { id = NWmonarchy.30 days = 1 }
+			}
 		}
 	}
 	
@@ -1865,6 +1922,7 @@ focus_tree = {
 			factor = 8
 		}
 		available = {
+			is_subject = no
 			is_in_faction = yes
 			LIT = { exists = yes }
 			LAT = { exists = yes }
@@ -1986,9 +2044,6 @@ focus_tree = {
 			}
 		}
 	}
-	
-	
-	
 	
 	
 	##########################
@@ -2540,6 +2595,7 @@ focus_tree = {
 			factor = 15
 		}
 		available = {
+			is_subject = no
 			has_completed_focus = HBBRG_vanguard_monarchy
 			has_government = monarchy
 			is_faction_leader = yes
@@ -2917,6 +2973,7 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
+			is_subject = no
 			country_exists = YUG
 			YUG = {
 				is_subject = no
@@ -2960,6 +3017,7 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
+			is_subject = no
 			country_exists = GRE
 			GRE = {
 				is_subject = no
@@ -4641,7 +4699,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = HBBRG_adopt_democratic_constitution
 
-		cost = 14.2
+		cost = 14.3
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
