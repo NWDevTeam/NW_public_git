@@ -19,6 +19,6 @@ NDefines_Graphics.NGraphics.CAMERA_ZOOM_KEY_SCALE = 0.02
 NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED_DISTANCE_MULT = 15.0
 
 -- AI FIX
-NDefines.NAI.RESEARCH_BONUS_FACTOR = 2.0			-- To which extent AI should care about bonuses to research #0.9
-NDefines.NAI.RESEARCH_AHEAD_OF_TIME_FACTOR = 15.0	-- To which extent AI should care about ahead of time penalties to research	#4.0
-NDefines.NAI.VARIANT_UPGRADE_MIN_XP = 100			-- Minimum XP before attempting to create a new variant. #50
+NDefines.NAI.RESEARCH_BONUS_FACTOR = 2.0							-- To which extent AI should care about bonuses to research #0.9
+NDefines.NAI.RESEARCH_AHEAD_OF_TIME_FACTOR = 15.0					-- To which extent AI should care about ahead of time penalties to research	#4.0
+NDefines.NAI.VARIANT_UPGRADE_MIN_XP = 100							-- Minimum XP before attempting to create a new variant. #50

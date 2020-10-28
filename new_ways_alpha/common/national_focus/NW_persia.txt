@@ -430,7 +430,7 @@ focus_tree = {
 	
 	focus = {
 		id = PER_create_the_sadabat_pact
-		icon = GFX_goal_generic_major_alliance
+		icon = GFX_focus_TUR_treaty_of_saadabad
 		prerequisite = { focus = PER_trade_with_middle_eastern_neighbors }
 		x = 0
 		y = 1
@@ -2566,26 +2566,19 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
-			OR = {
-				has_civil_war = yes
-				has_war_with = ENG
-				has_completed_focus = PER_islamic_revolution
-				has_completed_focus = PER_coup_progerman_officers
-				has_country_flag = PER_concessions_for_germanophiles_flag
-				has_country_flag = PER_form_prosoviet_government_flag
-				PER = { has_completed_focus = PER_nationalize_oil_industry }
-			}
 		}
 		select_effect = {
 			if = {
 				limit = {
 					OR = {
+						NOT = { has_idea = PER_payments_from_oil_sales }
 						has_civil_war = yes
 						has_war_with = ENG
 						has_completed_focus = PER_islamic_revolution
 						has_completed_focus = PER_coup_progerman_officers
 						has_country_flag = PER_concessions_for_germanophiles_flag
 						has_country_flag = PER_form_prosoviet_government_flag
+						has_country_flag = PER_last_blow_to_confessors_flag
 						PER = { has_completed_focus = PER_nationalize_oil_industry }
 					}
 				}
@@ -2595,33 +2588,41 @@ focus_tree = {
 		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus PER_nationalize_oil_industry"
-			remove_ideas = PER_payments_from_oil_sales
+			if = {
+				limit = { has_idea = PER_payments_from_oil_sales }
+				remove_ideas = PER_payments_from_oil_sales
+			}
 			ENG = {
-				if = {
-					limit = { NOT = { has_war_with = ROOT } }
-					country_event = { id = NWpersian.1 days = 1 }
-				}
 				remove_resource_rights = 411
 				remove_resource_rights = 412
 				remove_resource_rights = 413
-				effect_tooltip = { add_opinion_modifier = { target = ROOT modifier = PER_nationalize_oil_industry_op } }
 			}
-			effect_tooltip = { add_opinion_modifier = { target = ENG modifier = PER_nationalize_oil_industry_op } }
-			custom_effect_tooltip = PER_nationalize_oil_industry_tt
 			if = {
 				limit = {
 					OR = {
+						NOT = { has_idea = PER_payments_from_oil_sales }
 						has_civil_war = yes
 						has_war_with = ENG
 						has_completed_focus = PER_islamic_revolution
-						has_completed_focus = PER_last_blow_to_confessors
 						has_completed_focus = PER_coup_progerman_officers
 						has_country_flag = PER_concessions_for_germanophiles_flag
 						has_country_flag = PER_form_prosoviet_government_flag
+						has_country_flag = PER_last_blow_to_confessors_flag
 						PER = { has_completed_focus = PER_nationalize_oil_industry }
 					}
 				}
 				custom_effect_tooltip = generic_instant_focus_complete_tt
+			}
+			else = {
+				ENG = {
+					if = {
+						limit = { NOT = { has_war_with = ROOT } }
+						country_event = { id = NWpersian.1 days = 1 }
+					}
+					effect_tooltip = { add_opinion_modifier = { target = ROOT modifier = PER_nationalize_oil_industry_op } }
+				}
+				effect_tooltip = { add_opinion_modifier = { target = ENG modifier = PER_nationalize_oil_industry_op } }
+				custom_effect_tooltip = PER_nationalize_oil_industry_tt
 			}
 		}
 	}
@@ -3667,6 +3668,21 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus PER_new_leader_nowbakht"
 			add_war_support = 0.1
 			set_rule = { can_create_factions = yes }
+			if = {
+				limit = {
+					NOT = { has_country_leader = { name = "John Smith" ruling_only = no } }
+				}
+				create_country_leader = {
+					name = "Habib-Allah Nowbakt"
+					desc = "POLITICS_HABIB_ALLAH_NOWBAKT_DESC"
+					picture = "gfx/leaders/PER/Portrait_Habib_Allah_Nowbakt.dds"
+					expire = "1965.1.1"
+					ideology = nationalism_ideology
+					traits = {
+						knave
+					}
+				}
+			}
 		}
 	}
 	
@@ -4638,7 +4654,7 @@ focus_tree = {
 	focus = {
 		id = PER_islamic_revolution
 		icon = GFX_z_goal_islamic_revolution
-		prerequisite = { focus = PER_prohibit_schools_attached_mosques focus = PER_translate_persian_into_latin focus = PER_allow_women_serve_in_military }
+		#prerequisite = { focus = PER_prohibit_schools_attached_mosques focus = PER_translate_persian_into_latin focus = PER_allow_women_serve_in_military }
 		mutually_exclusive = { focus = PER_islamist_monarchist_reaction focus = PER_last_blow_to_confessors focus = PER_coup_progerman_officers focus = PER_revolution_probritish_officers }
 		x = 0
 		y = 1

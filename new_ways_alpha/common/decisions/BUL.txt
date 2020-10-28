@@ -1,0 +1,2133 @@
+#### ##    ## ########  ##     ##  ######  ######## ########  ####    ###    ##       
+ ##  ###   ## ##     ## ##     ## ##    ##    ##    ##     ##  ##    ## ##   ##       
+ ##  ####  ## ##     ## ##     ## ##          ##    ##     ##  ##   ##   ##  ##       
+ ##  ## ## ## ##     ## ##     ##  ######     ##    ########   ##  ##     ## ##       
+ ##  ##  #### ##     ## ##     ##       ##    ##    ##   ##    ##  ######### ##       
+ ##  ##   ### ##     ## ##     ## ##    ##    ##    ##    ##   ##  ##     ## ##       
+#### ##    ## ########   #######   ######     ##    ##     ## #### ##     ## ######## 
+
+
+BUL_foreign_agreements = {
+
+	BUL_german_industrial_agreements = {
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = FROM
+					has_completed_focus = BUL_friendly_Germany
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_german_industrial_agreements_cap_faction_tt
+					check_variable = { BUL_german_industrial_investments < BUL_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					has_completed_focus = BUL_friendly_Germany
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_german_industrial_agreements_cap_approach_tt
+					check_variable = { BUL_german_industrial_investments < BUL_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = BUL_german_industrial_agreements_cap_basic_tt
+					check_variable = { BUL_german_industrial_investments < BUL_industrial_investments_basic_cap }
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = FROM
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_british_military_agreements_flag
+				}
+				NOT = { ENG = { has_war_with = FROM } }
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_soviet_military_agreements_flag
+				}
+				NOT = { SOV = { has_war_with = FROM } }
+			}
+			check_variable = { BUL_german_industrial_investments < BUL_industrial_investments_max_cap }
+		}
+
+		cost = BUL_german_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_opinion_modifier = {
+					target = BUL
+					modifier = BUL_indutrial_investments_in_bulgaria
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = BUL_indutrial_investments_in_bulgaria
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { FROM = { has_country_flag = BUL_industrial_investments_in_bulgaria_flag } }
+				}
+				FROM = { set_country_flag = BUL_industrial_investments_in_bulgaria_flag }
+			}
+			
+			add_to_variable = { BUL_german_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_to_variable = { BUL_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = BUL_increase_foreign_industry_ns_tt
+		}
+	}
+
+	BUL_british_industrial_agreements = {
+
+		icon = generic_factory
+
+		allowed = { always = no } #Activated from effect
+
+		ai_will_do = {
+			base = 10
+		}
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = FROM
+					OR = {
+						has_completed_focus = BUL_own_rejime
+						has_completed_focus = BUL_democratic_government
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_british_industrial_agreements_cap_faction_tt
+					check_variable = { BUL_british_industrial_investments < BUL_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					OR = {
+						has_completed_focus = BUL_own_rejime
+						has_completed_focus = BUL_democratic_government
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_british_industrial_agreements_cap_approach_tt
+					check_variable = { BUL_british_industrial_investments < BUL_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = BUL_british_industrial_agreements_cap_basic_tt
+					check_variable = { BUL_british_industrial_investments < BUL_industrial_investments_basic_cap }
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = FROM
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = FROM } }
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_soviet_military_agreements_flag
+				}
+				NOT = { SOV = { has_war_with = FROM } }
+			}
+			check_variable = { BUL_british_industrial_investments < BUL_industrial_investments_max_cap }
+		}
+
+		cost = BUL_british_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_opinion_modifier = {
+					target = BUL
+					modifier = BUL_indutrial_investments_in_bulgaria
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = BUL_indutrial_investments_in_bulgaria
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { FROM = { has_country_flag = BUL_industrial_investments_in_bulgaria_flag } }
+				}
+				FROM = { set_country_flag = BUL_industrial_investments_in_bulgaria_flag }
+			}
+			
+			add_to_variable = { BUL_british_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_to_variable = { BUL_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = BUL_increase_foreign_industry_ns_tt
+		}
+	}
+
+	BUL_soviet_industrial_agreements = {
+
+		icon = generic_factory
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 14
+				}
+			}
+			#Manage Cap
+			if = { # Being in faction grants 10 civs cap
+				limit = {
+					is_in_faction_with = FROM
+					OR = {
+						has_completed_focus = BUL_bolshevist
+						has_completed_focus = BUL_communist_government
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_soviet_industrial_agreements_cap_faction_tt
+					check_variable = { BUL_soviet_industrial_investments < BUL_industrial_investments_max_cap }
+				}
+			}
+			else_if = { # Approaching country grants 5 civs cap
+				limit = {
+					OR = {
+						has_completed_focus = BUL_bolshevist
+						has_completed_focus = BUL_communist_government
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = BUL_soviet_industrial_agreements_cap_approach_tt
+					check_variable = { BUL_soviet_industrial_investments < BUL_industrial_investments_medium_cap }
+				}
+			}
+			else = { #Basic Cap
+				custom_trigger_tooltip = {
+					tooltip = BUL_soviet_industrial_agreements_cap_basic_tt
+					check_variable = { BUL_soviet_industrial_investments < BUL_industrial_investments_basic_cap }
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = FROM
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_british_military_agreements_flag
+				}
+				NOT = { ENG = { has_war_with = FROM } }
+			}
+			if = {
+				limit = {
+					has_country_flag = BUL_german_military_agreements_flag
+				}
+				NOT = { GER = { has_war_with = FROM } }
+			}
+			check_variable = { BUL_soviet_industrial_investments < BUL_industrial_investments_max_cap }
+		}
+
+		cost = BUL_soviet_civ_industries_cost
+		days_remove = 70
+		days_re_enable = 1
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_opinion_modifier = {
+					target = BUL
+					modifier = BUL_indutrial_investments_in_bulgaria
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = BUL_indutrial_investments_in_bulgaria
+			}
+		}
+		
+		remove_effect = {
+			if = {
+				limit = { 
+					NOT = { FROM = { has_country_flag = BUL_industrial_investments_in_bulgaria_flag } }
+				}
+				FROM = { set_country_flag = BUL_industrial_investments_in_bulgaria_flag }
+			}
+			
+			add_to_variable = { BUL_soviet_industrial_investments = 1 }
+
+			random_owned_controlled_state = {
+				limit = {
+					ROOT = { has_full_control_of_state = PREV }
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_to_variable = { BUL_foreign_industry_consumer_goods_modifier = 0.005 }
+			custom_effect_tooltip = BUL_increase_foreign_industry_ns_tt
+		}
+	}
+
+	BUL_military_agreements = {
+
+		icon = generic_tank
+
+		allowed = { always = no } #Activated from effect
+
+		ai_will_do = {
+			base = 10
+		}
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 50
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = FROM
+			}
+			NOT = { has_country_flag = BUL_german_military_agreements_flag }
+			NOT = { has_country_flag = BUL_british_military_agreements_flag }
+			NOT = { has_country_flag = BUL_soviet_military_agreements_flag }
+		}
+
+		cost = BUL_foreign_military_agreements_cost
+		days_remove = 30
+		fire_only_once = yes
+		
+		modifier = {
+			political_power_gain = -0.5
+			consumer_goods_factor = 0.25
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_opinion_modifier = {
+					target = BUL
+					modifier = BUL_indutrial_investments_in_bulgaria
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = BUL_indutrial_investments_in_bulgaria
+			}
+		}
+
+		remove_effect = {
+			if = { 
+				limit = {
+					FROM = { original_tag = GER }
+				}
+				set_country_flag = BUL_german_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_german_materiel_designer
+				show_ideas_tooltip = BUL_german_tank_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = ENG }
+				}
+				set_country_flag = BUL_british_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_british_materiel_designer
+				show_ideas_tooltip = BUL_british_tank_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = SOV }
+				}
+				set_country_flag = BUL_soviet_military_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_soviet_materiel_designer
+				show_ideas_tooltip = BUL_soviet_tank_designer
+			}
+		}
+	}
+
+	BUL_aircraft_agreements = {
+
+		icon = generic_air
+
+		ai_will_do = {
+			base = 10
+		}
+
+		allowed = { always = no } #Activated from effect
+
+		available = {
+			FROM = {
+				has_opinion = {
+					target = ROOT
+					value > 50
+				}
+			}
+		}
+
+		visible = {
+			NOT = { has_war_with = FROM }
+			NOT = { is_justifying_wargoal_against = FROM }
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = FROM
+			}
+			NOT = { has_country_flag = BUL_german_aeronautical_agreements_flag }
+			NOT = { has_country_flag = BUL_british_aeronautical_agreements_flag }
+			NOT = { has_country_flag = BUL_soviet_aeronautical_agreements_flag }
+		}
+
+		cost = BUL_foreign_military_agreements_cost
+		days_remove = 30
+		fire_only_once = yes
+		
+		modifier = {
+			political_power_gain = -0.5
+			consumer_goods_factor = 0.25
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_opinion_modifier = {
+					target = BUL
+					modifier = BUL_indutrial_investments_in_bulgaria
+				}
+			}
+			add_opinion_modifier = {
+				target = FROM
+				modifier = BUL_indutrial_investments_in_bulgaria
+			}
+		}
+		
+		remove_effect = {
+			if = { 
+				limit = {
+					FROM = { original_tag = GER }
+				}
+				set_country_flag = BUL_german_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_german_aircraft_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = ENG }
+				}
+				set_country_flag = BUL_british_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_british_aircraft_designer
+			}
+			if = { 
+				limit = {
+					FROM = { original_tag = SOV }
+				}
+				set_country_flag = BUL_soviet_aeronautical_agreements_flag
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_soviet_aircraft_designer
+			}
+		}
+	}
+}
+
+
+ #######  ######## ##     ## ######## ########  
+##     ##    ##    ##     ## ##       ##     ## 
+##     ##    ##    ##     ## ##       ##     ## 
+##     ##    ##    ######### ######   ########  
+##     ##    ##    ##     ## ##       ##   ##   
+##     ##    ##    ##     ## ##       ##    ##  
+ #######     ##    ##     ## ######## ##     ## 
+
+
+prospect_for_resources = {
+	BUL_mineral_extraction_in_the_rhodopes = { #212
+		
+		icon = chromium
+
+		ai_will_do = {
+			base = 0.5
+		}
+
+		allowed = {
+			#has_dlc = "Battle for the Bosporus"
+		}
+
+		highlight_state_targets = {
+			state = 212
+		}
+
+		available = {
+			has_tech = construction3
+			num_of_civilian_factories_available_for_projects > 1
+		}
+
+		visible = {
+			owns_state = 212
+			controls_state = 212
+			212 = {
+				NOT = {
+					has_state_flag = { 
+						flag = BUL_chromium_deposits_flag
+						value = 3
+					}
+				}
+			}
+			has_completed_focus = BUL_mineral_extraction_in_the_rhodopes
+		}
+
+		cost = 25
+		days_remove = BUL_plovdiv_chromium_duration
+
+		modifier = {
+			civilian_factory_use = 1
+		}
+
+		remove_effect = {
+			add_to_variable = { var = BUL_plovdiv_chromium_duration value = 30 }
+			212 = {
+				if = {
+					limit = {
+						NOT = {
+							has_state_flag = BUL_chromium_deposits_flag
+						}
+					}
+					set_state_flag = {
+						flag = BUL_chromium_deposits_flag
+						value = 1
+					}
+				}
+				else = {
+					modify_state_flag = {
+						flag = BUL_chromium_deposits_flag
+						value = 1
+					}
+				}
+			}
+			212 = {
+				add_resource = {
+					type = chromium
+					amount = 3
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_political_power < 200
+				factor = 0
+			}
+		}
+
+		complete_effect = {
+		}
+	}
+
+	BUL_uranium_concession_agreement = {
+		
+		icon = eng_trade_unions_support
+
+		allowed = {
+			#has_dlc = "Battle for the Bosporus"
+		}
+
+		target_trigger = {
+			FROM = {
+				is_in_faction_with = ROOT
+				OR = {
+					is_faction_leader = yes
+					AND = {
+						is_major = yes
+						BUL = { is_faction_leader = yes }
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0.1
+			modifier = {
+				factor = 10
+				FROM = {
+					is_ai = no
+					strength_ratio = {
+						tag = ROOT
+						ratio > 1
+					}
+				}
+			}
+		}
+
+		available = {
+			FROM = { has_tech = atomic_research }
+		}
+
+		visible = {
+			controls_state = 48
+			has_completed_focus = BUL_uranium_prospecting
+		}
+
+		fire_only_once = yes
+		cost = 0
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_political_power < 200
+				factor = 0
+			}
+		}
+
+		complete_effect = {
+			FROM = {
+				country_event = bftb_bulgaria_uranium_mining_concessions.1
+				add_ideas = BUL_buhovo_uranium_mines
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = BUL_granted_uranium_mining_rights
+				}
+			}
+			remove_ideas = BUL_buhovo_uranium_mines
+			add_ideas = BUL_uranium_concession_agreement_ns
+		}
+	}
+}
+
+BUL_negotiate_claims_in_the_balkans = {
+	BUL_demand_our_historical_claims = {
+
+		icon = hol_draw_up_staff_plans
+
+		ai_will_do = {
+			base = 800
+			modifier = {
+				factor = 10
+				is_historical_focus_on = yes
+			}
+		}
+
+		available = {
+			
+		}
+
+		visible = {
+			has_completed_focus = BUL_friendly_Germany
+			country_exists = GER
+			NOT = { has_war_with = GER }
+			GER = {
+				has_capitulated = no
+				is_subject = no
+			}
+			any_state = {
+				has_state_flag = BUL_historical_bulgarian_claim_flag
+				controller = {
+					OR = {
+						tag = GER
+						AND = {
+							NOT = { is_in_faction_with = GER }
+							NOT = { tag = BUL }
+						}
+					}
+				}
+			}
+		}
+
+		cost = 75
+
+		fire_only_once = yes
+		
+		complete_effect = {		
+			GER = { country_event = { id = bftb_bulgarian_claims.1 hours = 1 } }
+		}
+	}
+
+	BUL_secure_occupation_in_balkan_state = {
+
+		icon = hol_draw_up_staff_plans
+
+		on_map_mode = map_and_decisions_view
+
+		state_target = yes
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_state = yes
+				NOT = { is_controlled_by = BUL }
+				any_neighbor_state = {
+					is_fully_controlled_by = BUL
+				}
+				controller = {
+					PREV = {
+						NOT = { is_core_of = PREV }
+						is_fully_controlled_by = PREV
+					}
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100
+				FROM = {
+					OR = {
+						has_state_flag = BUL_initial_bulgarian_state_flag
+						has_state_flag = BUL_historical_bulgarian_claim_flag
+					}
+				}
+			}
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					OR = {
+						owner = {
+							has_capitulated = no
+						}
+						controller = {
+							NOT = { has_full_control_of_state = FROM }
+						}
+					}
+				}
+			}
+		}
+
+		available = {
+			has_manpower > 4999
+		}
+
+		visible = {
+			has_completed_focus = BUL_triple_pact
+			is_in_faction = yes
+			FROM = {
+				NOT = { is_controlled_by = BUL }
+				any_neighbor_state = {
+					is_fully_controlled_by = BUL
+				}
+				controller = {
+					PREV = {
+						NOT = { is_core_of = PREV }
+						is_fully_controlled_by = PREV
+					}
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		cost = 25
+		
+		complete_effect = {
+			FROM = {
+				controller = {
+					country_event = { id = bftb_bulgarian_claims.7 hours = 1 }
+				}
+			}
+			custom_effect_tooltip = BUL_secure_occupation_in_balkan_state_tt
+		}
+	}
+}
+
+BUL_bulgarisation_of_the_balkans = {
+	BUL_bulgarisation_campaing = {
+
+		icon = GFX_decision_generic_nationalism
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100
+				FROM = {
+					has_state_flag = BUL_historical_bulgarian_claim_flag
+				}
+			}
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 0.1
+				OR = {
+					has_government = fascism
+					has_country_leader = {
+						name = "Ferdinand I"
+						ruling_only = yes
+					}
+				}
+			}
+		}
+
+		on_map_mode = map_and_decisions_view
+
+		state_target = yes
+
+		target_array = controlled_states
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_state = yes
+				is_fully_controlled_by = ROOT
+				NOT = { is_core_of = ROOT }
+				any_neighbor_state = {
+					is_core_of = ROOT
+				}
+			}
+		}
+
+		available = {
+			FROM = {
+				compliance > 30
+			}
+			has_equipment = {
+			    infantry_equipment > 499
+			}
+			has_manpower > 999
+			command_power > 14
+		}
+
+		visible = {
+			has_completed_focus = BUL_bulgarisation_of_the_balkans
+			FROM = {
+				is_fully_controlled_by = ROOT
+				NOT = { is_core_of = ROOT }
+				any_neighbor_state = {
+					is_core_of = ROOT
+				}
+			}
+		}
+  
+		cost = 35
+
+		days_remove = 70
+		
+		complete_effect = {
+			FROM = { set_state_flag = BUL_bulgarisation_campaign_flag }
+			add_manpower = -1000
+			add_equipment_to_stockpile = {
+			    type = infantry_equipment
+			    amount = -500
+			}
+			add_command_power = -15
+		}
+
+		remove_effect = {
+			FROM = {
+				add_core_of = ROOT
+			}
+		}
+	}
+}
+
+
+ ######   ######## ########  ##     ##    ###    ##    ## ##    ## 
+##    ##  ##       ##     ## ###   ###   ## ##   ###   ##  ##  ##  
+##        ##       ##     ## #### ####  ##   ##  ####  ##   ####   
+##   #### ######   ########  ## ### ## ##     ## ## ## ##    ##    
+##    ##  ##       ##   ##   ##     ## ######### ##  ####    ##    
+##    ##  ##       ##    ##  ##     ## ##     ## ##   ###    ##    
+ ######   ######## ##     ## ##     ## ##     ## ##    ##    ##    
+
+
+#DECISIONS FOR GERMANY
+BUL_align_bulgaria = {
+	BUL_germany_donate_fighters = {
+
+		icon = generic_air
+
+		available = {
+			has_equipment = {
+				fighter_equipment > 11
+			}
+		}
+
+		visible = {
+			BUL = {
+				has_completed_focus = BUL_reorganize_the_military_industry
+				OR = {
+					is_in_faction = no
+					is_in_faction_with = GER
+				}
+			}
+			NOT = {	
+				has_war_with = BUL
+				is_justifying_wargoal_against = BUL
+			}
+			is_subject = no
+			has_capitulated = no
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100
+				is_historical_focus_on = yes
+				date > 1937.6.1
+			}
+			modifier = {
+				add = 1
+				is_historical_focus_on = no
+				has_government = BUL
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					BUL = {
+						has_opinion = {
+							target = ROOT
+							value < 0
+						}
+					}
+					
+				}
+			}
+		}
+
+		cost = 0
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			BUL = { country_event = { id = bftb_bulgaria_german_influence.1 hours = 2 random_hours = 1 } }
+			custom_effect_tooltip = BUL_donate_aircraft_tt
+		}
+	}
+
+	BUL_germany_demand_military_access = {
+
+		icon = hol_draw_up_staff_plans
+
+		available = {
+
+		}
+
+		visible = {
+			BUL = { 
+				has_country_flag = BUL_german_influence_flag
+				OR = {
+					is_in_faction = no
+					is_in_faction_with = GER
+				}
+			}
+			NOT = {	
+				has_war_with = BUL
+				is_justifying_wargoal_against = BUL
+				has_military_access_to = BUL
+			}
+			any_country = {
+				has_war_with = ROOT
+				is_neighbor_of = BUL				
+			}
+			is_subject = no
+			has_capitulated = no
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 1
+				OR = {
+					BUL = { has_government = ROOT }
+					AND = {
+						has_government = fascism
+						BUL = { has_government = neutrality }
+					}
+				}
+			}
+			modifier = {
+				factor = 5
+				BUL = { has_completed_focus = BUL_triple_pact }
+			}
+			modifier = {
+				factor = 500
+				is_historical_focus_on = yes
+				has_war_with = GRE
+			}
+		}
+
+		cost = 25
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			BUL = { country_event = { id = bftb_bulgaria_german_influence.7 hours = 2 random_hours = 1 } }
+		}
+	}
+
+	BUL_germany_demand_replacement_of_bulgarian_prime_minister = {
+
+		icon = eng_trade_unions_demand
+
+		available = {
+
+		}
+
+		visible = {
+			NOT = {	
+				has_war_with = BUL
+				is_justifying_wargoal_against = BUL
+			}
+			BUL = {
+				OR = {
+					is_in_faction = no
+					is_in_faction_with = GER
+				}
+				has_completed_focus = BUL_friendly_Germany
+				has_idea = BUL_georgi_ivanov_kyoseivanov_bftb
+				NOT = { has_idea = BUL_bogdan_filov }
+				has_country_flag = { flag = BUL_german_influence_flag value > 3 }
+			}
+			is_subject = no
+			has_capitulated = no
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 100
+				BUL = { has_completed_focus = BUL_triple_pact }
+			}
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+				date > 1939.1.1
+			}
+			modifier = {
+				factor = 0
+				BUL = {
+					has_opinion = {
+						target = ROOT
+						value < 0
+					}
+				}
+			}
+		}
+
+		cost = 5
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			BUL = { country_event = { id = bftb_bulgaria_german_influence.4 hours = 2 random_hours = 1 } }
+		}
+	}
+}
+
+
+########    ###    ######## ########     #######  ########    ######## ##     ## ########    ########     ###    ##       ##    ##    ###    ##    ##  ######  
+##         ## ##      ##    ##          ##     ## ##             ##    ##     ## ##          ##     ##   ## ##   ##       ##   ##    ## ##   ###   ## ##    ## 
+##        ##   ##     ##    ##          ##     ## ##             ##    ##     ## ##          ##     ##  ##   ##  ##       ##  ##    ##   ##  ####  ## ##       
+######   ##     ##    ##    ######      ##     ## ######         ##    ######### ######      ########  ##     ## ##       #####    ##     ## ## ## ##  ######  
+##       #########    ##    ##          ##     ## ##             ##    ##     ## ##          ##     ## ######### ##       ##  ##   ######### ##  ####       ## 
+##       ##     ##    ##    ##          ##     ## ##             ##    ##     ## ##          ##     ## ##     ## ##       ##   ##  ##     ## ##   ### ##    ## 
+##       ##     ##    ##    ########     #######  ##             ##    ##     ## ########    ########  ##     ## ######## ##    ## ##     ## ##    ##  ######  
+
+
+BUL_the_fate_of_the_balkans_dec_cat= {
+	BUL_fate_of_the_balkans_influence_government = {
+
+		icon = GFX_decision_generic_political_discourse
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { original_tag = BUL }
+				has_capitulated = no
+				country_exists = FROM
+				OR = {
+					is_subject = no
+					is_subject_of = ROOT
+				}
+				OR = {
+					is_in_faction = no
+					AND = {
+						is_in_faction = yes
+						is_faction_leader = no
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0.01
+			modifier = {
+				factor = 10
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 1
+					}
+				}
+			}
+			modifier = {
+				factor = 100
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 0.5
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				is_in_faction = no
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			NOT = { has_war_with = FROM }
+		}
+		
+		visible = {
+			country_exists = FROM
+			has_completed_focus = BUL_great_bulgaria
+		}
+ 
+		days_remove = 90
+		days_re_enable = 180
+
+		cost = 15
+
+		modifier = {
+			political_power_gain = -0.25
+		}
+		
+		remove_effect = {
+			#Country flag will be used to determine AI willingness to submit to Bulgaria
+			if = {
+				limit = {
+					FROM = {
+						NOT = { has_country_flag = BUL_fate_of_the_balkans_government_influenced_flag }
+					}
+				}
+				FROM = { set_country_flag = BUL_fate_of_the_balkans_government_influenced_flag }
+			}
+			else = {
+				FROM = { modify_country_flag = { flag = BUL_fate_of_the_balkans_government_influenced_flag value = 1 } }
+			}
+			if = {
+				limit = {
+					FROM = { is_subject_of = ROOT }
+				}
+				FROM = {
+					add_autonomy_score = {
+						value = -150
+						localization = BUL_fate_of_the_balkans_influence_government_autonomy
+					}
+				}
+			}
+			else = {
+				custom_effect_tooltip = BUL_fate_of_the_balkans_influence_government_tt
+			}
+		}
+	}
+
+	BUL_fate_of_the_balkans_ultimatum = {
+
+		icon = GFX_decision_eng_trade_unions_support
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { is_in_faction_with = ROOT }
+				has_capitulated = no
+				country_exists = FROM
+				is_subject = no
+				OR = {
+					is_in_faction = no
+					AND = {
+						is_in_faction = yes
+						is_faction_leader = no
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0.01
+			modifier = {
+				factor = 10
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 1
+					}
+				}
+			}
+			modifier = {
+				factor = 100
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 0.5
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				is_in_faction = no
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			NOT = { has_war_with = FROM }
+		}
+		
+		visible = {
+			has_completed_focus = BUL_great_bulgaria
+			country_exists = FROM
+			FROM = {
+				is_subject = no
+				NOT = { is_in_faction_with = ROOT }
+			}
+		}
+
+		days_re_enable = 365
+
+		cost = 35
+		
+		complete_effect = {
+			FROM = {
+				country_event = { id = bftb_bulgaria_fate_of_the_balkans.1 hours = 4 random_hours = 4 }
+			}
+			custom_effect_tooltip = BUL_fate_of_the_balkans_ultimatum_tt
+		}
+	}
+
+	BUL_fate_of_the_balkans_bring_back_state = {
+
+		icon = GFX_decision_infiltrate_state
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_state = yes
+				NOT = { is_controlled_by = ROOT }
+				OR = {
+					has_state_flag = BUL_historical_bulgarian_claim_flag
+					has_state_flag = BUL_initial_bulgarian_state_flag
+				}
+				any_neighbor_state = {
+					is_controlled_by = ROOT 
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 1
+			modifier = {
+				factor = 10
+				FROM = {
+					controller = {
+						strength_ratio = {
+							tag = ROOT
+							ratio < 1
+						}
+					}
+				}
+			}
+		}
+
+		state_target = yes
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			FROM = {
+				controller = {
+					is_subject_of = ROOT
+				}
+			}		
+		}
+		
+		visible = {
+			has_completed_focus = BUL_great_bulgaria
+			FROM = {
+				controller = {
+					is_in_faction_with = ROOT
+					NOT = { original_tag = BUL }
+				}
+			}
+		}
+
+		days_re_enable = 365
+
+		cost = 50
+		
+		complete_effect = {
+			FROM = {
+				controller = {
+					country_event = { id = bftb_bulgaria_fate_of_the_balkans.4 hours = 4 random_hours = 4 }
+				}
+			}
+		}
+	}
+
+	BUL_fate_of_the_balkans_demand_submission = {
+
+		icon = GFX_decision_eng_trade_unions_demand
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_nation = yes
+				has_capitulated = no
+				country_exists = FROM
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 0.01
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 1
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				FROM = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 0.5
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				is_in_faction = no
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			is_in_faction_with = FROM		
+		}
+		
+		visible = {
+			has_completed_focus = BUL_great_bulgaria
+			country_exists = FROM
+			NOT = { FROM = { is_subject_of = ROOT } }
+		}
+
+		days_re_enable = 365
+
+		cost = 50
+		
+		complete_effect = {
+			FROM = {
+				country_event = { id = bftb_bulgaria_fate_of_the_balkans.7 hours = 4 random_hours = 4 }
+			}
+			custom_effect_tooltip = BUL_fate_of_the_balkans_demand_submission_tt
+			custom_effect_tooltip = germany.126.warning
+		}
+	}
+}
+
+
+########   #######  ##     ## #### ##    ##    ###    ##    ##  ######  ########    #### ##    ##    ######## ##     ## ########     ######  ########    ###     ######  
+##     ## ##     ## ###   ###  ##  ###   ##   ## ##   ###   ## ##    ## ##           ##  ###   ##       ##    ##     ## ##          ##    ## ##         ## ##   ##    ## 
+##     ## ##     ## #### ####  ##  ####  ##  ##   ##  ####  ## ##       ##           ##  ####  ##       ##    ##     ## ##          ##       ##        ##   ##  ##       
+##     ## ##     ## ## ### ##  ##  ## ## ## ##     ## ## ## ## ##       ######       ##  ## ## ##       ##    ######### ######       ######  ######   ##     ##  ######  
+##     ## ##     ## ##     ##  ##  ##  #### ######### ##  #### ##       ##           ##  ##  ####       ##    ##     ## ##                ## ##       #########       ## 
+##     ## ##     ## ##     ##  ##  ##   ### ##     ## ##   ### ##    ## ##           ##  ##   ###       ##    ##     ## ##          ##    ## ##       ##     ## ##    ## 
+########   #######  ##     ## #### ##    ## ##     ## ##    ##  ######  ########    #### ##    ##       ##    ##     ## ########     ######  ######## ##     ##  ######  
+
+
+BUL_dominance_in_the_seas = {
+	BUL_dominance_in_the_black_sea_mission = {
+
+		icon = GFX_decision_generic_operation
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 0.01
+				is_major = yes
+				OR = {
+					has_war = no
+					alliance_strength_ratio > 1
+				}
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = { #GOAL
+			NOT = {
+				any_state = {
+					BUL_state_is_in_the_black_sea = yes
+					controller = {
+						NOT = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		activation = {
+			has_completed_focus = BUL_dominance_in_the_black_sea
+		}
+		
+		visible = {
+			has_completed_focus = BUL_dominance_in_the_black_sea
+		}
+
+		highlight_states = { 
+			BUL_state_is_in_the_black_sea = yes
+			controller = {
+				NOT = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+				}
+			}
+		}
+
+		days_mission_timeout = 730
+
+		fire_only_once = yes
+
+		is_good = no
+		
+		timeout_effect = { #FAIL
+			set_country_flag = BUL_black_sea_mission_failure_flag
+			add_stability = -0.1
+			add_war_support = -0.1
+			every_state = {
+				limit = {
+					has_state_flag = BUL_dominance_in_the_seas_claim_flag
+				}
+				remove_claim_by = ROOT
+				clr_state_flag = BUL_dominance_in_the_seas_claim_flag
+			}
+			BUL_add_weakened_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+
+		complete_effect = { #SUCCESS
+			set_country_flag = BUL_black_sea_mission_success_flag
+			add_stability = 0.1
+			add_war_support = 0.1
+			if = {
+				limit = {
+					has_idea = BUL_supremacy_on_the_bosporus
+				}
+				modify_timed_idea = {
+					idea = BUL_supremacy_on_the_bosporus
+					days = 180
+				}
+			}
+			BUL_add_improved_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	BUL_dominance_in_the_aegean_sea_mission = {
+
+		icon = GFX_decision_generic_operation
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 0.01
+				is_major = yes
+				OR = {
+					has_war = no
+					alliance_strength_ratio > 1
+				}
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = { #GOAL
+			NOT = {
+				any_state = {
+					BUL_state_is_in_the_aegean_sea = yes
+					controller = {
+						NOT = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		activation = {
+			has_completed_focus = BUL_dominance_in_the_aegean_sea
+		}
+		
+		visible = {
+			has_completed_focus = BUL_dominance_in_the_aegean_sea
+		}
+
+		days_mission_timeout = 730
+
+		fire_only_once = yes
+
+		is_good = no
+
+		highlight_states = { 
+			BUL_state_is_in_the_aegean_sea = yes
+			controller = {
+				NOT = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+				}
+			}
+		}
+		
+		timeout_effect = { #FAIL
+			set_country_flag = BUL_aegean_sea_mission_failure_flag
+			add_stability = -0.1
+			add_war_support = -0.1
+			every_state = {
+				limit = {
+					has_state_flag = BUL_dominance_in_the_seas_claim_flag
+				}
+				remove_claim_by = ROOT
+				clr_state_flag = BUL_dominance_in_the_seas_claim_flag
+			}
+			BUL_add_weakened_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+
+		complete_effect = { #SUCCESS
+			set_country_flag = BUL_aegean_sea_mission_success_flag
+			add_stability = 0.1
+			add_war_support = 0.1
+			if = {
+				limit = {
+					has_idea = BUL_supremacy_on_the_bosporus
+				}
+				modify_timed_idea = {
+					idea = BUL_supremacy_on_the_bosporus
+					days = 180
+				}
+			}
+			BUL_add_improved_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	BUL_dominance_in_the_adriatic_sea_mission = {
+
+		icon = GFX_decision_generic_operation
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 0.01
+				is_major = yes
+				OR = {
+					has_war = no
+					alliance_strength_ratio > 1
+				}
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = { #GOAL
+			NOT = {
+				any_state = {
+					BUL_state_is_in_the_adriatic_sea = yes
+					controller = {
+						NOT = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		activation = {
+			has_completed_focus = BUL_dominance_in_the_adriatic_sea
+		}
+		
+		visible = {
+			has_completed_focus = BUL_dominance_in_the_adriatic_sea
+		}
+
+		days_mission_timeout = 730
+
+		fire_only_once = yes
+
+		is_good = no
+
+		highlight_states = { 
+			BUL_state_is_in_the_adriatic_sea = yes
+			controller = {
+				NOT = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+				}
+			}
+		}
+		
+		timeout_effect = { #FAIL
+			set_country_flag = BUL_adriatic_sea_mission_failure_flag
+			add_stability = -0.1
+			add_war_support = -0.1
+			every_state = {
+				limit = {
+					has_state_flag = BUL_dominance_in_the_seas_claim_flag
+				}
+				remove_claim_by = ROOT
+				clr_state_flag = BUL_dominance_in_the_seas_claim_flag
+			}
+			BUL_add_weakened_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+
+		complete_effect = { #SUCCESS
+			set_country_flag = BUL_adriatic_sea_mission_success_flag
+			add_stability = 0.1
+			add_war_support = 0.1
+			if = {
+				limit = {
+					has_idea = BUL_supremacy_on_the_bosporus
+				}
+				modify_timed_idea = {
+					idea = BUL_supremacy_on_the_bosporus
+					days = 180
+				}
+			}
+			BUL_add_improved_prussia_of_the_balkans_ns = yes
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+}
+
+
+########     ###    ##       ##    ##    ###    ##    ##     ######   #######  ##    ## ######## ######## ########  ######## ########     ###    ######## ####  #######  ##    ## 
+##     ##   ## ##   ##       ##   ##    ## ##   ###   ##    ##    ## ##     ## ###   ## ##       ##       ##     ## ##       ##     ##   ## ##      ##     ##  ##     ## ###   ## 
+##     ##  ##   ##  ##       ##  ##    ##   ##  ####  ##    ##       ##     ## ####  ## ##       ##       ##     ## ##       ##     ##  ##   ##     ##     ##  ##     ## ####  ## 
+########  ##     ## ##       #####    ##     ## ## ## ##    ##       ##     ## ## ## ## ######   ######   ##     ## ######   ########  ##     ##    ##     ##  ##     ## ## ## ## 
+##     ## ######### ##       ##  ##   ######### ##  ####    ##       ##     ## ##  #### ##       ##       ##     ## ##       ##   ##   #########    ##     ##  ##     ## ##  #### 
+##     ## ##     ## ##       ##   ##  ##     ## ##   ###    ##    ## ##     ## ##   ### ##       ##       ##     ## ##       ##    ##  ##     ##    ##     ##  ##     ## ##   ### 
+########  ##     ## ######## ##    ## ##     ## ##    ##     ######   #######  ##    ## ##       ######## ########  ######## ##     ## ##     ##    ##    ####  #######  ##    ## 
+
+
+BUL_balkan_confederation = {
+	BUL_balkan_confederation_industrial_investment = {
+
+		icon = GFX_decision_generic_factory
+		
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { tag = ROOT }
+				country_exists = FROM
+				has_capitulated = no
+				OR = {
+					is_subject_of = ROOT
+					is_subject = no
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0.01
+			modifier = {
+				factor = 5
+				FROM = {
+					OR = {
+						democratic > 0.2
+						monarchy > 0.2
+						neutrality > 0.2
+					}
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = {
+					tag = GRE
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = {
+					tag = GRE
+					NOT = { is_in_faction_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = {
+					OR = {
+						tag = YUG
+						tag = TUR
+					}
+				}
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			NOT = { has_war_with = FROM }
+			num_of_civilian_factories_available_for_projects > 2
+		}
+		
+		visible = {
+			has_completed_focus = BUL_balkan_alliance
+			OR = {
+				has_government = democratic
+				has_government = monarchy
+				has_government = neutrality
+			}
+			country_exists = FROM
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { tag = ROOT }
+				has_capitulated = no	
+				OR = {
+					is_subject_of = ROOT
+					is_subject = no
+				}
+			}
+		}
+
+		cost = 15
+
+		days_re_enable = 365
+
+		days_remove = 120
+		
+		modifier = {
+			civilian_factory_use = 3
+		}
+		
+		complete_effect = {
+			FROM = {			
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+					}
+					set_state_flag = BUL_industrial_investement_target
+				}
+				if = {
+					limit = {
+						has_country_flag = BUL_bulgarian_capitalists_lobbying_country_flag
+					}
+					modify_country_flag = { flag = BUL_bulgarian_capitalists_lobbying_country_flag value = 1 }
+				}
+				set_country_flag = { flag = BUL_bulgarian_capitalists_lobbying_country_flag value = 1 }
+			}
+		}
+
+		remove_effect = {
+			effect_tooltip = {
+				FROM = {
+					add_popularity = {
+						ideology = var:ROOT.current_party_ideology_group
+						popularity = 0.1
+					}
+					if = {
+						limit = {
+							any_controlled_state = {
+								has_state_flag = BUL_industrial_investement_target
+							}
+						}
+						random_owned_controlled_state = {
+							limit = {
+								has_state_flag = BUL_industrial_investement_target
+							}
+							add_extra_state_shared_building_slots = 1
+							add_building_construction = {
+								type = industrial_complex
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					else = {
+						random_owned_controlled_state = {
+							limit = {
+								free_building_slots = {
+									building = industrial_complex
+									size > 1
+									include_locked = yes
+								}
+							}
+							add_extra_state_shared_building_slots = 1
+							add_building_construction = {
+								type = industrial_complex
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					FROM = { is_ai = yes }
+				}
+				custom_effect_tooltip = BUL_balkan_confederation_ai_tt
+			}
+			hidden_effect = {
+				FROM = { country_event = bftb_bulgaria_democratic_international_policies.2 }
+			}
+			custom_effect_tooltip = BUL_balkan_confederation_cooldown_tt
+		}
+	}
+
+	BUL_balkan_confederation_capital_injection = {
+
+		icon = GFX_decision_gre_investment_decisions
+
+		target_trigger = {
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { tag = ROOT }
+				country_exists = FROM
+				has_capitulated = no
+				OR = {
+					is_subject_of = ROOT
+					is_subject = no
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 0.01
+			modifier = {
+				factor = 5
+				FROM = {
+					OR = {
+						democratic > 0.2
+						monarchy > 0.2
+						neutrality > 0.2
+					}
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = {
+					tag = GRE
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = {
+					tag = GRE
+					NOT = { is_in_faction_with = ROOT }
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = {
+					OR = {
+						tag = YUG
+						tag = TUR
+					}
+				}
+			}
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			NOT = { has_war_with = FROM }
+		}
+		
+		visible = {
+			has_completed_focus = BUL_balkan_alliance
+			OR = {
+				has_government = democratic
+				has_government = monarchy
+				has_government = neutrality
+			}
+			country_exists = FROM
+			FROM = {
+				BUL_is_balkan_nation = yes
+				NOT = { tag = ROOT }
+				has_capitulated = no
+				OR = {
+					is_subject_of = ROOT
+					is_subject = no
+				}	
+			}
+		}
+
+		cost = 15
+
+		days_remove = 120	
+
+		modifier = {
+			consumer_goods_factor = 0.05
+		}
+		
+		complete_effect = {
+			FROM = {
+				if = {
+					limit = {
+						has_country_flag = BUL_bulgarian_capitalists_lobbying_country_flag
+					}
+					modify_country_flag = { flag = BUL_bulgarian_capitalists_lobbying_country_flag value = 1 }
+				}
+				set_country_flag = { flag = BUL_bulgarian_capitalists_lobbying_country_flag value = 1 }
+			}
+		}
+
+		remove_effect = {
+			effect_tooltip = {
+				FROM = {
+					add_popularity = {
+						ideology = var:ROOT.current_party_ideology_group
+						popularity = 0.05
+					}
+					add_timed_idea = {
+						idea = BUL_bulgarian_capital_injection
+						days = 120
+					}
+				}
+			}
+			if = {
+				limit = {
+					FROM = { is_ai = yes }
+				}
+				custom_effect_tooltip = BUL_balkan_confederation_ai_tt
+			}
+			hidden_effect = {
+				FROM = { country_event = bftb_bulgaria_democratic_international_policies.3 }
+			}
+		}
+	}
+
+	BUL_balkan_confederation_balkan_summit = {
+
+		icon = GFX_decision_generic_form_nation
+
+		ai_will_do = {
+			base = 1
+		}
+
+		allowed = {
+			original_tag = BUL
+		}
+
+		available = {
+			any_other_country = {
+				BUL_is_balkan_nation = yes
+				has_capitulated = no
+				NOT = { has_war_with = ROOT }
+				OR = {
+					is_subject_of = ROOT
+					is_subject = no
+				}
+			}
+		}
+		
+		visible = {
+			has_completed_focus = BUL_balkan_alliance
+			OR = {
+				has_government = democratic
+				has_government = monarchy
+				has_government = neutrality
+			}
+		}
+
+		cost = 75
+
+		days_re_enable = 365
+		
+		complete_effect = {
+			every_other_country = {
+				limit = {
+					BUL_is_balkan_nation = yes
+					has_capitulated = no
+					NOT = { has_war_with = ROOT }
+					OR = {
+						is_subject_of = ROOT
+						is_subject = no
+					}
+				}
+				if = {
+					limit = { has_government = democratic }
+					add_timed_idea = { idea = democratic_influence days = 365 }
+				}
+				if = {
+					limit = { has_government = monarchy }
+					add_timed_idea = { idea = monarchy_influence days = 365 }
+				}
+				if = {
+					limit = { has_government = neutrality }
+					add_timed_idea = { idea = neutrality_influence days = 365 }
+				}
+				country_event = { id = generic.1 }
+			}
+			custom_effect_tooltip = BUL_balkan_confederation_balkan_summit_cooldown_tt
+		}
+	}
+}

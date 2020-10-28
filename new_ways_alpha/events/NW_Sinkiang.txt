@@ -104,7 +104,6 @@ country_event = {
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWsinkiang.3" }
 	option = {
 		name = NWsinkiang.3.a
-		create_faction = antisinkiang_bloc
 		SIK = { 
 		    country_event = { id = NWsinkiang.4 hours = 12 } 
 		    set_autonomy = {
@@ -290,7 +289,30 @@ country_event = {
 		        autonomous_state = autonomy_free
 	        }
 		}
-		add_to_faction = FROM
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						has_war_with = KAS
+						has_war_with = TNG
+						has_war_with = DZH
+					}
+				}
+			}
+			every_country = {
+				limit = {
+					is_subject = no
+					OR = { is_faction_leader = yes is_in_faction = no }
+					OR = {
+						tag = KAS
+						tag = TNG
+						tag = DZH
+					}
+					has_war_with = FROM
+				}
+				white_peace = FROM
+			}
+		}
 		FROM = {
 			add_to_war = {
 				targeted_alliance = ROOT
@@ -312,11 +334,16 @@ country_event = {
 	option = {
 		name = NWsinkiang.7.a
 		hidden_effect = {
-		    FROM = {
-				add_to_war = {
-					targeted_alliance = SIK
-					enemy = ROOT
-					hostility_reason = asked_to_join
+			if = {
+				limit = {
+					FROM = { NOT = { has_war_with = ROOT } }
+				}
+				FROM = {
+					add_to_war = {
+						targeted_alliance = SIK
+						enemy = ROOT
+						hostility_reason = asked_to_join
+					}
 				}
 			}
 		}

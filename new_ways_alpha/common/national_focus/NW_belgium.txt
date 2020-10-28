@@ -2164,11 +2164,7 @@ focus_tree = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_rotate_right"
 			add_stability = 0.05
@@ -2236,10 +2232,6 @@ focus_tree = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_alliance_with_germany"
@@ -2268,10 +2260,6 @@ focus_tree = {
 		available = {
 			is_subject = no
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_your_own_third_way"
@@ -2297,10 +2285,6 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -2343,10 +2327,6 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -2398,10 +2378,20 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-		}
-		bypass = {
-		}
-		select_effect = {
+			if = {
+				limit = {
+					COG = {
+						OR = {
+							is_subject = no
+							AND = {
+								is_subject_of = ROOT
+								has_autonomy_state = autonomy_dominion
+							}
+						}
+					}
+				}
+				is_subject = no
+			}
 		}
 
 		completion_reward = {
@@ -2490,10 +2480,6 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_mobilize_enterprise"
@@ -2551,9 +2537,7 @@ focus_tree = {
 		bypass = {
 			is_in_faction_with = ENG
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_alliance_with_britain"
 			ENG = { country_event = { id = generic.2 } }
@@ -2594,43 +2578,62 @@ focus_tree = {
 			}
 		}
 		bypass = {
-			OR = {
-				is_in_faction_with = HOL
-				is_faction_leader = yes
-			}
-		}
-		select_effect = {
+			is_faction_leader = yes
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_benelux_military_union"
 			set_rule = { can_create_factions = yes }
 			create_faction = HOL_benelux
-			HOL = {
-				country_event = { id = generic.5 }
+			if = {
+				limit = {
+					country_exists = HOL
+					HOL = {
+						is_subject = no
+						NOT = {
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
+				HOL = {
+					country_event = { id = generic.5 }
+					add_ai_strategy = {
+						type = alliance
+						id = ROOT
+						value = 200
+					}
+				}
 				add_ai_strategy = {
 					type = alliance
-					id = ROOT
+					id = "HOL"
 					value = 200
 				}
 			}
-			LUX = {
-				country_event = { id = generic.5 }
+			if = {
+				limit = {
+					country_exists = LUX
+					LUX = {
+						is_subject = no
+						NOT = {
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
+				LUX = {
+					country_event = { id = generic.5 }
+					add_ai_strategy = {
+						type = alliance
+						id = ROOT
+						value = 200
+					}
+				}
 				add_ai_strategy = {
 					type = alliance
-					id = ROOT
+					id = "LUX"
 					value = 200
 				}
-			}
-			add_ai_strategy = {
-				type = alliance
-				id = "HOL"
-				value = 200
-			}
-			add_ai_strategy = {
-				type = alliance
-				id = "LUX"
-				value = 200
 			}
 		}
 	}
@@ -2669,8 +2672,6 @@ focus_tree = {
 		}
 		bypass = {
 			is_in_faction_with = event_target:NW_france_scope
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -2729,10 +2730,6 @@ focus_tree = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_step_left"
@@ -2776,10 +2773,6 @@ focus_tree = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_socialist_europe"
@@ -2790,10 +2783,12 @@ focus_tree = {
 						event_target:NW_france_scope = {
 							has_government = communism
 							is_faction_leader = yes
+							NOT = { has_war_with = ROOT }
 						}
 						HOL = {
 							has_government = communism
 							is_faction_leader = yes
+							NOT = { has_war_with = ROOT }
 						}
 					}
 				}
@@ -2802,11 +2797,21 @@ focus_tree = {
 			else = {
 				create_faction = BEL_socialist_europe
 				if = {
-					limit = { event_target:NW_france_scope = { has_government = communism } }
+					limit = {
+						event_target:NW_france_scope = {
+							has_government = communism
+							NOT = { has_war_with = ROOT }
+						}
+					}
 					event_target:NW_france_scope = { country_event = { id = NWbelgium.21 } }
 				}
 				if = {
-					limit = { HOL = { has_government = communism } }
+					limit = {
+						HOL = {
+							has_government = communism
+							NOT = { has_war_with = ROOT }
+						}
+					}
 					HOL = { country_event = { id = NWbelgium.21 } }
 				}
 			}
@@ -2850,8 +2855,6 @@ focus_tree = {
 		bypass = {
 			is_in_faction_with = SOV
 		}
-		select_effect = {
-		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_alliance_with_soviet_union"
@@ -2880,10 +2883,6 @@ focus_tree = {
 			hidden_trigger = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -2918,12 +2917,23 @@ focus_tree = {
 			hidden_trigger = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
+			if = {
+				limit = {
+					COG = {
+						OR = {
+							is_subject = no
+							AND = {
+								is_subject_of = ROOT
+								has_autonomy_state = autonomy_dominion
+								NOT = { has_government = communism }
+							}
+						}
+					}
+				}
+				is_subject = no
+			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_decolonization_of_congo"
 			if = {
@@ -3003,10 +3013,39 @@ focus_tree = {
 			hidden_trigger = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							country_exists = HOL
+							NOT = { has_war_with = HOL }
+							HOL = { NOT = { has_government = communism } }
+						}
+						AND = {
+							country_exists = LUX
+							NOT = { has_war_with = LUX }
+							LUX = { NOT = { has_government = communism } }
+						}
+					}
+				}
+				is_subject = no
+			}
 		}
 		bypass = {
-		}
-		select_effect = {
+			if = {
+				limit = {
+					country_exists = HOL
+					HOL = { NOT = { has_government = communism } }
+				}
+				has_war_with = HOL
+			}
+			if = {
+				limit = {
+					country_exists = LUX
+					LUX = { NOT = { has_government = communism } }
+				}
+				has_war_with = LUX
+			}
 		}
 
 		completion_reward = {
@@ -3014,6 +3053,7 @@ focus_tree = {
 			if = {
 				limit = {
 					country_exists = HOL
+					NOT = { has_war_with = HOL }
 					HOL = { NOT = { has_government = communism } }
 				}
 				create_wargoal = {
@@ -3039,6 +3079,7 @@ focus_tree = {
 			if = {
 				limit = {
 					country_exists = LUX
+					NOT = { has_war_with = LUX }
 					LUX = { NOT = { has_government = communism } }
 				}
 				create_wargoal = {
@@ -3091,8 +3132,10 @@ focus_tree = {
 			}
 		}
 		bypass = {
-		}
-		select_effect = {
+			all_neighbor_country = {
+				has_government = fascism
+				has_war_with = ROOT
+			}
 		}
 
 		completion_reward = {
@@ -3200,7 +3243,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BEL_benelux_military_union
 		
-		cost = 10
+		cost = 7.2
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -3229,10 +3272,6 @@ focus_tree = {
 			hidden_trigger = {
 				NOT = { has_completed_focus = BEL_rexist_coup }
 			}
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -3265,7 +3304,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BEL_defense_of_belgium
 		
-		cost = 10
+		cost = 5
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -3307,10 +3346,6 @@ focus_tree = {
 		}
 		available = {
 			
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -3509,6 +3544,11 @@ focus_tree = {
 		}
 	}
 	
+	
+	#########################
+	#### FASCISM SECTION ####
+	#########################
+	
 	focus = {
 		id = BEL_rexist_coup
 		icon = GFX_z_goal_rexist_coup
@@ -3581,13 +3621,9 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
+			has_government = fascism
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_execution_of_unfaithful_clergy"
 			add_war_support = 0.1
@@ -3616,13 +3652,9 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
+			has_government = fascism
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_rexist_militia"
 			add_ideas = BEL_rexist_militia
@@ -3648,16 +3680,22 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
+			has_government = fascism
 			
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_extension_of_conscription"
-			add_ideas = extensive_conscription
+			if = {
+				limit = {
+					OR = {
+						has_idea = disarmed_nation
+						has_idea = volunteer_only
+						has_idea = limited_conscription
+					}
+				}
+				add_ideas = extensive_conscription
+			}
 			add_ideas = BEL_extension_of_conscription
 		}
 	}
@@ -3680,13 +3718,9 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
+			has_government = fascism
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_militarization_of_economy"
 			capital_scope = {
@@ -3723,11 +3757,7 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
-		}
-		bypass = {
-		}
-		select_effect = {
+			has_government = fascism
 		}
 
 		completion_reward = {
@@ -3762,11 +3792,7 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
-		}
-		bypass = {
-		}
-		select_effect = {
+			has_government = fascism
 		}
 
 		completion_reward = {
@@ -3802,11 +3828,7 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-			
-		}
-		bypass = {
-		}
-		select_effect = {
+			has_government = fascism
 		}
 
 		completion_reward = {
@@ -3840,6 +3862,7 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
+			has_government = fascism
 			1061 = {
 				owner = {
 					OR = {
@@ -3934,11 +3957,10 @@ focus_tree = {
 			factor = 20
 		}
 		available = {
-			
-		}
-		bypass = {
-		}
-		select_effect = {
+			NOT = {
+				is_subject_of = FLA
+				is_subject_of = WLN
+			}
 		}
 
 		completion_reward = {
@@ -3955,6 +3977,11 @@ focus_tree = {
 			}
 			if = {
 				limit = { country_exists = FLA }
+				FLA = {
+					every_unit_leader = {
+						set_nationality = ROOT
+					}
+				}
 				annex_country = {
 					target = FLA
 					transfer_troops = yes
@@ -3962,6 +3989,11 @@ focus_tree = {
 			}
 			if = {
 				limit = { country_exists = WLN }
+				WLN = {
+					every_unit_leader = {
+						set_nationality = ROOT
+					}
+				}
 				annex_country = {
 					target = WLN
 					transfer_troops = yes
@@ -4002,15 +4034,14 @@ focus_tree = {
 			factor = 20
 		}
 		available = {
+			is_subject = no
 			GER = { has_government = fascism }
 			NOT = { has_war_with = GER }
 		}
 		bypass = {
 			is_in_faction_with = GER
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_reconciliation_with_germany"
 			GER = { country_event = { id = NWbelgium.8 days = 1 } }
@@ -4036,11 +4067,10 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
-
+			is_subject = no
 		}
 		bypass = {
-		}
-		select_effect = {
+			is_in_faction = yes
 		}
 
 		completion_reward = {
@@ -4072,14 +4102,15 @@ focus_tree = {
 			}
 		}
 		available = {
-			
+			is_subject = no
 		}
 		bypass = {
-			has_full_control_of_state = 1005
+			OR = {
+				has_full_control_of_state = 1005
+				1005 = { controller = { has_war_with = ROOT } }
+			}
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_extension_of_congo"
 			1005 = {
@@ -4134,7 +4165,7 @@ focus_tree = {
 			}
 		}
 		available = {
-			
+			is_subject = no
 		}
 		bypass = {
 			has_full_control_of_state = 539
@@ -4142,9 +4173,7 @@ focus_tree = {
 			has_full_control_of_state = 1006
 			has_full_control_of_state = 1019
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_true_colonial_empire"
 			every_state = {
@@ -4214,13 +4243,15 @@ focus_tree = {
 			}
 		}
 		available = {
+			is_subject = no
 		}
 		bypass = {
-			has_full_control_of_state = 8
+			OR = {
+				has_full_control_of_state = 8
+				8 = { controller = { has_war_with = ROOT } }
+			}
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_reunification_of_luxembourg"
 			8 = {
@@ -4280,18 +4311,23 @@ focus_tree = {
 			}
 		}
 		available = {
-			
+			is_subject = no
 		}
 		bypass = {
+			OR = {
+				is_in_faction_with = HOL
+				HOL = { is_subject_of = ROOT }
+			}
 		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_expansion_flanders_to_north"
-			create_wargoal = {
-				type = annex_everything
-				target = HOL
+			if = {
+				limit = { NOT = { has_war_with = HOL } }
+				create_wargoal = {
+					type = annex_everything
+					target = HOL
+				}
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -4351,13 +4387,9 @@ focus_tree = {
 			}
 		}
 		available = {
-			
+			is_subject = no
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_reunion_with_brothers_from_france"
 			every_state = {
@@ -4369,21 +4401,24 @@ focus_tree = {
 				}
 				add_core_of = ROOT
 				controller = {
-					ROOT = {
-						create_wargoal = {
-							type = take_state_focus
-							target = PREV
-							generator = { 1037 1038 }
-						}
-						add_ai_strategy = {
-							type = antagonize
-							id = PREV
-							value = 200
-						}
-						add_ai_strategy = {
-							type = conquer
-							id = PREV
-							value = 100
+					if = {
+						limit = { NOT = { has_war_with = ROOT } }
+						ROOT = {
+							create_wargoal = {
+								type = take_state_focus
+								target = PREV
+								generator = { 1037 1038 }
+							}
+							add_ai_strategy = {
+								type = antagonize
+								id = PREV
+								value = 200
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = PREV
+								value = 100
+							}
 						}
 					}
 				}
@@ -4391,7 +4426,10 @@ focus_tree = {
 		}
 	}
 	
-	##MONARHY BRANCH
+	
+	#########################
+	#### MONARHY SECTION ####
+	#########################
 	
 	focus = {
 		id = BEL_uncertainty_in_government
@@ -4419,10 +4457,6 @@ focus_tree = {
 			hidden_trigger = {
 				always = no
 			}
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -4460,11 +4494,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_state_of_emergency"
 			add_political_power = 150
@@ -4494,11 +4524,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_monarch_above_civil_law"
 			remove_ideas = BEL_uncertainty_in_government
@@ -4531,11 +4557,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_independent_belgium"
 			add_stability = 0.1
@@ -4562,10 +4584,6 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -4599,11 +4617,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_accelerated_rearmament"
 			add_tech_bonus = {
@@ -4636,11 +4650,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_studying_tactics_wehrmacht"
 			add_tech_bonus = {
@@ -4696,11 +4706,7 @@ focus_tree = {
 				}
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_protection_border_germany"
 			766 = {
@@ -4775,11 +4781,7 @@ focus_tree = {
 				}
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_protection_border_netherlands"
 			1061 = {
@@ -4853,11 +4855,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_belgian_fortress"
 			add_stability = 0.05
@@ -4885,11 +4883,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_promotion_of_military_service_2"
 			add_war_support = 0.1
@@ -4916,11 +4910,7 @@ focus_tree = {
 		}
 		available = {
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_putting_economy_on_war_footing"
 			remove_ideas = BEL_incompetent_monarch
@@ -4961,11 +4951,38 @@ focus_tree = {
 			factor = 6
 		}
 		available = {
+			is_subject = no
 			threat > 0.35
 		}
 		bypass = {
-		}
-		select_effect = {
+			OR = {
+				is_subject_of = event_target:NW_france_scope
+				is_subject_of = ENG
+				is_subject_of = GER
+				AND = {
+					event_target:NW_france_scope = {
+						OR = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+					ENG = {
+						OR = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+					GER = {
+						OR = {
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
+			}
 		}
 
 		completion_reward = {
@@ -4975,6 +4992,10 @@ focus_tree = {
 			if = {
 				limit = {
 					event_target:NW_france_scope = {
+						NOT = {
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
 						OR = {
 							has_government = fascism
 							has_government = communism
@@ -5001,6 +5022,10 @@ focus_tree = {
 			if = {
 				limit = {
 					ENG = {
+						NOT = {
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
 						OR = {
 							has_government = fascism
 							has_government = communism
@@ -5027,6 +5052,10 @@ focus_tree = {
 			if = {
 				limit = {
 					GER = {
+						NOT = {
+							is_in_faction_with = ROOT
+							has_war_with = ROOT
+						}
 						OR = {
 							has_government = fascism
 							has_government = monarchy
@@ -5095,11 +5124,7 @@ focus_tree = {
 				}
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_strengthening_coastline"
 			6 = {
@@ -5162,11 +5187,7 @@ focus_tree = {
 				}
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_competitor_to_british_navy"
 			6 = {
@@ -5198,10 +5219,6 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
@@ -5238,11 +5255,7 @@ focus_tree = {
 				}
 			}
 		}
-		bypass = {
-		}
-		select_effect = {
-		}
-
+		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BEL_restructuring_redoubts"
 			add_ideas = BEL_restructuring_redoubts
@@ -5328,10 +5341,6 @@ focus_tree = {
 		}
 		available = {
 			NOT = { has_completed_focus = BEL_congo_as_backup }
-		}
-		bypass = {
-		}
-		select_effect = {
 		}
 
 		completion_reward = {
