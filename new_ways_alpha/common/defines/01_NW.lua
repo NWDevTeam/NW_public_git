@@ -22,3 +22,7 @@ NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED_DISTANCE_MULT = 15.0
 NDefines.NAI.RESEARCH_BONUS_FACTOR = 2.0							-- To which extent AI should care about bonuses to research #0.9
 NDefines.NAI.RESEARCH_AHEAD_OF_TIME_FACTOR = 15.0					-- To which extent AI should care about ahead of time penalties to research	#4.0
 NDefines.NAI.VARIANT_UPGRADE_MIN_XP = 100							-- Minimum XP before attempting to create a new variant. #50
+
+-- VICTORY POINTS
+NDefines.NGraphics.VICTORY_POINT_MAP_ICON_TEXT_CUTOFF = {270, 400, 600}  	-- Vanilla is 100, 250, 500
+NDefines.NGraphics.VICTORY_POINTS_DISTANCE_CUTOFF = {300, 500, 1200} 		-- Vanilla is 300, 500, 1500
