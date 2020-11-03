@@ -4197,6 +4197,175 @@ technocracy_on_the_rise = {
 
 
 nw_political_actions = {
+	start_world_revolution = {
+	
+		icon = revolt
+
+		available = {
+			is_subject = no
+			has_government = trozkism
+			OR = {
+				AND = {
+					has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+					any_country = { NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } } }
+				}
+				has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+			}
+			any_other_country = {
+				has_civil_war = no
+				has_capitulated = no
+				num_of_controlled_states > 1
+				NOT = {
+					has_government = trozkism
+					is_subject_of = ROOT
+				}
+				trozkism > 0.05
+			}
+		}
+		
+		visible = {
+			has_global_flag = revolutionary_war_enable_flag
+			is_subject = no
+			has_government = trozkism
+			OR = {
+				AND = {
+					has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+					any_country = { NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } } }
+				}
+				has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+			}
+		}
+
+		cost = 100
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 50
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision start_world_revolution"
+			effect_tooltip = {
+				every_other_country = {
+					limit = {
+						has_civil_war = no
+						has_capitulated = no
+						num_of_controlled_states > 1
+						NOT = {
+							has_government = trozkism
+							is_subject_of = ROOT
+						}
+						trozkism > 0.05
+					}
+					start_civil_war = { ideology = trozkism size = 0.5 }
+				}
+			}
+			hidden_effect = {
+				while_loop_effect = {
+					limit = {
+						civil_war_is_available = yes
+						any_other_country = {
+							has_civil_war = no
+							has_capitulated = no
+							num_of_controlled_states > 1
+							NOT = {
+								has_government = trozkism
+								is_subject_of = ROOT
+							}
+							trozkism > 0.05
+						}
+					}
+					random_other_country = {
+						limit = {
+							has_civil_war = no
+							has_capitulated = no
+							num_of_controlled_states > 1
+							NOT = {
+								has_government = trozkism
+								is_subject_of = ROOT
+							}
+							trozkism > 0.05
+						}
+						start_civil_war = { ideology = trozkism size = 0.5 }
+						hidden_effect = {
+							add_popularity = { ideology = trozkism popularity = -1 }
+							country_event = { id = NWgeneric.10 }
+							clr_country_flag = shard_call_to_help_flag
+							clr_country_flag = has_chance_revenge_flag
+							set_country_flag = flag_revolter_of_base_is_@ROOT
+							ROOT = { set_country_flag = flag_is_revolter_of_base_@PREV }
+						}
+						random_country = {
+							limit = {
+								original_tag = PREV
+								has_government = ROOT
+							}
+							add_ai_strategy = {
+								type = befriend
+								id = ROOT
+								value = 100
+							}
+							add_ai_strategy = {
+								type = alliance
+								id = ROOT		
+								value = 100
+							}
+							add_opinion_modifier = { target = ROOT modifier = generic_start_civil_war_op }
+							ROOT = {
+								set_country_flag = flag_is_revolter_of_shard_@PREV
+								add_opinion_modifier = { target = PREV modifier = generic_start_civil_war_op }
+								add_ai_strategy = {
+									type = alliance
+									id = PREV		
+									value = 100
+								}
+								add_ai_strategy = {
+									type = protect
+									id = PREV		
+									value = 100
+								}
+								add_ai_strategy = {
+									type = send_volunteers_desire
+									id = PREV		
+									value = 75
+								}
+							}
+						}
+						hidden_effect = {
+							add_ai_strategy = {
+								type = antagonize
+								id = ROOT
+								value = 300
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = ROOT
+								value = 300
+							}
+							add_ai_strategy = {
+								type = contain
+								id = ROOT
+								value = 75
+							}
+							ROOT = {
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 100
+								}
+								add_ai_strategy = {
+									type = contain
+									id = PREV
+									value = 75
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	prepare_an_independence_day_celebration = {
 	
 		icon = generic_form_nation

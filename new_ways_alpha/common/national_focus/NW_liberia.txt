@@ -7,7 +7,6 @@ focus_tree = {
 		modifier = {
 			add = 10
 			tag = LIB
-			NOT = { has_country_flag = liberia_mason_focus_flag }
 		}
 	}
 	continuous_focus_position = { x = 80 y = 1850 }
@@ -2409,17 +2408,81 @@ focus_tree = {
 		}
 		
 		available = {
-			FRA = { 
-				NOT = {
-					has_war_with = FRC
-					has_war_with = FRF
+			if = {
+				limit = {
+					OR = {
+						1011 = { owner = { tag = FRA } }
+						1012 = { owner = { tag = FRA } }
+					}
 				}
+				FRA = {
+					NOT = {
+						has_war_with = FRC
+						has_war_with = FRF
+					}
+					OR = {
+						has_full_control_of_state = 1011
+						has_full_control_of_state = 1012
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						1011 = { owner = { tag = FRC } }
+						1012 = { owner = { tag = FRC } }
+					}
+				}
+				FRC = {
+					NOT = {
+						has_war_with = FRA
+						has_war_with = FRF
+					}
+					OR = {
+						has_full_control_of_state = 1011
+						has_full_control_of_state = 1012
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						1011 = { owner = { tag = FRF } }
+						1012 = { owner = { tag = FRF } }
+					}
+				}
+				FRF = {
+					NOT = {
+						has_war_with = FRA
+						has_war_with = FRC
+					}
+					OR = {
+						has_full_control_of_state = 1011
+						has_full_control_of_state = 1012
+					}
+				}
+			}
+			else = {
+				1011 = { owner = { has_civil_war = no has_full_control_of_state = 1011 } }
+				1012 = { owner = { has_civil_war = no has_full_control_of_state = 1012 } }
 			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LIB_kot_d_ivuar"
-			event_target:NW_france_scope = { country_event = { id = nw_liberia.29 days = 1 } }
+			if = {
+				limit = {
+					OR = {
+						1011 = { owner = { OR = { tag = FRA tag = FRC tag = FRF } } }
+						1012 = { owner = { OR = { tag = FRA tag = FRC tag = FRF } } }
+					}
+				}
+				event_target:NW_france_scope = { country_event = { id = nw_liberia.29 days = 1 } }
+			}
+			else = {
+				1011 = { owner = { country_event = { id = nw_liberia.29 days = 1 } } }
+				1012 = { owner = { country_event = { id = nw_liberia.29 days = 1 } } }
+			}
 		}
 	}
 	focus = {
@@ -2439,13 +2502,16 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = yes
 
+		available = {
+			700 = { owner = { has_civil_war = no has_full_control_of_state = 700 } }
+		}
 		bypass = {
 			owns_state = 700
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LIB_serr_leon"
-			ENG = { country_event = { id = nw_liberia.28 days = 1 } }
+			700 = { owner = { country_event = { id = nw_liberia.28 days = 1 } } }
 		}
 	}
 	
