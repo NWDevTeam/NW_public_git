@@ -1117,16 +1117,31 @@ country_event = {
 	
 	immediate = { 
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event nw_greece.16" 
-		
 		if = {
 			limit = {
 				EMA = { exists = no }
 				any_state = {
-					is_core_of = EMA
+					OR = {
+						state = 184
+						state = 782
+						state = 731
+						state = 1028
+					}
 					is_owned_by = GRE
 				}
 				has_country_flag = CRE_GRE_war
 				NOT = { has_country_flag = EMA_attack }
+			}
+			every_state = {
+				limit = {
+					OR = {
+						state = 184
+						state = 782
+						state = 731
+						state = 1028
+					}
+				}
+				add_core_of = EMA
 			}
 			set_country_flag = EMA_attack
 			country_event = { id = nw_greece.17 }
@@ -1146,6 +1161,19 @@ country_event = {
 	immediate = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event nw_greece.17" 
 		hidden_effect = {
+			if = {
+				limit = { 184 = { is_owned_by = GRE } }
+				EMA = { transfer_state = 184 }
+				else = {
+					random_state = {
+						limit = { 
+							is_core_of = EMA
+							is_owned_by = GRE
+						}
+						EMA = { transfer_state = PREV }
+					}
+				}
+			}
 			if = {
 				limit = { 731 = { is_owned_by = GRE } }
 				EMA = { transfer_state = 731 }
@@ -4612,8 +4640,10 @@ country_event = {
 					state = 1028
 					state = 731
 					state = 782
+					state = 184
 				}
 			}
+			add_core_of = EMA
 			EMA = { transfer_state = PREV }
 		}
 		puppet = EMA
@@ -4671,7 +4701,10 @@ country_event = {
 						state = 825
 					}
 				}
-				EMA = { transfer_state = PREV }
+				EMA = {
+					add_state_core = PREV
+					transfer_state = PREV
+				}
 			}
 			hidden_effect = {
 				BUL = { country_event = { id = nw_greece.84 days = 1 } }
