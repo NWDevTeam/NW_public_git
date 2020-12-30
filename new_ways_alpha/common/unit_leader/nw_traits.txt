@@ -1,9 +1,62 @@
+# leader_traits contain a list of UnitLeaderTrait with the following structure:
+# trait_key = {
+# 	type = all # or either of field_marshal, corps_commander, navy
+#	trait_type = basic_trait # or either of status_trait, personality_trait, assignable_trait, basic_terrain_trait, assignable_terrain_trait, exile
+#	attack_skill = 0 # integer
+#	defense_skill = 0 # integer
+#	logistics_skill = 0 # integer
+#	planning_skill = 0 # integer
+#	maneuvering_skill = 0 # integer
+#	coordination_skill = 0 # integer
+#	attack_skill_factor = 0.0 # decimal
+#	defense_skill_factor = 0.0 # decimal
+#	logistics_skill_factor = 0.0 # decimal
+#	planning_skill_factor = 0.0 # decimal
+#	maneuvering_skill_factor = 0.0 # decimal
+#	coordination_skill_factor = 0.0 # decimal
+#	show_in_combat = yes # boolean
+#	override_effect_tooltip = "" # loc key
+#	custom_effect_tooltip = "" # loc key
+#	custom_prerequisite_tooltip = "" # loc key
+#	custom_gain_xp_trigger_tooltip = "" # loc key
+#	mutually_exclusive = other_trait # trait key
+#	parent = other_trait # trait key
+#	num_parents_needed = -1 # integer, -1 means "all"
+#	gui_row = -1 # integer, starts at 0, -1 means auto
+#	gui_column = -1 # integer, starts at 0, -1 means auto
+#	allowed = trigger # scope is a unit leader
+#	prerequisites = trigger # scope is an unit leader
+#	gain_xp = trigger # scope is a combatant
+#	gain_xp_leader = trigger # scope is a unit leader. ROOT is country you are from and FROM is any target nationality for agents
+#	gain_xp_on_spotting = 0 # integer
+#	modifier = { } # list of modifiers
+#	non_shared_modifier = {} #
+#	corps_commander_modifier = {} #
+#	field_marshal_modifier = {} #
+#	sub_unit_modifiers = { # list of sub unit def
+#		# e.g.
+#		submarine {
+#			units = {} # list of adjusters
+#			# list of modifiers e.g.
+#			naval_visibility = -0.1
+#		}
+#	}
+#	trait_xp_factor = {} # list of trait_key/decimal
+#	on_add = effect # scope is an unit leader
+#	on_remove = effect # scope is an unit leader
+#	daily_effect = effect # scope is an unit leader
+#	cost = 1000 # integer
+#	ai_will_do = {} # weight
+#	new_commander_weight = {} # weight
+#	enable_ability = ability_key
+#}
+
 leader_traits = {
 
 	
-##################################
-# Common Traits
-##################################
+	##################################
+	# Common Traits
+	##################################
 	JAP_trozkist_sympathizer = {
 		type = all
 		trait_type = personality_trait
@@ -50,18 +103,256 @@ leader_traits = {
 	}
 	
 	
-##################################
-# Field Marshal traits.
-##################################
+	############
 	
-##################################
-# Corps Commander traits.
-##################################
-	
-##################################
-# Corps Commander assignabme traits.
-##################################
+	guerrilla_war_trait = {
+		type = all
+		trait_type = personality_trait
+		
+		field_marshal_modifier = {
+			max_army_group_size = -2
+		}
+		corps_commander_modifier = {
+			max_commander_army_size = -14
+		}
+		new_commander_weight = {
+			factor = 0
+		}
+	}
 
-##################################
-# Naval traits.
-##################################
+	national_war_trait = {
+		type = all
+		trait_type = personality_trait
+		
+		field_marshal_modifier = {
+			max_army_group_size = 2
+		}
+		corps_commander_modifier = {
+			max_commander_army_size = 16
+		}
+		new_commander_weight = {
+			factor = 0
+		}
+	}
+
+
+	##################################
+	# Corps Commander traits.
+	##################################
+	
+	art_leader = {
+		type = corps_commander
+		gain_xp = {
+			set_temp_variable = { temp = num_units }
+			multiply_temp_variable = { temp = 0.40 }
+			check_variable = { num_artillery > temp }
+		}
+		custom_gain_xp_trigger_tooltip = art_ratio_over_40
+		
+		cost = 1000
+		modifier = {
+			army_artillery_defence_factor = 0.10
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		gui_row = 16
+	}
+	
+	fire_leader = {
+		type = corps_commander
+		gain_xp = {
+			set_temp_variable = { temp = num_units }
+			multiply_temp_variable = { temp = 0.2 }
+			set_temp_variable = { fum = num_units_with_type@flamethrower_infantry }
+			add_to_temp_variable = { fum = num_units_with_type@armored_car_fire }
+			add_to_temp_variable = { fum = num_units_with_type@light_sp_fire_brigade }
+			add_to_temp_variable = { fum = num_units_with_type@medium_sp_fire_brigade }
+			add_to_temp_variable = { fum = num_units_with_type@heavy_sp_fire_brigade }
+			add_to_temp_variable = { fum = num_units_with_type@modern_sp_fire_brigade }
+			check_variable = { fum > temp }
+		}
+		custom_gain_xp_trigger_tooltip = fire_ratio_over_20
+		
+		cost = 1000
+		modifier = {
+			modifier_army_sub_unit_category_all_flamethrower_defence_factor = 0.10
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		gui_row = 17
+	}
+	
+	
+	
+	combined_avia_leader = {
+		type = corps_commander
+		gain_xp = {
+			OR = {
+				has_flanked_opponent = yes
+				opponent = { has_flanked_opponent = yes }
+			}
+		}
+		custom_gain_xp_trigger_tooltip = has_flanked
+		
+		cost = 1000
+		modifier = {
+			army_bonus_air_superiority_factor = 0.10
+			air_superiority_bonus_in_combat = 0.10
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+		logistics_skill_factor = 1
+		
+		gui_row = 19
+	}
+	
+	
+	
+	##################################
+	# Corps Commander assignable traits.
+	##################################
+	
+	art_expert = {
+		type = corps_commander
+		gain_xp = {
+			always = no # not gainable
+		}
+		cost = 1000
+		modifier = {
+			army_artillery_attack_factor = 0.15
+			breakthrough_factor = 0.05
+		}
+		
+		custom_effect_tooltip = INCREASED_TACTIC_TACTIC_BLITZ_INF_CHANCE
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		trait_type = assignable_trait
+		parent = art_leader
+		
+		gui_row = 16
+	}
+
+	fire_expert = {
+		type = corps_commander
+		gain_xp = {
+			always = no # not gainable
+		}
+		cost = 1000
+		modifier = {
+			modifier_army_sub_unit_category_all_flamethrower_attack_factor = 0.10
+		}
+		sub_unit_modifiers = {
+			flamethrower_infantry = {
+				breakthrough_factor = 0.10
+			}
+			flamethrower_squad = {
+				breakthrough_factor = 0.10
+			}
+			armored_car_fire = {
+				breakthrough_factor = 0.10
+			}
+			light_sp_fire_brigade = {
+				breakthrough_factor = 0.10
+			}
+			medium_sp_fire_brigade = {
+				breakthrough_factor = 0.10
+			}
+			heavy_sp_fire_brigade = {
+				breakthrough_factor = 0.10
+			}
+			modern_sp_fire_brigade = {
+				breakthrough_factor = 0.10
+			}
+		}
+		
+		custom_effect_tooltip = INCREASED_TACTIC_FIRE_STORM_AND_ENCIRCLEMENT_FIRE_CHANCE
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		trait_type = assignable_trait
+		parent = fire_leader
+		
+		gui_row = 17
+	}
+	
+	fire_fuel_expert = {
+		type = corps_commander
+		gain_xp = {
+			always = no # not gainable
+		}
+		cost = 700
+		
+		logistics_skill = 1
+		
+		sub_unit_modifiers = {
+			flamethrower_infantry = {
+				army_fuel_consumption_factor = -0.10
+			}
+			flamethrower_squad = {
+				army_fuel_consumption_factor = -0.10
+			}
+			armored_car_fire = {
+				army_fuel_consumption_factor = -0.10
+			}
+			light_sp_fire_brigade = {
+				army_fuel_consumption_factor = -0.10
+			}
+			medium_sp_fire_brigade = {
+				army_fuel_consumption_factor = -0.10
+			}
+			heavy_sp_fire_brigade = {
+				army_fuel_consumption_factor = -0.10
+			}
+			modern_sp_fire_brigade = {
+				army_fuel_consumption_factor = -0.10
+			}
+		}
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		trait_type = assignable_trait
+		parent = fire_leader
+		
+		gui_row = 18
+	}
+	
+	combined_avia_expert = {
+		type = corps_commander
+		gain_xp = {
+			always = no # not gainable
+		}
+		cost = 1000
+		modifier = {
+			enemy_army_bonus_air_superiority_factor = -0.15
+			cas_damage_reduction = 0.15
+		}
+		
+		planning_skill = 1
+		
+		ai_will_do = {
+			factor = 1
+		}
+		
+		trait_type = assignable_trait
+		parent = combined_avia_leader
+		
+		
+		gui_row = 19
+	}
+	
+}

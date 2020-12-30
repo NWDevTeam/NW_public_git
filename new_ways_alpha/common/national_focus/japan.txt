@@ -324,6 +324,15 @@ focus_tree = {
 					set_autonomy = { target = MEN autonomy_state = autonomy_integrated_puppet }
 				}
 			}
+			every_owned_state = {
+				limit = {
+					OR = {
+						state = 611
+						state = 612
+					}
+				}
+				MEN = { transfer_state = PREV }
+			}
 			if = {
 				limit = {
 					MAN = { has_idea = MAN_kwantung_veto }
@@ -2807,6 +2816,101 @@ focus_tree = {
 			custom_effect_tooltip = set_country_leader_ideology_dual_monarchy
 		}
 	}
+	
+	focus = {
+		id = JAP_join_axis
+		icon = GFX_focus_chi_mission_to_germany
+		prerequisite = { focus = JAP_modern_shogunate focus = JAP_showa_restoration }
+		mutually_exclusive = { focus = JAP_asian_anti_communist_treaty }
+		x = -1
+		y = 1
+		relative_position_id = JAP_modern_shogunate
+
+		cost = 10
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = {
+					GER = { has_civil_war = yes }
+					GER = { focus_progress = { focus = GER_oppose_hitler progress > 0 } }
+					NOT = {
+						has_game_rule = { rule = GER_ai_behavior option = DEFAULT }
+						has_game_rule = { rule = GER_ai_behavior option = FASCIST }
+					}
+				}
+			}
+		}
+
+		available = {
+			country_exists = GER
+			GER = {
+				is_faction_leader = yes
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		
+		bypass = {
+			is_in_faction_with = GER
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+		
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			GER = { country_event = generic.2 }
+		}
+	}
+	
+	focus = {
+		id = JAP_asian_anti_communist_treaty
+		icon = GFX_z_goal_asian_anti_communist_treaty
+		prerequisite = { focus = JAP_modern_shogunate focus = JAP_showa_restoration }
+		mutually_exclusive = { focus = JAP_join_axis }
+		x = 1
+		y = 1
+		relative_position_id = JAP_modern_shogunate
+
+		cost = 10
+
+		ai_will_do = {
+			factor = 2
+		}
+		
+		available = {
+			is_subject = no
+		}
+
+		bypass = {
+			is_in_faction = yes
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			set_rule = { can_create_factions = yes }
+			create_faction = JAP_asian_anti_communist_treaty
+			if = {
+				limit = {
+					#country_exists = event_target:WTT_current_china_leader
+					event_target:WTT_current_china_leader = {
+						is_subject = no
+						is_in_faction = no
+						NOT = { has_war_with = ROOT }
+					}
+				}
+				event_target:WTT_current_china_leader = { country_event = { id = tr_japan.3 hours = 12 } }
+				custom_effect_tooltip = JAP_asian_anti_communist_treaty_tt
+			}
+		}
+	}
 
 	focus = {
 		id = JAP_prepare_for_war_with_the_soviet_union
@@ -2814,7 +2918,7 @@ focus_tree = {
 		prerequisite = { focus = JAP_modern_shogunate focus = JAP_showa_restoration }
 		x = 1
 		y = 1
-		relative_position_id = JAP_modern_shogunate
+		relative_position_id = JAP_showa_restoration
 
 		cost = 10
 
@@ -2902,9 +3006,10 @@ focus_tree = {
 		id = JAP_join_the_london_naval_treaty
 		icon = GFX_focus_generic_diplomatic_treaty
 		prerequisite = { focus = JAP_prepare_for_war_with_the_soviet_union }
+		prerequisite = { focus = JAP_join_axis focus = JAP_asian_anti_communist_treaty }
 		x = -1
 		y = 1
-		relative_position_id = JAP_prepare_for_war_with_the_soviet_union
+		relative_position_id = JAP_asian_anti_communist_treaty
 
 		cost = 10
 
@@ -2942,9 +3047,10 @@ focus_tree = {
 		id = JAP_build_up_the_manchurian_army
 		icon = GFX_goal_generic_army_doctrines
 		prerequisite = { focus = JAP_prepare_for_war_with_the_soviet_union }
+		prerequisite = { focus = JAP_join_axis focus = JAP_asian_anti_communist_treaty }
 		x = 1
 		y = 1
-		relative_position_id = JAP_prepare_for_war_with_the_soviet_union
+		relative_position_id = JAP_asian_anti_communist_treaty
 
 		cost = 10
 
@@ -3120,7 +3226,10 @@ focus_tree = {
 
 
 		completion_reward = {
-			CHI = { country_event = wtt_japan.11 } #TODO_WTT_CD make a proper is nationalist china trigger
+			if = {
+				limit = { NOT = { is_in_faction_with = ROOT } }
+				CHI = { country_event = wtt_japan.11 } #TODO_WTT_CD make a proper is nationalist china trigger
+			}
 			609 = {
 				if = {
 					limit = { is_controlled_by = ROOT }
@@ -3128,6 +3237,12 @@ focus_tree = {
 						type = bunker
 						level = 3
 						province = 6969
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 3
+						province = 14410
 						instant_build = yes
 					}
 					add_building_construction = {
@@ -3147,19 +3262,23 @@ focus_tree = {
 			if = {
 				limit = {
 					MAN = {
-						is_puppet_of = ROOT
+						is_subject_of = ROOT
 					}
 				}
-				MAN = {
-					610 = {
-						if = {
-							limit = { is_controlled_by = PREV }
-							add_building_construction = {
-								type = bunker
-								level = 3
-								province = 3955
-								instant_build = yes
-							}
+				610 = {
+					if = {
+						limit = { is_controlled_by = MAN }
+						add_building_construction = {
+							type = bunker
+							level = 3
+							province = 3955
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = bunker
+							level = 3
+							province = 9768
+							instant_build = yes
 						}
 					}
 				}
@@ -3167,44 +3286,35 @@ focus_tree = {
 			if = {
 				limit = {
 					MEN = {
-						is_puppet_of = ROOT
+						is_subject_of = ROOT
 					}
 				}
-				MEN = {
-					611 = {
-						if = {
-							limit = { is_controlled_by = PREV }
-							add_building_construction = {
-								type = bunker
-								level = 3
-								province = 1137
-								instant_build = yes
-							}
-							add_building_construction = {
-								type = bunker
-								level = 3
-								province = 6904
-								instant_build = yes
-							}
-							add_building_construction = {
-								type = bunker
-								level = 3
-								province = 9776
-								instant_build = yes
-							}
+				1133 = {
+					if = {
+						limit = { is_controlled_by = MEN }
+						add_building_construction = {
+							type = bunker
+							level = 3
+							province = 828
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = bunker
+							level = 3
+							province = 10397
+							instant_build = yes
 						}
 					}
 				}
 			}
 		}
 	}
-
+	
 	focus = {
-		id = JAP_technological_exchange
-		icon = GFX_goal_tfv_generic_tech_sharing
+		id = JAP_introduction_to_chinese_economy
+		icon = GFX_focus_generic_china1
 		prerequisite = { focus = JAP_non_aggression_pact_with_china }
-		prerequisite = { focus = JAP_create_a_manchurian_imperial_air_force }
-		x = 1
+		x = 0
 		y = 1
 		relative_position_id = JAP_non_aggression_pact_with_china
 
@@ -3215,11 +3325,59 @@ focus_tree = {
 		}
 
 		available = {
+			event_target:WTT_current_china_leader = {
+				OR = {
+					is_in_faction_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+			num_of_factories > 10
+		}
 
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+
+		completion_reward = {
+			add_ideas = JAP_introduction_to_chinese_economy_idea
+			event_target:WTT_current_china_leader = { add_ideas = JAP_introduction_to_chinese_economy_idea_2 }
+		}
+	}
+
+	focus = {
+		id = JAP_technological_exchange
+		icon = GFX_goal_tfv_generic_tech_sharing
+		prerequisite = { focus = JAP_non_aggression_pact_with_china }
+		prerequisite = { focus = JAP_create_a_manchurian_imperial_air_force }
+		x = 0
+		y = 1
+		relative_position_id = JAP_create_a_manchurian_imperial_air_force
+
+		cost = 10
+
+		ai_will_do = {
+			factor = 1
+		}
+
+		available = {
+			if = {
+				limit = { has_completed_focus = JAP_join_axis }
+				is_in_faction_with = GER
+			}
+			else = {
+				is_in_faction_with = event_target:WTT_current_china_leader
+			}
 		}
 
 		bypass = {
-			has_war_with = GER
+			if = {
+				limit = { has_completed_focus = JAP_join_axis }
+				has_war_with = GER
+			}
+			else = {
+				has_war_with = event_target:WTT_current_china_leader
+			}
 		}
 
 		cancel_if_invalid = yes
@@ -3231,35 +3389,56 @@ focus_tree = {
 		completion_reward = {
 			if = {
 				limit = {
-					has_country_leader = { id = 700 } #Hirohito
+					OR = {
+						has_country_leader = { id = 700 } #Hirohito
+						has_country_leader = { name = "Hirohito" ruling_only = yes }
+					}
 				}
 				remove_country_leader_trait = warrior_code
 			}
-			random_country = {
-				limit = {
-					original_tag = GER
-					has_government = fascism
-					is_faction_leader = yes
-				}
-				if = {
+			if = {
+				limit = { has_completed_focus = JAP_join_axis }
+				random_country = {
 					limit = {
-						not = {
-							is_in_faction_with = ROOT
-						}
+						original_tag = GER
+						has_government = fascism
+						is_faction_leader = yes
 					}
-					country_event = generic.2
+					if = {
+						limit = {
+							OR = {
+								has_dlc = "Together for Victory"
+								has_dlc = "Death or Dishonor"
+								has_dlc = "Waking the Tiger"
+							}
+						}
+						add_to_tech_sharing_group = JAP_technological_exchange
+					}
 				}
-				if = {
+				ROOT = { add_to_tech_sharing_group = JAP_technological_exchange }
+			}
+			else = {
+				every_other_country = {
 					limit = {
 						OR = {
-							has_dlc = "Together for Victory"
-							has_dlc = "Death or Dishonor"
-							has_dlc = "Waking the Tiger"
+							original_tag = event_target:WTT_current_china_leader
+							is_in_faction_with = ROOT
+							is_subject_of = ROOT
+							is_subject_of = event_target:WTT_current_china_leader
 						}
 					}
-					add_to_tech_sharing_group = JAP_technological_exchange
-					ROOT = { add_to_tech_sharing_group = JAP_technological_exchange }
+					if = {
+						limit = {
+							OR = {
+								has_dlc = "Together for Victory"
+								has_dlc = "Death or Dishonor"
+								has_dlc = "Waking the Tiger"
+							}
+						}
+						add_to_tech_sharing_group = JAP_technological_exchange
+					}
 				}
+				ROOT = { add_to_tech_sharing_group = JAP_technological_exchange }
 			}
 		}
 	}
@@ -3268,7 +3447,7 @@ focus_tree = {
 		id = JAP_preemptive_war
 		icon = GFX_goal_generic_war_with_comintern
 		prerequisite = { focus = JAP_technological_exchange }
-		x = 0
+		x = -1
 		y = 1
 		relative_position_id = JAP_technological_exchange
 
@@ -3489,7 +3668,7 @@ focus_tree = {
 		id = JAP_strengthen_civilian_government
 		icon = GFX_goal_support_democracy
 		mutually_exclusive = { focus = JAP_purge_the_kodoha_faction focus = JAP_support_the_kodoha_faction focus = JAP_the_unthinkable_option focus = JAP_the_bezumie_option }
-		x = 4
+		x = 5
 		y = 0
 		relative_position_id = JAP_support_the_kodoha_faction
 
@@ -3736,6 +3915,15 @@ focus_tree = {
 						MEN = { is_subject_of = ROOT }
 					}
 					MAN = { puppet = MEN }
+				}
+				every_owned_state = {
+					limit = {
+						OR = {
+							state = 611
+							state = 612
+						}
+					}
+					MEN = { transfer_state = PREV }
 				}
 				add_popularity = { ideology = democratic popularity = 0.1 }
 				start_civil_war = {
@@ -5999,10 +6187,35 @@ focus_tree = {
 				}
 			}
 			custom_effect_tooltip = all_or_nothing_TT
-			set_autonomy = { target = MAN autonomy_state = autonomy_free } 
-			set_autonomy = { target = MEN autonomy_state = autonomy_free }
-			MAN = {
-				set_autonomy = { target = MEN autonomy_state = autonomy_integrated_puppet }
+			if = {
+				limit = {
+					MEN = { is_subject_of = ROOT }
+				}
+				set_autonomy = { target = MEN autonomy_state = autonomy_free }
+			}
+			if = {
+				limit = {
+					MAN = { is_subject_of = ROOT }
+				}
+				set_autonomy = { target = MAN autonomy_state = autonomy_free } 
+				MAN = {
+					set_autonomy = { target = MEN autonomy_state = autonomy_integrated_puppet }
+				}
+			}
+			every_owned_state = {
+				limit = {
+					OR = {
+						state = 611
+						state = 612
+					}
+				}
+				MEN = { transfer_state = PREV }
+			}
+			if = {
+				limit = {
+					MAN = { has_idea = MAN_kwantung_veto }
+				}
+				MAN = { remove_ideas = MAN_kwantung_veto }
 			}
 			hidden_effect = {
 				division_template = { name = "Japanese People's Regiment" division_names_group = JAP_INF_01 is_locked = yes regiments = { infantry = { x = 0 y = 0 } infantry = { x = 1 y = 0 } infantry = { x = 2 y = 0 } } }

@@ -18,9 +18,6 @@ country_event = {
 	#Accept generals
 	option = {
 		name = tr_japan.1.a
-		ai_chance = {
-			base = 10
-		}
 		FROM = {
 			every_army_leader = {
 				limit = { has_trait = JAP_samurai_lineage }
@@ -44,12 +41,346 @@ country_event = {
 	
 	option = {
 		name = tr_japan.2.a
+	}
+}
+
+#Токийские дипломаты // CHI
+country_event = {
+	id = tr_japan.3
+	title = tr_japan.3.t
+	desc = tr_japan.3.desc
+	picture = GFX_report_china_jap_ally_2
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.3" }
+	
+	option = {
+		name = tr_japan.3.a
 		ai_chance = {
-			base = 10
+			factor = 90
+		}
+		FROM = {
+			effect_tooltip = { add_to_faction = ROOT }
+			country_event = { id = tr_japan.5 hours = 12 }
+		}
+	}
+	
+	option = {
+		name = tr_japan.3.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = tr_japan.4 hours = 12 } }
+	}
+}
+
+#Отказ китайского правительства // JAP
+country_event = {
+	id = tr_japan.4
+	title = tr_japan.4.t
+	desc = tr_japan.4.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.4" }
+	
+	option = {
+		name = tr_japan.4.a
+	}
+}
+
+#Подписание антикоммунистического договора // JAP
+country_event = {
+	id = tr_japan.5
+	title = tr_japan.5.t
+	desc = tr_japan.5.desc
+	picture = GFX_report_china_jap_ally
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.5" }
+	
+	option = {
+		name = tr_japan.5.a
+		add_to_faction = FROM
+		hidden_effect = {
+			add_ai_strategy = {
+				type = befriend
+				id = FROM
+				value = 100
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = FROM		
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+		}
+		every_other_country = {
+			limit = {
+				is_subject = no
+				OR = {
+					is_chinese_warlord = yes
+					original_tag = PRC
+					original_tag = MEN
+					original_tag = KUM
+				}
+			}
+			country_event = { id = tr_japan.6 hours = 12 }
 		}
 	}
 }
 
+#Предательство нанкинского правительства // is_chinese_warlord // MEN // PRC
+country_event = {
+	id = tr_japan.6
+	title = tr_japan.6.t
+	desc = tr_japan.6.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.6" }
+	
+	option = {
+		name = tr_japan.6.a
+		trigger = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+				has_government = anarchism
+				original_tag = MEN
+				original_tag = XIK
+				original_tag = PRC
+				original_tag = NEA
+				AND = {
+					original_tag = XSM
+					has_country_leader = { name = "Ma Lin" ruling_only = yes }
+				}
+				focus_progress = { focus = CHI_cooperation_with_the_communists progress > 0 }
+				focus_progress = { focus = CHI_opposition progress > 0 }
+			}
+			NOT = { original_tag = GXC }
+		}
+		ai_chance = {
+			factor = 90
+		}
+		declare_war_on = {
+			target = event_target:WTT_current_china_leader
+			type = annex_everything
+		}
+		if = {
+			limit = { original_tag = PRC }
+			country_event = { id = tr_japan.7 hours = 3 }
+		}
+	}
+	
+	option = {
+		name = tr_japan.6.b
+		trigger = {
+			original_tag = GXC
+		}
+		ai_chance = {
+			factor = 90
+		}
+		declare_war_on = {
+			target = event_target:WTT_current_china_leader
+			type = annex_everything
+		}
+		declare_war_on = {
+			target = PRC
+			type = annex_everything
+		}
+		set_cosmetic_tag = GXC_langfangshi_government
+	}
+	
+	option = {
+		name = tr_japan.6.c
+		trigger = {
+			OR = {
+				original_tag = SHA
+				original_tag = NGX
+				AND = {
+					original_tag = TNG 
+					has_government = neutrality
+				}
+				focus_progress = { focus = CHI_cooperation_with_the_nationalists progress > 0 }
+			}
+		}
+		ai_chance = {
+			factor = 90
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = befriend
+				id = FROM
+				value = 100
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = FROM		
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+		}
+		FROM = { country_event = { id = generic.2 hours = 6 } }
+	}
+	
+	option = {
+		name = tr_japan.6.d
+		trigger = {
+			OR = {
+				original_tag = MEN
+				original_tag = XIK
+				original_tag = KUM
+				original_tag = YUL
+				original_tag = YUN
+				original_tag = SIH
+				original_tag = SHX
+				AND = {
+					original_tag = XSM
+					has_country_leader = { name = "Ma Bufang" ruling_only = yes }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
 
+#Формирование Северо-западного правительства национальной обороны // PRC
+country_event = {
+	id = tr_japan.7
+	title = tr_japan.7.t
+	desc = tr_japan.7.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.7" }
+	
+	option = {
+		name = tr_japan.7.a
+		set_country_flag = PRC_north_western_government_flag
+		set_rule = { can_create_factions = yes }
+		create_faction = PRC_north_western_government
+		every_other_country = {
+			limit = {
+				is_chinese_warlord = yes
+				NOT = { has_war_with = ROOT }
+				NOT = { original_tag = GXC }
+				OR = {
+					has_war_with = event_target:WTT_current_china_leader
+					has_war_with = JAP
+				}
+			}
+			country_event = { id = tr_japan.8 hours = 3 }
+		}
+	}
+}
 
-
+#Письмо от Северо-западного правительства национальной обороны // is_chinese_warlord
+country_event = {
+	id = tr_japan.8
+	title = tr_japan.8.t
+	desc = tr_japan.8.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tr_japan.8" }
+	
+	option = {
+		name = tr_japan.8.a
+		ai_chance = {
+			factor = 80
+		}
+		if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = befriend
+				id = PRC
+				value = 100
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = PRC		
+				value = 200
+			}
+			PRC = {
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+		}
+		PRC = {
+			add_to_faction = ROOT
+			if = {
+				limit = { has_war_with = event_target:WTT_current_china_leader }
+				add_to_war = {
+					targeted_alliance = ROOT
+					enemy = event_target:WTT_current_china_leader
+					hostility_reason = asked_to_join
+				}
+			}
+			else_if = {
+				limit = { has_war_with = JAP }
+				add_to_war = {
+					targeted_alliance = ROOT
+					enemy = JAP
+					hostility_reason = asked_to_join
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = tr_japan.8.b
+		trigger = {
+			NOT = {
+				has_government = communism
+				has_government = trozkism
+				has_completed_focus = CHI_cooperation_with_the_communists
+				has_focus_tree = china_communist_focus
+				original_tag = NEA
+				original_tag = SIK
+			}
+		}
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.1
+				focus_progress = { focus = CHI_cooperation_with_the_communists progress > 0 }
+			}
+		}
+	}
+}

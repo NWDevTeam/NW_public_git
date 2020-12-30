@@ -24,6 +24,7 @@ nw_drop_focus_tree = {
 			load_focus_tree = { tree = generic_focus keep_completed = no }
 			hidden_effect = {
 				remove_all_start_ideas = yes
+				set_country_flag = drop_focus_flag
 			}
 		}
 	}
@@ -63,6 +64,7 @@ nw_drop_focus_tree = {
 				load_focus_tree = { tree = generic_focus keep_completed = no }
 				hidden_effect = {
 					remove_all_start_ideas = yes
+					set_country_flag = drop_focus_flag
 				}
 			}
 		}
@@ -2002,7 +2004,7 @@ generic_interventions_start_civil_war_category = {
 				}
 				add_ai_strategy = {
 					type = alliance
-					id = ROOT		
+					id = ROOT
 					value = 100
 				}
 				add_opinion_modifier = { target = ROOT modifier = generic_start_civil_war_op }
@@ -2011,17 +2013,17 @@ generic_interventions_start_civil_war_category = {
 					add_opinion_modifier = { target = PREV modifier = generic_start_civil_war_op }
 					add_ai_strategy = {
 						type = alliance
-						id = PREV		
+						id = PREV
 						value = 100
 					}
 					add_ai_strategy = {
 						type = protect
-						id = PREV		
+						id = PREV
 						value = 100
 					}
 					add_ai_strategy = {
 						type = send_volunteers_desire
-						id = PREV		
+						id = PREV
 						value = 75
 					}
 				}
@@ -5445,7 +5447,7 @@ generic_anarchism_private_army_category = {
 		#	state = var:capital_var
 		#}
 		available = {
-			has_manpower > 6600
+			has_manpower > 7100
 			OR = {
 				has_idea = monopolized_private_armies
 				has_idea = thriving_private_army_market
@@ -5461,7 +5463,7 @@ generic_anarchism_private_army_category = {
 		days_remove = 1
 		remove_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_infantry_division_monopolized_private_armies"
-			add_manpower = -6600
+			add_manpower = -7100
 			hidden_effect = {
 				if = {
 					limit = { NOT = { has_template = "Mercenary Division" } }
@@ -5479,6 +5481,7 @@ generic_anarchism_private_army_category = {
 						support = {
 							engineer = { x = 0 y = 0 }
 							artillery = { x = 0 y = 1 }
+							sniper_squad = { x = 0 y = 2 }
 						}
 					}
 				}
@@ -5496,6 +5499,82 @@ generic_anarchism_private_army_category = {
 			factor = 1
 			modifier = {
 				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = thriving_private_army_market
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+		}
+	}
+	
+	generic_hire_fire_infantry_division_monopolized_private_armies = {
+		icon = generic_fire
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 5800
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+			has_tech = tech_flamethrower
+		}
+		visible = {
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cost = 35
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_infantry_division_monopolized_private_armies"
+			add_manpower = -5800
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Mercenary Flamethrower Division" } }
+					division_template = {
+						name = "Mercenary Flamethrower Division"
+						is_locked = no
+						regiments = {
+							flamethrower_infantry = { x = 0 y = 0 }
+							flamethrower_infantry = { x = 0 y = 1 }
+							flamethrower_infantry = { x = 0 y = 2 }
+							flamethrower_infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+						support = {
+							engineer = { x = 0 y = 0 }
+							sniper_squad = { x = 0 y = 1 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Mercenary Flamethrower Division\" division_template = \"Mercenary Flamethrower Division\" start_experience_factor = 0.2" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 30
 				ai_wants_divisions > 0
 			}
 			modifier = {
@@ -5598,7 +5677,7 @@ generic_anarchism_private_army_category = {
 		#	state = var:capital_var
 		#}
 		available = {
-			has_manpower > 20200
+			has_manpower > 21200
 			has_idea = thriving_private_army_market
 		}
 		visible = {
@@ -5608,7 +5687,7 @@ generic_anarchism_private_army_category = {
 		days_remove = 1
 		remove_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_infantry_division_thriving_private_army_market"
-			add_manpower = -20200
+			add_manpower = -21200
 			hidden_effect = {
 				if = {
 					limit = { NOT = { has_template = "Corpus of Mercenaries with artillery" } }
@@ -5630,6 +5709,7 @@ generic_anarchism_private_army_category = {
 							recon = { x = 0 y = 0 }
 							engineer = { x = 0 y = 1 }
 							artillery = { x = 0 y = 2 }
+							sniper_squad = { x = 0 y = 3 }
 						}
 					}
 				}
@@ -5654,6 +5734,7 @@ generic_anarchism_private_army_category = {
 							recon = { x = 0 y = 0 }
 							engineer = { x = 0 y = 1 }
 							anti_tank = { x = 0 y = 2 }
+							sniper_squad = { x = 0 y = 3 }
 						}
 					}
 				}
@@ -5667,6 +5748,76 @@ generic_anarchism_private_army_category = {
 				}
 				create_unit = {
 					division = "name = \"Corpus of Mercenaries\" division_template = \"Corpus of Mercenaries\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+		}
+	}
+	
+	generic_hire_fire_infantry_division_thriving_private_army_market = {
+		icon = generic_fire_red
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 10500
+			has_idea = thriving_private_army_market
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 45
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_infantry_division_thriving_private_army_market"
+			add_manpower = -10500
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Corpus of Flamethrower" } }
+					division_template = {
+						name = "Corpus of Flamethrower"
+						is_locked = no
+						regiments = {
+							flamethrower_infantry = { x = 0 y = 0 }
+							flamethrower_infantry = { x = 0 y = 1 }
+							flamethrower_infantry = { x = 0 y = 2 }
+							flamethrower_infantry = { x = 1 y = 0 }
+							flamethrower_infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							infantry = { x = 2 y = 1 }
+							infantry = { x = 2 y = 2 }
+							infantry = { x = 3 y = 0 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							flamethrower_squad = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Corpus of Flamethrower\" division_template = \"Corpus of Flamethrower\" start_experience_factor = 0.4" 
 					owner = ROOT
 					count = 1
 					allow_spawning_on_enemy_provs = yes
@@ -5741,6 +5892,79 @@ generic_anarchism_private_army_category = {
 					division = "name = \"Tank Corpus Of Mercenary\" division_template = \"Tank Corpus Of Mercenary\" start_experience_factor = 0.4" 
 					owner = ROOT
 					count = 3
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+		}
+	}
+	
+	generic_hire_fire_tank_division_thriving_private_army_market = {
+		icon = generic_concern_red_tank
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 18600
+			has_idea = thriving_private_army_market
+			has_tech = motorised_infantry
+			has_tech = armored_car_fire_upgrade
+			has_tech = basic_medium_fire
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 85
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_tank_division_thriving_private_army_market"
+			add_manpower = -18600
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Tank Corpus Of Mercenary" } }
+					division_template = {
+						name = "Tank Corpus Of Mercenary"
+						is_locked = no
+						regiments = {
+							medium_sp_fire_brigade = { x = 0 y = 0 }
+							medium_sp_fire_brigade = { x = 0 y = 1 }
+							medium_sp_fire_brigade = { x = 0 y = 2 }
+							armored_car_fire = { x = 1 y = 0 }
+							armored_car_fire = { x = 1 y = 1 }
+							armored_car_fire = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							motorized = { x = 2 y = 2 }
+							motorized = { x = 2 y = 3 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							flamethrower_squad = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Tank Corpus Of Mercenary\" division_template = \"Tank Corpus Of Mercenary\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 2
 					allow_spawning_on_enemy_provs = yes
 				}
 			}
@@ -7383,7 +7607,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 10 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -7453,7 +7677,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 7.5 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -7540,7 +7764,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 15 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -7662,7 +7886,7 @@ generic_negotiate_with_private_owners_category = {
 				else = { check_variable = { state_resources_factor_state_var < 0 } }
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 10
 		days_remove = 30
 		cancel_trigger = {
@@ -7747,7 +7971,7 @@ generic_negotiate_with_private_owners_category = {
 				else = { check_variable = { recruitable_population_factor_state_var < 0 } }
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 10
 		days_remove = 30
 		cancel_trigger = {
@@ -7891,7 +8115,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 15
 		days_remove = 30
 		cancel_trigger = {
@@ -8081,7 +8305,7 @@ generic_negotiate_with_private_owners_category = {
 				check_variable = { state_resources_factor_state_var < 0 }
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 10
 		days_remove = 30
 		cancel_trigger = {
@@ -8157,7 +8381,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 2.5 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -8256,7 +8480,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 2.5 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -8345,7 +8569,7 @@ generic_negotiate_with_private_owners_category = {
 				check_variable = { state_production_speed_buildings_factor_state_var < 0.25 }
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 10
 		days_remove = 30
 		cancel_trigger = {
@@ -8424,7 +8648,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		cost = 10
 		days_remove = 30
 		cancel_trigger = {
@@ -8509,7 +8733,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 15 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -8607,7 +8831,7 @@ generic_negotiate_with_private_owners_category = {
 				}
 			}
 		}
-		target_array = ROOT.controlled_states
+		target_array = ROOT.core_states
 		custom_cost_trigger = {
 			set_temp_variable = { custom_cost = 15 }
 			check_variable = { anarchism_unity_var > custom_cost }
@@ -8665,3 +8889,4 @@ generic_negotiate_with_private_owners_category = {
 		}
 	}
 }
+

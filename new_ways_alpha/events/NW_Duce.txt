@@ -2079,7 +2079,6 @@ country_event = {
 			controls_state = 662
 			controls_state = 663
 			controls_state = 273
-			controls_state = 1060
 			controls_state = 938
 			controls_state = 1059
 			controls_state = 1058
@@ -2109,7 +2108,6 @@ country_event = {
 				transfer_state = 662
 				transfer_state = 663
 				transfer_state = 273
-				transfer_state = 1060
 				transfer_state = 938
 				transfer_state = 1059
 				transfer_state = 1058
@@ -2120,7 +2118,7 @@ country_event = {
 					type = annex_everything
 				}
 			}
-			IF = {
+			if = {
 				limit = {
 					NOT = { has_country_flag = balbo_dead_flag }
 					has_country_flag = race_manifesto_flag
@@ -2173,7 +2171,6 @@ country_event = {
 				transfer_state = 662
 				transfer_state = 663
 				transfer_state = 273
-				transfer_state = 1060
 				transfer_state = 938
 				transfer_state = 1059
 				transfer_state = 1058
@@ -2185,35 +2182,35 @@ country_event = {
 				}
 				change_tag_from = ROOT
 			}
-			IF = {
-					limit = {
-						NOT = { has_country_flag = balbo_dead_flag }
-						has_country_flag = race_manifesto_flag
+			if = {
+				limit = {
+					NOT = { has_country_flag = balbo_dead_flag }
+					has_country_flag = race_manifesto_flag
+				}
+				random_army_leader = {
+					limit = { has_id = 100901 }
+					set_nationality = LBA
+				}
+				set_country_flag = italo_balbo_run_flag
+				LBA = {
+					add_popularity = { ideology = fascism popularity = 0.25 }
+					set_country_flag = italo_balbo_rule_flag
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
 					}
-					random_army_leader = {
-						limit = { has_id = 100901 }
-						set_nationality = LBA
-					}
-					set_country_flag = italo_balbo_run_flag
-					LBA = {
-						add_popularity = { ideology = fascism popularity = 0.25 }
-						set_country_flag = italo_balbo_rule_flag
-						set_politics = {
-							ruling_party = fascism
-							elections_allowed = no
-						}
-						create_country_leader = {
-							name = "Italo Balbo"
-							desc = "POLITICS_ITALO_BALBO_DESC"
-							picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
-							expire = "1965.1.1"
-							ideology = fascism_corporatism
-							traits = {
-								#
-							}
+					create_country_leader = {
+						name = "Italo Balbo"
+						desc = "POLITICS_ITALO_BALBO_DESC"
+						picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
+						expire = "1965.1.1"
+						ideology = fascism_corporatism
+						traits = {
+							#
 						}
 					}
 				}
+			}
 			news_event = { hours = 6 id = duce_news.8 }
 		}
 	}
@@ -2632,16 +2629,31 @@ country_event = {
 			AND = {
 				controls_state = 158
 				controls_state = 987
+				ITA = {
+					owns_state = 158
+					owns_state = 987
+				}
 			}
 			AND = {
 				controls_state = 160
 				controls_state = 159
+				ITA = {
+					owns_state = 160
+					owns_state = 159
+				}
 			}
 			AND = {
 				controls_state = 115
 				controls_state = 156
+				ITA = {
+					owns_state = 115
+					owns_state = 156
+				}
 			}
-			controls_state = 2
+			AND = {
+				controls_state = 2
+				ITA = { owns_state = 2 }
+			}
 		}
 		NOT = {
 			original_tag = ITA
@@ -2653,6 +2665,8 @@ country_event = {
 			casualties > 300000
 		}
 	}
+	
+	mean_time_to_happen = { days = 30 }
 
 	option = {
 		name = duce.26.a
@@ -2668,6 +2682,9 @@ country_event = {
 			}
 		}
 		ITA = { country_event = duce.260 }
+		hidden_effect = {
+			save_global_event_target_as = italy_capitulator
+		}
 	}
 	
 	option = {
@@ -2704,7 +2721,7 @@ country_event = {
 		set_cosmetic_tag = ITA_salo_republic
 		set_country_flag = ITA_salo_republic_flag
 		hidden_effect = {
-			load_focus_tree = Salo_focus
+			mark_focus_tree_layout_dirty = yes
 			kill_country_leader = yes
 		}
 		set_party_name = { ideology = fascism long_name = ITA_republican_fashist_long name = ITA_republican_fashist }
@@ -2832,7 +2849,47 @@ country_event = {
 					}
 					add_civil_war_target = ITA
 				}
-				add_ideas = ITA_partisans_idea
+				event_target:italy_capitulator = {
+					add_ai_strategy = {
+						type = protect
+						id = RSI		
+						value = 50
+					}
+					RSI = {
+						add_ai_strategy = {
+							type = alliance
+							id = PREV		
+							value = 200
+						}
+						add_ai_strategy = {
+							type = befriend
+							id = PREV		
+							value = 100
+						}
+					}
+				}
+				if = {
+					limit = {
+						event_target:italy_capitulator = {
+							is_in_faction = yes
+							is_faction_leader = no
+						}
+					}
+					random_other_country = {
+						limit = {
+							is_in_faction_with = event_target:italy_capitulator
+							is_faction_leader = no
+						}
+						add_to_faction = RSI
+						RSI = {
+							add_ai_strategy = {
+								type = alliance
+								id = PREV		
+								value = 200
+							}
+						}
+					}
+				}
 				every_state = {
 					limit = { is_core_of = ITA}
 					add_core_of = RSI
@@ -2891,7 +2948,7 @@ country_event = {
 		set_cosmetic_tag = ITA_salo_republic
 		set_country_flag = ITA_salo_republic_flag
 		hidden_effect = {
-			load_focus_tree = Salo_focus
+			mark_focus_tree_layout_dirty = yes
 			kill_country_leader = yes
 		}
 		set_party_name = { ideology = fascism long_name = ITA_republican_fashist_long name = ITA_republican_fashist }
@@ -3018,7 +3075,47 @@ country_event = {
 				add_civil_war_target = ITA
 				change_tag_from = ROOT
 			}
-			add_ideas = ITA_partisans_idea
+			event_target:italy_capitulator = {
+				add_ai_strategy = {
+					type = protect
+					id = RSI		
+					value = 50
+				}
+				RSI = {
+					add_ai_strategy = {
+						type = alliance
+						id = PREV		
+						value = 200
+					}
+					add_ai_strategy = {
+						type = befriend
+						id = PREV		
+						value = 100
+					}
+				}
+			}
+			if = {
+				limit = {
+					event_target:italy_capitulator = {
+						is_in_faction = yes
+						is_faction_leader = no
+					}
+				}
+				random_other_country = {
+					limit = {
+						is_in_faction_with = event_target:italy_capitulator
+						is_faction_leader = no
+					}
+					add_to_faction = RSI
+					RSI = {
+						add_ai_strategy = {
+							type = alliance
+							id = PREV		
+							value = 200
+						}
+					}
+				}
+			}
 			every_state = {
 				limit = { is_core_of = ITA}
 				add_core_of = RSI
@@ -3481,6 +3578,7 @@ country_event = {
 		}
 		ITA = { transfer_state = 772 }
 		ITA = { transfer_state = 183 }
+		ITA = { transfer_state = 1153 }
 		ITA = { transfer_state = 116 }
 		hidden_effect = {
 			ITA = { country_event = { hours = 6 id = duce.37 } }

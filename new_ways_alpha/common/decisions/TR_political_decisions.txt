@@ -4881,10 +4881,30 @@ nw_political_actions = {
 		days_remove = 100
 
 		ai_will_do = {
-			factor = 2.5
+			factor = 1
+			modifier = {
+				factor = 5
+				num_of_civilian_factories > 4
+			}
+			modifier = {
+				factor = 1.5
+				num_of_civilian_factories > 14
+			}
+			modifier = {
+				factor = 1.5
+				num_of_civilian_factories > 29
+			}
+			modifier = {
+				factor = 1.5
+				num_of_civilian_factories > 49
+			}
 			modifier = {
 				factor = 0
-				num_of_civilian_factories_available_for_projects < 1
+				set_temp_variable = { temp = num_of_civilian_factories }
+				set_temp_variable = { temp0 = num_of_civilian_factories }
+				multiply_temp_variable = { temp = modifier@consumer_goods_factor }
+				subtract_from_temp_variable = { temp0 = temp }
+				check_variable = { temp0 < 2 }
 			}
 		}
 		
@@ -5075,6 +5095,17 @@ nw_interactions_with_allies_category = {
 						is_subject_of = FROM
 					}
 				}
+				OR = {
+					any_neighbor_state = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					is_coastal = yes
+				}
 			}
 		}
 		
@@ -5103,6 +5134,17 @@ nw_interactions_with_allies_category = {
 						tag = FROM
 						is_subject_of = FROM
 					}
+				}
+				OR = {
+					any_neighbor_state = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					is_coastal = yes
 				}
 			}
 			if = {
@@ -5144,6 +5186,17 @@ nw_interactions_with_allies_category = {
 						tag = FROM
 						is_subject_of = FROM
 					}
+				}
+				OR = {
+					any_neighbor_state = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					is_coastal = yes
 				}
 			}
 		}
@@ -5190,7 +5243,44 @@ nw_interactions_with_allies_category = {
 							}
 						}
 					}
-					set_state_flag = is_demand_territories_of_@ROOT
+					ROOT = {
+						add_to_temp_variable = { temp0 = 1 }
+						log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): NUM OF DEMAND STATES: [?temp0]"
+					}
+				}
+				while_loop_effect = {
+					limit = { check_variable = { temp0 > 0 } }
+					add_to_temp_variable = { temp0 = -1 }
+					random_state = {
+						limit = {
+							NOT = { has_state_flag = is_demand_territories_of_@ROOT }
+							OR = {
+								is_core_of = ROOT
+								is_claimed_by = ROOT
+							}
+							owner = {
+								OR = {
+									tag = FROM
+									is_subject_of = FROM
+								}
+							}
+							OR = {
+								any_neighbor_state = {
+									OR = {
+										has_state_flag = is_demand_territories_of_@ROOT
+										owner = {
+											OR = {
+												tag = ROOT
+												is_subject_of = ROOT
+											}
+										}
+									}
+								}
+								is_coastal = yes
+							}
+						}
+						set_state_flag = is_demand_territories_of_@ROOT
+					}
 				}
 			}
 		}
@@ -5225,6 +5315,7 @@ nw_interactions_with_allies_category = {
 				is_core_of = FROM
 				is_claimed_by = FROM
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				owner = {
 					OR = {
 						tag = ROOT
@@ -5245,6 +5336,7 @@ nw_interactions_with_allies_category = {
 				is_core_of = FROM
 				is_claimed_by = FROM
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				owner = {
 					OR = {
 						tag = ROOT
@@ -5274,6 +5366,7 @@ nw_interactions_with_allies_category = {
 				is_core_of = FROM
 				is_claimed_by = FROM
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				owner = {
 					OR = {
 						tag = ROOT
@@ -5290,6 +5383,7 @@ nw_interactions_with_allies_category = {
 			every_state = {
 				limit = {
 					NOT = { is_owned_by = FROM }
+					NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 					is_core_of = FROM
 					is_claimed_by = FROM
 					owner = {
@@ -5299,6 +5393,7 @@ nw_interactions_with_allies_category = {
 						}
 					}
 				}
+				set_state_flag = state_flag_transfer_of_@FROM
 				remove_core_of = ROOT
 				remove_claim_by = ROOT
 				FROM = { transfer_state = PREV }
@@ -5401,6 +5496,7 @@ nw_interactions_with_allies_category = {
 			}
 			any_state = {
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				OR = {
 					is_core_of = FROM
 					is_claimed_by = FROM
@@ -5424,6 +5520,7 @@ nw_interactions_with_allies_category = {
 			}
 			any_state = {
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				OR = {
 					is_core_of = FROM
 					is_claimed_by = FROM
@@ -5456,6 +5553,7 @@ nw_interactions_with_allies_category = {
 			}
 			any_state = {
 				NOT = { is_owned_by = FROM }
+				NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 				OR = {
 					is_core_of = FROM
 					is_claimed_by = FROM
@@ -5476,6 +5574,7 @@ nw_interactions_with_allies_category = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision transfer_part_of_his_regions_to_subject (From [From.GetName] [From.GetTag])"
 			every_state = {
 				limit = {
+					NOT = { has_state_flag = state_flag_transfer_of_@FROM }
 					NOT = { is_owned_by = FROM }
 					OR = {
 						is_core_of = FROM
@@ -5488,6 +5587,7 @@ nw_interactions_with_allies_category = {
 						}
 					}
 				}
+				set_state_flag = state_flag_transfer_of_@FROM
 				remove_core_of = ROOT
 				remove_claim_by = ROOT
 				random_other_country = {

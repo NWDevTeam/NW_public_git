@@ -383,58 +383,44 @@ focus_tree = {
 			is_subject = no
 		}
 		bypass = {
-			
 		}
 		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus QAS_new_shah_of_iran"
 			every_state = {
-				limit = { is_owned_by = PER }
+				limit = { is_core_of = PER }
 				add_claim_by = ROOT
 			}
-			create_wargoal = {
-				type = annex_everything
-				target = PER
-			}
-			add_ai_strategy = {
-				type = antagonize
-				id = "PER"
-				value = 500
-			}
-			add_ai_strategy = {
-				type = conquer
-				id = "PER"
-				value = 500
-			}
-			if = {
-				limit = { is_in_faction_with = PER }
-				leave_faction = yes
-			}
-			if = {
-				limit = { PER = { has_civil_war = yes } }
-				random_other_country = {
-					limit = {
+			every_other_country = {
+				limit = {
+					OR = {
 						original_tag = PER
-						NOT = { tag = PER }
+						original_tag = KHU
 					}
-					ROOT = {
-						create_wargoal = {
-							type = annex_everything
-							target = PREV
-						}
+					NOT = { has_war_with = ROOT }
+				}
+				ROOT = {
+					create_wargoal = {
+						type = annex_everything
+						target = PREV
+					}
+					add_ai_strategy = {
+						type = antagonize
+						id = PREV
+						value = 500
+					}
+					add_ai_strategy = {
+						type = conquer
+						id = PREV
+						value = 500
+					}
+					if = {
+						limit = { is_in_faction_with = PREV }
+						leave_faction = yes
 						add_ai_strategy = {
-							type = antagonize
-							id = PREV
-							value = 500
-						}
-						add_ai_strategy = {
-							type = conquer
-							id = PREV
-							value = 500
-						}
-						if = {
-							limit = { is_in_faction_with = PREV }
-							leave_faction = yes
+							type = alliance
+							id = "PER"
+							value = -1000
 						}
 					}
 				}
@@ -867,6 +853,21 @@ focus_tree = {
 					}
 				}
 				hidden_effect = { load_party_popularity = yes }
+			}
+			every_state = {
+				limit = {
+					is_claimed_by = ROOT
+					is_core_of = PER
+				}
+				remove_claim_by = ROOT
+			}
+			every_state = {
+				limit = {
+					NOT = { state = 412 }
+					is_core_of = PER
+					NOT = { is_controlled_by = ROOT }
+				}
+				remove_core_of = ROOT
 			}
 		}
 	}

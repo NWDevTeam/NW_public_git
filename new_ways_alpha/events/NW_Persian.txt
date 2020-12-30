@@ -3547,7 +3547,6 @@ country_event = {
 		}
 		KHU = {
 			transfer_state = 413
-			hidden_effect = { load_oob = "KHU_1936" }
 		}
 		add_state_claim = 413
 		add_ai_strategy = {
@@ -3570,7 +3569,6 @@ country_event = {
 		413 = { reset_state_name = yes }
 		KHU = {
 			transfer_state = 413
-			hidden_effect = { load_oob = "KHU_1936" }
 			declare_war_on = {
 				target = ROOT
 				type = annex_everything
@@ -3578,9 +3576,24 @@ country_event = {
 		}
 		add_state_claim = 413
 	}
+	
+	option = {
+		name = NWpersian.66.c
+		trigger = { is_ai = no }
+		413 = { reset_state_name = yes }
+		KHU = {
+			transfer_state = 413
+			declare_war_on = {
+				target = ROOT
+				type = annex_everything
+			}
+			change_tag_from = ROOT
+		}
+		add_state_claim = 413
+	}
 }
 
-#Арабистан становится независимым эмиратом // 413.controller
+#Вопрос Арабистана // 413.controller
 country_event = {
 	id = NWpersian.67
 	title = NWpersian.67.t
@@ -3604,6 +3617,10 @@ country_event = {
 		name = NWpersian.67.b
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 2
+				KHU = { is_ai = no }
+			}
 		}
 		add_state_claim = 413
 		create_wargoal = {
@@ -6272,50 +6289,241 @@ country_event = {
 	}
 }
 
-
-
+#Арабистан предлагает мирный договор // враги
 country_event = {
-	id = NWpersian.999
-	title = NWpersian.999.t
-	desc = NWpersian.999.desc
+	id = NWpersian.301
+	title = NWpersian.301.t
+	desc = NWpersian.301.desc
 	picture = GFX_report_event_generic_rally_3
 	is_triggered_only = yes
 	
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.999" }
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.301" }
 	
 	option = {
-		name = 1
-		unlock_decision_category_tooltip = PER_integration_south_azerbaijan_category
-		every_country = {
-			limit = {
-				OR = {
-					tag = TUR
-					tag = SOV
-					tag = PER
+		name = NWpersian.301.a
+		ai_chance = {
+			factor = 25
+		}
+		white_peace = FROM
+	}
+	option = {
+		name = NWpersian.301.b
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 0
+				any_country = {
+					is_major = yes
+					has_war_with = ROOT
 				}
 			}
-			set_country_flag = PER_integration_south_azerbaijan_flag
+			modifier = {
+				factor = 0
+				surrender_progress > 0.5
+			}
+		}
+	}
+}
+
+#Арабистан хочет купить вооружение // ENG
+country_event = {
+	id = NWpersian.302
+	title = NWpersian.302.t
+	desc = NWpersian.302.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.302" }
+	
+	option = {
+		name = NWpersian.302.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = { add_political_power = -150 }
+		add_political_power = 150
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 1000
+			target = FROM
+		}
+		send_equipment = {
+			equipment = support_equipment
+			amount = 150
+			target = FROM
+		}
+		send_equipment = {
+			equipment = artillery_equipment
+			amount = 250
+			target = FROM
 		}
 	}
 	
 	option = {
-		name = 2
-		create_country_leader = {
-			name = "Juan I"
-			desc = "POLITICS_JUAN_I_DESC"
-			picture = "gfx/leaders/SPR/Portrait_Juan_III.dds"
-			expire = "1965.1.1"
-			ideology = liberalism
-			traits = { }
+		name = NWpersian.302.b
+		ai_chance = {
+			factor = 25
+		}
+	}
+}
+
+#Арабистан хочет купить лицензию на производство винтовок // ENG
+country_event = {
+	id = NWpersian.303
+	title = NWpersian.303.t
+	desc = NWpersian.303.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.303" }
+	
+	option = {
+		name = NWpersian.303.a
+		ai_chance = {
+			factor = 75
+		}
+		FROM = { add_political_power = -75 }
+		add_political_power = 75
+		if = {
+			limit = { has_tech = advanced_infantry_weapons }
+			create_production_license = {
+				target = FROM
+				equipment = {
+					type = infantry_equipment_3
+				}
+				cost_factor = 0
+			}
+		}
+		else_if = {
+			limit = { has_tech = improved_infantry_weapons }
+			create_production_license = {
+				target = FROM
+				equipment = {
+					type = infantry_equipment_2
+				}
+				cost_factor = 0
+			}
 		}
 	}
 	
 	option = {
-		name = 3
-		save_party_popularity = yes
+		name = NWpersian.303.b
+		ai_chance = {
+			factor = 25
+		}
 	}
+}
+
+#Депеша из Арабистана // ENG
+country_event = {
+	id = NWpersian.304
+	title = NWpersian.304.t
+	desc = NWpersian.304.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.304" }
+	
 	option = {
-		name = 4
-		load_party_popularity = yes
+		name = NWpersian.302.a
+		ai_chance = {
+			factor = 85
+		}
+		FROM = { add_political_power = -25 }
+		add_political_power = 25
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 1000
+			target = FROM
+		}
+	}
+	
+	option = {
+		name = NWpersian.302.b
+		ai_chance = {
+			factor = 15
+		}
+	}
+}
+
+#Арабистан требует Кувейт // 656 owner
+country_event = {
+	id = NWpersian.305
+	title = NWpersian.305.t
+	desc = NWpersian.305.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.305" }
+	
+	option = {
+		name = NWpersian.305.a
+		ai_chance = {
+			factor = 50
+		}
+		FROM = { transfer_state = 656 }
+	}
+	
+	option = {
+		name = NWpersian.305.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				strength_ratio = {
+					tag = FROM
+					ratio < 1
+				}
+			}
+			modifier = {
+				factor = 0.25
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.75
+				}
+			}
+			modifier = {
+				factor = 0
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.5
+				}
+			}
+		}
+		FROM = {
+			add_state_claim = 656
+			create_wargoal = {
+				type = take_state_focus
+				target = ROOT
+				generator = { 656 }
+			}
+			add_ai_strategy = {
+				type = antagonize
+				id = ROOT
+				value = 200
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = ROOT
+				value = 200
+			}
+		}
+	}
+}
+
+#Депеша из Арабистана // 959 owner SAU
+country_event = {
+	id = NWpersian.306
+	title = NWpersian.306.t
+	desc = NWpersian.306.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.306" }
+	
+	option = {
+		name = NWpersian.306.a
+		959 = { set_demilitarized_zone = no }
+		add_opinion_modifier = { target = FROM modifier = KHU_waiver_of_claims_for_el_wafr_op }
 	}
 }

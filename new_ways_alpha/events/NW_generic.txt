@@ -1217,16 +1217,7 @@ country_event = {
 		}
 		every_state = {
 			limit = {
-				OR = {
-					is_core_of = FROM
-					is_claimed_by = FROM
-				}
-				owner = {
-					OR = {
-						tag = ROOT
-						is_subject_of = ROOT
-					}
-				}
+				has_state_flag = is_demand_territories_of_@FROM
 			}
 			remove_core_of = ROOT
 			remove_claim_by = ROOT
@@ -1268,16 +1259,7 @@ country_event = {
 		hidden_effect = {
 			every_state = {
 				limit = {
-					OR = {
-						is_core_of = FROM
-						is_claimed_by = FROM
-					}
-					owner = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-						}
-					}
+					has_state_flag = is_demand_territories_of_@FROM
 				}
 				clr_state_flag = is_demand_territories_of_@FROM
 			}
@@ -1538,22 +1520,85 @@ country_event = {
 		ai_chance = {
 			factor = 90
 		}
-		every_state = {
-			limit = {
-				OR = {
-					is_core_of = event_target:is_demender
-					is_claimed_by = event_target:is_demender
-				}
-				owner = {
+		effect_tooltip = {
+			every_state = {
+				limit = {
 					OR = {
-						tag = ROOT
-						is_subject_of = ROOT
+						is_core_of = event_target:is_demender
+						is_claimed_by = event_target:is_demender
+					}
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+					OR = {
+						any_neighbor_state = {
+							owner = {
+								OR = {
+									tag = event_target:is_demender
+									is_subject_of = event_target:is_demender
+								}
+							}
+						}
+						is_coastal = yes
 					}
 				}
+				remove_core_of = ROOT
+				remove_claim_by = ROOT
+				event_target:is_demender = { transfer_state = PREV }
 			}
-			remove_core_of = ROOT
-			remove_claim_by = ROOT
-			event_target:is_demender = { transfer_state = PREV }
+		}
+		hidden_effect = {
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = event_target:is_demender
+						is_claimed_by = event_target:is_demender
+					}
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				event_target:is_demender = {
+					add_to_temp_variable = { temp0 = 1 }
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): NUM OF DEMAND STATES: [?temp0]"
+				}
+			}
+			while_loop_effect = {
+				limit = { check_variable = { temp0 > 0 } }
+				add_to_temp_variable = { temp0 = -1 }
+				random_state = {
+					limit = {
+						OR = {
+							is_core_of = event_target:is_demender
+							is_claimed_by = event_target:is_demender
+						}
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+						OR = {
+							any_neighbor_state = {
+								owner = {
+									OR = {
+										tag = event_target:is_demender
+										is_subject_of = event_target:is_demender
+									}
+								}
+							}
+							is_coastal = yes
+						}
+					}
+					event_target:is_demender = { transfer_state = PREV }
+				}
+			}
 		}
 		every_state = {
 			limit = {
@@ -5091,9 +5136,13 @@ country_event = {
 	hidden = yes
 	
 	trigger = {
+		NOT = { has_focus_tree = nw_skm_focus }
 		check_variable = { global.troz_threat_var > 24.999 }
 		has_government = trozkism
 		NOT = { has_global_flag = four_international_flag }
+		NOT = {
+			has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+		}
 	}
 	
 	fire_only_once = yes
@@ -5169,7 +5218,10 @@ country_event = {
 		every_other_country = {
 			limit = {
 				is_subject = no
-				NOT = { has_government = trozkism }
+				OR = {
+					NOT = { has_government = trozkism }
+					has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+				}
 				is_in_faction_with = ROOT
 			}
 			leave_faction = yes
@@ -5192,6 +5244,7 @@ country_event = {
 			limit = {
 				has_government = trozkism
 				NOT = {
+					has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
 					is_in_faction_with = ROOT
 					has_country_flag = NOT_WANT_LEADER_FLAG
 				}
@@ -5231,7 +5284,10 @@ country_event = {
 			random_other_country = {
 				limit = {
 					has_government = trozkism
-					NOT = { has_country_flag = NOT_WANT_LEADER_FLAG }
+					NOT = {
+						has_country_flag = NOT_WANT_LEADER_FLAG
+						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+					}
 				}
 				country_event = NWgeneric.20001
 			}
@@ -5300,11 +5356,13 @@ country_event = {
 	fire_only_once = yes
 	
 	trigger = {
+		NOT = { has_focus_tree = nw_skm_focus }
 		has_government = trozkism
 		has_global_flag = four_international_flag
 		has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
 		any_country = { NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } } }
 		NOT = {
+			has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
 			has_global_flag = flag_mexico_invited_trotsky_to_government
 			has_global_flag = trotsky_dead
 			has_global_flag = flag_trotsky_dead
@@ -5419,6 +5477,7 @@ country_event = {
 			AND = {
 				NOT = {
 					any_country = {
+						NOT = { has_country_leader = { name = "Nikolas Roerich" ruling_only = yes } }
 						has_government = trozkism
 						has_war = no
 					}
@@ -5433,6 +5492,7 @@ country_event = {
 		has_civil_war = no
 		has_government = trozkism
 		has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+		NOT = { original_tag = SOV }
 		has_global_flag = four_international_flag
 		NOT = { has_global_flag = fifth_international_flag }
 	}
@@ -5773,6 +5833,7 @@ country_event = {
 			AND = {
 				NOT = {
 					any_country = {
+						NOT = { has_country_leader = { name = "Nikolas Roerich" ruling_only = yes } }
 						has_government = trozkism
 						has_war = no
 					}
@@ -5780,7 +5841,10 @@ country_event = {
 				check_variable = { global.troz_threat_var > 35 }
 			}
 		}
-		NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } }
+		NOT = {
+			has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+			has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+		}
 		has_government = trozkism
 		has_global_flag = NO_INVITE_LEON_TROTSKY_FLAG
 		is_faction_leader = no
@@ -5823,7 +5887,10 @@ country_event = {
 			}
 		}
 		every_country = {
-			limit = { has_government = trozkism }
+			limit = {
+				has_government = trozkism
+				NOT = { has_country_leader = { name = "Nikolas Roerich" ruling_only = yes } }
+			}
 			country_event = { id = NWgeneric.209 days = 7 }
 		}
 	}

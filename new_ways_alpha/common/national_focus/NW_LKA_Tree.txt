@@ -657,6 +657,34 @@ focus_tree = {
 			}
 		}
 	}
+	
+	focus = {
+		id = LKA_elephants
+		text = SKM_elephants
+		icon = GFX_z_goal_elephants
+		cost = 7.2
+		prerequisite = { focus = LKA_Doctors }
+		prerequisite = { focus = LKA_Ceilon_Horse }
+		x = 1
+		y = 1
+		relative_position_id = LKA_Doctors
+
+		available_if_capitulated = no
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LKA_elephants"
+			set_technology = {
+				elephant_art_support_unit = 1
+			}
+			set_variable = { ETH_elephants_trait_var = 2 }
+			add_ideas = ETH_elephants_2
+			unlock_decision_category_tooltip = ETH_spawn_elephants_category
+		}
+	}
 
 	focus = {
 		id = LKA_Royal_Guard
@@ -1889,6 +1917,294 @@ focus_tree = {
 			remove_ideas = LKA_idea_big_col_app
 		}
 	}
+	
+	focus = {
+		id = LKA_own_coalition
+		text = NEP_own_coalition
+		icon = GFX_goal_molotov_ribbentrop_pact
+		cost = 10
+		prerequisite = {
+			focus = LKA_ComParty
+		}
+		mutually_exclusive = {
+			focus = LKA_Kommintern
+		}
+		x = -2
+		y = 1
+		relative_position_id = LKA_ComParty
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 3
+				OR = {
+					RAJ = { has_government = communism }
+					NEP = { has_government = communism }
+					TIB = { has_government = communism }
+				}
+			}
+		}
+		
+		available = {
+			is_subject = no
+			is_in_faction = no
+		}
+		completion_reward = {
+			set_rule = {
+				can_create_factions = yes
+			}
+			create_faction = lanka_ally
+		}
+	}
+	
+	focus = {
+		id = LKA_expansion_raj
+		text = NEP_expansion_raj
+		icon = GFX_z_goal_expansion_raj
+		prerequisite = { focus = LKA_own_coalition }
+		x = 0
+		y = 1
+		relative_position_id = LKA_own_coalition
+
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0.1
+				NEP = {
+					focus_progress = {
+						focus = NEP_expansion_raj
+						progress > 0
+					}
+				}
+			}
+		}
+		available = {
+			is_faction_leader = yes
+			country_exists = RAJ
+			RAJ = {
+				is_subject = no
+				has_government = communism
+			}
+			NOT = { has_war_with = RAJ }
+		}
+		bypass = {
+			RAJ = {
+				OR = {
+					is_subject_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LKA_expansion_raj"
+			add_opinion_modifier = { target = RAJ modifier = emphasis_on_alliance }
+			RAJ = {
+				add_opinion_modifier = { target = ROOT modifier = emphasis_on_alliance }
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+			if = {
+				limit = { RAJ = { is_in_faction = no } }
+				RAJ = { custom_effect_tooltip = TUR_invite_to_faction_tooltip }
+			}
+			hidden_effect = {
+				if = {
+					limit = { RAJ = { is_in_faction = no } }
+					RAJ = { country_event = { id = generic.5 days = 1 } }
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LKA_expansion_tibet
+		text = NEP_expansion_tibet
+		icon = GFX_z_goal_expansion_tibet
+		prerequisite = { focus = LKA_own_coalition }
+		x = -2
+		y = 1
+		relative_position_id = LKA_own_coalition
+
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0.1
+				OR = {
+					RAJ = {
+						focus_progress = {
+							focus = RAJ_expansion_tibet
+							progress > 0
+						}
+					}
+					NEP = {
+						focus_progress = {
+							focus = NEP_expansion_tibet
+							progress > 0
+						}
+					}
+					TUR = {
+						focus_progress = {
+							focus = TUR_expansion_tibet
+							progress > 0
+						}
+					}
+					BHU = {
+						focus_progress = {
+							focus = BHU_expansion_tibet
+							progress > 0
+						}
+					}
+				}
+			}
+		}
+		available = {
+			is_faction_leader = yes
+			country_exists = TIB
+			TIB = {
+				is_subject = no
+				has_government = communism
+			}
+			NOT = { has_war_with = TIB }
+		}
+		bypass = {
+			TIB = {
+				OR = {
+					is_subject_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LKA_expansion_raj"
+			add_opinion_modifier = { target = TIB modifier = emphasis_on_alliance }
+			TIB = {
+				add_opinion_modifier = { target = ROOT modifier = emphasis_on_alliance }
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+			if = {
+				limit = { TIB = { is_in_faction = no } }
+				TIB = { custom_effect_tooltip = TUR_invite_to_faction_tooltip }
+			}
+			hidden_effect = {
+				if = {
+					limit = { TIB = { is_in_faction = no } }
+					TIB = { country_event = { id = generic.5 days = 1 } }
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = LKA_expansion_nepal
+		icon = GFX_z_goal_expansion_nepal
+		prerequisite = { focus = LKA_own_coalition }
+		x = -1
+		y = 2
+		relative_position_id = LKA_own_coalition
+
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0.1
+				OR = {
+					RAJ = {
+						focus_progress = {
+							focus = RAJ_expansion_nepal
+							progress > 0
+						}
+					}
+					BHU = {
+						focus_progress = {
+							focus = BHU_expansion_nepal
+							progress > 0
+						}
+					}
+				}
+			}
+		}
+		available = {
+			is_faction_leader = yes
+			country_exists = NEP
+			NEP = {
+				is_subject = no
+				has_government = communism
+			}
+			NOT = { has_war_with = NEP }
+		}
+		bypass = {
+			NEP = {
+				OR = {
+					is_subject_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus LKA_expansion_nepal"
+			add_opinion_modifier = { target = NEP modifier = emphasis_on_alliance }
+			NEP = {
+				add_opinion_modifier = { target = ROOT modifier = emphasis_on_alliance }
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT
+					value = 100
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT		
+					value = 200
+				}
+			}
+			if = {
+				limit = { NEP = { is_in_faction = no } }
+				NEP = { custom_effect_tooltip = TUR_invite_to_faction_tooltip }
+			}
+			hidden_effect = {
+				if = {
+					limit = { NEP = { is_in_faction = no } }
+					NEP = { country_event = { id = generic.5 days = 1 } }
+				}
+			}
+		}
+	}
 
 	focus = {
 		id = LKA_Kommintern
@@ -1896,6 +2212,9 @@ focus_tree = {
 		cost = 10.00
 		prerequisite = {
 			focus = LKA_ComParty
+		}
+		mutually_exclusive = {
+			focus = LKA_own_coalition
 		}
 		x = -2
 		y = 6

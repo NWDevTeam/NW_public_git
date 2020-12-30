@@ -37,14 +37,7 @@ NDefines.NGraphics.COUNTRY_FLAG_STRIPE_TEX_MAX_HEIGHT = 8196
 NDefines.NGraphics.COUNTRY_FLAG_LARGE_STRIPE_MAX_WIDTH = 41
 NDefines.NGraphics.COUNTRY_FLAG_LARGE_STRIPE_MAX_HEIGHT = 24000
 
--- Camera changes
-NDefines_Graphics.NFrontend.CAMERA_MIN_HEIGHT = 25.0
-NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED = 50
-NDefines_Graphics.NGraphics.CAMERA_ZOOM_KEY_SCALE = 0.02
-NDefines_Graphics.NGraphics.CAMERA_ZOOM_SPEED_DISTANCE_MULT = 15.0
-
 -- AI FIX
-NDefines.NAI.RESEARCH_BONUS_FACTOR = 2.0									-- To which extent AI should care about bonuses to research #0.9
 NDefines.NAI.RESEARCH_AHEAD_OF_TIME_FACTOR = 15.0							-- To which extent AI should care about ahead of time penalties to research	#4.0
 NDefines.NAI.VARIANT_UPGRADE_MIN_XP = 100									-- Minimum XP before attempting to create a new variant. #50
 NDefines.NAI.RESEARCH_BONUS_FACTOR = 1.5									-- To which extent AI should care about bonuses to research
@@ -126,7 +119,7 @@ NDefines.NAI.NUM_SILOS_PER_DOCKYARDS = 0.0									-- ai will try to build a sil
 
 --NDefines.NAI.NEW_LEADER_EXTRA_PP_FACTOR = 1.0								-- Country must have at least this many times extra PP to get new admirals or army leaders
 
-NDefines.NAI.HOUR_BAD_COMBAT_REEVALUATE = 24								-- if we are in combat for this amount and it goes shitty then try skipping it
+NDefines.NAI.HOUR_BAD_COMBAT_REEVALUATE = 48								-- if we are in combat for this amount and it goes shitty then try skipping it
 
 --NDefines.NAI.PLAN_ATTACK_MIN_ORG_FACTOR_LOW = 0.85							-- Minimum org % for a unit to actively attack an enemy unit when executing a plan
 --NDefines.NAI.PLAN_ATTACK_MIN_STRENGTH_FACTOR_LOW = 0.85						-- Minimum strength for a unit to actively attack an enemy unit when executing a plan
@@ -229,12 +222,12 @@ NDefines.NGraphics.VICTORY_POINTS_DISTANCE_CUTOFF = {300, 500, 1200} 		-- Vanill
 -- Graphics
 NDefines_Graphics.NGraphics.COMMANDGROUP_PRESET_COLORS_HSV = {
 	0.0/360.0, 1.0, 0.75,		--red
-	10.0/360.0, 1.0, 0.75,		--orange
+	24.0/360.0, 1.0, 1.0,		--orange
 	60.0/360.0, 1.0, 0.75,		--yellow
 	120.0/360.0, 0.85, 0.75,	--green
 	155.0/360.0, 1.0, 0.75,		--greenish
 	180.0/360.0, 1.0, 0.75,		--turq
-	220.0/360.0, 1.0, 0.75,		--blue
-	260.0/360.0, 1.0, 0.85,		--dark purple
+	220.0/360.0, 1.0, 1.0,		--blue
+	260.0/360.0, 0.5, 0.85,		--purple
 	330.0/360.0, 0, 0.75		--white
 }
