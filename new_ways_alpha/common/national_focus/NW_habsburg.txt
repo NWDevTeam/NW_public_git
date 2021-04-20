@@ -2411,23 +2411,24 @@ focus_tree = {
 			has_government = monarchy
 			custom_trigger_tooltip = {
 				tooltip = form_country_austria_required_states_tt
-				NOT = {
-					any_state = {
-						is_core_of = AUS
-						is_on_continent = europe
-						NOT = { is_controlled_by = ROOT }
-					}
-				}
+				controls_state = 845
+				controls_state = 153
+				controls_state = 839
+				controls_state = 841
+				controls_state = 840
+				controls_state = 810
+				controls_state = 4
+				controls_state = 152
 			}
 			custom_trigger_tooltip = {
 				tooltip = form_country_hungary_required_states_tt
-				NOT = {
-					any_state = {
-						is_core_of = HUN
-						is_on_continent = europe
-						NOT = { is_controlled_by = ROOT }
-					}
-				}
+				controls_state = 977
+				controls_state = 155
+				controls_state = 784
+				controls_state = 784
+				controls_state = 783
+				controls_state = 43
+				controls_state = 154
 			}
 		}
 		bypass = {
@@ -3414,6 +3415,7 @@ focus_tree = {
 				expire = "1965.1.1"
 				ideology = socialism
 				traits = {
+					socialist_trait
 					father_of_europe
 				}
 			}
@@ -5652,18 +5654,28 @@ focus_tree = {
 		}
 		
 		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus HBBRG_atlantic_cooperation_program"
-			if = {
-				limit = { USA = { is_in_faction = no } }
-				ROOT = { add_to_faction = USA }
+			USA = {
+				country_event = generic.5
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
+				}
+				ROOT = {
+					add_ai_strategy = {
+						type = alliance
+						id = PREV
+						value = 200
+					}
+				}
 			}
-			ROOT = { add_to_tech_sharing_group = HBBRG_atlantic_cooperation_program_group }
-			USA = { add_to_tech_sharing_group = HBBRG_atlantic_cooperation_program_group }
-			
+			add_to_tech_sharing_group = HBBRG_atlantic_cooperation_program_group
 			every_other_country = {
 				limit = {
-					AND = {
+					OR = {
+						tag = USA
 						is_in_faction_with = ROOT
-						is_faction_leader = no
+						
 					}
 				}
 				add_to_tech_sharing_group = HBBRG_atlantic_cooperation_program_group
@@ -6080,7 +6092,10 @@ focus_tree = {
 			set_cosmetic_tag = HBBRG_use_tag
 			hidden_effect = {
 				every_other_country = {
-					limit = { is_subject_of = ROOT }
+					limit = {
+						is_subject_of = ROOT
+						capital_scope = { is_on_continent = europe }
+					}
 					set_cosmetic_tag = HBBRG_use_subject
 				}
 			}
@@ -6101,7 +6116,7 @@ focus_tree = {
 						}
 					}
 				}
-				GER = { country_event = { id = NWmonarchy.91 } }
+				GER = { country_event = { id = NWmonarchy.91 hours = 3 } }
 			}
 			if = {
 				limit = {
@@ -6113,14 +6128,27 @@ focus_tree = {
 						}
 					}
 				}
-				ITA = { country_event = { id = NWmonarchy.92 } }
+				ITA = { country_event = { id = NWmonarchy.92 hours = 3 } }
 			}
 			if = {
-				limit = { has_completed_focus = HBBRG_against_USA }
+				limit = {
+					OR = {
+						has_completed_focus = HBBRG_against_USA
+						USA = {
+							NOT = { has_government = ROOT }
+						}
+					}
+				}
 				country_event = { id = NWmonarchy.77 days = 5 }
 			}
 			else_if = {
-				limit = { has_completed_focus = HBBRG_provide_support_USA }
+				limit = {
+					has_completed_focus = HBBRG_provide_support_USA
+					USA = {
+						has_government = ROOT
+						is_subject = no
+					}
+				}
 				country_event = { id = NWmonarchy.78 days = 5 }
 			}
 			effect_tooltip = {

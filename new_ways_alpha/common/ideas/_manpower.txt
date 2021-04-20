@@ -38,6 +38,34 @@ ideas = {
 			cancel_if_invalid = no
 		}
 		
+		partial_regular_army = {
+			removal_cost = -1
+			level = 8
+
+			allowed = {
+				always = no
+			}
+			allowed_to_remove = {
+				has_focus_tree = generic_focus
+			}
+			on_add = {
+				log = "[GetDateText] [Root.GetName]: add idea partial_regular_army"
+				hidden_effect = {
+					if = {
+						limit = { check_variable = { peoples_militia_var < 1 } }
+						set_variable = { peoples_militia_var = 1 }
+					}
+				}
+			}
+			modifier = {
+				conscription = 0.10
+				training_time_factor = 0.8
+				custom_modifier_tooltip = irregular_army_tt
+			}
+			
+			cancel_if_invalid = no
+		}
+		
 		disarmed_nation = {
 		
 			cost = 150
@@ -359,7 +387,7 @@ ideas = {
 				modifier = {
 					#Prio if low on manpower
 					factor = 20
-					manpower_per_military_factory <  800
+					manpower_per_military_factory < 800
 				}
 
 				modifier = { # china relies a lot on throwing bodies at the enemy
@@ -370,13 +398,28 @@ ideas = {
 				}
 				
 				modifier = {
-					tag = TUR
+					original_tag = TUR
 					factor = 50
 				}
 				modifier = {
-					tag = GER
+					original_tag = GER
 					factor = 20
 					has_manpower < 1000000
+					NOT = {
+						has_idea = service_by_requirement
+						has_idea = all_adults_serve
+						has_idea = scraping_the_barrel
+					}
+				}
+				modifier = {
+					factor = 20
+					original_tag = SOV
+					NOT = {
+						has_idea = service_by_requirement
+						has_idea = all_adults_serve
+						has_idea = scraping_the_barrel
+					}
+					check_variable = { manpower_k < 1500 }
 				}
 				
 			}
@@ -545,11 +588,13 @@ ideas = {
 					factor = 50
 
 					original_tag = GER
+					has_idea = extensive_conscription
 					has_manpower < 2000000
 				}
 				modifier = {
-					factor = 1000
+					factor = 50
 					original_tag = SOV
+					has_idea = extensive_conscription
 					check_variable = { manpower_k < 3000 }
 				}
 				
@@ -704,6 +749,7 @@ ideas = {
 					factor = 10
 					original_tag = SOV
 					date > 1943.1.1
+					has_idea = service_by_requirement
 					has_manpower < 2000000	
 				}
 			}

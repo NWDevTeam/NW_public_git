@@ -2,8 +2,9 @@ generic_irregular_army_category = {
 	
 	BHU_summon_peoples_militia = {
 	
-		highlight_state_targets = {
-			state = var:capital_var
+		highlight_states = {
+			is_controlled_by = ROOT
+			is_capital = yes
 		}
 		
 		icon = generic_military
@@ -17,7 +18,7 @@ generic_irregular_army_category = {
 			any_state = {
 				is_controlled_by = ROOT
 			}
-			NOT = { has_country_flag = BHU_summon_peoples_militia_flag }
+			NOT = { has_country_flag = summon_peoples_militia_flag }
 		}
 		visible = {
 		}
@@ -27,7 +28,8 @@ generic_irregular_army_category = {
 		
 		remove_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision BHU_summon_peoples_militia"
-			set_country_flag = BHU_summon_peoples_militia_flag
+			set_variable = { num_of_militia_var = 0 }
+			set_country_flag = summon_peoples_militia_flag
 			if = {
 				limit = { NOT = { has_completed_focus = BHU_bet_on_militia } }
 				if = {
@@ -89,6 +91,7 @@ generic_irregular_army_category = {
 						count = 1
 						allow_spawning_on_enemy_provs = yes
 					}
+					add_to_variable = { ROOT.num_of_militia_var = 1 }
 				}
 				if = {
 					limit = { has_completed_focus = BHU_support_network_of_dzongs }
@@ -99,6 +102,7 @@ generic_irregular_army_category = {
 							count = 1
 							allow_spawning_on_enemy_provs = yes
 						}
+						add_to_variable = { ROOT.num_of_militia_var = 1 }
 					}
 				}
 				if = {
@@ -116,6 +120,7 @@ generic_irregular_army_category = {
 							count = 1
 							allow_spawning_on_enemy_provs = yes
 						}
+						add_to_variable = { ROOT.num_of_militia_var = 2 }
 					}
 				}
 			}
@@ -139,6 +144,103 @@ generic_irregular_army_category = {
 			}
 		}
 	}
+	
+	BHU_irregular_army_recovery = {
+		name = irregular_army_recovery
+		available = {
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = generic_irregular_army_recovery_tt		
+				check_variable = { var = num_divisions value = num_of_militia_var compare = greater_than_or_equals }
+			}
+		}
+		visible = {
+			has_war = yes
+			check_variable = { num_divisions < num_of_militia_var }
+		}
+		cancel_if_not_visible = yes
+		icon = generic_nationalism
+		days_mission_timeout = 40
+		activation = {
+			has_war = yes
+			check_variable = { num_divisions < num_of_militia_var }
+		}
+		is_good = yes
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision TIB_communist_uprising_of_tibetans"
+			if = {
+				limit = { has_country_flag = put_pressure_on_chiefs_flag }
+				clr_country_flag = put_pressure_on_chiefs_flag
+			}
+			set_temp_variable = { num_of_spawn = num_of_militia_var }	
+			multiply_temp_variable = { num_of_spawn = 0.1 }
+			round_temp_variable = num_of_spawn
+			add_to_temp_variable = { num_of_spawn = 1 }
+			### ПРОВЕРКА
+			set_temp_variable = { check_num_of_spawn = num_divisions }
+			add_to_temp_variable = { check_num_of_spawn = num_of_spawn }
+			if = {
+				limit = {
+					check_variable = { check_num_of_spawn > num_of_militia_var }
+				}
+				subtract_from_temp_variable = { check_num_of_spawn = num_of_militia_var }
+				subtract_from_temp_variable = { num_of_spawn = check_num_of_spawn }
+			}
+			set_temp_variable = { num_of_cycle = num_of_spawn }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_cycle > 0 } }
+				add_to_temp_variable = { num_of_cycle = -1 }
+				random_controlled_state = {
+					create_unit = {
+						division = "name = \"Punakha sena\" division_template = \"Druk Gyal Khap sena\" start_experience_factor = 0.1" 
+						owner = ROOT
+						count = 1
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn = 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt2
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn > 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt3
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision BHU_irregular_army_recovery"
+		}
+	}
+	
+	BHU_put_pressure_on_chiefs = {
+		name = put_pressure_on_chiefs
+    	icon = hol_attract_foreign_investors
+        available = {
+			has_active_mission = BHU_irregular_army_recovery
+			NOT = { has_country_flag = put_pressure_on_chiefs_flag }
+        }
+		visible = {
+            has_active_mission = BHU_irregular_army_recovery
+        }
+		cost = 30
+
+        ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				check_variable = { days_mission_timeout@BHU_irregular_army_recovery < 20 }
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_put_pressure_on_chiefs"
+			add_days_mission_timeout = { mission = BHU_irregular_army_recovery days = -30 }
+			set_country_flag = put_pressure_on_chiefs_flag
+		}
+    }
 }
 
 BHU_attracting_foreign_investment_category = {

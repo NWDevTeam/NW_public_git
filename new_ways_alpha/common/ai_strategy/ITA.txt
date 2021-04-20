@@ -55,10 +55,14 @@ albania_war_goal = {
 	enable = {
 		has_completed_focus = ITA_albania_war_goal
 		country_exists = ALB
+		ALB = { NOT = { is_subject_of = ITA } }
 	}
 	abort = {
-		NOT = {
-			country_exists = ALB
+		OR = {
+			NOT = {
+				country_exists = ALB
+			}
+			ALB = { is_subject_of = ITA }
 		}
 	}
 	
@@ -92,7 +96,12 @@ greece_war_goal = {
 		type = conquer
 		id = "GRE"			
 		value = 1000
-	}	
+	}
+	ai_strategy = {
+		type = invade
+		id = "GRE"
+		value = 10
+	}
 }
 
 germany_ally = {
@@ -460,7 +469,12 @@ yugoslavia_war_goal = {
 		type = antagonize
 		id = "YUG"			
 		value = 200
-	}		
+	}
+	ai_strategy = {
+		type = invade
+		id = "YUG"
+		value = 10
+	}
 }
 
 ITA_naval_role_ratios_historical = {
@@ -572,10 +586,9 @@ ITA_share_borders_with_GER_against_SOV = {
 	}
 }
 
-spain_scw_support_ITA_resistance = {
+spain_scw_support_ITA = {
 	allowed = {
 		tag = ITA
-		has_dlc = "La Resistance"
 	}
 	enable = {
 		tag = ITA
@@ -892,7 +905,6 @@ NW_ITA_north_africa_east = {
 NW_ITA_offensive_vs_ETH_rush = {
 	allowed = { tag = ITA }
 	enable = {
-		is_historical_focus_on = yes
 		has_war_with = ETH
 		###
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
@@ -908,10 +920,14 @@ NW_ITA_offensive_vs_ETH_rush = {
 		}
 		divide_temp_variable = { tot_fielded_eq_ratio = equipment_count }
 		set_temp_variable = { NW_fielded_eq_ratio = tot_fielded_eq_ratio }
-		check_variable = { NW_fielded_eq_ratio > 0.75 }
+		OR = {
+			check_variable = { NW_fielded_eq_ratio > 0.75 }
+			ETH = { surrender_progress > 0.5 }
+		}
 	}
 	abort = {
 		check_variable = { NW_fielded_eq_ratio < 0.75 }
+		ETH = { surrender_progress < 0.5 }
 	}
 
 	ai_strategy = {
@@ -932,7 +948,6 @@ NW_ITA_offensive_vs_ETH_rush = {
 NW_ITA_offensive_vs_ETH_careful = {
 	allowed = { tag = ITA }
 	enable = {
-		is_historical_focus_on = yes
 		has_war_with = ETH
 		###
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
@@ -1042,5 +1057,115 @@ NW_ITA_garrison_home = {
 		}
 		subtract_invasions_from_need = no
 		subtract_fronts_from_need = no
+	}
+}
+
+NW_ITA_wants_civ = {
+	allowed = {
+		tag = ITA
+	}
+	enable = {
+		tag = ITA
+		has_government = fascism
+		date < 1939.1.1
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = industrial_complex
+		value = 50
+	}
+}
+NW_ITA_wants_arms_factory = {
+	allowed = {
+		tag = ITA
+	}
+	enable = {
+		tag = ITA
+		has_government = fascism
+		has_war = no
+		has_built = { type = industrial_complex value > 49 }
+		has_built = { type = arms_factory value < 50 }
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = arms_factory
+		value = 50
+	}
+}
+
+NW_ITA_force_defend_ally_borders_ALB = {
+	allowed = {
+		tag = ITA
+	}
+	enable = {
+		tag = ITA
+		ALB = {
+			is_subject_of = ITA
+			has_capitulated = no
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = force_defend_ally_borders
+		id = "ALB"
+		value = 25
+	}
+}
+
+NW_ITA_ignore_VAT = {
+	allowed = { tag = ITA }
+	enable = {
+		VAT = {
+			is_ai = yes
+			is_in_faction = no
+			NOT = {
+				has_wargoal_against = ITA
+				is_justifying_wargoal_against = ITA
+			}
+		}
+		NOT = {
+			has_war_with = VAT
+			has_wargoal_against = VAT
+			is_justifying_wargoal_against = VAT
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	
+	ai_strategy = {
+		type = ignore
+		id = "VAT"
+		value = 500
+	}
+}
+
+NW_ITA_ignore_SMA = {
+	allowed = { tag = ITA }
+	enable = {
+		SMA = {
+			is_ai = yes
+			is_in_faction = no
+			NOT = {
+				has_wargoal_against = ITA
+				is_justifying_wargoal_against = ITA
+			}
+		}
+		NOT = {
+			has_war_with = SMA
+			has_wargoal_against = SMA
+			is_justifying_wargoal_against = SMA
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	
+	ai_strategy = {
+		type = ignore
+		id = "SMA"
+		value = 500
 	}
 }

@@ -1,0 +1,339 @@
+scripted_diplomatic_actions = {
+	
+	impose_trade_embargo = {
+
+		allowed = {
+			always = yes
+		}
+		visible = {
+			ROOT = {
+				NOT = {
+					has_relation_modifier = {
+						target = PREV
+						modifier = embargo_static_modifier
+					}
+					has_idea = closed_economy
+					is_subject_of = PREV
+				}
+			}
+			PREV = {
+				NOT = { is_subject_of = ROOT }
+			}
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					PREV = {
+						OR = {
+							has_war_together_with = ROOT
+							is_in_faction_with = ROOT
+							has_non_aggression_pact_with = ROOT
+							has_war_with = ROOT
+						}
+					}
+				}
+				#custom_trigger_tooltip = {
+				#	tooltip = EMBARGO_DENIED
+				#	always = no
+				#}
+				PREV = {
+					if = {
+						limit = { has_war_together_with = ROOT }
+						NOT = { has_war_together_with = ROOT }
+					}
+					if = {
+						limit = { is_in_faction_with = ROOT }
+						NOT = { is_in_faction_with = ROOT }
+					}
+					if = {
+						limit = { has_non_aggression_pact_with = ROOT }
+						NOT = { has_non_aggression_pact_with = ROOT }
+					}
+					if = {
+						limit = { has_war_with = ROOT }
+						NOT = { has_war_with = ROOT }
+					}
+				}
+			}
+			else = {
+				#custom_trigger_tooltip = {
+				#	tooltip = EMBARGO_ALLOWED
+				#	always = yes
+				#}
+				PREV = {
+					NOT = {
+						has_war_together_with = ROOT
+						is_in_faction_with = ROOT
+						has_non_aggression_pact_with = ROOT
+						has_war_with = ROOT
+					}
+				}
+			}
+			ROOT = {
+				custom_trigger_tooltip = {
+					tooltip = EMBARGO_RESOURCE_EXPORTED_ALLOWED
+					OR = {
+						check_variable = { resource_exported@oil > 0 }
+						check_variable = { resource_exported@aluminium > 0 }
+						check_variable = { resource_exported@rubber > 0 }
+						check_variable = { resource_exported@tungsten > 0 }
+						check_variable = { resource_exported@steel > 0 }
+						check_variable = { resource_exported@chromium > 0 }
+					}
+				}
+			}
+		}
+
+		cost = 10
+		command_power = 0
+
+		show_acceptance_on_action_button = no
+
+		requires_acceptance = no
+
+		accept_title = IMPOSE_EMBARGO_TARGET_TITLE
+		accept_description = IMPOSE_EMBARGO_TARGET_DESC
+
+		can_be_sent = {
+			always = yes
+		}
+
+		icon = 1
+
+		complete_effect = {
+			impose_embargo = yes
+		}
+
+		ai_desire = {
+			base = 1
+			modifier = { #game rule
+				has_game_rule = {
+					rule = allow_ai_embargo
+					option = DONT_ALLOW_AI_EMBARGO
+				}
+				add = -5000
+			}
+			modifier = { #if opinion is lower than -75 they will impose embargo if no puppet 
+				ROOT = {
+					AND = {
+						is_subject = no
+						has_opinion = {
+							target = PREV
+							value < -75
+						}
+					}
+				}
+				add = 50
+			}
+
+			modifier = { #if opinion is higher than -75 they won't impose embargo if no puppet
+				ROOT = {
+					AND = {
+						is_subject = no
+						has_opinion = {
+							target = PREV
+							value > -75
+						}
+					}
+				}
+				add = -50
+			}
+			modifier = { #Counter Embargo
+				PREV = {
+					has_relation_modifier = {
+						target = ROOT
+						modifier = embargo_static_modifier
+					}
+				}
+				add = 100
+			}
+			modifier = { #if opinion is higher than 75 they'll never impose embargo
+				ROOT = {
+					has_opinion = {
+						target = PREV
+						value > 74
+					}
+				}
+				add = -100
+			}
+			modifier = { #if ally is at war with target they'll impose embargo regardless of autonomy state 
+				ROOT = {
+					any_allied_country = {
+						has_war_with = PREV.PREV
+					}
+				}
+				add = 300
+			}
+			modifier = { #if puppet they'll follow master #fixed DLC use now without any DLC
+				AND = {
+					ROOT = { is_subject = yes }
+					any_other_country = {
+						has_subject = ROOT
+						has_relation_modifier = {
+							target = PREV
+							modifier = embargo_static_modifier
+						}
+					}
+				}
+				add = 300
+			}
+		}
+	}
+
+	cancel_trade_embargo = {
+
+		allowed = {
+			always = yes
+		}
+
+		visible = {
+			ROOT = {
+				has_relation_modifier = {
+					target = PREV
+					modifier = embargo_static_modifier
+				}
+			}
+		}
+
+		selectable = {
+			if = {
+				limit = {
+					ROOT = {
+						has_relation_modifier = { target = PREV modifier = embargo_static_modifier }
+					}
+					PREV = {
+						AND = {
+							OR = {
+								is_subject_of = ROOT
+								NOT = { has_war_with = ROOT }
+							}
+						}
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = CANCEL_EMBARGO_ALLOWED
+					always = yes
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = CANCEL_EMBARGO_DENIED
+					always = no
+				}
+			}
+		}
+
+		cost = 10
+		command_power = 0
+
+		requires_acceptance = no
+
+		show_acceptance_on_action_button = no
+
+		accept_title = CANCEL_EMBARGO_TARGET_TITLE
+		accept_description = CANCEL_EMBARGO_TARGET_DESC
+
+		can_be_sent = {
+			always = yes
+		}
+
+		icon = 1
+
+		complete_effect = {
+			cancel_embargo = yes
+		}
+
+		ai_desire = {
+			base = 1
+
+			modifier = { #game rule
+				has_game_rule = {
+					rule = allow_ai_embargo
+					option = DONT_ALLOW_AI_EMBARGO
+				}
+				add = -5000
+			}
+			modifier = { #if opinion is higher -75 they'll cancel emb if not puppet
+				ROOT = {
+					AND = {
+						is_puppet = no
+						has_opinion = {
+							target = PREV
+							value > -75
+						}
+					}
+				}
+				add = 50
+			}
+			modifier = { #if opinion is lower -75 they won't cancel if not puppet
+				ROOT = {
+					AND = {
+						is_puppet = no
+						has_opinion = {
+							target = PREV
+							value < -75
+						}
+					}
+				}
+				add = -50
+			}
+			modifier = { #if ally has war with target they won't cancel
+				ROOT = {
+					any_allied_country = {
+						has_war_with = PREV.PREV
+					}
+				}
+				add = -300
+			}
+
+			modifier = { #see above #won't cancel if master has embargo
+				AND = {
+					ROOT = { is_puppet = yes }
+					any_other_country = {
+						has_subject = ROOT
+						has_relation_modifier = {
+							target = PREV
+							modifier = embargo_static_modifier
+						}
+					}
+				}
+				add = -300
+			}
+
+			modifier = { #this is used to lift embargo when master has lifted
+				AND = {
+					ROOT = {
+						AND = {
+							is_puppet = yes
+							has_relation_modifier = {
+								target = PREV
+								modifier = embargo_static_modifier
+							}
+						}
+					}
+					any_other_country = {
+						has_subject = ROOT
+						NOT = {
+							has_relation_modifier = {
+								target = PREV
+								modifier = embargo_static_modifier
+							}
+						}
+					}
+				}
+				add = 300
+			}
+
+			modifier = { #Counter Embargo
+				PREV = {
+					has_relation_modifier = {
+						target = ROOT
+						modifier = embargo_static_modifier
+					}
+				}
+				add = -300
+			}
+		}
+	}
+}

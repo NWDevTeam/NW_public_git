@@ -25,7 +25,10 @@ country_event = {
 	option = {
 		name = germany.4.a
 		every_state = {
-			limit = { is_core_of = AUS }
+			limit = {
+				is_core_of = AUS
+				NOT = { is_core_of = ROOT }
+			}
 			add_core_of = GER
 		}
 		AUS = {
@@ -1031,12 +1034,20 @@ country_event = {
 				is_in_faction_with = GER
 			}
 			modifier = {
-				factor = 0
-				has_country_flag = hbbrg_flag
+				factor = 0.01
+				OR = {
+					is_subject = yes
+					has_country_flag = hbbrg_flag
+					has_country_flag = hhnbrg_flag
+				}
 			}
 			modifier = {
 				factor = 0
-				has_country_flag = hhnbrg_flag
+				OR = {
+					is_guaranteed_by = ITA
+					is_in_faction_with = ITA
+				}
+				ITA = { NOT = { is_in_faction_with = GER } }
 			}
 		}
 		GER = {
@@ -1081,6 +1092,10 @@ country_event = {
 				}
 				factor = 5
 			}
+			modifier = {
+				factor = 0
+				is_subject_of = GER
+			}
 		}
 		GER = {
 			add_opinion_modifier = { target = ROOT modifier = GER_anschluss_rejected }
@@ -1113,10 +1128,27 @@ country_event = {
 		add_state_claim = 841
 		add_state_claim = 840
 		add_state_claim = 810
+		every_state = {
+			limit = {
+				NOT = { is_core_of = ROOT }
+				OR = {
+					state = 4
+					state = 152
+					state = 153
+					state = 845
+					state = 839
+					state = 841
+					state = 840
+					state = 810
+				}
+			}
+			add_core_of = ROOT
+		}
 		create_wargoal = {
 			type = take_state_focus
 			target = AUS
 			generator = { 4 152 153 845 839 841 840 810 }
+			expire = 0
 		}
 	}
 }
@@ -4605,6 +4637,30 @@ country_event = {
 		}
 		if = {
 			limit = {
+				ENG = {
+					exists = yes
+					is_subject = no
+					has_government = democratic
+					NOT = { is_in_faction_with = GER }
+				}	
+			}	
+			ENG = {
+				add_ai_strategy = {
+					type = alliance
+					id = "POL"
+					value = 200
+				}
+			}
+			POL = {
+				add_ai_strategy = {
+					type = alliance
+					id = "ENG"
+					value = 200
+				}
+			}
+		}
+		if = {
+			limit = {
 				event_target:NW_france_scope = {
 					NOT = {
 						is_in_faction_with = GER
@@ -4634,7 +4690,7 @@ country_event = {
 					type = alliance
 					id = "POL"			
 					value = 200
-				}	
+				}
 			}
 		}
 	}
@@ -6278,6 +6334,16 @@ country_event = {
 				every_country = { remove_state_core = 762 }
 			}
 			SOV = { add_state_core = 762 }
+			if = {
+				limit = {
+					event_target:yalta_partner = { NOT = { has_war_with = JAP } }
+					OR = {
+						has_war_with = JAP
+						any_allied_country = { has_war_with = JAP }
+					}
+				}
+				custom_effect_tooltip = SOV_yalta_conference_tt1
+			}
 		}
 		event_target:yalta_partner = {
 			custom_effect_tooltip = needs_approval
@@ -6361,9 +6427,22 @@ country_event = {
 			add_state_core = 981
 		}
 		hidden_effect = {
-				every_country = { remove_state_core = 762 }
-			}
+			every_country = { remove_state_core = 762 }
+		}
 		SOV = { add_state_core = 762 }
+		if = {
+			limit = {
+				NOT = { has_war_with = JAP }
+				FROM = {
+					OR = {
+						has_war_with = JAP
+						any_allied_country = { has_war_with = JAP }
+					}
+				}
+			}
+			set_country_flag = JAP_yalta_conference_flag
+			custom_effect_tooltip = SOV_yalta_conference_tt2
+		}
 		hidden_effect = {
 			news_event = { days = 1 id = news.236 }
 		}
@@ -6378,6 +6457,7 @@ country_event = {
 			create_wargoal = {
 				type = liberate_wargoal
 				target = DDR
+				expire = 0
 			}
 		}
 		event_target:yalta_origin = {
@@ -6388,6 +6468,7 @@ country_event = {
 				create_wargoal = {
 					type = liberate_wargoal
 					target = WGR
+					expire = 0
 				}
 			}
 		}

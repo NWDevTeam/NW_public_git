@@ -215,6 +215,11 @@ GER_unit_production = {
 		value = 4
 	}
 	ai_strategy = {
+		type = equipment_production_min_factories
+		id = air_transport
+		value = 4
+	}
+	ai_strategy = {
 		type = equipment_variant_production_factor
 		id = strat_bomber_equipment
 		value = -100
@@ -549,9 +554,22 @@ danzig_of_war_preparation = {
 		id = "DNZ"
 		value = 100
 	}
+	ai_strategy = {
+		type = prepare_for_war 
+		id = "POL"
+		value = 85
+	}
+	ai_strategy = {
+		type = prepare_for_war 
+		id = "DNZ"
+		value = 15
+	}
 }
 
 dont_die_in_mountains = {
+	allowed = {
+		tag = GER
+	}
 	enable = {
 		tag = GER
 		country_exists = SWI
@@ -595,22 +613,22 @@ war_with_soviets = {
 	ai_strategy = {
 		type = antagonize
 		id = "SOV"			
-		value = 200
+		value = 500
 	}
 	ai_strategy = {
 		type = conquer
 		id = "SOV"			
-		value = 200
+		value = 500
 	}
 	ai_strategy = {
 		type = contain
 		id = "SOV"			
-		value = 200
+		value = 500
 	}
 	ai_strategy = {
 		type = declare_war
 		id = "SOV"			
-		value = 200
+		value = 500
 	}
 }
 
@@ -967,7 +985,34 @@ CZE_is_idiot = {
 		type = antagonize
 		id = "CZE"			
 		value = 300
-	}		
+	}
+}
+
+CZE_is_idiot_2 = {
+	allowed = {
+		tag = GER
+	}
+	enable = {
+		tag = GER
+		has_war_with = CZE
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_control
+		tag = CZE
+		ratio = 0.5
+		execution_type = rush
+		manual_attack = yes
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = {
+			tag = CZE
+		}
+		value = 100
+	}
 }
 
 play_nice_with_ribbentrop_pact = {
@@ -1419,58 +1464,84 @@ worry_about_barbarossa_before_africa = {
 	}
 }
 
-make_sure_poland_is_ganked_before_we_move = {
+make_sure_poland_is_ganked_before_we_move_1 = {
 	allowed = {
 		tag = GER
 	}
 	enable = {
 		tag = GER
-		
-		focus_progress = { focus = GER_around_maginot progress > 0 }
-		
-		NOT = {
+		focus_progress = { focus = GER_weserubung progress > 0 }
+		if = {
+			limit = { OR = { has_war_with = BEL has_war_with = HOL } }
 			AND = {
-				date > 1939.11.1
-			
-				OR = {
-					POL = { has_capitulated = yes }
-					POL = { exists = no }
-					POL = { is_subject = yes }
-					POL = { has_government = fascism }
-					is_in_faction_with = POL
-				}
-				
-				OR = {
-					DEN = { has_capitulated = yes }
-					DEN = { exists = no }
-					DEN = { is_subject = yes }
-					DEN = { has_government = fascism }
-					is_in_faction_with = DEN
-					date > 1940.2.1
-				}
+				if = { limit = { has_war_with = BEL } BEL = { has_capitulated = yes } }
+				if = { limit = { has_war_with = HOL } HOL = { has_capitulated = yes } }
+			}
+		}
+		OR = {
+			date < 1940.04.1
+			OR = {
+				POL = { has_capitulated = no }
+				POL = { exists = yes }
+				POL = { is_subject = no }
+				POL = { NOT = { has_government = fascism } }
+				NOT = { is_in_faction_with = POL }
+			}
+			OR = {
+				DNZ = { has_capitulated = no }
+				DNZ = { exists = yes }
+				DNZ = { NOT = { is_subject_of = ROOT } }
+				NOT = { is_in_faction_with = DNZ }
 			}
 		}
 	}
-	abort = {
-		date > 1939.11.1
-		
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = declare_war
+		id = "NOR"			
+		value = -2000 
+	}
+	ai_strategy = {
+		type = declare_war
+		id = "DEN"
+		value = -2000 
+	}
+}
+
+make_sure_poland_is_ganked_before_we_move_2 = {
+	allowed = {
+		tag = GER
+	}
+	enable = {
+		tag = GER
+		focus_progress = { focus = GER_around_maginot progress > 0 }
 		OR = {
-			POL = { has_capitulated = yes }
-			POL = { exists = no }
-			POL = { is_subject = yes }
-			POL = { has_government = fascism }
-			is_in_faction_with = POL
+			date < 1940.05.10
+			NOT = { has_war_with = event_target:NW_france_scope }
 		}
-		
 		OR = {
-			DEN = { has_capitulated = yes }
-			DEN = { exists = no }
-			DEN = { is_subject = yes }
-			DEN = { has_government = fascism }
-			is_in_faction_with = DEN
-			date > 1940.2.1
+			POL = { has_capitulated = no }
+			POL = { exists = yes }
+			POL = { is_subject = no }
+			POL = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = POL }
+		}
+		OR = {
+			DNZ = { has_capitulated = no }
+			DNZ = { exists = yes }
+			DNZ = { NOT = { is_subject_of = ROOT } }
+			NOT = { is_in_faction_with = DNZ }
+		}
+		OR = {
+			DEN = { has_capitulated = no }
+			DEN = { exists = yes }
+			DEN = { is_subject = no }
+			DEN = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = DEN }
 		}
 	}
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = declare_war
@@ -1518,7 +1589,7 @@ GER_want_to_invade_FRA_without_ITA = {
 	enable = {
 		tag = GER
 		is_historical_focus_on = yes
-		date < 1940.1.1
+		date < 1940.6.1
 		event_target:NW_france_scope = {
 			is_ai = yes
 		}
@@ -1528,7 +1599,7 @@ GER_want_to_invade_FRA_without_ITA = {
 
 	abort = {
 		OR = { 
-			date > 1940.1.1
+			date > 1940.6.1
 			event_target:NW_france_scope = {
 				is_ai = no
 			}
@@ -1589,8 +1660,20 @@ GER_want_to_invade_POL_without_HUN_ROM = {
 	}
 	ai_strategy = {
 		type = dont_join_wars_with
+		id = HUN
+		target_country = DNZ
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
 		id = ROM
 		target_country = POL
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = ROM
+		target_country = DNZ
 		value = 500
 	}
 }
@@ -1845,6 +1928,24 @@ GER_wants_synth = {
 		type = building_target
 		id = synthetic_refinery
 		value = 8
+	}
+}
+GER_wants_arms_factory = {
+	allowed = {
+		tag = GER
+	}
+	enable = {
+		tag = GER
+		has_government = fascism
+		has_war = no
+		has_built = { type = synthetic_refinery value > 7 }
+		has_built = { type = arms_factory value < 100 }
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = arms_factory
+		value = 100
 	}
 }
 
@@ -2157,7 +2258,7 @@ GER_around_the_maginot = {
 	
 	enable = {
 		date < 1941.4.1
-		event_target:NW_france_scope = {
+		FRA = {
 			is_ai = yes
 		}
 		
@@ -2183,7 +2284,7 @@ GER_around_the_maginot = {
 		NOT = { has_war_with = LUX }
 		LUX = {
 			has_capitulated = no
-			NOT = { is_in_faction_with = event_target:NW_france_scope }
+			NOT = { is_in_faction_with = FRA }
 		}
 		
 		# we are ready to declare war on low countries
@@ -2197,7 +2298,7 @@ GER_around_the_maginot = {
 				is_in_array = { potential_and_current_enemies = BEL }
 			}
 		}
-		is_in_array = { potential_and_current_enemies = event_target:NW_france_scope }
+		is_in_array = { potential_and_current_enemies = FRA }
 	}
 	
 	abort_when_not_enabled = yes
@@ -2206,14 +2307,14 @@ GER_around_the_maginot = {
 	ai_strategy = {
 		type = declare_war
 		id = "LUX"			
-		value = -2000 
+		value = -2000
 	}
 	
 	ai_strategy = {
 		type = diplo_action_desire
 		id = "LUX"		
 		target = declare_war		
-		value = -50000 
+		value = -50000
 	}
 	
 	ai_strategy = {
@@ -2225,24 +2326,30 @@ GER_around_the_maginot = {
 	ai_strategy = {
 		type = front_armor_score
 		id = "HOL"			
-		value = 100
+		value = 50
 	}
 	
 	ai_strategy = {
 		type = front_armor_score
 		id = "BEL"			
-		value = 100
+		value = 50
 	}
 	
 	ai_strategy = {
 		type = front_armor_score
 		id = "POL"			
-		value = 100
+		value = 85
+	}
+	
+	ai_strategy = {
+		type = front_armor_score
+		id = "DNZ"			
+		value = 15
 	}
 }
 
 # lets not invade until we have europe
-GER_around_the_maginot = {
+GER_around_the_maginot_2 = {
 	allowed = {
 		original_tag = GER
 		is_historical_focus_on = yes
@@ -2491,6 +2598,9 @@ NW_no_docking_rights_for_GER_outside_europe = {
 }
 
 NW_asia_minors_dont_ally_GER = {
+	allowed = {
+		original_tag = GER
+	}
 	enable = {
 		is_historical_focus_on = yes
 		capital_scope = { is_on_continent = asia }
@@ -2507,6 +2617,9 @@ NW_asia_minors_dont_ally_GER = {
 }
 
 NW_asia_minors_dont_ally_GER_2 = {
+	allowed = {
+		original_tag = GER
+	}
 	enable = {
 		is_historical_focus_on = yes
 		capital_scope = { is_on_continent = asia }
@@ -2528,15 +2641,20 @@ NW_GER_prep_for_maginot = {
 	allowed = { tag = GER }
 	enable = {
 		is_historical_focus_on = yes
-		
 		focus_progress = { focus = GER_around_maginot progress > 0 }
-		
 		date < 1941.1.1
+		OR = {
+			DEN = { has_capitulated = no }
+			DEN = { exists = yes }
+			DEN = { is_subject = no }
+			DEN = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = DEN }
+		}
 	}
 
 	abort = {
 		OR = {
-			NOT = { date < 1941.1.1 }
+			date > 1941.1.1
 			if = { limit = { OR = { has_war_with = BEL has_war_with = HOL has_war_with = FRA } }
 				AND = {
 					if = { limit = { has_war_with = BEL } BEL = { has_capitulated = yes } }
@@ -2553,13 +2671,57 @@ NW_GER_prep_for_maginot = {
 	ai_strategy = { type = garrison value = -200 }
 	ai_strategy = {
 		type = front_unit_request
-
 		country_trigger = {
-
 			OR = { tag = BEL tag = HOL tag = LUX }
 		}
-
 		value = 200
+	}
+}
+
+NW_GER_prep_for_denmark = {
+	allowed = { tag = GER }
+	enable = {
+		is_historical_focus_on = yes
+		focus_progress = { focus = GER_weserubung progress > 0 }
+		date < 1941.1.1
+		OR = {
+			POL = { has_capitulated = no }
+			POL = { exists = yes }
+			POL = { is_subject = no }
+			POL = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = POL }
+		}
+		OR = {
+			DNZ = { has_capitulated = no }
+			DNZ = { exists = yes }
+			DNZ = { NOT = { is_subject_of = ROOT } }
+			NOT = { is_in_faction_with = DNZ }
+		}
+		NOT = {
+			has_war_with = BEL
+			has_war_with = HOL
+		}
+	}
+
+	abort = {
+		OR = {
+			date > 1941.1.1
+			if = {
+				limit = { has_war_with = DEN }
+				DEN = { has_capitulated = yes }
+				else = { always = no }
+			}
+		}
+	}
+	
+	ai_strategy = { type = conquer id = "DEN" value = 200 }
+	ai_strategy = { type = garrison value = -200 }
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = {
+			tag = DEN
+		}
+		value = 50
 	}
 }
 
@@ -2607,34 +2769,24 @@ NW_GER_warprep = {
 		id = "FRA"
 		value = 100
 	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = "FRA"
+		value = 100
+	}
 }
 
 NW_GER_wardec_YUG = {
 	allowed = { tag = GER }
 	enable = {
 		is_historical_focus_on = yes
-		has_completed_focus = GER_demand_slovenia
-	}
-
-	ai_strategy = {
-		type = consider_weak
-		id = "YUG"
-		value = 1000
-	}
-}
-
-NW_invasion_of_yugoslavia = {
-	allowed = { tag = GER }
-	enable = {
-		is_historical_focus_on = yes
 		focus_progress = { focus = GER_demand_slovenia progress > 0 }
-		date < 1942.1.1
 	}
-	abort = {
-		has_completed_focus = GER_demand_slovenia
-	}
-	
+
+	ai_strategy = { type = consider_weak id = "YUG" value = 1000 }
 	ai_strategy = { type = conquer id = "YUG" value = 500 }
+	ai_strategy = { type = declare_war id = "YUG" value = 500 }
+	ai_strategy = { type = prepare_for_war id = "YUG" value = 100 }
 }
 
 NW_ignore_SWE = {
@@ -2740,6 +2892,7 @@ NW_GER_garrison_atlantic_wall = {
 			21
 			1032
 			821
+			1165
 		}
 		subtract_invasions_from_need = no
 		subtract_fronts_from_need = no
@@ -2751,10 +2904,7 @@ NW_rush_denmark = {
 		original_tag = GER
 	}
 	enable = {
-		AND = {
-			focus_progress = { focus = GER_weserubung progress > 0 }
-			NOT = { has_completed_focus = GER_weserubung }
-		}
+		has_war_with = DEN
 		###
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
 		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
@@ -2864,10 +3014,65 @@ NW_wardec_LUX = {
 	ai_strategy = { type = ignore_claim id = "LUX" value = -500 }
 }
 
+NW_wardec_DEN = {
+	allowed = { original_tag = GER }
+	enable = {
+		is_historical_focus_on = yes
+		has_wargoal_against = DEN
+		OR = {
+			POL = { has_capitulated = no }
+			POL = { exists = yes }
+			POL = { is_subject = no }
+			POL = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = POL }
+		}
+		OR = {
+			DNZ = { has_capitulated = no }
+			DNZ = { exists = yes }
+			DNZ = { NOT = { is_subject_of = ROOT } }
+			NOT = { is_in_faction_with = DNZ }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = declare_war id = "DEN" value = 500 }
+	ai_strategy = { type = antagonize id = "DEN" value = 5000 }
+	ai_strategy = { type = ignore_claim id = "DEN" value = -500 }
+}
+
+NW_wardec_NOR = {
+	allowed = { original_tag = GER }
+	enable = {
+		is_historical_focus_on = yes
+		has_wargoal_against = NOR
+		OR = {
+			POL = { has_capitulated = no }
+			POL = { exists = yes }
+			POL = { is_subject = no }
+			POL = { NOT = { has_government = fascism } }
+			NOT = { is_in_faction_with = POL }
+		}
+		OR = {
+			DNZ = { has_capitulated = no }
+			DNZ = { exists = yes }
+			DNZ = { NOT = { is_subject_of = ROOT } }
+			NOT = { is_in_faction_with = DNZ }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = declare_war id = "NOR" value = 500 }
+	ai_strategy = { type = antagonize id = "NOR" value = 5000 }
+	ai_strategy = { type = ignore_claim id = "NOR" value = -500 }
+}
+
 NW_rush_poland = {
 	allowed = { original_tag = GER }
 	enable = {
-		has_war_with = POL
+		OR = {
+			has_war_with = POL
+			has_war_with = DNZ
+		}
 		###
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
 		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
@@ -2889,6 +3094,13 @@ NW_rush_poland = {
 	ai_strategy = {
 		type = front_control
 		tag = POL
+		execution_type = rush
+		manual_attack = yes
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		tag = DNZ
 		execution_type = rush
 		manual_attack = yes
 		execute_order = yes

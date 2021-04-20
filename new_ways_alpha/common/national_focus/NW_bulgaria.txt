@@ -825,17 +825,32 @@ focus_tree = {
 		
 		bypass = {
 			AND = {
-				OR = {
-					106 = { is_owned_by = BUL } 
-					AND = { 106 = { is_owned_by = MAC } MAC = { is_subject_of = BUL } }
+				106 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
 				}
-				OR = {
-					812 = { is_owned_by = BUL } 
-					AND = { 812 = { is_owned_by = MAC } MAC = { is_subject_of = BUL } }
+				812 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
 				}
-				OR = {
-					825 = { is_owned_by = BUL } 
-					AND = { 825 = { is_owned_by = MAC } MAC = { is_subject_of = BUL } }
+				825 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+						}
+					}
 				}
 			}
 		}
@@ -847,21 +862,25 @@ focus_tree = {
 					MAC = { exists = no }
 				}
 				if = {
-					limit = { NOT = { 825 = { is_owned_by = BUL } } }
-					MAC = { transfer_state = 825 }
-				}
-				if = {
-					limit = { NOT = { 106 = { is_owned_by = BUL } } }
+					limit = { NOT = { 106 = { is_owned_by = ROOT } } }
 					MAC = { transfer_state = 106 }
+					hidden_effect = {
+						106 = { owner = { set_country_flag = temp_flag_1 } }
+					}
 				}
 				if = {
-					limit = { NOT = { 812 = { is_owned_by = BUL } } }
+					limit = { NOT = { 812 = { is_owned_by = ROOT } } }
 					MAC = { transfer_state = 812 }
+					hidden_effect = {
+						812 = { owner = { set_country_flag = temp_flag_1 } }
+					}
 				}
-				create_wargoal = {
-					type = take_state_focus
-					target = YUG
-					generator = { 106 }
+				if = {
+					limit = { NOT = { 825 = { is_owned_by = ROOT } } }
+					MAC = { transfer_state = 825 }
+					hidden_effect = {
+						825 = { owner = { set_country_flag = temp_flag_1 } }
+					}
 				}
 				hidden_effect = {
 					MAC = {
@@ -877,13 +896,43 @@ focus_tree = {
 							can_create_factions = no
 							can_join_factions = no
 						}
+						add_ai_strategy = {
+							type = befriend
+							id = ROOT
+							value = 80
+						}
+						add_ai_strategy = {
+							type = protect
+							id = ROOT
+							value = 50
+						}
+						give_military_access = ROOT
+					}
+					add_ai_strategy = {
+						type = befriend
+						id = "MAC"
+						value = 80
+					}
+					add_ai_strategy = {
+						type = protect
+						id = "MAC"
+						value = 50
+					}
+				}
+				effect_tooltip = {
+					every_other_country = {
+						limit = { has_country_flag = temp_flag_1 }
+						MAC = {
+							declare_war_on = {
+								target = PREV
+								type = annex_everything
+							}
+							add_to_war = { targeted_alliance = ROOT enemy = PREV hostility_reason = asked_to_join }
+						}
 					}
 				}
 			}
-			else_if = {
-				limit = {
-					MAC = { exists = yes }
-				}
+			else = {
 				MAC = { country_event = { id = macedonia.3 hours = 6 } }
 			}
 		}
@@ -1130,7 +1179,7 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_ANNEXATION}
 		completion_reward = {
 			custom_effect_tooltip = BUL_bulgarian_administration_of_the_balkans_decisions_tt
-			custom_effect_tooltip = BUL_bulgarian_administration_of_the_balkans_cores_tt
+			custom_effect_tooltip = BUL_bulgarian_administration_of_the_balkans_cores_nw_tt
 			if = {
 				limit = {
 					has_full_control_of_state = 106
@@ -1141,11 +1190,11 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					has_full_control_of_state = 803
-					803 = { NOT = { is_core_of = ROOT } }
+					has_full_control_of_state = 812
+					812 = { NOT = { is_core_of = ROOT } }
 				}
-				803 = { set_state_flag = BUL_bulgarian_reintegration_campaign_flag }
-				add_state_core = 803
+				812 = { set_state_flag = BUL_bulgarian_reintegration_campaign_flag }
+				add_state_core = 812
 			}
 			if = {
 				limit = {
@@ -1155,7 +1204,7 @@ focus_tree = {
 				77 = { set_state_flag = BUL_bulgarian_reintegration_campaign_flag }
 				add_state_core = 77
 			}
-			custom_effect_tooltip = BUL_historical_states_tt
+			custom_effect_tooltip = BUL_historical_states_nw_tt
 
 			hidden_effect = {
 				news_event = { id = bftb_news.5 hours = 8 random_hours = 4 }
@@ -1438,9 +1487,15 @@ focus_tree = {
 				factor = 0
 				has_country_flag = NW_BUL_AI_MONARCHY
 			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				date < 1940.1.1
+			}
 		}
 		
 		available = {
+			is_subject = no
 			OR = {
 				has_government = monarchy
 				has_government = fascism
@@ -1449,13 +1504,18 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_fashizacia"
+			add_popularity = { ideology = fascism popularity = 0.1 }
+			set_temp_variable = { temp2 = 0.5 }
+			custom_effect_tooltip = monarchy_in_to_fascism
+			set_temp_variable = { temp1 = party_popularity@monarchy }
+			multiply_temp_variable = { temp1 = temp2 }
+			add_popularity = { ideology = fascism popularity = temp1 }
 			BUL = {
 				set_politics = {
 					ruling_party = fascism
 					elections_allowed = no
 				}
 			}
-			add_popularity = { ideology = fascism popularity = 0.10 }
 			create_country_leader = {
 				name = "Bogdan Filov"
 				desc = "POLITICS_BOGDAN_FILOV_DESC"
@@ -1511,6 +1571,7 @@ focus_tree = {
 		cost = 10
 		
 		available = {
+			is_subject = no
 			OR = {
 				has_government = monarchy
 				has_government = communism
@@ -1583,6 +1644,7 @@ focus_tree = {
 		icon = GFX_goal_generic_improve_relations
 		prerequisite = { focus = BUL_fashizacia focus = BUL_own_rejime }
 		available = {
+			is_subject = no
 			country_exists = GER
 			NOT = { has_war_with = GER }
 		}
@@ -1608,6 +1670,7 @@ focus_tree = {
 		prerequisite = { focus = BUL_friendly_Germany }
 		mutually_exclusive = { focus = BUL_ally_USSR }
 		available = {
+			is_subject = no
 			country_exists = GER
 			NOT = { has_war_with = GER }
 			GER = {
@@ -1631,8 +1694,14 @@ focus_tree = {
 		ai_will_do = {
 			factor = 5
 			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				date < 1941.1.1
+			}
+			modifier = {
 				factor = 3
 				is_historical_focus_on = yes
+				date > 1941.1.1
 			}
 		}
 
@@ -1841,6 +1910,7 @@ focus_tree = {
 		icon = GFX_goal_tripartite_pact
 		prerequisite = { focus = BUL_bolshevist focus = BUL_own_rejime }
 		available = {
+			is_subject = no
 			country_exists = SOV
 			NOT = { has_war_with = SOV }
 		}

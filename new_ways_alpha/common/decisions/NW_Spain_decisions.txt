@@ -52,6 +52,11 @@ spain_civil_war_north_category = {
 					set_cosmetic_tag = ASU_interprov
 				}
 			}
+			every_enemy_country = {
+				ASU = {
+					add_to_war = { targeted_alliance = ROOT enemy = PREV hostility_reason = asked_to_join }
+				}
+			}
 		}
 
 		ai_will_do = {
@@ -108,6 +113,11 @@ spain_civil_war_north_category = {
 					}
 					SNT = { country_event = { id = NWspain.905 } }
 					set_cosmetic_tag = SNT_interprov
+				}
+			}
+			every_enemy_country = {
+				ASU = {
+					add_to_war = { targeted_alliance = ROOT enemy = PREV hostility_reason = asked_to_join }
 				}
 			}
 		}
@@ -216,18 +226,74 @@ spain_civil_war_category = {
 
 		visible = {
 			has_war_with = SPR
+			country_exists = SPR
+			SPR_scw_in_progress = yes
 		}
 		
 		days_re_enable = 30
-		cost = 25
+		cost = SPA_activate_fifth_column_var?25
 		
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName]: Decisions SPA_activate_fifth_column"
 			SPR = { add_war_support = -0.04 }
+			if = {
+				limit = {
+					check_variable = {
+						var = SPA_activate_fifth_column_var
+						value = 25
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = SPA_activate_fifth_column_var
+					value = 25
+				}
+			}
+			add_to_variable = {
+				var = SPA_activate_fifth_column_var
+				value = 5
+			}
+			
+			if = {
+				limit = {
+					check_variable = {
+						var = SPA_activate_fifth_column_var
+						value = 50
+						compare = greater_than_or_equals
+					}
+					check_variable = {
+						var = SPA_activate_fifth_column_var_stability_var
+						value = -0.015
+						compare = greater_than
+					}
+				}
+				set_variable = {
+					var = SPA_activate_fifth_column_var_stability_var
+					value = -0.015
+				}
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = SPA_activate_fifth_column_var_stability_var
+						value = -0.015
+						compare = less_than_or_equals
+					}
+				}
+				add_to_variable = {
+					var = SPA_activate_fifth_column_var_stability_var
+					value = -0.015
+				}
+				add_stability = SPA_activate_fifth_column_var_stability_var
+			}
 		}
 		
 		ai_will_do = {
 			factor = 200
+			modifier = {
+				factor = 0.01
+				SPR = { has_capitulated = yes }
+			}
 		}
 	}
 		
@@ -246,14 +312,64 @@ spain_civil_war_category = {
 
 		visible = {
 			has_war_with = SPA
+			SPR_scw_in_progress = yes
 		}
 		
-		fire_only_once = yes
-		cost = 75
+		fire_only_once = no
+		days_re_enable = 90
+		cost = SPR_organization_peoples_militia_var?50
 		
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName]: Decisions SPR_organization_peoples_militia"
-			add_war_support = 0.1
+			if = {
+				limit = {
+					check_variable = {
+						var = SPR_organization_peoples_militia_var
+						value = 50
+						compare = less_than
+					}
+				}
+				set_variable = {
+					var = SPR_organization_peoples_militia_var
+					value = 50
+				}
+			}
+			add_to_variable = {
+				var = SPR_organization_peoples_militia_var
+				value = 25
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = SPR_organization_peoples_militia_var
+						value = 100
+						compare = greater_than_or_equals
+					}
+					check_variable = {
+						var = SPR_organization_peoples_militia_war_support_var
+						value = -0.05
+						compare = greater_than
+					}
+				}
+				set_variable = {
+					var = SPR_organization_peoples_militia_war_support_var
+					value = -0.05
+				}
+			}
+			if = {
+				limit = {
+					check_variable = {
+						var = SPR_organization_peoples_militia_war_support_var
+						value = -0.05
+						compare = less_than_or_equals
+					}
+				}
+				add_to_variable = {
+					var = SPR_organization_peoples_militia_war_support_var
+					value = -0.025
+				}
+				add_war_support = SPR_organization_peoples_militia_war_support_var
+			}
 			hidden_effect = {
 				if = {
 					limit = { NOT = {  has_template = "People Militia" } }
@@ -296,7 +412,7 @@ spain_civil_war_category = {
 							}
 						}
 					}
-					add_war_support = 0.1
+					add_war_support = 0.025
 					random_owned_state = {
 						create_unit = {
 							division = "name = \"People Militia\" division_template = \"People Militia\" start_experience_factor = 0.1" 
@@ -307,6 +423,7 @@ spain_civil_war_category = {
 					}
 				}
 			}
+			custom_effect_tooltip = SPR_remove_after_civil_war_tt
 		}
 		
 		ai_will_do = {
@@ -318,6 +435,15 @@ spain_civil_war_category = {
 			modifier = {
 				factor = 10
 				surrender_progress > 0.5
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				check_variable = {
+					var = SPR_organization_peoples_militia_var
+					value = 100
+					compare = greater_than_or_equals
+				}
 			}
 		}
 	}
@@ -574,5 +700,3 @@ catalon_decision_category = {
 		}
 	}
 }
-
-

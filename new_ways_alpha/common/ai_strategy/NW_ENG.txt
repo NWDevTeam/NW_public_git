@@ -128,24 +128,6 @@ NW_ignore_fin_eng = {
 	}
 }
 
-NW_ignore_fin_eng2 = {
-	allowed = { tag = FIN }
-	enable = {
-		country_exists = ENG
-		is_historical_focus_on = yes
-	}
-	abort = {
-		FIN = { is_in_faction_with = GER }
-		FIN = { is_in_faction_with = SOV }
-	}
-	
-	ai_strategy = {
-		type = ignore
-		id = "FIN"
-		value = 400
-	}
-}
-
 NW_ENG_befriend_middle_east = {
 	allowed = { tag = FIN }
 	enable = { 
@@ -282,5 +264,140 @@ NW_ENG_suez = {
 		}
 		subtract_invasions_from_need = no
 		subtract_fronts_from_need = no
+	}
+}
+
+NW_dont_defend_POL_borders = {
+	allowed = {
+		OR = {
+			original_tag = ENG
+			original_tag = FRA
+		}
+	}
+	enable = {
+		has_war_with = GER
+		GER = { has_war_with = POL }
+		country_exists = POL
+		POL = {
+			has_capitulated = no
+			is_ai = yes
+		}
+		date < 1940.3.1
+		is_historical_focus_on = yes
+	}
+	abort = {
+		OR = {
+			OR = {
+				NOT = { country_exists = POL }
+				POL = { has_capitulated = yes }
+			}
+			POL = { is_ai = no }
+			date > 1940.3.1
+		}
+	}
+	
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "POL"
+		value = 100
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "DNZ"
+		value = 100
+	}
+}
+
+NW_ENG_GER_strange_war = {
+	allowed = { original_tag = ENG }
+	enable = {
+		has_war_with = GER
+		GER = { has_war_with = POL }
+		country_exists = POL
+		POL = { has_capitulated = no }
+		GER = { has_war_with = DNZ }
+		country_exists = DNZ
+		DNZ = { has_capitulated = no }
+		is_historical_focus_on = yes
+	}
+	abort = {
+		OR = {
+			AND = {
+				OR = {
+					NOT = { country_exists = POL }
+					POL = { has_capitulated = yes }
+				}
+				OR = {
+					NOT = { country_exists = DNZ }
+					DNZ = { has_capitulated = yes }
+				}
+			}
+			date > 1940.3.1
+		}
+	}
+	
+	ai_strategy = {
+		type = invade
+		id = "GER"			
+		value = -2000 # that low means not going for islands either
+	}
+	ai_strategy = {
+		type = front_control
+		tag = GER
+		ordertype = front
+		execution_type = careful
+		execute_order = no
+		manual_attack = no
+	}
+}
+
+NW_ENG_ITA_strange_war = {
+	allowed = { original_tag = ENG }
+	enable = {
+		has_war_with = ITA
+		has_war_with = GER
+		is_historical_focus_on = yes
+	}
+	abort = {
+		OR = {
+			NOT = { country_exists = GER }
+			GER = { has_capitulated = yes }
+			date > 1940.3.1
+		}
+	}
+	
+	ai_strategy = {
+		type = invade
+		id = "ITA"			
+		value = -2000 # that low means not going for islands either
+	}
+	ai_strategy = {
+		type = front_control
+		tag = ITA
+		ordertype = front
+		execution_type = careful
+		execute_order = no
+		manual_attack = no
+	}
+}
+
+NW_ENG_no_division_in_oman = {
+	allowed = { original_tag = ENG }
+	enable = {
+		NOT = { has_war_with = IOM }
+		IOM = { has_war_with = OMA }
+		OMA = { is_subject_of = ENG }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = invade
+		id = "IOM"			
+		value = -2000
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "IOM"
+		value = 100
 	}
 }

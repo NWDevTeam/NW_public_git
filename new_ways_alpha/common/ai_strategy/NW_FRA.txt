@@ -586,3 +586,126 @@ ITA_help_FRF_win_civil_war = {
 		value = 75
 	}
 }
+
+FRC_prioritet_on_mountaineers = {
+	allowed = {
+		OR = {
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = FRF
+		}
+	}
+	enable = {
+		country_exists = SWI
+		SWI = {
+			NOT = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+			}
+		}
+		OR = {
+			focus_progress = { focus = FRC_preventing_counter_revolution progress > 0 }
+			OR = {
+				has_war_with = SWI
+				is_justifying_wargoal_against = SWI
+				has_wargoal_against = SWI
+			}
+			SWI = {
+				OR = {
+					is_justifying_wargoal_against = ROOT
+					has_wargoal_against = ROOT
+				}
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = template_prio
+		id = mountaineers
+		value = 10
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = mountaineers
+		value = 10
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = infantry
+		value = -10
+	}
+}
+
+NW_FRA_GER_strange_war = {
+	allowed = { original_tag = FRA }
+	enable = {
+		has_war_with = GER
+		GER = { has_war_with = POL }
+		country_exists = POL
+		POL = { has_capitulated = no }
+		GER = { has_war_with = DNZ }
+		country_exists = DNZ
+		DNZ = { has_capitulated = no }
+		is_historical_focus_on = yes
+	}
+	abort = {
+		OR = {
+			AND = {
+				OR = {
+					NOT = { country_exists = POL }
+					POL = { has_capitulated = yes }
+				}
+				OR = {
+					NOT = { country_exists = DNZ }
+					DNZ = { has_capitulated = yes }
+				}
+			}
+			date > 1940.3.1
+		}
+	}
+	
+	ai_strategy = {
+		type = invade
+		id = "GER"			
+		value = -2000 # that low means not going for islands either
+	}
+	ai_strategy = {
+		type = front_control
+		tag = GER
+		ordertype = front
+		execution_type = careful
+		execute_order = no
+		manual_attack = no
+	}
+}
+
+NW_FRA_ITA_strange_war = {
+	allowed = { original_tag = FRA }
+	enable = {
+		has_war_with = ITA
+		has_war_with = GER
+		is_historical_focus_on = yes
+	}
+	abort = {
+		OR = {
+			NOT = { country_exists = GER }
+			GER = { has_capitulated = yes }
+			date > 1940.3.1
+		}
+	}
+	
+	ai_strategy = {
+		type = invade
+		id = "ITA"			
+		value = -2000 # that low means not going for islands either
+	}
+	ai_strategy = {
+		type = front_control
+		tag = ITA
+		ordertype = front
+		execution_type = careful
+		execute_order = no
+		manual_attack = no
+	}
+}

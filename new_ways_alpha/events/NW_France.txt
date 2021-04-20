@@ -1251,6 +1251,7 @@ country_event = {
 			expire = "1965.1.1"
 			ideology = socialism
 			traits = {
+				socialist_trait
 			}
 		}
 	}
@@ -1288,6 +1289,7 @@ country_event = {
 			expire = "1965.1.1"
 			ideology = socialism
 			traits = {
+				socialist_trait
 			    jew_socialist
 			}
 		}
@@ -1326,6 +1328,7 @@ country_event = {
 			expire = "1965.1.1"
 			ideology = socialism
 			traits = {
+				socialist_trait
 				stout_defender
 			}
 		}
@@ -4588,6 +4591,7 @@ country_event = {
 						state = 1038
 						state = 1037
 						state = 1062
+						state = 1165
 					}
 				}
 				GER = { transfer_state = PREV }
@@ -6139,89 +6143,43 @@ country_event = {
 		}
 		else = {
 			if = {
-				limit = { FROM = { has_completed_focus = FRC_french_revolutionary_union } }
-				if = {
-					limit = { FROM = { is_faction_leader = yes } }
-					FROM = { set_faction_name = FRC_united_international }
-				}
-				else = {
-					FROM = {
-						set_rule = { can_create_factions = yes }
-						set_faction_name = FRC_united_international
-					}
-				}
+				limit = { FROM = { is_faction_leader = yes } }
+				FROM = { set_faction_name = FRC_united_international }
+			}
+			else = {
 				FROM = {
-					every_other_country = {
-						limit = {
-							NOT = { tag = ROOT }
-							is_in_faction_with = ROOT
-						}
-						country_event = { id = NWfrance.311 hours = 6 }
-						add_ai_strategy = {
-							type = alliance
-							id = FROM
-							value = 200
-						}
-					}
+					set_rule = { can_create_factions = yes }
+					set_faction_name = FRC_united_international
 				}
-				ROOT = {
-					dismantle_faction = yes
+			}
+			FROM = {
+				every_other_country = {
+					limit = {
+						NOT = { tag = ROOT }
+						is_in_faction_with = ROOT
+					}
+					country_event = { id = NWfrance.311 hours = 6 }
 					add_ai_strategy = {
 						type = alliance
 						id = FROM
-						value = 200
-					}
-				}
-				FROM = {
-					add_to_faction = ROOT
-					add_ai_strategy = {
-						type = alliance
-						id = ROOT
 						value = 200
 					}
 				}
 			}
-			else_if = {
-				limit = { FROM = { has_completed_focus = FRC_fourth_international } }
-				if = {
-					limit = { FROM = { is_faction_leader = yes } }
-					FROM = { set_faction_name = FRC_three_half_international }
+			ROOT = {
+				dismantle_faction = yes
+				add_ai_strategy = {
+					type = alliance
+					id = FROM
+					value = 200
 				}
-				else = {
-					FROM = {
-						set_rule = { can_create_factions = yes }
-						set_faction_name = FRC_three_half_international
-					}
-				}
-				FROM = {
-					every_other_country = {
-						limit = {
-							NOT = { tag = ROOT }
-							is_in_faction_with = ROOT
-						}
-						country_event = { id = NWfrance.311 hours = 6 }
-						add_ai_strategy = {
-							type = alliance
-							id = FROM
-							value = 200
-						}
-					}
-				}
-				ROOT = {
-					dismantle_faction = yes
-					add_ai_strategy = {
-						type = alliance
-						id = FROM
-						value = 200
-					}
-				}
-				FROM = {
-					add_to_faction = ROOT
-					add_ai_strategy = {
-						type = alliance
-						id = ROOT
-						value = 200
-					}
+			}
+			FROM = {
+				add_to_faction = ROOT
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
 				}
 			}
 		}
@@ -6929,7 +6887,19 @@ country_event = {
 		}
 		if = {
 			limit = { LUX = { is_in_faction_with = ROOT } }
-			LUX = { leave_faction = yes }
+			LUX = {
+				leave_faction = yes
+				add_ai_strategy = {
+					type = alliance
+					id = "ENG"
+					value = -200
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "LUX"
+				value = -200
+			}
 		}
 		if = {
 			limit = { has_guaranteed = LUX }
@@ -6946,6 +6916,15 @@ country_event = {
 		name = NWfrance.413.b
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					any_enemy_country = {
+						is_major = yes
+					}
+					strength_ratio = { tag = FROM ratio < 0.5 }
+				}
+			}
 		}
 		give_guarantee = LUX
 		FROM = { country_event = { id = NWfrance.416 days = 1 } }
@@ -6958,7 +6937,19 @@ country_event = {
 		}
 		if = {
 			limit = { LUX = { is_in_faction_with = ROOT } }
-			LUX = { leave_faction = yes }
+			LUX = {
+				leave_faction = yes
+				add_ai_strategy = {
+					type = alliance
+					id = "ENG"
+					value = -200
+				}
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "LUX"
+				value = -200
+			}
 		}
 		if = {
 			limit = { has_guaranteed = LUX }
@@ -7884,7 +7875,6 @@ country_event = {
 #резерв косметиков
 country_event = {
 	id = NWfrance.901
-	fire_only_once = yes
 	hidden = yes
 	trigger = {
 		OR = {

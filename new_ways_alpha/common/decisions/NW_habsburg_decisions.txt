@@ -604,6 +604,7 @@ HBBRG_return_decisions_category = {
 					has_full_control_of_state = 341
 					has_full_control_of_state = 340
 					has_full_control_of_state = 342
+					has_full_control_of_state = 1167
 					NOT = { has_war_with = CRE }
 				}
 			}
@@ -613,6 +614,7 @@ HBBRG_return_decisions_category = {
 					has_full_control_of_state = 341
 					has_full_control_of_state = 340
 					has_full_control_of_state = 342
+					has_full_control_of_state = 1167
 					NOT = { has_war_with = GRE }
 				}
 			}
@@ -644,6 +646,7 @@ HBBRG_return_decisions_category = {
 				340 = { add_core_of = GRE }
 				341 = { add_core_of = GRE }
 				342 = { add_core_of = GRE }
+				1167 = { add_core_of = GRE }
 				GRE = { set_cosmetic_tag = HBBRG_latin_empire }
 			}
 			else_if = {
@@ -652,6 +655,7 @@ HBBRG_return_decisions_category = {
 				340 = { add_core_of = CRE }
 				341 = { add_core_of = CRE }
 				342 = { add_core_of = CRE }
+				1167 = { add_core_of = CRE }
 				CRE = { set_cosmetic_tag = HBBRG_latin_empire }
 			}
 		}
@@ -806,7 +810,12 @@ HBBRG_form_USE_annex_category = {
 
 	USE_annex_puppet = {
 
-		icon = generic_break_treaty
+		icon = generic_form_nation
+		
+		highlight_states = {
+			is_controlled_by = FROM
+			is_capital = yes
+		}
 
 		available = {
 			FROM = {
@@ -896,14 +905,48 @@ HBBRG_form_USE_annex_category = {
 HBBRG_form_USE_puppet_category = {
 	
 	USE_go_puppet_from_ally = {
+	
+		highlight_states = {
+			is_controlled_by = FROM
+			is_capital = yes
+		}
 
-		icon = generic_break_treaty
+		icon = eng_trade_unions_support
 
 		available = {
 			FROM = {
 				NOT = { is_subject_of = ROOT }
 				is_in_faction_with = ROOT
 				capital_scope = { is_on_continent = europe }
+			}
+			set_temp_variable = { use_go_puppet_t1 = FROM.num_battalions }
+			divide_temp_variable = { use_go_puppet_t1 = 20 }
+			set_temp_variable = { use_go_puppet_cost = use_go_puppet_t1 }
+			add_to_temp_variable = { use_go_puppet_cost = FROM.num_owned_states }
+			set_temp_variable = { use_go_puppet_t2 = FROM.num_of_factories }
+			add_to_temp_variable = { use_go_puppet_t2 = FROM.num_of_civilian_factories }
+			divide_temp_variable = { use_go_puppet_t2 = 2 }
+			add_to_temp_variable = { use_go_puppet_cost = use_go_puppet_t2 }
+			if = {
+				limit = { FROM = { is_major = yes } }
+				multiply_temp_variable = { use_go_puppet_cost = 1.5 }
+			}
+			if = {
+				limit = { check_variable = { use_go_puppet_cost < 50 } }
+				set_temp_variable = { use_go_puppet_cost = 35 }
+			}
+			else = {
+				if = {
+					limit = { FROM = { is_major = yes } }
+					custom_trigger_tooltip = {
+						tooltip = USE_go_puppet_tt2
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = USE_go_puppet_tt1
+					}
+				}
 			}
 		}
 		
@@ -932,7 +975,7 @@ HBBRG_form_USE_puppet_category = {
 			}
 		}
 		
-		cost = 125
+		cost = var:use_go_puppet_cost
 
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision USE_go_puppet_from_ally (From [From.GetTag])"
@@ -954,8 +997,13 @@ HBBRG_form_USE_puppet_category = {
 HBBRG_form_USE_ally_category = {
 
 	USE_democratic_to_ally = {
+	
+		highlight_states = {
+			is_controlled_by = FROM
+			is_capital = yes
+		}
 
-		icon = generic_break_treaty
+		icon = hol_exchange_intelligence_data
 
 		available = {
 			FROM = {
@@ -1145,6 +1193,7 @@ GRE_decisions_category = {
 					has_full_control_of_state = 341
 					has_full_control_of_state = 340
 					has_full_control_of_state = 342
+					has_full_control_of_state = 1167
 				}
 				NOT = { has_war_with = TUR }
 			}
@@ -1363,7 +1412,7 @@ VAT_decisions_category = {
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision VAT_cononisations_habbrg"
 			set_country_flag = VAT_cononisations_finish
-			random_country = {
+			random_other_country = {
 				limit = { has_country_flag = hbbrg_flag }
 				country_event = { id = NWmonarchy.85 }
 			}

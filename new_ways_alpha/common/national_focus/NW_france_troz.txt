@@ -921,6 +921,7 @@ focus_tree = {
 			if = {
 				limit = { has_government = anarchism }
 				add_popularity = { ideology = anarchism popularity = 0.1 }
+				set_country_flag = anarchism_left_flag
 			}
 			if = {
 				limit = { NOT = { has_government = anarchism } }
@@ -1476,6 +1477,7 @@ focus_tree = {
 							create_wargoal = {
 								type = annex_everything
 								target = PREV
+								expire = 0
 							}
 							add_ai_strategy = {
 								type = antagonize
@@ -1491,14 +1493,15 @@ focus_tree = {
 					}
 				}
 			}
+			unlock_decision_category_tooltip = FRC_triumph_of_revolution_category
 		}
 	}
 	
 	focus = {
-		id = FRC_preventing_counter_revolution
-		icon = GFX_z_communism12
+		id = FRC_around_westwall
+		icon = GFX_z_goal_war_with_belgium
 		prerequisite = { focus = FRC_supporting_spanish_revolution }
-		x = 0
+		x = -2
 		y = 2
 		relative_position_id = FRC_supporting_spanish_revolution
 		
@@ -1509,7 +1512,7 @@ focus_tree = {
 		available_if_capitulated = yes
 
 		ai_will_do = {
-			factor = 0.1
+			factor = 20
 			modifier = {
 				factor = 100
 				GER = { has_war = yes }
@@ -1523,19 +1526,19 @@ focus_tree = {
 				OR = {
 					AND = {
 						strength_ratio = {
-							tag = ENG
+							tag = BEL
 							ratio < 1
 						}
 						strength_ratio = {
-							tag = GER
+							tag = HOL
 							ratio < 1
 						}
 						strength_ratio = {
-							tag = ITA
+							tag = LUX
 							ratio < 1
 						}
 					}
-					num_divisions < 150
+					num_divisions < 100
 				}
 			}
 			modifier = {
@@ -1543,15 +1546,15 @@ focus_tree = {
 				OR = {
 					AND = {
 						strength_ratio = {
-							tag = ENG
+							tag = BEL
 							ratio > 2
 						}
 						strength_ratio = {
-							tag = GER
+							tag = HOL
 							ratio > 2
 						}
 						strength_ratio = {
-							tag = ITA
+							tag = LUX
 							ratio > 2
 						}
 					}
@@ -1563,15 +1566,15 @@ focus_tree = {
 				OR = {
 					AND = {
 						strength_ratio = {
-							tag = ENG
+							tag = BEL
 							ratio > 3
 						}
 						strength_ratio = {
-							tag = GER
+							tag = HOL
 							ratio > 3
 						}
 						strength_ratio = {
-							tag = ITA
+							tag = LUX
 							ratio > 3
 						}
 					}
@@ -1587,77 +1590,467 @@ focus_tree = {
 			is_subject = no
 		}
 		bypass = {
-			has_war_with = ENG
-			has_war_with = GER
-			has_war_with = ITA
+			has_war_with = HOL
+			has_war_with = LUX
+			34 = { owner = { has_war_with = ROOT } }
 		}
 		select_effect = {
 		}
 		
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_preventing_counter_revolution"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_around_westwall"
 			if = {
-				limit = { NOT = { has_war_with = ENG } }
+				limit = {
+					NOT = { has_war_with = BEL }
+					country_exists = BEL
+				}
 				if = {
 					limit = {
 						is_faction_leader = yes
-						is_in_faction_with = ENG
+						is_in_faction_with = BEL
 					}
-					ENG = { leave_faction = yes }
+					BEL = { leave_faction = yes }
 				}
 				else_if = {
 					limit = {
 						is_faction_leader = no
-						is_in_faction_with = ENG
+						is_in_faction_with = BEL
 					}
 					leave_faction = yes
 				}
-				declare_war_on = {
-					target = ENG
+				create_wargoal = {
+					target = BEL
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "BEL"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "BEL" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						owns_state = 34
+						controls_state = 34
+						34 = {
+							owner = { has_war_with = ROOT }
+						}
+					}
+				}
+				if = {
+					limit = {
+						is_faction_leader = yes
+						34 = {
+							owner = {
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+					34 = {
+						owner = {
+							leave_faction = yes
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						34 = {
+							owner = {
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+					leave_faction = yes
+				}
+				34 = {
+					owner = {
+						ROOT = {
+							create_wargoal = {
+								target = PREV
+								type = annex_everything
+								expire = 0
+							}
+							add_ai_strategy = {
+								type = antagonize
+								id = PREV
+								value = 200
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = PREV 
+								value = 100
+							}
+						}
+					}
 				}
 			}
 			if = {
-				limit = { NOT = { has_war_with = GER } }
+				limit = { NOT = { has_war_with = HOL } }
 				if = {
 					limit = {
 						is_faction_leader = yes
-						is_in_faction_with = GER
+						is_in_faction_with = HOL
 					}
-					GER = { leave_faction = yes }
+					HOL = { leave_faction = yes }
 				}
 				else_if = {
 					limit = {
 						is_faction_leader = no
-						is_in_faction_with = GER
+						is_in_faction_with = HOL
 					}
 					leave_faction = yes
 				}
-				declare_war_on = {
-					target = GER
+				create_wargoal = {
+					target = HOL
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "HOL"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "HOL" 
+					value = 100
 				}
 			}
 			if = {
-				limit = { NOT = { has_war_with = ITA } }
+				limit = { NOT = { has_war_with = LUX } }
 				if = {
 					limit = {
 						is_faction_leader = yes
-						is_in_faction_with = ITA
+						is_in_faction_with = LUX
 					}
-					ITA = { leave_faction = yes }
+					LUX = { leave_faction = yes }
 				}
 				else_if = {
 					limit = {
 						is_faction_leader = no
-						is_in_faction_with = ITA
+						is_in_faction_with = LUX
 					}
 					leave_faction = yes
 				}
-				declare_war_on = {
-					target = ITA
+				create_wargoal = {
+					target = LUX
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "LUX"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "LUX" 
+					value = 100
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = FRC_preventing_counter_revolution
+		icon = GFX_focus_attack_switzerland
+		prerequisite = { focus = FRC_supporting_spanish_revolution }
+		x = 0
+		y = 2
+		relative_position_id = FRC_supporting_spanish_revolution
+		
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 100
+				SWI = { has_war = yes }
+			}
+			modifier = {
+				factor = 0
+				has_idea = FRC_economic_crisis
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					strength_ratio = {
+						tag = SWI
+						ratio < 1
+					}
+					num_divisions < 75
+				}
+			}
+			modifier = {
+				factor = 50
+				OR = {
+					strength_ratio = {
+						tag = SWI
+						ratio > 2
+					}
+					num_divisions > 100
+				}
+			}
+			modifier = {
+				factor = 200
+				is_in_faction_with = SOV
+			}
+		}
+		available = {
+			is_subject = no
+			is_neighbor_of = SWI
+		}
+		bypass = {
+			has_war_with = SWI
+		}
+		select_effect = {
+		}
+		
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_continuation_of_iberian_revolution"
+			if = {
+				limit = { NOT = { has_war_with = SWI } }
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = SWI
+					}
+					SWI = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = SWI
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
+					target = SWI
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "SWI"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "SWI" 
+					value = 100
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = FRC_continuation_of_iberian_revolution
+		icon = GFX_z_goal_crush_POR
+		prerequisite = { focus = FRC_supporting_spanish_revolution }
+		x = 2
+		y = 2
+		relative_position_id = FRC_supporting_spanish_revolution
+		
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 100
+				POR = { has_war = yes }
+			}
+			modifier = {
+				factor = 0
+				has_idea = FRC_economic_crisis
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					strength_ratio = {
+						tag = POR
+						ratio < 1
+					}
+					num_divisions < 75
+				}
+			}
+			modifier = {
+				factor = 50
+				OR = {
+					strength_ratio = {
+						tag = POR
+						ratio > 2
+					}
+					num_divisions > 100
+				}
+			}
+			modifier = {
+				factor = 200
+				is_in_faction_with = SOV
+			}
+		}
+		available = {
+			is_subject = no
+			OR = {
+				171 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				174 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				788 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				170 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+				169 = {
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		bypass = {
+			181 = { owner = { has_war_with = ROOT } }
+		}
+		select_effect = {
+		}
+		
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_continuation_of_iberian_revolution"
+			if = {
+				limit = {
+					NOT = { has_war_with = POR }
+					country_exists = POR
+				}
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = POR
+					}
+					POR = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = POR
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
+					target = POR
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "POR"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "POR" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						owns_state = 181
+						controls_state = 181
+						181 = {
+							owner = { has_war_with = ROOT }
+						}
+					}
+				}
+				if = {
+					limit = {
+						is_faction_leader = yes
+						181 = {
+							owner = {
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+					181 = {
+						owner = {
+							leave_faction = yes
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						181 = {
+							owner = {
+								is_in_faction_with = ROOT
+							}
+						}
+					}
+					leave_faction = yes
+				}
+				181 = {
+					owner = {
+						ROOT = {
+							create_wargoal = {
+								target = PREV
+								type = annex_everything
+								expire = 0
+							}
+							add_ai_strategy = {
+								type = antagonize
+								id = PREV
+								value = 200
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = PREV 
+								value = 100
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1679,7 +2072,38 @@ focus_tree = {
 		available_if_capitulated = yes
 
 		ai_will_do = {
-			factor = 0.1
+			factor = 1.5
+			modifier = {
+				factor = 0
+				surrender_progress > 0.5
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_state = {
+						is_on_continent = europe
+						controller = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+						any_neighbor_state = {
+							is_controlled_by = SOV
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				has_war_with = GER
+				GER = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = POL
+				POL = { has_capitulated = no }
+			}
 			modifier = {
 				factor = 0.1
 				num_divisions < 150
@@ -1721,6 +2145,7 @@ focus_tree = {
 			create_wargoal = {
 				type = puppet_wargoal_focus
 				target = SOV
+				expire = 0
 			}
 		}
 	}
@@ -1741,10 +2166,50 @@ focus_tree = {
 		available_if_capitulated = yes
 
 		ai_will_do = {
-			factor = 2
+			factor = 5
+			modifier = {
+				factor = 0
+				has_war_with = GER
+				surrender_progress < 0.5
+				GER = { surrender_progress > 0.5 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					GER = { has_capitulated = yes }
+					NOT = { country_exists = GER }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_war_with = POL
+				POL = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0
+				any_state = {
+					is_on_continent = europe
+					controller = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+					any_neighbor_state = {
+						is_controlled_by = SOV
+					}
+				}
+			}
 			modifier = {
 				factor = 5
-				SOV = { has_war_with = GER }
+				OR = {
+					SOV = { has_war_with = GER }
+					AND = {
+						has_war_with = GER
+						surrender_progress > 0.25
+					}
+					surrender_progress > 0.5
+				}
 			}
 		}
 		available = {
@@ -1775,10 +2240,10 @@ focus_tree = {
 	focus = {
 		id = FRC_attack_from_north
 		icon = GFX_z_attack_democracy4
-		prerequisite = { focus = FRC_supporting_spanish_revolution }
 		prerequisite = { focus = FRC_correction_of_deformed_union focus = FRC_division_world_with_soviet_union }
-		x = -1
-		y = 1
+		prerequisite = { focus = FRC_preventing_counter_revolution focus = FRC_around_westwall }
+		x = 0
+		y = 2
 		relative_position_id = FRC_correction_of_deformed_union
 		
 		cost = 10
@@ -1789,11 +2254,63 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 7
+			modifier = {
+				factor = 0
+				has_war_with = BEL
+				BEL = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = HOL
+				HOL = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = ITA
+				ITA = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0.1
+				num_divisions < 150
+			}
+			modifier = {
+				factor = 0.1
+				strength_ratio = {
+					tag = GER
+					ratio < 1
+				}
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { has_completed_focus = FRC_around_westwall }
+			}
+			modifier = {
+				factor = 40
+				strength_ratio = {
+					tag = GER
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 80
+				strength_ratio = {
+					tag = GER
+					ratio > 2
+				}
+			}
+			modifier = {
+				factor = 5
+				GER = { has_war = yes }
+			}
 		}
 		available = {
 			is_subject = no
 		}
 		bypass = {
+			OR = {
+				has_war_with = GER
+				NOT = { country_exists = GER }
+			}
 		}
 		select_effect = {
 		}
@@ -1803,31 +2320,146 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_attack_from_north"
 			add_war_support = 0.05
-			add_timed_idea = {
-				idea = FRC_attack_from_north
-				days = 365
-			}
 			if = {
 				limit = {
-					country_exists = GER
-					NOT = { has_war_with = GER }
-					GER = { NOT = { is_in_faction_with = ROOT } }
+					is_faction_leader = yes
+					is_in_faction_with = GER
 				}
-				declare_war_on = {
-					target = GER
-					type = annex_everything
+				GER = { leave_faction = yes }
+			}
+			else_if = {
+				limit = {
+					is_faction_leader = no
+					is_in_faction_with = GER
+				}
+				leave_faction = yes
+			}
+			create_wargoal = {
+				target = GER
+				type = annex_everything
+				expire = 0
+			}
+			add_ai_strategy = {
+				type = antagonize
+				id = "GER"
+				value = 200
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = "GER" 
+				value = 100
+			}
+		}
+	}
+	
+	focus = {
+		id = FRC_attack_poland
+		icon = GFX_z_goal_annex_poland
+		prerequisite = { focus = FRC_attack_from_north }
+		x = -1
+		y = 1
+		relative_position_id = FRC_attack_from_north
+		
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 17
+			modifier = {
+				factor = 0
+				has_war_with = GER
+				GER = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0.1
+				num_divisions < 125
+			}
+			modifier = {
+				factor = 0.1
+				strength_ratio = {
+					tag = POL
+					ratio < 1
 				}
 			}
+			modifier = {
+				factor = 40
+				strength_ratio = {
+					tag = POL
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 80
+				strength_ratio = {
+					tag = POL
+					ratio > 2
+				}
+			}
+			modifier = {
+				factor = 5
+				POL = { has_war = yes }
+			}
+		}
+		available = {
+			is_subject = no
+			any_state = {
+				is_on_continent = europe
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+				any_neighbor_state = {
+					is_controlled_by = POL
+				}
+			}
+		}
+		bypass = {
+			OR = {
+				has_war_with = POL
+				NOT = { country_exists = POL }
+			}
+		}
+		select_effect = {
+		}
+		
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_attack_poland"
+			add_war_support = 0.05
 			if = {
 				limit = {
-					country_exists = POL
-					NOT = { has_war_with = POL }
-					POL = { NOT = { is_in_faction_with = ROOT } }
+					is_faction_leader = yes
+					is_in_faction_with = POL
 				}
-				declare_war_on = {
-					target = POL
-					type = annex_everything
+				POL = { leave_faction = yes }
+			}
+			else_if = {
+				limit = {
+					is_faction_leader = no
+					is_in_faction_with = POL
 				}
+				leave_faction = yes
+			}
+			create_wargoal = {
+				target = POL
+				type = annex_everything
+				expire = 0
+			}
+			add_ai_strategy = {
+				type = antagonize
+				id = "POL"
+				value = 200
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = "POL" 
+				value = 100
 			}
 		}
 	}
@@ -1835,10 +2467,10 @@ focus_tree = {
 	focus = {
 		id = FRC_attack_from_south
 		icon = GFX_z_communism3
-		prerequisite = { focus = FRC_supporting_spanish_revolution }
 		prerequisite = { focus = FRC_correction_of_deformed_union focus = FRC_division_world_with_soviet_union }
-		x = 1
-		y = 1
+		prerequisite = { focus = FRC_preventing_counter_revolution focus = FRC_continuation_of_iberian_revolution }
+		x = 0
+		y = 2
 		relative_position_id = FRC_division_world_with_soviet_union
 		
 		cost = 10
@@ -1848,12 +2480,50 @@ focus_tree = {
 		available_if_capitulated = yes
 
 		ai_will_do = {
-			factor = 7
+			factor = 12
+			modifier = {
+				factor = 0
+				has_war_with = GER
+				GER = { has_capitulated = no }
+			}
+			modifier = {
+				factor = 0.1
+				num_divisions < 125
+			}
+			modifier = {
+				factor = 0.1
+				strength_ratio = {
+					tag = ITA
+					ratio < 1
+				}
+			}
+			modifier = {
+				factor = 40
+				strength_ratio = {
+					tag = ITA
+					ratio > 1
+				}
+			}
+			modifier = {
+				factor = 80
+				strength_ratio = {
+					tag = ITA
+					ratio > 2
+				}
+			}
+			modifier = {
+				factor = 5
+				ITA = { has_war = yes }
+			}
 		}
 		available = {
 			is_subject = no
 		}
 		bypass = {
+			OR = {
+				has_war_with = ITA
+				NOT = { country_exists = ITA }
+			}
 		}
 		select_effect = {
 		}
@@ -1863,74 +2533,323 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_attack_from_south"
 			add_war_support = 0.05
-			add_timed_idea = {
-				idea = FRC_attack_from_south
-				days = 365
+			if = {
+				limit = {
+					is_faction_leader = yes
+					is_in_faction_with = ITA
+				}
+				ITA = { leave_faction = yes }
 			}
+			else_if = {
+				limit = {
+					is_faction_leader = no
+					is_in_faction_with = ITA
+				}
+				leave_faction = yes
+			}
+			create_wargoal = {
+				target = ITA
+				type = annex_everything
+				expire = 0
+			}
+			add_ai_strategy = {
+				type = antagonize
+				id = "ITA"
+				value = 200
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = "ITA" 
+				value = 100
+			}
+		}
+	}
+	
+	focus = {
+		id = FRC_attack_balkan
+		icon = GFX_z_goal_balkan_crusade2
+		prerequisite = { focus = FRC_attack_from_south }
+		x = 1
+		y = 1
+		relative_position_id = FRC_attack_from_south
+		
+		cost = 10
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 17
+			modifier = {
+				factor = 0.1
+				num_divisions < 150
+			}
+		}
+		available = {
+			is_subject = no
+			any_state = {
+				is_on_continent = europe
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+				any_neighbor_state = {
+					OR = {
+						is_controlled_by = YUG
+						is_controlled_by = BUL
+						is_controlled_by = ROM
+						is_controlled_by = GRE
+						is_controlled_by = CRE
+						is_controlled_by = HEL
+					}
+				}
+			}
+		}
+		bypass = {
+			OR = {
+				has_war_with = YUG
+				NOT = { country_exists = YUG }
+			}
+			OR = {
+				has_war_with = BUL
+				NOT = { country_exists = BUL }
+			}
+			OR = {
+				has_war_with = ROM
+				NOT = { country_exists = ROM }
+			}
+			OR = {
+				has_war_with = GRE
+				NOT = { country_exists = GRE }
+			}
+			OR = {
+				has_war_with = CRE
+				NOT = { country_exists = CRE }
+			}
+			OR = {
+				has_war_with = HEL
+				NOT = { country_exists = HEL }
+			}
+		}
+		select_effect = {
+		}
+		
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus FRC_attack_balkan"
+			add_war_support = 0.05
 			if = {
 				limit = {
 					country_exists = YUG
 					NOT = { has_war_with = YUG }
-					YUG = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = YUG
+					}
+					YUG = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = YUG
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = YUG
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "YUG"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "YUG" 
+					value = 100
 				}
 			}
 			if = {
 				limit = {
 					country_exists = BUL
 					NOT = { has_war_with = BUL }
-					BUL = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = BUL
+					}
+					BUL = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = BUL
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = BUL
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "BUL"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "BUL" 
+					value = 100
 				}
 			}
 			if = {
 				limit = {
 					country_exists = ROM
 					NOT = { has_war_with = ROM }
-					ROM = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = ROM
+					}
+					ROM = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = ROM
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = ROM
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "ROM"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "ROM" 
+					value = 100
 				}
 			}
 			if = {
 				limit = {
 					country_exists = GRE
 					NOT = { has_war_with = GRE }
-					GRE = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = GRE
+					}
+					GRE = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = GRE
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = GRE
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "GRE"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "GRE" 
+					value = 100
 				}
 			}
 			if = {
 				limit = {
 					country_exists = CRE
 					NOT = { has_war_with = CRE }
-					CRE = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = CRE
+					}
+					CRE = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = CRE
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = CRE
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "CRE"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "CRE" 
+					value = 100
 				}
 			}
 			if = {
 				limit = {
 					country_exists = HEL
 					NOT = { has_war_with = HEL }
-					HEL = { NOT = { is_in_faction_with = ROOT } }
 				}
-				declare_war_on = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+						is_in_faction_with = HEL
+					}
+					HEL = { leave_faction = yes }
+				}
+				else_if = {
+					limit = {
+						is_faction_leader = no
+						is_in_faction_with = HEL
+					}
+					leave_faction = yes
+				}
+				create_wargoal = {
 					target = HEL
 					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "HEL"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "HEL" 
+					value = 100
 				}
 			}
 		}
@@ -1941,8 +2860,8 @@ focus_tree = {
 		icon = GFX_z_goal_begin_massacres_kurds
 		prerequisite = { focus = FRC_attack_from_north }
 		prerequisite = { focus = FRC_attack_from_south }
-		x = 2
-		y = 1
+		x = 1
+		y = 2
 		relative_position_id = FRC_attack_from_north
 		
 		cost = 10
@@ -1955,6 +2874,7 @@ focus_tree = {
 			factor = 100
 		}
 		available = {
+			has_war = yes
 		}
 		bypass = {
 		}
@@ -2436,6 +3356,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = LUX
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -2450,6 +3371,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = BEL
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -2464,6 +3386,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = HOL
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -2533,6 +3456,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = GER
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -2746,6 +3670,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = ITA
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -2803,6 +3728,10 @@ focus_tree = {
 			}
 			add_ideas = FRC_association_with_afa
 			set_country_flag = anarchism_neutrality_flag
+			if = {
+				limit = { has_country_flag = anarchism_left_flag }
+				clr_country_flag = anarchism_left_flag
+			}
 		}
 	}
 	
@@ -3049,6 +3978,7 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = ENG
+				expire = 0
 			}
 			add_ai_strategy = {
 				type = antagonize

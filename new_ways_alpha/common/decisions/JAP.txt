@@ -943,17 +943,51 @@ JAP_southern_expansion = {
 		ai_will_do = {
 			factor = 15
 			modifier = {
-				factor = 0
+				factor = 0.1
 				event_target:NW_france_scope = { has_war = no }
+				671 = {
+					owner = {
+						OR = {
+							tag = event_target:NW_france_scope
+							is_subject_of = event_target:NW_france_scope
+						}
+					}
+				}
 			}			
 			modifier = {
 				factor = 3
-				event_target:NW_france_scope = { has_war = yes } 
+				event_target:NW_france_scope = { has_war = yes }
+				671 = {
+					owner = {
+						OR = {
+							tag = event_target:NW_france_scope
+							is_subject_of = event_target:NW_france_scope
+						}
+					}
+				}
 				OR = {
 					16 = { NOT = { is_controlled_by = event_target:NW_france_scope } } #Paris
 					strength_ratio = {
 						tag = event_target:NW_france_scope
 						ratio > 0.9
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				OR = {
+					date < 1940.09.20
+					event_target:NW_france_scope = { has_capitulated = no }
+				}
+			}
+			modifier = {
+				factor = 10
+				is_historical_focus_on = yes
+				event_target:NW_france_scope = {
+					OR = {
+						has_capitulated = yes
+						is_subject = yes
 					}
 				}
 			}
@@ -967,7 +1001,7 @@ JAP_southern_expansion = {
 				}
 				event_target:NW_france_scope = { country_event = { id = france.1 } }
 			}
-			if = {
+			else_if = {
 				limit = {
 					country_exists = FIC
 					FIC = {
@@ -977,12 +1011,15 @@ JAP_southern_expansion = {
 				}
 				FIC = { OVERLORD = { country_event = { id = france.1 } } }
 			}
-			if = {
+			else_if = {
 				limit = {
 					country_exists = FIC
 					FIC = { is_subject = no }
 				}
 				FIC = { country_event = { id = france.1 } }
+			}
+			else = {
+				671 = { owner = { country_event = { id = france.1 } } }
 			}
 		}
 
