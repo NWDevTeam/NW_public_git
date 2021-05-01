@@ -348,27 +348,13 @@ propaganda_efforts = {
 			NOT = { has_country_flag = war_propaganda_campaign_running }
 			FROM = {
 				OR = {
-					is_justifying_wargoal_against = ROOT
-					AND = {
-						has_war_with = ROOT
-						is_neighbor_of = ROOT
-					}
 					has_offensive_war = yes
+					is_justifying_wargoal_against = ROOT
 				}
 			}
 			if = {
 				limit = {
-					original_tag = SPR
-					has_dlc = "La Resistance"
-				}
-				NOT = {
-					has_idea = SPR_political_violence
-				}
-			}
-			if = {
-				limit = {
-					original_tag = SPA
-					has_dlc = "La Resistance"
+					is_literally_spain = yes
 				}
 				has_global_flag = scw_over
 			}
@@ -376,83 +362,161 @@ propaganda_efforts = {
 
 		visible = {
 			FROM = {
-				NOT = { is_in_faction_with = ROOT }
+				NOT = { 
+					is_neighbor_of = ROOT 
+					has_government = ROOT
+				}
 				OR = {
+					AND = {
+						NOT = { has_government = ROOT }
+						has_offensive_war = yes
+						has_added_tension_amount > 15
+					}
 					is_justifying_wargoal_against = ROOT
-					AND = {
-						is_neighbor_of = ROOT
-						OR = {
-							has_war_with = ROOT
-							AND = {
-								NOT = { has_government = ROOT }
-								has_offensive_war = yes
-								has_added_tension_amount > 5
-							}
-						}
-					}
-					AND = {
-						NOT = { is_neighbor_of = ROOT }
-						OR = {
-							has_offensive_war_with = ROOT
-							AND = {
-								NOT = { has_government = ROOT }
-								has_offensive_war = yes
-								has_added_tension_amount > 30
-							}
-						}
-					}
+					has_offensive_war_with = ROOT
 				}
 			}
 		}
 
 		target_trigger = {
 			FROM = {
-				NOT = { is_in_faction_with = ROOT }
+				NOT = { 
+					is_neighbor_of = ROOT 
+					has_government = ROOT
+				}
 				OR = {
+					AND = {
+						NOT = { has_government = ROOT }
+						has_offensive_war = yes
+						has_added_tension_amount > 15
+					}
 					is_justifying_wargoal_against = ROOT
-					AND = {
-						is_neighbor_of = ROOT
-						OR = {
-							has_war_with = ROOT
-							AND = {
-								NOT = { has_government = ROOT }
-								has_offensive_war = yes
-								has_added_tension_amount > 5
-							}
-						}
-					}
-					AND = {
-						NOT = { is_neighbor_of = ROOT }
-						OR = {
-							has_offensive_war_with = ROOT
-							AND = {
-								NOT = { has_government = ROOT }
-								has_offensive_war = yes
-								has_added_tension_amount > 30
-							}
-						}
-					}
+					has_offensive_war_with = ROOT
+				}
+			}
+		}
+		
+		target_array = enemies_of_allies
+		target_array = potential_and_current_enemies
+
+		days_remove = 90
+
+		fire_only_once = yes
+
+		cost = 75
+
+		modifier = {
+			war_support_weekly = 0.01
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision war_propaganda_against_warmonger"
+			set_country_flag = war_propaganda_campaign_running
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName]: Decision remove war_propaganda_against_warmonger"
+			clr_country_flag = war_propaganda_campaign_running
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_war_support > 0.9
+			}
+		}
+	}
+	
+	#Propaganda campaign against a neighbor
+	war_propaganda_against_warmonger_neighbor = {
+		name = war_propaganda_against_warmonger
+
+		icon = generic_prepare_civil_war
+
+		available = {
+			NOT = { has_country_flag = war_propaganda_campaign_running }
+			FROM = {
+				OR = {
+					has_offensive_war = yes 
+					is_justifying_wargoal_against = ROOT
+					has_war_with = ROOT
 				}
 			}
 			if = {
 				limit = {
-					FROM = {
-						is_neighbor_of = ROOT
-					}
-					set_temp_variable = { war_propaganda_cost = 50 }
+					is_literally_spain = yes
 				}
+				has_global_flag = scw_over
 			}
 		}
+
+		visible = {
+			FROM = {
+				NOT = { 
+					tag = ROOT
+					tag = OVERLORD
+					has_government = ROOT 
+					is_in_faction_with = ROOT
+				} 
+				is_neighbor_of = ROOT
+				if = {
+					limit = {
+						is_puppet = yes 
+					}
+					compare_autonomy_state > autonomy_puppet
+				}
+				OR = {
+					AND = {
+						NOT = { has_government = ROOT }
+						has_offensive_war = yes
+					}
+					is_justifying_wargoal_against = ROOT
+					has_war_with = ROOT
+				}
+				has_added_tension_amount > 5
+			}
+		}
+
+		target_trigger = {
+			FROM = {
+				NOT = { 
+					tag = ROOT
+					tag = OVERLORD
+					has_government = ROOT 
+					is_in_faction_with = ROOT
+				} 
+				is_neighbor_of = ROOT
+				if = {
+					limit = {
+						is_puppet = yes 
+					}
+					compare_autonomy_state > autonomy_puppet
+				}
+				OR = {
+					AND = {
+						NOT = { has_government = ROOT }
+						has_offensive_war = yes
+					}
+					is_justifying_wargoal_against = ROOT
+					has_war_with = ROOT
+				}
+				has_added_tension_amount > 5
+			}
+		}
+		
+		target_array = enemies_of_allies
+		target_array = potential_and_current_enemies
+		target_array = neighbors
 
 		days_remove = 90
 		days_re_enable = 180
 
 		fire_only_once = yes
 
-		cost = var:war_propaganda_cost?75
+		cost = 50
 
 		modifier = {
-			war_support_weekly = 0.01
+			war_support_weekly = 0.008
 		}
 
 		complete_effect = {
