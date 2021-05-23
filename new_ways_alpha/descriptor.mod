@@ -14,5 +14,5 @@ tags={
 picture="thumbnail.png"
 name="New Ways"
 supported_version="1.10.*"
-path="R:/Users/my_doc/Paradox Interactive/Hearts of Iron IV/mod/new_ways_alpha"
+path="mod/new_ways_alpha"
 remote_file_id="2197593000"
