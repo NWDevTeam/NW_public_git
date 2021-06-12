@@ -2287,7 +2287,6 @@ political_actions = {
 			is_subject = no
 			has_capitulated = no
 			is_in_faction = yes
-			is_faction_leader = no
 			FACTION_LEADER = {
 				has_government = monarchy
 				OR = {
@@ -2297,9 +2296,21 @@ political_actions = {
 					has_country_flag = hbbrg_flag
 				}
 			}
+			if = {
+				limit = { is_faction_leader = yes }
+				any_allied_country = {
+					has_government = monarchy
+					OR = {
+						original_tag = GER
+						original_tag = BUL
+						original_tag = TUR
+						has_country_flag = hbbrg_flag
+					}
+				}
+			}
 		}
 
-		cost = 150
+		cost = mtth:GER_propose_revive_central_powers_cost
 
 		fire_only_once = yes
 
@@ -2327,19 +2338,24 @@ political_actions = {
 				has_completed_focus = HBBRG_austrian_hungary
 			}
 			has_government = monarchy
+			FACTION_LEADER = {
+				NOT = { has_country_flag = GER_propose_revive_central_powers_flag }
+			}
 			#NOT = { has_global_flag = GER_propose_revive_central_powers_flag }
 			#NOT = { has_global_flag = GER_propose_revive_central_powers_process_flag }
 		}
 
 		complete_effect = {
 			set_global_flag = GER_propose_revive_central_powers_process_flag
-			random_other_country = {
-				limit = {
-					has_government = monarchy
-					is_faction_leader = yes
-					is_in_faction_with = ROOT
+			if = {
+				limit = { is_faction_leader = yes }
+				set_faction_name = GER_central_powers_faction
+				set_country_flag = GER_propose_revive_central_powers_flag
+			}
+			else = {
+				FACTION_LEADER = {
+					country_event = { id = tr_german.15 days = 1 }
 				}
-				country_event = { id = tr_german.15 days = 1 }
 			}
 		}
 	}
