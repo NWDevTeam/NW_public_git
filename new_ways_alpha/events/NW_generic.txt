@@ -261,15 +261,15 @@ country_event = {
 							is_subject = no
 							OR = { is_faction_leader = yes is_in_faction = no }
 							NOT = {
-								any_state = {
-									is_owned_by = ROOT
+								any_of_scopes = {
+									array = ROOT.owned_states
 									OR = {
 										is_claimed_by = PREV
 										is_core_of = PREV
 									}
 								}
-								any_state = {
-									is_owned_by = PREV
+								any_of_scopes = {
+									array = PREV.owned_states
 									OR = {
 										is_claimed_by = ROOT
 										is_core_of = ROOT
@@ -451,15 +451,15 @@ country_event = {
 							is_subject = no
 							OR = { is_faction_leader = yes is_in_faction = no }
 							NOT = {
-								any_state = {
-									is_owned_by = FROM
+								any_of_scopes = {
+									array = FROM.owned_states
 									OR = {
 										is_claimed_by = PREV
 										is_core_of = PREV
 									}
 								}
-								any_state = {
-									is_owned_by = PREV
+								any_of_scopes = {
+									array = PREV.owned_states
 									OR = {
 										is_claimed_by = FROM
 										is_core_of = FROM
@@ -505,15 +505,15 @@ country_event = {
 							is_subject = no
 							OR = { is_faction_leader = yes is_in_faction = no }
 							NOT = {
-								any_state = {
-									is_owned_by = FROM
+								any_of_scopes = {
+									array = FROM.owned_states
 									OR = {
 										is_claimed_by = PREV
 										is_core_of = PREV
 									}
 								}
-								any_state = {
-									is_owned_by = PREV
+								any_of_scopes = {
+									array = PREV.owned_states
 									OR = {
 										is_claimed_by = FROM
 										is_core_of = FROM
@@ -611,15 +611,15 @@ country_event = {
 							is_subject = no
 							OR = { is_faction_leader = yes is_in_faction = no }
 							NOT = {
-								any_state = {
-									is_owned_by = FROM
+								any_of_scopes = {
+									array = FROM.owned_states
 									OR = {
 										is_claimed_by = PREV
 										is_core_of = PREV
 									}
 								}
-								any_state = {
-									is_owned_by = PREV
+								any_of_scopes = {
+									array = PREV.owned_states
 									OR = {
 										is_claimed_by = FROM
 										is_core_of = FROM
@@ -751,15 +751,15 @@ country_event = {
 							is_subject = no
 							OR = { is_faction_leader = yes is_in_faction = no }
 							NOT = {
-								any_state = {
-									is_owned_by = FROM
+								any_of_scopes = {
+									array = FROM.owned_states
 									OR = {
 										is_claimed_by = PREV
 										is_core_of = PREV
 									}
 								}
-								any_state = {
-									is_owned_by = PREV
+								any_of_scopes = {
+									array = PREV.owned_states
 									OR = {
 										is_claimed_by = FROM
 										is_core_of = FROM
@@ -816,7 +816,8 @@ country_event = {
 	trigger = {
 		NOT = { has_country_flag = shard_call_to_help_flag }
 		has_civil_war = yes
-		any_other_country = {
+		any_of_scopes = {
+			array = global.is_revolter
 			has_country_flag = flag_is_revolter_of_shard_@ROOT
 			NOT = {
 				is_in_faction_with = ROOT
@@ -942,7 +943,8 @@ country_event = {
 	
 	trigger = {
 		has_civil_war = no
-		any_other_country = {
+		any_of_scopes = {
+			array = global.is_revolter
 			has_country_flag = flag_is_revolter_of_base_@ROOT
 			NOT = {
 				is_in_faction_with = ROOT
@@ -5374,8 +5376,8 @@ country_event = {
 	immediate = {
 		if = {
 			limit = {
-				any_country = {
-					has_government = trozkism
+				any_of_scopes = {
+					array = global.is_trozkism
 					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
 					is_subject = no
 				}
@@ -5588,7 +5590,7 @@ country_event = {
 		is_subject = no
 		has_global_flag = four_international_flag
 		has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
-		any_country = { NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } } }
+		all_country = { NOT = { has_country_leader = { name = "Leon Trotsky" ruling_only = yes } } }
 		NOT = {
 			has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
 			has_global_flag = flag_mexico_invited_trotsky_to_government
@@ -5703,11 +5705,11 @@ country_event = {
 				ROOT = { check_variable = { num_ememies_temp > 15 } }
 			}
 			AND = {
-				NOT = {
-					any_country = {
-						NOT = { has_country_leader = { name = "Nikolas Roerich" ruling_only = yes } }
-						has_government = trozkism
-						has_war = no
+				all_of_scopes = {
+					array = global.is_trozkism
+					OR = {
+						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+						has_war = yes
 					}
 				}
 				check_variable = { global.troz_threat_var > 35 }
@@ -6062,11 +6064,11 @@ country_event = {
 		OR = {
 			check_variable = { global.troz_threat_var > 99 }
 			AND = {
-				NOT = {
-					any_country = {
-						NOT = { has_country_leader = { name = "Nikolas Roerich" ruling_only = yes } }
-						has_government = trozkism
-						has_war = no
+				all_of_scopes = {
+					array = global.is_trozkism
+					OR = {
+						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
+						has_war = yes
 					}
 				}
 				check_variable = { global.troz_threat_var > 35 }
@@ -6325,10 +6327,9 @@ country_event = {
 			factor = 50
 			modifier = {
 				factor = 2
-				any_other_country = {
+				any_neighbor_country = {
 					is_faction_leader = yes
 					is_in_faction_with = ROOT
-					is_neighbor_of = ROOT
 				}
 			}
 		}
@@ -7387,7 +7388,6 @@ country_event = {
 				limit = {
 					ENG = {
 						is_subject = no
-						any_other_country = { is_major = yes }
 						NOT = {
 							has_war_with = TUR
 							is_in_faction_with = TUR
@@ -8136,5 +8136,9 @@ country_event = {
 			limit = { has_trait = anarchist_timed_trait }
 			remove_unit_leader_trait = anarchist_timed_trait
 		}
+	}
+	
+	option = {
+		name = LOG5
 	}
 }

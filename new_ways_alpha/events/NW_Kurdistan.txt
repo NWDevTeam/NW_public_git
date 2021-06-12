@@ -153,14 +153,28 @@ country_event = {
 			remove_ideas = KRD_rebellion_in_dersim
 		}
 		release = KRD
-		add_civil_war_target = KRD
 		set_country_flag = kurd_revolt_flag
-		KRD = {
-			declare_war_on = {
-				target = ROOT
-				type = civil_war
+		hidden_effect = {
+			every_state = {
+				limit = {
+					NOT = { is_fully_controlled_by = ROOT }
+					owner = {
+						tag = KRD
+					}
+				}
+				teleport_armies = {
+					limit = {
+						tag = ROOT
+					}
+					to_state_array = owned_controlled_states
+				}
 			}
-			add_civil_war_target = ROOT
+		}
+		declare_war_on = {
+			target = KRD
+			type = annex_everything
+		}
+		KRD = {
 			add_timed_idea = { idea = KRD_liberation_war days = 180 }
 			add_ideas = {
 				KRD_tribal_army
@@ -225,14 +239,28 @@ country_event = {
 			remove_ideas = KRD_rebellion_in_dersim
 		}
 		release = KRD
-		add_civil_war_target = KRD
 		set_country_flag = kurd_revolt_flag
-		KRD = {
-			declare_war_on = {
-				target = ROOT
-				type = civil_war
+		hidden_effect = {
+			every_state = {
+				limit = {
+					NOT = { is_fully_controlled_by = ROOT }
+					owner = {
+						tag = KRD
+					}
+				}
+				teleport_armies = {
+					limit = {
+						tag = ROOT
+					}
+					to_state_array = owned_controlled_states
+				}
 			}
-			add_civil_war_target = ROOT
+		}
+		declare_war_on = {
+			target = KRD
+			type = annex_everything
+		}
+		KRD = {
 			add_timed_idea = { idea = KRD_liberation_war days = 180 }
 			add_ideas = {
 				KRD_tribal_army
@@ -441,8 +469,9 @@ country_event = {
 	option = {
 		name = NWkurd.8.a
 		ai_chance = {
-			factor = 50
+			factor = 10
 		}
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.8.a"
 	}
 	
 	option = {
@@ -463,6 +492,7 @@ country_event = {
 		TUR = { add_opinion_modifier = { target = ROOT modifier = KRD_support_us_op } }
 		add_opinion_modifier = { target = KRD modifier = KRD_support_turkey_op }
 		KRD = { add_opinion_modifier = { target = ROOT modifier = KRD_support_turkey_op } }
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.8.b"
 	}
 	
 	option = {
@@ -483,6 +513,7 @@ country_event = {
 		KRD = { add_opinion_modifier = { target = ROOT modifier = KRD_support_us_op } }
 		add_opinion_modifier = { target = TUR modifier = KRD_support_kurds_op }
 		TUR = { add_opinion_modifier = { target = ROOT modifier = KRD_support_kurds_op } }
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.8.c"
 	}
 }
 
@@ -495,10 +526,21 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.9" }
+	immediate = {
+		set_variable = { temp1 = 1 }
+		randomize_variable = {
+			var = temp1
+			distribution = uniform
+			min = 450
+			max = 700
+		}
+		round_variable = temp1
+	}
 	
 	option = {
 		name = NWkurd.9.a
 		add_manpower = 8000
+		add_equipment_to_stockpile = { type = infantry_equipment amount = temp1 }
 		capital_scope = {
 			create_unit = {
 				division = "name = \"Kurdish Infantry\" division_template = \"Kurdish Infantry\" start_experience_factor = 0.2"
@@ -506,6 +548,7 @@ country_event = {
 				allow_spawning_on_enemy_provs = yes
 			}
 		}
+		clear_variable = temp1
 	}
 }
 
@@ -518,12 +561,24 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.10" }
+	immediate = {
+		set_variable = { temp1 = 1 }
+		randomize_variable = {
+			var = temp1
+			distribution = uniform
+			min = 250
+			max = 500
+		}
+		round_variable = temp1
+	}
 	
 	option = {
 		name = NWkurd.10.a
 		add_political_power = 50
 		add_war_support = 0.10
+		add_equipment_to_stockpile = { type = infantry_equipment amount = temp1 }
 		add_timed_idea = { idea = KRD_development_of_kurdish_identity days = 90 }
+		clear_variable = temp1
 	}
 }
 
@@ -535,7 +590,7 @@ country_event = {
 	
 	trigger = {
 		tag = KRD
-		NOT = { has_war_with = TUR }
+		has_war = no
 		has_template = "Tribal Cavalry"
 	}
 	
@@ -556,6 +611,16 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWkurd.12" }
+	immediate = {
+		set_variable = { temp1 = 1 }
+		randomize_variable = {
+			var = temp1
+			distribution = uniform
+			min = 1500
+			max = 3000
+		}
+		round_variable = temp1
+	}
 	
 	option = {
 		name = NWkurd.12.a
@@ -564,6 +629,7 @@ country_event = {
 		}
 		add_timed_idea = { idea = KRD_concessions_kurdish_sheikhs days = 90 }
 		add_manpower = 60000
+		add_equipment_to_stockpile = { type = infantry_equipment amount = temp1 }
 		capital_scope = {
 			create_unit = {
 				division = "name = \"Kurdish Cavalry\" division_template = \"Kurdish Cavalry\" start_experience_factor = 0.2"
@@ -572,6 +638,7 @@ country_event = {
 				allow_spawning_on_enemy_provs = yes
 			}
 		}
+		clear_variable = temp1
 	}
 	
 	option = {
@@ -579,7 +646,7 @@ country_event = {
 		ai_chance = {
 			factor = 50
 		}
-		
+		clear_variable = temp1
 	}
 }
 
@@ -645,14 +712,28 @@ country_event = {
 				allow_spawning_on_enemy_provs = yes
 			}
 		}
-		add_civil_war_target = FROM
-		FROM = {
-			declare_war_on = {
-				target = ROOT
-				type = civil_war
+		hidden_effect = {
+			every_state = {
+				limit = {
+					NOT = { is_fully_controlled_by = ROOT }
+					owner = {
+						tag = FROM
+					}
+				}
+				teleport_armies = {
+					limit = {
+						tag = ROOT
+					}
+					to_state_array = owned_controlled_states
+				}
 			}
-			add_civil_war_target = ROOT
-			set_country_flag = { flag = KRD_offer_peace_iran_enable_flag days = 30 value = 1 }
+			FROM = {
+				set_country_flag = { flag = KRD_offer_peace_iran_enable_flag days = 30 value = 1 }
+			}
+		}
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
 		}
 	}
 }
@@ -709,14 +790,28 @@ country_event = {
 				allow_spawning_on_enemy_provs = yes
 			}
 		}
-		add_civil_war_target = FROM
-		FROM = {
-			declare_war_on = {
-				target = ROOT
-				type = civil_war
+		hidden_effect = {
+			every_state = {
+				limit = {
+					NOT = { is_fully_controlled_by = ROOT }
+					owner = {
+						tag = FROM
+					}
+				}
+				teleport_armies = {
+					limit = {
+						tag = ROOT
+					}
+					to_state_array = owned_controlled_states
+				}
 			}
-			add_civil_war_target = ROOT
-			set_country_flag = { flag = KRD_offer_peace_iraq_enable_flag days = 30 value = 1 }
+			FROM = {
+				set_country_flag = { flag = KRD_offer_peace_iraq_enable_flag days = 30 value = 1 }
+			}
+		}
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
 		}
 	}
 }
@@ -769,14 +864,28 @@ country_event = {
 				allow_spawning_on_enemy_provs = yes
 			}
 		}
-		add_civil_war_target = FROM
-		FROM = {
-			declare_war_on = {
-				target = ROOT
-				type = civil_war
+		hidden_effect = {
+			every_state = {
+				limit = {
+					NOT = { is_fully_controlled_by = ROOT }
+					owner = {
+						tag = FROM
+					}
+				}
+				teleport_armies = {
+					limit = {
+						tag = ROOT
+					}
+					to_state_array = owned_controlled_states
+				}
 			}
-			add_civil_war_target = ROOT
-			set_country_flag = { flag = KRD_offer_peace_syria_enable_flag days = 30 value = 1 }
+			FROM = {
+				set_country_flag = { flag = KRD_offer_peace_syria_enable_flag days = 30 value = 1 }
+			}
+		}
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
 		}
 	}
 }

@@ -8,8 +8,8 @@ focus_tree = {
 			add = 0
 			#NOT = { has_global_flag = NW_TUR_OLD_FOCUS_TREE }
 			OR = {
-				tag = TUR
-				tag = TRK
+				original_tag = TUR
+				original_tag = TRK
 			}
 		}
 	}
@@ -117,11 +117,13 @@ focus_tree = {
 				#	has_full_control_of_state = 945
 				#	is_subject_of = event_target:NW_france_scope
 				#}
-				any_other_country = {
-					has_full_control_of_state = 945
-					is_major = no
-					is_in_faction = no
-					NOT = { has_war_with = ROOT }
+				945 = {
+					owner = {
+						has_full_control_of_state = PREV
+						is_major = no
+						is_in_faction = no
+						NOT = { has_war_with = ROOT }
+					}
 				}
 			}
 			NOT = { has_full_control_of_state = 945 }
@@ -227,9 +229,11 @@ focus_tree = {
 			add_state_claim = 962
 			if = {
 				limit = {
-					any_other_country = {
-						owns_state = 676
-						owns_state = 962
+					676 = {
+						owner = {
+							NOT = { tag = ROOT }
+							owns_state = 962
+						}
 					}
 				}
 				676 = { owner = { country_event = { id = NW_new_turkey.5 days = 1 } } }
@@ -2481,6 +2485,7 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
+			NOT = { has_country_flag = kurd_revolt_flag }
 		}
 		bypass = {
 		}
@@ -2523,6 +2528,14 @@ focus_tree = {
 						division = "name = \"4. Kurdish Division\" division_template = \"Kurdish Division\" start_experience_factor = 0.3"
 						owner = PREV
 					}
+				}
+				hidden_effect = {
+					if = {
+						limit = { NOT = { has_focus_tree = generic_focus } }
+						load_focus_tree = { tree = generic_focus keep_completed = no }
+					}
+					drop_cosmetic_tag = yes
+					remove_all_KRD_ideas = yes
 				}
 			}
 		}
@@ -4663,13 +4676,14 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					any_other_country = {
-						NOT = {
-							tag = TUN
-							has_war_with = ROOT
-						}
-						any_owned_state = {
-							is_core_of = TUN
+					any_of_scopes = {
+						array = TUN.core_states
+						owner = {
+							NOT = {
+								tag = ROOT
+								tag = TUN
+								has_war_with = ROOT
+							}
 						}
 					}
 				}
@@ -4684,13 +4698,14 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					any_other_country = {
-						NOT = {
-							tag = LBA
-							has_war_with = ROOT
-						}
-						any_owned_state = {
-							is_core_of = LBA
+					any_of_scopes = {
+						array = LBA.core_states
+						owner = {
+							NOT = {
+								tag = ROOT
+								tag = LBA
+								has_war_with = ROOT
+							}
 						}
 					}
 				}
@@ -5124,14 +5139,13 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_request_northern_cyprus"
 			if = {
 				limit = {
-					OR = {
-						ENG = { has_full_control_of_state = 772 }
-						any_country = {
+					772 = {
+						owner = {
+							has_full_control_of_state = PREV
 							OR = {
-								is_puppet_of = ENG
+								tag = ENG
 								is_subject_of = ENG
 							}
-							has_full_control_of_state = 772
 						}
 					}
 				}
@@ -5232,6 +5246,16 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_create_kurdish_association"
 			release_puppet = KRD
 			set_autonomy = { target = KRD autonomy_state = autonomy_dominion }
+			hidden_effect = {
+				KRD = {
+					if = {
+						limit = { NOT = { has_focus_tree = generic_focus } }
+						load_focus_tree = { tree = generic_focus keep_completed = no }
+					}
+					drop_cosmetic_tag = yes
+					remove_all_KRD_ideas = yes
+				}
+			}
 		}
 	}
 	
@@ -5254,10 +5278,12 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
-			any_other_country = {
-				is_subject = no
-				any_owned_state = {
-					is_core_of = KRD
+			any_of_scopes = {
+				array = KRD.core_states
+				tooltip = any_of_core_states_KRD_tt
+				owner = {
+					NOT = { tag = ROOT }
+					is_subject = no
 				}
 			}
 		}
@@ -5275,6 +5301,14 @@ focus_tree = {
 			}
 			KRD = {
 				add_ideas = neutrality_idea
+				hidden_effect = {
+					if = {
+						limit = { NOT = { has_focus_tree = generic_focus } }
+						load_focus_tree = { tree = generic_focus keep_completed = no }
+					}
+					drop_cosmetic_tag = yes
+					remove_all_KRD_ideas = yes
+				}
 			}
 			every_other_country = {
 				limit = {
@@ -7420,6 +7454,10 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_set_fire_of_revolution"
 			add_ideas = TUR_set_fire_of_revolution_idea
+			set_temp_variable = { troz_threat_temp_var = 3 }
+			add_to_variable = { global.troz_threat_var = troz_threat_temp_var }
+			custom_effect_tooltip = troz_threat_tt1
+			set_var_for_troz_threat_dyn = yes
 		}
 	}
 	
@@ -7561,7 +7599,7 @@ focus_tree = {
 			}
 			unlock_decision_category_tooltip = TUR_unification_of_sunni_middle_east_category
 			add_to_variable = { global.troz_threat_var = 1 }
-			custom_effect_tooltip = troz_threat_tt1
+			custom_effect_tooltip = troz_threat_tt4
 			set_var_for_troz_threat_dyn = yes
 		}
 	}
@@ -8831,8 +8869,15 @@ focus_tree = {
 	focus = {
 		id = TUR_start_modernization_of_army
 		icon = GFX_goal_generic_build_tank
-		x = 39
+		x = 33
 		y = 0
+		offset = {
+			x = 6
+			y = 0
+			trigger = {
+				check_variable = { TUR_loyalty_anarchists_var > 2 }
+			}
+		}
 		relative_position_id = TUR_correction_constitution
 		
 		cost = 7.2
@@ -8847,7 +8892,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -8904,7 +8949,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -8991,7 +9036,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9052,7 +9097,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9113,7 +9158,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9168,7 +9213,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9228,7 +9273,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9283,7 +9328,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9338,7 +9383,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT
@@ -9394,7 +9439,7 @@ focus_tree = {
 				factor = 1.5
 				OR = {
 					has_war = yes
-					any_country = {
+					any_neighbor_country = {
 						OR = {
 							has_wargoal_against = ROOT
 							is_justifying_wargoal_against = ROOT

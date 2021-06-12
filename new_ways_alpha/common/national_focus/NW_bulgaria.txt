@@ -106,8 +106,8 @@ focus_tree = {
 		prerequisite = { focus = BUL_fascist_coup }
 		available = {
 			is_subject = no
-			any_other_country = {
-				original_tag = GER
+			any_country_with_original_tag = {
+				original_tag_to_check = GER
 				has_government = fascism
 				is_faction_leader = yes
 				NOT = { has_war_with = ROOT }
@@ -1184,9 +1184,11 @@ focus_tree = {
 				has_government = fascism
 				has_government = monarchy
 			}
-			any_state = {
-				has_state_flag = BUL_historical_bulgarian_claim_flag
-				is_fully_controlled_by = BUL
+			any_of_scopes = {
+				array = global.BUL_historical_bulgarian_claim_states
+				tooltip = BUL_historical_bulgarian_claim_flag
+				hidden_trigger = { has_state_flag = BUL_historical_bulgarian_claim_flag }
+				is_fully_controlled_by = ROOT
 			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
@@ -5106,16 +5108,24 @@ focus_tree = {
 		available = {
 			NOT = { has_government = democratic }
 			#NOT = { has_idea = BUL_second_national_catastrophe }
-			any_country = {
-				OR = {
-					tag = GER
-					tag = ENG
-					tag = SOV
+			OR = {
+				GER = {
+					custom_trigger_tooltip = {
+						tooltip = BUL_industrial_investments_in_bulgaria_flag
+						has_country_flag = BUL_industrial_investments_in_bulgaria_flag
+					}
 				}
-				#BUL_country_can_influence_bulgaria = yes
-				custom_trigger_tooltip = {
-					tooltip = BUL_industrial_investments_in_bulgaria_flag
-					has_country_flag = BUL_industrial_investments_in_bulgaria_flag
+				ENG = {
+					custom_trigger_tooltip = {
+						tooltip = BUL_industrial_investments_in_bulgaria_flag
+						has_country_flag = BUL_industrial_investments_in_bulgaria_flag
+					}
+				}
+				SOV = {
+					custom_trigger_tooltip = {
+						tooltip = BUL_industrial_investments_in_bulgaria_flag
+						has_country_flag = BUL_industrial_investments_in_bulgaria_flag
+					}
 				}
 			}
 			is_subject = no
@@ -6394,13 +6404,12 @@ focus_tree = {
 				}
 				AND = {
 					is_faction_leader = yes
-					any_country = {
-						is_in_faction_with = ROOT
+					any_allied_country = {
 						has_full_control_of_state = 341 #EDIRNE
 						has_full_control_of_state = 843 #ISTANBUL
 					}
 				}
-				any_country = {
+				any_allied_country = {
 					is_subject_of = ROOT
 					has_full_control_of_state = 341 #EDIRNE
 					has_full_control_of_state = 843 #ISTANBUL
@@ -6487,11 +6496,7 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					any_country = {
-						OR = {
-							is_in_faction_with = ROOT
-							is_subject_of = ROOT
-						}			
+					any_allied_country = {
 						has_full_control_of_state = 341 #EDIRNE
 						has_full_control_of_state = 843 #ISTANBUL
 					}
@@ -6526,15 +6531,14 @@ focus_tree = {
 		cost = 7.2
 
 		available = {
-			any_state = {
-				BUL_state_is_in_the_black_sea = yes
+			any_of_scopes = {
+				array = global.is_in_the_black_sea
+				tooltip = BUL_state_is_in_the_black_sea_tt
 				controller = {
 					NOT = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-							is_in_faction_with = ROOT
-						}
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6542,17 +6546,14 @@ focus_tree = {
 		}
 
 		bypass = {
-			NOT = {
-				any_state = {
-					BUL_state_is_in_the_black_sea = yes
-					controller = {
-						NOT = {
-							OR = {
-								tag = ROOT
-								is_subject_of = ROOT
-								is_in_faction_with = ROOT
-							}
-						}
+			all_of_scopes = {
+				array = global.is_in_the_black_sea
+				tooltip = BUL_state_is_in_the_black_sea_tt
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6565,13 +6566,11 @@ focus_tree = {
 				limit = {
 					BUL_state_is_in_the_black_sea = yes
 					NOT = { is_controlled_by = ROOT }
-					NOT = {
-						any_country = {
-							OR = {
-								is_in_faction_with = ROOT
-								is_subject_of = ROOT
+					ROOT = {
+						NOT = {
+							any_allied_country = {
+								controls_state = PREV.PREV
 							}
-							controls_state = PREV
 						}
 					}
 					NOT = { is_claimed_by = ROOT }
@@ -6580,13 +6579,16 @@ focus_tree = {
 				set_state_flag = BUL_dominance_in_the_seas_claim_flag
 			}
 			if = {
-			limit = {
-					any_other_country = {
-						any_controlled_state = {
-							BUL_state_is_in_the_black_sea = yes
+				limit = {
+					any_of_scopes = {
+						array = global.is_in_the_black_sea
+						controller = {
+							NOT = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+							}
 						}
-						NOT = { is_subject_of = ROOT }
-						NOT = { is_in_faction_with = ROOT }
 					}
 				}
 				custom_effect_tooltip = BUL_dominance_in_the_black_sea_wargoals_tt
@@ -6626,15 +6628,14 @@ focus_tree = {
 		cost = 5
 
 		available = {
-			any_state = {
-				BUL_state_is_in_the_aegean_sea = yes
+			any_of_scopes = {
+				array = global.is_in_the_aegean_sea
+				tooltip = BUL_state_is_in_the_aegean_sea_tt
 				controller = {
 					NOT = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-							is_in_faction_with = ROOT
-						}
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6642,17 +6643,14 @@ focus_tree = {
 		}
 
 		bypass = {
-			NOT = {
-				any_state = {
-					BUL_state_is_in_the_aegean_sea = yes
-					controller = {
-						NOT = {
-							OR = {
-								tag = ROOT
-								is_subject_of = ROOT
-								is_in_faction_with = ROOT
-							}
-						}
+			all_of_scopes = {
+				array = global.is_in_the_aegean_sea
+				tooltip = BUL_state_is_in_the_aegean_sea_tt
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6665,13 +6663,11 @@ focus_tree = {
 				limit = {
 					BUL_state_is_in_the_aegean_sea = yes
 					NOT = { is_controlled_by = ROOT }
-					NOT = {
-						any_country = {
-							OR = {
-								is_in_faction_with = ROOT
-								is_subject_of = ROOT
+					ROOT = {
+						NOT = {
+							any_allied_country = {
+								controls_state = PREV.PREV
 							}
-							controls_state = PREV
 						}
 					}
 					NOT = { is_claimed_by = ROOT }
@@ -6681,14 +6677,17 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-						any_other_country = {
-							any_controlled_state = {
-								BUL_state_is_in_the_aegean_sea = yes
+					any_of_scopes = {
+						array = global.is_in_the_aegean_sea
+						controller = {
+							NOT = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
 							}
-							NOT = { is_subject_of = ROOT }
-							NOT = { is_in_faction_with = ROOT }
 						}
 					}
+				}
 				custom_effect_tooltip = BUL_dominance_in_the_black_sea_wargoals_tt
 				every_other_country = {
 					limit = {
@@ -6726,15 +6725,14 @@ focus_tree = {
 		cost = 5
 
 		available = {
-			any_state = {
-				BUL_state_is_in_the_adriatic_sea = yes
+			any_of_scopes = {
+				array = global.is_in_the_adriatic_sea
+				tooltip = BUL_state_is_in_the_adriatic_sea_tt
 				controller = {
 					NOT = {
-						OR = {
-							tag = ROOT
-							is_subject_of = ROOT
-							is_in_faction_with = ROOT
-						}
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6742,17 +6740,14 @@ focus_tree = {
 		}
 
 		bypass = {
-			NOT = {
-				any_state = {
-					BUL_state_is_in_the_adriatic_sea = yes
-					controller = {
-						NOT = {
-							OR = {
-								tag = ROOT
-								is_subject_of = ROOT
-								is_in_faction_with = ROOT
-							}
-						}
+			all_of_scopes = {
+				array = global.is_in_the_adriatic_sea
+				tooltip = BUL_state_is_in_the_adriatic_sea_tt
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
 					}
 				}
 			}
@@ -6765,13 +6760,11 @@ focus_tree = {
 				limit = {
 					BUL_state_is_in_the_adriatic_sea = yes
 					NOT = { is_controlled_by = ROOT }
-					NOT = {
-						any_country = {
-							OR = {
-								is_in_faction_with = ROOT
-								is_subject_of = ROOT
+					ROOT = {
+						NOT = {
+							any_allied_country = {
+								controls_state = PREV.PREV
 							}
-							controls_state = PREV
 						}
 					}
 					NOT = { is_claimed_by = ROOT }
@@ -6781,12 +6774,15 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					any_other_country = {
-						any_controlled_state = {
-							BUL_state_is_in_the_adriatic_sea = yes
+					any_of_scopes = {
+						array = global.is_in_the_adriatic_sea
+						controller = {
+							NOT = {
+								tag = ROOT
+								is_subject_of = ROOT
+								is_in_faction_with = ROOT
+							}
 						}
-						NOT = { is_subject_of = ROOT }
-						NOT = { is_in_faction_with = ROOT }
 					}
 				}
 				custom_effect_tooltip = BUL_dominance_in_the_black_sea_wargoals_tt

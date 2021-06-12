@@ -1142,15 +1142,9 @@ news_event = {
 		has_global_flag = mexico_civil_war
 		NOT = { has_global_flag = mcw1_over }
 		MEX = { has_civil_war = no }
-		any_other_country = {
-			original_tag = MEX
+		any_country_with_original_tag = {
+			original_tag_to_check = MEX
 			NOT = { has_government = neutrality }
-		}
-		all_country = {
-			OR = {
-				NOT = { original_tag = MEX }
-				NOT = { has_government = neutrality }
-			}
 		}
 	}
 
@@ -1188,15 +1182,9 @@ news_event = {
 		has_global_flag = mexico_civil_war
 		NOT = { has_global_flag = mcw1_over }
 		MEX = { has_civil_war = no }
-		any_other_country = {
-			original_tag = MEX
+		any_country_with_original_tag = {
+			original_tag_to_check = MEX
 			has_government = neutrality
-		}
-		all_country = {
-			OR = {
-				NOT = { original_tag = MEX }
-				has_government = neutrality
-			}
 		}
 	}
 
@@ -4636,6 +4624,8 @@ news_event = {
 	is_triggered_only = yes
 	major = yes
 	
+	immediate = { set_global_flag = intervention_in_italy_flag }
+	
 	option = {
 		name = trworldnews.108.a
 		trigger = {
@@ -4753,10 +4743,10 @@ news_event = {
 			country_event = { id = NWethiopia.12 days = 1 }
 		}
 		country_event = { id = NWethiopia.14 days = 3 }
-		every_country = {
+		every_enemy_country = {
 			limit = {
-				has_war_with = ETH
 				is_subject = no
+				OR = { is_faction_leader = yes is_in_faction = no }
 			}
 			white_peace = ETH
 		}
@@ -4767,11 +4757,12 @@ news_event = {
 			set_rule = { can_join_factions = yes }
 			if = {
 				limit = {
+					has_global_flag = intervention_in_italy_flag
 					ITA = {
 						OR = {
-							has_war_with = SOV
-							has_war_with = ENG
-							has_war_with = FRA
+							has_defensive_war_with = SOV
+							has_defensive_war_with = ENG
+							has_defensive_war_with = FRA
 						}
 					}
 				}
@@ -5952,28 +5943,49 @@ news_event = {
 	
 	trigger = {
 		NOT = { has_global_flag = FSW_flag }
-		any_country = {
-			OR = {
-				has_government = communism
-				has_government = trozkism
-			}
-			has_defensive_war = yes
-			is_subject = no
-			any_enemy_country = {
+		OR = {
+			any_of_scopes = {
+				array = global.is_trozkism
+				has_defensive_war = yes
 				is_subject = no
-				NOT = { original_tag = PREV }
-				OR = {
-					has_government = communism
-					has_government = trozkism
+				any_enemy_country = {
+					is_subject = no
+					NOT = { original_tag = PREV }
+					OR = {
+						has_government = communism
+						has_government = trozkism
+					}
+					has_offensive_war_with = PREV
+					AND = {
+						is_literally_china = no
+						PREV = { is_literally_china = no }
+					}
+					AND = {
+						is_literally_spain = no
+						PREV = { is_literally_spain = no }
+					}
 				}
-				has_offensive_war_with = PREV
-				AND = {
-					is_literally_china = no
-					PREV = { is_literally_china = no }
-				}
-				AND = {
-					is_literally_spain = no
-					PREV = { is_literally_spain = no }
+			}
+			any_of_scopes = {
+				array = global.is_communism
+				has_defensive_war = yes
+				is_subject = no
+				any_enemy_country = {
+					is_subject = no
+					NOT = { original_tag = PREV }
+					OR = {
+						has_government = communism
+						has_government = trozkism
+					}
+					has_offensive_war_with = PREV
+					AND = {
+						is_literally_china = no
+						PREV = { is_literally_china = no }
+					}
+					AND = {
+						is_literally_spain = no
+						PREV = { is_literally_spain = no }
+					}
 				}
 			}
 		}
@@ -6060,8 +6072,8 @@ news_event = {
 	
 	trigger = {
 		NOT = { has_global_flag = FAW_flag }
-		any_country = {
-			has_government = anarchism
+		any_of_scopes = {
+			array = global.is_anarchism
 			has_defensive_war = yes
 			is_subject = no
 			any_enemy_country = {
@@ -6438,7 +6450,6 @@ news_event = {
 		}
 	}
 }
-
 
 #В МИРЕ ОДНА ИДЕОЛОГИЯ
 news_event = {

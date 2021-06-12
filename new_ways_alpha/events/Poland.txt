@@ -50,8 +50,8 @@ country_event = {
 			modifier = {
 				factor = 0
 				OR = {
-					any_other_country = {
-						is_major = yes
+					any_of_scopes = {
+						array = global.majors
 						OR = {
 							is_in_faction_with = POL
 							has_guaranteed = POL
@@ -1402,24 +1402,25 @@ country_event = {
 country_event = {
 	id = poland.war.901
 	hidden = yes 
-	immediate = { 
+	immediate = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event poland.war.901" 
 		clr_country_flag = POL_truce
 	}
 	
 	trigger = {
-		any_country = {
-			OR = {
-				is_in_faction_with = POL
-				POL = { is_subject_of = PREV }
-				NOT = { is_subject_of = POL }
-			}
-			ROOT = {
-				has_war_with = POL
-				has_country_flag = POL_truce
-				has_war_with = PREV
+		has_war_with = POL
+		has_country_flag = POL_truce
+		POL = {
+			any_allied_country = {
+				has_war_with = ROOT
+				OR = {
+					is_in_faction_with = POL
+					POL = { is_subject_of = THIS }
+					NOT = { is_subject_of = POL }
+				}
 			}
 		}
+			
 	}
 
 	mean_time_to_happen = {
@@ -1438,10 +1439,11 @@ country_event = {
 		
 		if = {
 			limit = {
-				any_country = {
-					has_country_flag = POL_truce
-					has_war_with = POL
-					POL = { is_in_faction_with = ROOT }
+				POL = {
+					any_enemy_country = {
+						has_country_flag = POL_truce
+					}
+					is_in_faction_with = ROOT
 				}
 			}
 			country_event = { id = poland.war.30 }

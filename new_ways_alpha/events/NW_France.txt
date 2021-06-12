@@ -1862,8 +1862,7 @@ country_event = {
 				factor = 0
 				tag = POL
 				is_in_faction = yes
-				any_state = {
-					is_owned_by = POL
+				any_owned_state = {
 					NOT = { is_claimed_by = GER }
 				}
 			}
@@ -1946,8 +1945,7 @@ country_event = {
 			modifier = {
 				factor = 0
 				tag = POL
-				any_state = {
-					is_owned_by = POL
+				any_owned_state = {
 					is_claimed_by = GER
 				}
 			}
@@ -1991,8 +1989,7 @@ country_event = {
 				factor = 0
 				tag = POL
 				is_in_faction = yes
-				any_state = {
-					is_owned_by = POL
+				any_owned_state = {
 					NOT = { is_claimed_by = SOV }
 				}
 			}
@@ -2075,8 +2072,7 @@ country_event = {
 			modifier = {
 				factor = 0
 				tag = POL
-				any_state = {
-					is_owned_by = POL
+				any_owned_state = {
 					is_claimed_by = SOV
 				}
 			}
@@ -2787,11 +2783,11 @@ country_event = {
 			}
 			modifier = {
 				factor = 0
-				any_country = {
+				any_of_scopes = {
+					array = global.majors
 					NOT = { tag = FROM }
-					is_major = yes
 					is_faction_leader = yes
-					ROOT = { is_in_faction_with = PREV }
+					is_in_faction_with = ROOT
 				}
 			}
 			modifier = {
@@ -3312,10 +3308,25 @@ country_event = {
 			}
 			if = {
 				limit = {
-					any_other_country = {
-						has_country_flag = hbbrg_flag
-						has_completed_focus = HBBRG_first_state_europe
-						has_country_flag = paneuropean_council_member_flag
+					OR = {
+						any_country_with_original_tag = {
+							original_tag_to_check = AUS
+							has_country_flag = hbbrg_flag
+							has_completed_focus = HBBRG_first_state_europe
+							has_country_flag = paneuropean_council_member_flag
+						}
+						any_country_with_original_tag = {
+							original_tag_to_check = HUN
+							has_country_flag = hbbrg_flag
+							has_completed_focus = HBBRG_first_state_europe
+							has_country_flag = paneuropean_council_member_flag
+						}
+						any_country_with_original_tag = {
+							original_tag_to_check = CZE
+							has_country_flag = hbbrg_flag
+							has_completed_focus = HBBRG_first_state_europe
+							has_country_flag = paneuropean_council_member_flag
+						}
 					}
 				}
 				every_country = {
@@ -3603,21 +3614,21 @@ country_event = {
 				}
 				save_party_popularity = yes
 				random_country = {
-						limit = { has_country_flag = paneuropean_leader }
-						if = {
-							limit = { check_variable = { var = FRA.confederation_system_var value = FRA.independent_system_var compare = greater_than } }
-							set_autonomy = {
-								target = PREV
-								autonomy_state = autonomy_dominion
-							}
-						}
-						else = {
-							set_autonomy = {
-								target = PREV
-								autonomy_state = autonomy_european_union_state
-							}
+					limit = { has_country_flag = paneuropean_leader }
+					if = {
+						limit = { check_variable = { var = FRA.confederation_system_var value = FRA.independent_system_var compare = greater_than } }
+						set_autonomy = {
+							target = PREV
+							autonomy_state = autonomy_dominion
 						}
 					}
+					else = {
+						set_autonomy = {
+							target = PREV
+							autonomy_state = autonomy_european_union_state
+						}
+					}
+				}
 				load_party_popularity = yes
 			}
 		}
@@ -4134,14 +4145,18 @@ country_event = {
 				}
 			}
 		}
-		NOT = {
-			any_state = {
-				NOT = { state = 114 }
-				is_controlled_by = FRA
-				OR = {
-					is_core_of = GER
-					is_core_of = ITA
-				}
+		all_of_scopes = {
+			array = GER.core_states
+			OR = {
+				region = 169
+				NOT = { is_controlled_by = FRA }
+			}
+		}
+		all_of_scopes = {
+			array = ITA.core_states
+			OR = {
+				region = 169
+				NOT = { is_controlled_by = FRA }
 			}
 		}
 		16 = {
@@ -4213,7 +4228,7 @@ country_event = {
 							is_owned_by = FRA
 							is_controlled_by = GER
 						}
-						add_to_variable = { GER_FRA_occupy_state = 1 }
+						add_to_variable = { ROOT.GER_FRA_occupy_state = 1 }
 					}
 					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): GER_FRA_occupy_state: [?GER_FRA_occupy_state]"
 				}
@@ -4224,7 +4239,7 @@ country_event = {
 							is_owned_by = FRA
 							is_controlled_by = ITA
 						}
-						add_to_variable = { ITA_FRA_occupy_state = 1 }
+						add_to_variable = { ROOT.ITA_FRA_occupy_state = 1 }
 					}
 					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): ITA_FRA_occupy_state: [?ITA_FRA_occupy_state]"
 				}
@@ -4757,10 +4772,17 @@ country_event = {
 			owns_state = 459
 			owns_state = 460
 		}
-		any_country = {
-			has_war_with = ROOT
-			controls_state = 459
-			controls_state = 460
+		OR = {
+			459 = {
+				controller = {
+					has_war_with = ROOT
+				}
+			}
+			460 = {
+				controller = {
+					has_war_with = ROOT
+				}
+			}
 		}
 		NOT = {
 			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
@@ -6823,8 +6845,7 @@ country_event = {
 					has_government = anarchism
 					AND = {
 						is_faction_leader = yes
-						any_other_country = {
-							is_in_faction_with = ROOT
+						any_allied_country = {
 							NOT = { is_subject_of = ROOT }
 						}
 					}
@@ -7495,8 +7516,9 @@ country_event = {
 				factor = 0
 				OR = {
 					NOT = {
-						any_other_country = {
-							is_major = yes
+						any_of_scopes = {
+							array = global.majors
+							NOT = { tag = ROOT }
 							is_in_faction_with = ROOT
 						}
 					}
@@ -7741,8 +7763,9 @@ country_event = {
 				OR = {
 					NOT = {
 						has_government = fascism
-						any_other_country = {
-							is_major = yes
+						any_of_scopes = {
+							array = global.majors
+							NOT = { tag = ROOT }
 							is_in_faction_with = ROOT
 						}
 					}
@@ -7852,22 +7875,15 @@ country_event = {
 				remove_core_of = FRR
 			}
 		}
-		if = {
+		every_enemy_country = {
 			limit = {
-				any_country = {
-					has_war_with = ROOT
+				OR = {
+					tag = SYR
+					tag = LEB
+					tag = FIC
 				}
 			}
-			every_enemy_country = {
-				limit = {
-					OR = {
-						tag = SYR
-						tag = LEB
-						tag = FIC
-					}
-				}
-				white_peace = ROOT
-			}
+			white_peace = ROOT
 		}
 	}
 }
@@ -7957,382 +7973,3 @@ country_event = {
 		}
 	}
 }
-
-#test
-country_event = {
-	id = NWfrance.999
-	title = "TEST 999"
-	desc = "TEST EVENT"
-	picture = GFX_report_event_poland_rejects
-	is_triggered_only = yes
-	
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWfrance.999" }
-	
-	option = {
-		name = KEK
-		hidden_effect = {
-			random_owned_state = {
-				SAI = { transfer_state = PREV }
-				random_neighbor_state = {
-					limit = { is_owned_by = ROOT }
-					SAI = { transfer_state = PREV }
-				}
-			}
-			SAI = {
-				set_cosmetic_tag = AFG
-				add_popularity = {
-					ideology = fascism
-					popularity = 1
-				}
-				set_politics = {
-					ruling_party = fascism
-					elections_allowed = no
-				}
-			}
-		}
-		start_civil_war = {
-			ideology = communism
-			size = 0.5
-		}
-		every_country = {
-			limit = { original_tag = ROOT }
-			SAI = {
-				declare_war_on = {
-					target = PREV
-					type = annex_everything
-				}
-			}
-		}
-	}
-	
-	option = {
-		name = KEK2
-		SOV = { country_event = { id = NWfrance.310 } }
-	}
-	
-	option = {
-		name = KEK3
-		if = {
-			limit = {
-				NOT = { country_exists = MOR }
-				any_state = {
-					is_core_of = MOR
-					is_owned_by = ROOT
-				}
-			}
-			release = MOR
-			hidden_effect = {
-				MOR = {
-					add_popularity = { ideology = monarchy popularity = 0.2 }
-					set_politics = { ruling_party = monarchy elections_allowed = no }
-				}
-			}
-		}
-		else_if = {
-			limit = { MOR = { is_subject_of = ROOT } }
-			set_autonomy = {
-				target = MOR
-				autonomy_state = autonomy_free
-			}
-			hidden_effect = {
-				MOR = {
-					add_popularity = { ideology = monarchy popularity = 0.2 }
-					set_politics = { ruling_party = monarchy elections_allowed = no }
-				}
-			}
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = TUN }
-				any_state = {
-					is_core_of = TUN
-					is_owned_by = ROOT
-				}
-			}
-			release = TUN
-			hidden_effect = {
-				TUN = {
-					add_popularity = { ideology = monarchy popularity = 0.2 }
-					set_politics = { ruling_party = monarchy elections_allowed = no }
-				}
-			}
-		}
-		else_if = {
-			limit = { TUN = { is_subject_of = ROOT } }
-			set_autonomy = {
-				target = TUN
-				autonomy_state = autonomy_free
-			}
-			hidden_effect = {
-				TUN = {
-					add_popularity = { ideology = monarchy popularity = 0.2 }
-					set_politics = { ruling_party = monarchy elections_allowed = no }
-				}
-			}
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = LEB }
-				any_state = {
-					is_core_of = LEB
-					is_owned_by = ROOT
-				}
-			}
-			release = LEB
-			hidden_effect = {
-				LEB = { drop_cosmetic_tag = yes }
-			}
-		}
-		else_if = {
-			limit = { LEB = { is_subject_of = ROOT } }
-			set_autonomy = {
-				target = LEB
-				autonomy_state = autonomy_free
-			}
-			hidden_effect = {
-				LEB = { drop_cosmetic_tag = yes }
-			}
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = SYR }
-				any_state = {
-					is_core_of = SYR
-					is_owned_by = ROOT
-				}
-			}
-			release = SYR
-			hidden_effect = {
-				SYR = { drop_cosmetic_tag = yes }
-			}
-		}
-		else_if = {
-			limit = { SYR = { is_subject_of = ROOT } }
-			set_autonomy = {
-				target = SYR
-				autonomy_state = autonomy_free
-			}
-			hidden_effect = {
-				SYR = { drop_cosmetic_tag = yes }
-			}
-		}
-		#Asia
-		if = {
-			limit = { NOT = { country_exists = FIC } }
-			if = {
-				limit = {
-					NOT = { country_exists = VIN }
-					any_state = {
-						is_core_of = VIN
-						is_owned_by = ROOT
-					}
-				}
-				release_puppet = VIN
-			}
-			if = {
-				limit = {
-					NOT = { country_exists = LAO }
-					any_state = {
-						is_core_of = LAO
-						is_owned_by = ROOT
-					}
-				}
-				release_puppet = LAO
-			}
-			if = {
-				limit = {
-					NOT = { country_exists = CAM }
-					any_state = {
-						is_core_of = CAM
-						is_owned_by = ROOT
-					}
-				}
-				release_puppet = CAM
-			}
-		}
-		else_if = {
-			limit = { FIC = { is_subject_of = ROOT } }
-			FIC = {
-				add_autonomy_ratio = {
-					value = 1.0
-					localization = FRA_conduct_decolonization
-				}
-			}
-		}
-		#Africa
-		if = {
-			limit = {
-				NOT = { country_exists = ALG }
-				any_state = {
-					is_core_of = ALG
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = ALG
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = MRT }
-				any_state = {
-					is_core_of = MRT
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = MRT
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = SEN }
-				any_state = {
-					is_core_of = SEN
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = SEN
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = MLI }
-				any_state = {
-					is_core_of = MLI
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = MLI
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = NGR }
-				any_state = {
-					is_core_of = NGR
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = NGR
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = CAR }
-				any_state = {
-					is_core_of = CAR
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = CAR
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = GAB }
-				any_state = {
-					is_core_of = GAB
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = GAB
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = DJI }
-				any_state = {
-					is_core_of = DJI
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = DJI
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = MAD }
-				any_state = {
-					is_core_of = MAD
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = MAD
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = CHA }
-				any_state = {
-					is_core_of = CHA
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = CHA
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = CMR }
-				any_state = {
-					is_core_of = CMR
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = CMR
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = RCG }
-				any_state = {
-					is_core_of = RCG
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = RCG
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = DAH }
-				any_state = {
-					is_core_of = DAH
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = DAH
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = TOG }
-				any_state = {
-					is_core_of = TOG
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = TOG
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = VOL }
-				any_state = {
-					is_core_of = VOL
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = VOL
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = IVO }
-				any_state = {
-					is_core_of = IVO
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = IVO
-		}
-		if = {
-			limit = {
-				NOT = { country_exists = GNA }
-				any_state = {
-					is_core_of = GNA
-					is_owned_by = ROOT
-				}
-			}
-			release_puppet = GNA
-		}
-	}
-}
-
-
-
-

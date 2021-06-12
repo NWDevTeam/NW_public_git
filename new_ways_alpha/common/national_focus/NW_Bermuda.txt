@@ -1533,16 +1533,12 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BMD_military_presence"
 			add_popularity = {
-				ideology = fascism
-				popularity = -0.10
+				ideology = democratic
+				popularity = -0.1
             }
 			add_popularity = {
-				ideology = communism
-				popularity = -0.10
-			}
-			add_popularity = {
 				ideology = neutrality
-				popularity = 0.05
+				popularity = 0.1
 			}
 			add_stability = 0.1
 		}
@@ -1635,6 +1631,7 @@ focus_tree = {
 			ENG = { controls_state = 698 }
 		}
 		bypass = {
+			controls_state = 698
 		}
 
 		completion_reward = {
@@ -1646,9 +1643,13 @@ focus_tree = {
 	focus = {
 		id = BMD_transfer_of_madeira #Передача Мадейры 
 		icon = GFX_z_goal_generic_papers
-		prerequisite = { focus = BMD_transfer_of_azores }
-		x = -1
-		y = 2
+		prerequisite = {
+			focus = BMD_transfer_of_azores
+			focus = BMD_invasion_of_azores
+		}
+		mutually_exclusive = { focus = BMD_invasion_of_madeira }
+		x = 0
+		y = 3
 		relative_position_id = BMD_transfer_of_azores
 		
 		cost = 7.2
@@ -1665,6 +1666,7 @@ focus_tree = {
 			ENG = { controls_state = 697 }
 		}
 		bypass = {
+			controls_state = 697
 		}
 
 		completion_reward = {
@@ -1755,9 +1757,10 @@ focus_tree = {
 		available = {
 			is_subject_of = ENG
 			ENG = { has_war_with = GER }
-			POR = { has_government = fascism controls_state = 698 } 
+			698 = { owner = { controls_state = PREV has_government = GER NOT = { is_in_faction_with = ENG } } }
 		}
 		bypass = {
+			controls_state = 698
 		}
 
 		completion_reward = {
@@ -1769,9 +1772,13 @@ focus_tree = {
 	focus = {
 		id = BMD_invasion_of_madeira #Вторжение на Мадейру
 		icon = GFX_goal_generic_occupy_states_ongoing_war
-		prerequisite = { focus = BMD_invasion_of_azores }
-		x = 1
-		y = 2
+		prerequisite = {
+			focus = BMD_transfer_of_azores
+			focus = BMD_invasion_of_azores
+		}
+		mutually_exclusive = { focus = BMD_transfer_of_madeira }
+		x = 0
+		y = 3
 		relative_position_id = BMD_invasion_of_azores
 		
 		cost = 7.2
@@ -1786,9 +1793,10 @@ focus_tree = {
 		available = {
 			is_subject_of = ENG
 			ENG = { has_war_with = GER }
-			POR = { has_government = fascism controls_state = 697 } 
+			697 = { owner = { controls_state = PREV has_government = GER NOT = { is_in_faction_with = ENG } } }
 		}
 		bypass = {
+			controls_state = 697
 		}
 
 		completion_reward = {
@@ -1806,7 +1814,7 @@ focus_tree = {
 			focus = BMD_invasion_of_madeira
 		}
 		x = 0
-		y = 1
+		y = 2
 		relative_position_id = BMD_disputes_with_bahamas
 		
 		cost = 7.2
@@ -1830,7 +1838,22 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BMD_dominion_of_west_indies"
-			ENG = { country_event = { id = bermuda.68 days = 1 } }
+			effect_tooltip = {
+				add_country_leader_trait = nationalist_symbol
+				add_country_leader_trait = imperial_connections
+				set_cosmetic_tag = WEST_INDIES
+				ENG = {
+					set_autonomy = {
+						target = ROOT
+						autonomy_state = autonomy_dominion
+					}
+				}
+				add_political_power = 300
+			}
+			ENG = {
+				country_event = { id = bermuda.68 hours = 6 }
+				custom_effect_tooltip = needs_approval
+			}
 		}
 	}
 	
@@ -2123,6 +2146,36 @@ focus_tree = {
 				remove_idea = AST_great_depression_1
 				add_idea = AST_great_depression_2
 			}
+		}
+	}
+	
+	focus = {
+		id = BMD_commonwealth_science #Наука Содружества
+		icon = GFX_focus_research2
+		prerequisite = { focus = BMD_fighting_great_depression }
+		x = 0
+		y = 1
+		relative_position_id = BMD_fighting_great_depression
+		
+		cost = 7.2
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			is_in_faction_with = ENG
+			compare_autonomy_state > autonomy_puppet
+		}
+		bypass = {
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BMD_commonwealth_science"
+			add_to_tech_sharing_group = commonwealth_research
 		}
 	}
 	
@@ -3277,14 +3330,6 @@ focus_tree = {
 				ENG = { country_event = { id = bermuda.125 days = 1 } }
 			}
 			ENG = { end_puppet = ROOT } 
-			create_country_leader = {
-				name = "Sir Henry Tucker" 
-				desc = "POLITICS_Sir_Henry_Tucker_DESC" 
-				picture = "Portrait_BMD_Sir_Henry_Tucker.dds" 
-				expire = "1965.1.1" 
-				ideology = conservatism 
-				traits = {  } 
-			}
 		}
 	}
 	
