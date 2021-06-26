@@ -148,11 +148,9 @@ scripted_gui = {
 		}
 		
 		ai_check = {
-			
 		}
 		
 		ai_check_scope = {
-			
 		}
 		
 		ai_weights = {
@@ -187,6 +185,328 @@ scripted_gui = {
 						FROM.FROM = {
 							owner = {
 								has_country_flag = state_coup_per_rate
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	state_urbanization = {
+	
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		
+		window_name = "state_urbanization_container"
+		
+		visible = {
+			ROOT = { has_completed_focus = COG_african_urbanization }
+			FROM.FROM = {
+				is_fully_controlled_by = ROOT
+				NOT = { has_state_category = megalopolis }
+			}
+		}
+
+		effects = {
+			state_urbanization_button_click = {
+				if = {
+					limit = { ROOT = { NOT = { has_country_flag = state_urbanization_1 } } }
+					FROM.FROM = {
+						set_state_flag = state_urbanization
+						save_global_event_target_as = state_urbanization_1
+						if = {
+							limit = { is_core_of = ROOT }
+							set_variable = { ROOT.var_days_remove_state_urbanization_1 = 90 }
+							else = {
+								set_variable = { ROOT.var_days_remove_state_urbanization_1 = 270 }
+							}
+						}
+						if = {
+							limit = {
+								OR = {
+									has_state_category = large_town
+									has_state_category = town
+									has_state_category = city
+								}
+							}
+							multiply_variable = { ROOT.var_days_remove_state_urbanization_1 = 1.5 }
+							else_if = {
+								limit = {
+									OR = {
+										has_state_category = large_city
+										has_state_category = metropolis
+									}
+								}
+								multiply_variable = { ROOT.var_days_remove_state_urbanization_1 = 2 }
+							}
+						}
+					}
+					ROOT = {
+						set_country_flag = state_urbanization_1
+						hidden_effect = { activate_decision = COG_state_urbanization_1 }
+						unlock_decision_tooltip = { decision = COG_state_urbanization_1 show_effect_tooltip = yes show_modifiers = yes }
+					}
+				}
+				else_if = {
+					limit = { ROOT = { NOT = { has_country_flag = state_urbanization_2 } } }
+					FROM.FROM = {
+						set_state_flag = state_urbanization
+						save_global_event_target_as = state_urbanization_2
+						if = {
+							limit = { is_core_of = ROOT }
+							set_variable = { ROOT.var_days_remove_state_urbanization_2 = 90 }
+							else = {
+								set_variable = { ROOT.var_days_remove_state_urbanization_2 = 270 }
+							}
+						}
+						if = {
+							limit = {
+								OR = {
+									has_state_category = large_town
+									has_state_category = town
+									has_state_category = city
+								}
+							}
+							multiply_variable = { ROOT.var_days_remove_state_urbanization_2 = 1.5 }
+							else_if = {
+								limit = {
+									OR = {
+										has_state_category = large_city
+										has_state_category = metropolis
+										has_state_category = megalopolis
+									}
+								}
+								multiply_variable = { ROOT.var_days_remove_state_urbanization_2 = 2 }
+							}
+						}
+					}
+					ROOT = {
+						set_country_flag = state_urbanization_2
+						hidden_effect = { activate_decision = COG_state_urbanization_2 }
+						unlock_decision_tooltip = { decision = COG_state_urbanization_2 show_effect_tooltip = yes show_modifiers = yes }
+					}
+				}
+				else_if = {
+					limit = { ROOT = { NOT = { has_country_flag = state_urbanization_3 } } }
+					FROM.FROM = {
+						set_state_flag = state_urbanization
+						save_global_event_target_as = state_urbanization_3
+						if = {
+							limit = { is_core_of = ROOT }
+							set_variable = { ROOT.var_days_remove_state_urbanization_3 = 90 }
+							else = {
+								set_variable = { ROOT.var_days_remove_state_urbanization_3 = 270 }
+							}
+						}
+						if = {
+							limit = {
+								OR = {
+									has_state_category = large_town
+									has_state_category = town
+									has_state_category = city
+								}
+							}
+							multiply_variable = { ROOT.var_days_remove_state_urbanization_3 = 1.5 }
+							else_if = {
+								limit = {
+									OR = {
+										has_state_category = large_city
+										has_state_category = metropolis
+										has_state_category = megalopolis
+									}
+								}
+								multiply_variable = { ROOT.var_days_remove_state_urbanization_3 = 2 }
+							}
+						}
+					}
+					ROOT = {
+						set_country_flag = state_urbanization_3
+						hidden_effect = { activate_decision = COG_state_urbanization_3 }
+						unlock_decision_tooltip = { decision = COG_state_urbanization_3 show_effect_tooltip = yes show_modifiers = yes }
+					}
+				}
+				
+			}
+		}
+		
+		triggers = {
+			state_urbanization_button_click_enabled = {
+				ROOT = {
+					custom_trigger_tooltip = {
+						OR = {
+							NOT = { has_country_flag = state_urbanization_1 }
+							NOT = { has_country_flag = state_urbanization_2 }
+							NOT = { has_country_flag = state_urbanization_3 }
+						}
+						tooltip = state_urbanization_trigger_tt
+					}
+				}
+				ROOT = {
+					num_of_civilian_factories_available_for_projects > 4
+				}
+				if = {	#pastoral
+					limit = { FROM.FROM = { has_state_category = pastoral is_core_of = ROOT } }
+					ROOT = { num_of_factories > 9 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = pastoral NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 19 }
+				}
+				if = {	#rural
+					limit = { FROM.FROM = { has_state_category = rural is_core_of = ROOT } }
+					ROOT = { num_of_factories > 14 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = rural NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 24 }
+				}
+				if = {	#town
+					limit = { FROM.FROM = { has_state_category = town is_core_of = ROOT } }
+					ROOT = { num_of_factories > 19 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = town NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 29 }
+				}
+				if = {	#large_town
+					limit = { FROM.FROM = { has_state_category = large_town is_core_of = ROOT } }
+					ROOT = { num_of_factories > 29 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = large_town NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 39 }
+				}
+				if = {	#city
+					limit = { FROM.FROM = { has_state_category = city is_core_of = ROOT } }
+					ROOT = { num_of_factories > 49 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = city NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 59 }
+				}
+				if = {	#large_city
+					limit = { FROM.FROM = { has_state_category = large_city is_core_of = ROOT } }
+					ROOT = { num_of_factories > 69 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = large_city NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 79 }
+				}
+				if = {	#metropolis
+					limit = { FROM.FROM = { has_state_category = metropolis is_core_of = ROOT } }
+					ROOT = { num_of_factories > 99 }
+				}
+				else_if = {
+					limit = { FROM.FROM = { has_state_category = metropolis NOT = { is_core_of = ROOT } } }
+					ROOT = { num_of_factories > 109 }
+				}
+				FROM.FROM = {
+					is_fully_controlled_by = ROOT
+				}
+				FROM.FROM = {
+					if = {
+						limit = { has_state_category = pastoral }
+						state_population_k > 9.999
+					}
+					else_if = {
+						limit = { has_state_category = rural }
+						state_population_k > 99.999
+					}
+					else_if = {
+						limit = { has_state_category = town }
+						state_population_k > 149.999
+					}
+					else_if = {
+						limit = { has_state_category = large_town }
+						state_population_k > 299.999
+					}
+					else_if = {
+						limit = { has_state_category = city }
+						state_population_k > 499.999
+					}
+					else_if = {
+						limit = { has_state_category = large_city }
+						state_population_k > 999.999
+					}
+					else_if = {
+						limit = { has_state_category = metropolis }
+						state_population_k > 1999.999
+					}
+				}
+				FROM.FROM = {
+					if = {
+						limit = { has_state_category = pastoral }
+						infrastructure > 0
+					}
+					else_if = {
+						limit = { has_state_category = rural }
+						infrastructure > 1
+						hospital > 0
+					}
+					else_if = {
+						limit = { has_state_category = town }
+						infrastructure > 2
+						hospital > 0
+					}
+					else_if = {
+						limit = { has_state_category = large_town }
+						infrastructure > 3
+						hospital > 1
+					}
+					else_if = {
+						limit = { has_state_category = city }
+						infrastructure > 4
+						hospital > 2
+					}
+					else_if = {
+						limit = { has_state_category = large_city }
+						infrastructure > 5
+						hospital > 3
+					}
+					else_if = {
+						limit = { has_state_category = metropolis }
+						infrastructure > 6
+						hospital > 4
+					}
+				}
+				FROM.FROM = {
+					impassable = no
+				}
+				FROM.FROM = {
+					is_border_conflict = no
+				}
+				FROM.FROM = {
+					NOT = { has_state_flag = state_urbanization }
+				}
+			}
+		}
+		
+		ai_test_scopes = test_self_controlled_states
+		
+		ai_enabled = {
+            original_tag = COG
+		}
+		
+		ai_weights = {
+			state_urbanization_button_click = {
+				ai_will_do = {
+					factor = 0
+					modifier = {
+						add = 1
+						OR = {
+							ROOT = { has_war = no }
+							FROM.FROM = {
+								all_neighbor_state = {
+									controller = {
+										OR = {
+											tag = ROOT
+											is_subject_of = ROOT
+											is_in_faction_with = ROOT
+											NOT = { has_war_with = ROOT }
+										}
+									}
+								}
 							}
 						}
 					}
