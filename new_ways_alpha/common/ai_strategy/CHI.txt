@@ -300,3 +300,243 @@ CHI_division_limiter_historical = {
 	ai_strategy = { type = build_army id = modern_armor value = -6000 }
 	ai_strategy = { type = build_army id = infantry value = -6000 }
 }
+
+CHI_ignore_warlords = {
+	allowed = {
+		is_historical_focus_on = yes
+		OR = {
+			tag = CHI
+			tag = XSM
+			tag = PRC
+			tag = YUN
+			tag = GXC
+			tag = SHX
+			tag = NGX
+			tag = SIH
+			tag = XIK
+			tag = NEA
+			tag = SHA
+			tag = HCP
+			tag = YUL
+		}
+	}
+	enable = {
+		is_historical_focus_on = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = {
+			is_ai = yes
+			OR = {
+				tag = CHI
+				tag = XSM
+				tag = PRC
+				tag = YUN
+				tag = GXC
+				tag = SHX
+				tag = NGX
+				tag = SIH
+				tag = XIK
+				tag = NEA
+				tag = SHA
+				tag = HCP
+				tag = YUL
+			}
+		}
+		value = -200
+	}
+}
+
+CHI_ignore_other_countries = {
+	allowed = {
+		is_historical_focus_on = yes
+		OR = {
+			tag = CHI
+			tag = XSM
+			tag = PRC
+			tag = YUN
+			tag = GXC
+			tag = SHX
+			tag = NGX
+			tag = SIH
+			tag = XIK
+			tag = NEA
+			tag = SHA
+			tag = HCP
+			tag = YUL
+		}
+	}
+	enable = {
+		is_historical_focus_on = yes
+		has_war_with = JAP
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = {
+			is_ai = yes
+			NOT = { has_war_with = FROM }
+		}
+		value = -200
+	}
+}
+
+CHI_garrison_coast = {
+	allowed = { 
+		OR = {
+			tag = CHI
+			tag = XSM
+			tag = PRC
+			tag = YUN
+			tag = GXC
+			tag = SHX
+			tag = NGX
+			tag = SIH
+			tag = XIK
+			tag = NEA
+			tag = SHA
+			tag = HCP
+			tag = YUL
+		}
+	}
+	enable = {
+		has_war_with = JAP
+		OR = {
+			JAP = { is_ai = no }
+			CHI = { surrender_progress > 0.5 }
+		}
+		surrender_progress < 0.4
+		any_owned_state = { is_coastal = yes }
+		if = {
+			limit = { NOT = { tag = CHI } }
+			NOT = { surrender_progress > 0 }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = put_unit_buffers
+		ratio = 0.35
+		states = { 
+			597
+			743
+			598
+			613
+			596
+			595
+			593
+			1162
+			592
+			591
+			1129
+		}
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = no
+	}
+}
+
+CHI_defensive_vs_JAP_careful_north = {
+	allowed = {
+		OR = {
+			tag = CHI
+			tag = XSM
+			tag = PRC
+			tag = YUN
+			tag = GXC
+			tag = SHX
+			tag = NGX
+			tag = SIH
+			tag = XIK
+			tag = NEA
+			tag = SHA
+			tag = HCP
+			tag = YUL
+		}
+	}
+	enable = {
+		has_war_with = JAP
+		OR = {
+			JAP = { is_ai = no }
+			CHI = { surrender_progress > 0.5 }
+		}
+		has_defensive_war = yes
+		surrender_progress > 0
+		NOT = { JAP = { surrender_progress > 0.2 } }
+		
+		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
+		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		add_to_temp_variable = { tot_fielded_eq_ratio = fielded_eq_ratio }
+		add_to_temp_variable = { equipment_count = 1 }
+		divide_temp_variable = { tot_fielded_eq_ratio = equipment_count }
+		check_variable = { tot_fielded_eq_ratio < 0.95 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+		priority = 6
+		state_trigger = {
+			NOT = { is_coastal = yes }
+			CONTROLLER = {
+				OR = {
+					tag = JAP
+					has_war_together_with = JAP
+				}
+			}
+		}
+		ordertype = front
+		execute_order = no
+	}
+}
+
+CHI_defensive_vs_JAP_coastal = {
+	allowed = {
+		OR = {
+			tag = CHI
+			tag = XSM
+			tag = PRC
+			tag = YUN
+			tag = GXC
+			tag = SHX
+			tag = NGX
+			tag = SIH
+			tag = XIK
+			tag = NEA
+			tag = SHA
+			tag = HCP
+			tag = YUL
+		}
+	}
+	enable = {
+		has_war = yes
+		OR = {
+			JAP = { is_ai = no }
+			CHI = { surrender_progress > 0.5 }
+		}
+		
+		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
+		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		add_to_temp_variable = { tot_fielded_eq_ratio = fielded_eq_ratio }
+		add_to_temp_variable = { equipment_count = 1 }
+		divide_temp_variable = { tot_fielded_eq_ratio = equipment_count }
+		check_variable = { tot_fielded_eq_ratio > 0.5 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+		priority = 4
+		state_trigger = {
+			is_coastal = yes
+		}
+		ratio = 0.75
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+}

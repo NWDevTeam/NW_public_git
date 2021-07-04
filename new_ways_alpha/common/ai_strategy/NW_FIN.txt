@@ -1,0 +1,203 @@
+# befriend
+# alliance
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+# alliance
+# contain
+# area_priority
+
+FIN_division_limiter_historical = {
+	allowed = {
+		tag = FIN
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_army_manpower = { size > 350000 }
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = build_army id = cavalry value = -6000 }
+	ai_strategy = { type = build_army id = garrison value = -6000 }
+	ai_strategy = { type = build_army id = paratroopers value = -6000 }
+	ai_strategy = { type = build_army id = mountaineers value = -6000 }
+	ai_strategy = { type = build_army id = marines value = -6000 }
+	ai_strategy = { type = build_army id = armor value = -6000 }
+	ai_strategy = { type = build_army id = light_armor value = -6000 }
+	ai_strategy = { type = build_army id = heavy_armor value = -6000 }
+	ai_strategy = { type = build_army id = medium_armor value = -6000 }
+	ai_strategy = { type = build_army id = modern_armor value = -6000 }
+	ai_strategy = { type = build_army id = infantry value = -6000 }
+}
+
+NW_dont_join_JAP_FIN = {
+	allowed = {
+		tag = FIN
+		is_historical_focus_on = yes
+	}
+	enable = {
+		always = yes
+	}
+	ai_strategy = { type = diplo_action_desire id = JAP target = join_faction value = -5000 }
+	ai_strategy = { type = diplo_action_acceptance id = JAP target = offer_join_faction value = -5000 }
+}
+
+NW_FIN_prepare_SOV = {
+	allowed = {
+		tag = FIN
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_country_flag = NW_fin_continuation_war_flag
+		GER = { has_war_with = SOV }
+		NOT = {
+			has_war_with = SOV
+			is_in_faction_with = SOV
+			has_government = SOV
+		}
+	}
+	ai_strategy = {
+		type = antagonize
+		id = "SOV"			
+		value = 600
+	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = "SOV"			
+		value = 200
+	}
+	ai_strategy = {
+		type = consider_weak
+		id = "SOV"
+		value = 75
+	}
+	ai_strategy = {
+		type = declare_war
+		id = "SOV"
+		value = 200
+	}
+	ai_strategy = {
+		type = conquer
+		id = "SOV"
+		value = 200
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = "SOV"
+		target = declare_war		
+		value = 200
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = SOV
+		value = -1000
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = ENG
+		value = -1000
+	}
+}
+
+NW_GER_FIN_prepare_SOV = {
+	allowed = {
+		original_tag = GER
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_war_with = SOV
+		is_in_faction_with = FIN
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = FIN
+		target_country = SOV
+		value = -1000
+	}
+}
+
+NW_join_axis_FIN = {
+	allowed = { tag = FIN }
+	enable = {
+		OR = {
+			has_government = fascism
+			has_government = monarchy
+			has_government = neutrality
+			has_government = democratic
+		}
+		OR = {
+			AND = {
+				has_war_together_with = GER
+				has_war_with = SOV
+			}
+			AND = {
+				has_country_flag = NW_fin_continuation_war_flag
+				NOT = { has_country_flag = NW_fin_continuation_war_flag_timeout }
+			}
+		}
+		is_in_faction = no
+		GER = {
+			is_faction_leader = yes
+			has_war_with = SOV
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+				has_government = neutrality
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = diplo_action_desire id = GER target = join_faction value = 10000 }
+	ai_strategy = { type = diplo_action_acceptance id = GER target = offer_join_faction value = 10000 }
+}
+
+NW_FIN_hold_vs_SOV = {
+	allowed = {
+		tag = FIN
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_war_with = SOV
+		has_army_manpower = { size < 300000 }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+		tag = SOV
+		execute_order = no
+	}
+}
+
+NW_SOV_hold_vs_FIN = {
+	allowed = { tag = SOV }
+	enable = {
+		date < 1942.1.1
+		has_war_with = FIN
+		has_war_with = GER
+		FIN = { is_in_faction_with = GER }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+		tag = FIN
+		execute_order = no
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = FIN
+		value = -75
+	}
+}

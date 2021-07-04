@@ -65,7 +65,6 @@ on_actions = {
 				force_update_dynamic_modifier = yes
 			}
 			
-			
 			### AI_DIVISION_LIMITER_DYNAMIC
 			if = {
 				limit = {
@@ -89,6 +88,59 @@ on_actions = {
 					round_variable = ai_upper_limit
 				}
 			}
+
+			### AI_DIVISION_LIMITER_DYNAMIC
+			random_country = {
+				set_variable = { global.total_division = 0 }
+				every_country = {
+					add_to_variable = { global.total_division = THIS.num_divisions }
+				}
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_1000 } }
+				random_country = { set_variable = { global.total_division_limit = 1000 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_1250 } }
+				random_country = { set_variable = { global.total_division_limit = 1250 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_1500 } }
+				random_country = { set_variable = { global.total_division_limit = 1500 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_1750 } }
+				random_country = { set_variable = { global.total_division_limit = 1750 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_2000 } }
+				random_country = { set_variable = { global.total_division_limit = 2000 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_2250 } }
+				random_country = { set_variable = { global.total_division_limit = 2250 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_2500 } }
+				random_country = { set_variable = { global.total_division_limit = 2500 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_2750 } }
+				random_country = { set_variable = { global.total_division_limit = 2750 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_3000 } }
+				random_country = { set_variable = { global.total_division_limit = 3000 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_3250 } }
+				random_country = { set_variable = { global.total_division_limit = 3250 } }
+			}
+			if = {
+				limit = { has_game_rule = { rule = ai_division_total_limiter_status option = AI_DIVISION_TOTAL_LIMITER_3500 } }
+				random_country = { set_variable = { global.total_division_limit = 3500 } }
+			}
+
 			### volunteer_only
 			every_country = {
 				limit = {
@@ -2469,6 +2521,7 @@ on_actions = {
 						original_tag = NEA
 						original_tag = NGX
 						original_tag = YUL
+						original_tag = HCP
 					}
 				}
 				random_list = {
@@ -2503,6 +2556,7 @@ on_actions = {
 							original_tag = NEA
 							original_tag = NGX
 							original_tag = YUL
+							original_tag = HCP
 						}
 					}
 				}
@@ -3088,8 +3142,52 @@ on_actions = {
 
 				hidden_effect = { 
 					set_country_flag = { flag = NW_barbarossa_blitz value = 1 days = 30 }
-
 					SOV = { set_country_flag = { flag = NW_barbarossa_defensive value = 1 days = 270 } }
+				}
+			}
+			# GER wardec on SOV
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = GER 
+					}
+					FROM = {
+						original_tag = SOV
+					}
+				}
+
+				if = { # fin continuation war
+					limit = {
+						FROM = {
+							OR = {
+								owns_state = 146
+								owns_state = 147
+							}
+						}
+					}
+					FIN = {
+						set_country_flag = { flag = NW_fin_continuation_war_flag_timeout value = 1 days = 6 }
+						set_country_flag = NW_fin_continuation_war_flag
+					}
+					if = {
+						limit = {
+							is_faction_leader = yes
+							OR = {
+								has_government = fascism
+								has_government = monarchy
+								has_government = neutrality
+							}
+							FIN = {
+								OR = {
+									has_government = fascism
+									has_government = monarchy
+									has_government = neutrality
+									has_government = democratic
+								}
+							}
+						}
+						FIN = { country_event = { id = generic.5 days = 3 } }
+					}
 				}
 			}
 			# Для снятия договора СССР с Прибалтикой
@@ -5330,6 +5428,19 @@ on_actions = {
 		effect = {
 			if = {
 				limit = {
+					NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				}
+				random_country = {
+					set_variable = { global.total_division = 0 }
+					every_country = {
+						add_to_variable = { global.total_division = THIS.num_divisions }
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
 					has_completed_focus = private_tribunals_focus
 					NOT = { has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 } }
 				}
@@ -5356,7 +5467,7 @@ on_actions = {
 					check_variable = { global.total_infantry_weapons > 0 }
 				}
 				SAI = {
-					log = "[GetDateText]: [This.GetName] ([This.GetTag]): РАСЧЕТ ПЕХОТКИ ЧЕРНОГО РЫНКА: [?global.total_infantry_weapons]"
+					#log = "[GetDateText]: [This.GetName] ([This.GetTag]): РАСЧЕТ ПЕХОТКИ ЧЕРНОГО РЫНКА: [?global.total_infantry_weapons]"
 					set_temp_variable = { inflation_rifles = global.total_infantry_weapons }
 					divide_temp_variable = { inflation_rifles = 10 }
 					subtract_from_variable = { global.total_infantry_weapons = inflation_rifles }
