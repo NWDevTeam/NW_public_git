@@ -538,9 +538,35 @@ form_unite_turks_category = {
 form_middle_east_union_category = {
 	allowed = {
 		has_dlc = "Waking the Tiger"
+		OR = {
+			original_tag = TUR
+			original_tag = TRK
+			original_tag = PER
+			original_tag = IRQ
+			original_tag = SYR
+		}
 	}
 	icon = generic_form_nation
 	picture = GFX_decision_cat_generic_soviet_middle_east
+}
+
+TUR_balance_of_power_system_category = {
+	allowed = {
+		OR = {
+			original_tag = TUR
+			original_tag = TRK
+		}
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+	}
+	visible = {
+		has_completed_focus = TUR_create_balance_of_power_system
+		NOT = { has_country_flag = block_balance_of_power_system_flag }
+	}
+	icon = faction_tur_unaligned
+	priority = 110
 }
 
 TUR_pasarici_category = {
@@ -574,15 +600,41 @@ TUR_create_pact_category = {
 			original_tag = EGY
 			original_tag = SYR
 			original_tag = BPL
+			original_tag = LEB
+			original_tag = ALW
+			original_tag = JDS
 		}
 		NOT = {
 			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
 			has_global_flag = WORLD_OF_SPLIT_FLAG
 		}
 	}
-	visible = {
+	available = {
+		is_subject = no
 	}
-	icon = saf_anti_colonialist_crusade
+	visible = {
+		if = {
+			limit = { original_tag = BPL }
+			has_completed_focus = BPL_concessions_arab_leaders
+		}
+		NOT = {
+			has_war_with = TUR
+			has_war_with = PER
+			has_war_with = IRQ
+			has_war_with = AFG
+			has_war_with = EGY
+			has_war_with = SYR
+			has_war_with = BPL
+			has_war_with = LEB
+			has_war_with = ALW
+			has_war_with = JDS
+		}
+		NOT = { has_global_flag = TUR_create_pact_final_flag }
+		NOT = { has_country_flag = TUR_refuse_to_sign_flag }
+	}
+	icon = generic_foreign_policy
+	picture = GFX_decision_cat_picture_concessions_to_the_trade_unions
+	scripted_gui = saadabad_pact_decision_ui
 	priority = 90
 }
 
@@ -737,8 +789,42 @@ TUR_peace_category = {
 	priority = 60
 }
 
+TUR_solution_of_kurdish_question_category = {
+	allowed = {
+		OR = {
+			original_tag = TUR
+			original_tag = TRK
+		}
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+	}
+	visible = {
+		has_country_flag = NW_new_turkey_49b_flag
+	}
+	icon = eng_move_to_secure_the_dominions
+	priority = 199
+}
+
 
 #NEW TURKEY
+TUR_debug_category = {
+	allowed = {
+		original_tag = TUR
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+		is_debug = yes
+	}
+	visible = {
+		has_global_flag = NW_TUR_NEW_FOCUS_TREE
+	}
+	icon = generic_political_actions
+	priority = 500
+	visible_when_empty = yes
+}
 TUR_unite_turks_category = {
 	allowed = {
 		OR = {
@@ -812,31 +898,6 @@ TUR_liberalization_of_social_life_category = {
 	priority = 200
 }
 
-TUR_solution_of_kurdish_question_category = {
-	allowed = {
-		OR = {
-			original_tag = TUR
-			original_tag = TRK
-		}
-		NOT = {
-			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
-			has_global_flag = WORLD_OF_SPLIT_FLAG
-		}
-	}
-	available = {
-		hidden_trigger = {
-			has_global_flag = NW_TUR_NEW_FOCUS_TREE
-			has_country_flag = NW_new_turkey_49b_flag
-		}
-	}
-	visible = {
-		has_global_flag = NW_TUR_NEW_FOCUS_TREE
-		has_country_flag = NW_new_turkey_49b_flag
-	}
-	icon = eng_move_to_secure_the_dominions
-	priority = 199
-}
-
 TUR_promotion_of_anarchism_in_turkey_category = {
 	allowed = {
 		OR = {
@@ -882,6 +943,10 @@ TUR_ideology_anarcho_kemalism_category = {
 	visible = {
 		has_global_flag = NW_TUR_NEW_FOCUS_TREE
 		has_completed_focus = TUR_reject_statism
+		NOT = {
+			has_country_flag = anarchism_left_flag
+			has_country_flag = anarchism_right_flag
+		}
 	}
 	icon = generic_anarchism
 	priority = 209
@@ -900,13 +965,17 @@ TUR_formation_of_united_states_of_greater_turkey_category = {
 	}
 	available = {
 		hidden_trigger = {
-			has_global_flag = NW_TUR_NEW_FOCUS_TREE
-			has_completed_focus = TUR_form_federal_republic_of_greater_turkey
+			OR = {
+				has_completed_focus = TUR_form_federal_republic_of_greater_turkey
+				has_completed_focus = TUR_form_federal_republic_of_greater_turkey_2
+			}
 		}
 	}
 	visible = {
-		has_global_flag = NW_TUR_NEW_FOCUS_TREE
-		has_completed_focus = TUR_form_federal_republic_of_greater_turkey
+		OR = {
+			has_completed_focus = TUR_form_federal_republic_of_greater_turkey
+			has_completed_focus = TUR_form_federal_republic_of_greater_turkey_2
+		}
 	}
 	icon = generic_democracy
 	priority = 210
@@ -925,18 +994,18 @@ TUR_unification_of_sunni_middle_east_category = {
 	}
 	available = {
 		hidden_trigger = {
-			has_global_flag = NW_TUR_NEW_FOCUS_TREE
 			OR = {
 				has_completed_focus = TUR_unite_muslim_lands
 				has_completed_focus = TUR_to_free_muslims_and_working
+				has_completed_focus = TUR_to_free_muslims_and_working_2
 			}
 		}
 	}
 	visible = {
-		has_global_flag = NW_TUR_NEW_FOCUS_TREE
 		OR = {
 			has_completed_focus = TUR_unite_muslim_lands
 			has_completed_focus = TUR_to_free_muslims_and_working
+			has_completed_focus = TUR_to_free_muslims_and_working_2
 		}
 	}
 	icon = generic_trozkism
@@ -2534,6 +2603,8 @@ KRD_problem_of_dersim_category = {
 				}
 				has_country_flag = NWkurd3_flag
 			}
+			NOT = { has_country_flag = kurd_revolt_flag }
+			NOT = { has_country_flag = kurd_revolt_over_flag }
 		}
 	}
 	visible = {
@@ -2548,8 +2619,10 @@ KRD_problem_of_dersim_category = {
 			has_country_flag = NWkurd3_flag
 		}
 		NOT = { has_country_flag = kurd_revolt_flag }
+		NOT = { has_country_flag = kurd_revolt_over_flag }
 	}
 	icon = generic_trozkism
+	picture = GFX_decision_cat_krd_dersim_problem
 	priority = 100
 }
 
@@ -2577,19 +2650,28 @@ KRD_raise_tribal_militia_category = {
 
 KRD_call_all_kurds_to_war_category = {
 	allowed = {
-	    original_tag = KRD
+		OR = {
+			original_tag = KRD
+			original_tag = ERB
+			original_tag = ROJ
+			original_tag = MHB
+		}
 		NOT = {
 			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
 			has_global_flag = WORLD_OF_SPLIT_FLAG
 		}
 	}
 	available = {
-		hidden_trigger = {
-			has_completed_focus = KRD_bring_war_to_neighboring_kurds
-		}
+		is_subject = no
 	}
 	visible = {
-		has_completed_focus = KRD_bring_war_to_neighboring_kurds
+		if = {
+			limit = {
+				original_tag = KRD
+			}
+			has_completed_focus = KRD_bring_war_to_neighboring_kurds
+		}
+		is_subject = no
 	}
 	icon = generic_trozkism
 	priority = 99
@@ -2699,6 +2781,87 @@ KRD_socialist_propaganda_category = {
 	priority = 99
 }
 
+KRD_tribal_militias_of_kurdish_sheikhs_category = {
+	allowed = {
+	    original_tag = KRD
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+	}
+	available = {
+		hidden_trigger = {
+			has_completed_focus = KRD_tribal_militias_of_kurdish_sheikhs
+		}
+	}
+	visible = {
+		has_completed_focus = KRD_tribal_militias_of_kurdish_sheikhs
+	}
+	icon = generic_propaganda
+	priority = 99
+}
+
+KRD_support_for_separatism_category = {
+	allowed = {
+	    original_tag = KRD
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+	}
+	available = {
+		hidden_trigger = {
+			OR = {
+				has_completed_focus = KRD_support_western_armenians
+				has_completed_focus = KRD_support_azerbaijanis_of_tabriz
+				has_completed_focus = KRD_support_assyrians_of_mosul
+			}
+		}
+	}
+	visible = {
+		OR = {
+			has_completed_focus = KRD_support_western_armenians
+			has_completed_focus = KRD_support_azerbaijanis_of_tabriz
+			has_completed_focus = KRD_support_assyrians_of_mosul
+		}
+	}
+	icon = generic_propaganda
+	priority = 99
+}
+
+KRD_unification_of_kurdistan_category = {
+	allowed = {
+		OR = {
+			original_tag = KRD
+			original_tag = ROJ
+			original_tag = ERB
+			original_tag = MHB
+		}
+		NOT = {
+			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+			has_global_flag = WORLD_OF_SPLIT_FLAG
+		}
+	}
+	available = {
+		hidden_trigger = {
+			OR = {
+				has_completed_focus = KRD_support_western_armenians
+				has_completed_focus = KRD_support_azerbaijanis_of_tabriz
+				has_completed_focus = KRD_support_assyrians_of_mosul
+			}
+		}
+	}
+	visible = {
+		OR = {
+			has_completed_focus = KRD_support_western_armenians
+			has_completed_focus = KRD_support_azerbaijanis_of_tabriz
+			has_completed_focus = KRD_support_assyrians_of_mosul
+		}
+	}
+	icon = generic_propaganda
+	priority = 99
+}
+
 #BHU
 BHU_attracting_foreign_investment_category = {
 	allowed = {
@@ -2759,7 +2922,7 @@ generic_seek_support_category = {
 	allowed = {
 		always = yes
 	}
-	scripted_gui = generic_seek_support_decision_ui	
+	scripted_gui = generic_seek_support_decision_ui
 	icon = saf_anti_colonialist_crusade
 	priority = 60
 }
@@ -2821,6 +2984,12 @@ generic_policy_interventions_category = {
 				has_government = trozkism
 				has_government = anarchism
 			}
+		}
+		else_if = {
+			limit = {
+				has_focus_tree = nw_denmark_focus
+			}
+			has_completed_focus = DEN_danish_revolution
 		}
 		else = {
 			OR = {
@@ -2890,6 +3059,12 @@ generic_interventions_start_civil_war_category = {
 				has_government = trozkism
 				has_government = anarchism
 			}
+		}
+		else_if = {
+			limit = {
+				has_focus_tree = nw_denmark_focus
+			}
+			has_completed_focus = DEN_danish_revolution
 		}
 		else = {
 			OR = {
@@ -3433,6 +3608,8 @@ generic_irregular_army_category = {
 	picture = GFX_decision_cat_picture_macedonian_organizations
 	priority = 210
 }
+
+
 
 
 

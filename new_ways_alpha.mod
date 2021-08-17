@@ -1,4 +1,4 @@
-version="0.4.1"
+version="0.5.0"
 replace_path="common/national_focus"
 replace_path="common/difficulty_settings"
 replace_path="history/states"

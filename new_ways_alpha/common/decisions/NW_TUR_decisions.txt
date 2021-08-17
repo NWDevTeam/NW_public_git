@@ -160,6 +160,160 @@ TUR_decisions_category = {
 	}
 }
 
+TUR_balance_of_power_system_category = {
+
+	TUR_expand_independent_group = {
+
+		icon = generic_political_rally
+
+		available = {
+			has_completed_focus = TUR_create_independent_group
+		}
+
+		cost = 100
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_expand_independent_group"
+			add_to_variable = { influence_opposition_var = 1 }
+			custom_effect_tooltip = influence_opposition_up_tt
+			add_to_variable = { influence_party_var = 1 }
+			custom_effect_tooltip = influence_party_up_tt
+			check_balance_of_power_system = yes
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 10
+				check_variable = { influence_party_var > influence_opposition_var }
+				has_country_leader = { name = "Ismet Inönü" ruling_only = yes }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 100
+				date > 1947.1.1
+				is_historical_focus_on = yes
+			}
+		}
+	}
+	
+	TUR_reduce_independent_group = {
+
+		icon = generic_arrest
+
+		available = {
+			has_completed_focus = TUR_create_independent_group
+			check_variable = { influence_opposition_var > 0 }
+		}
+
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_reduce_independent_group"
+			add_to_variable = { influence_opposition_var = -1 }
+			custom_effect_tooltip = influence_opposition_down_tt
+			check_balance_of_power_system = yes
+		}
+		
+		ai_will_do = {
+			factor = 30
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+	
+	TUR_invite_generals_to_government = {
+
+		icon = generic_army_support
+
+		available = {
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 50 }
+			set_temp_variable = { comnand_power_temp_cost = 10 }
+			has_political_power > custom_cost_pp
+			command_power > comnand_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_invite_generals_to_government"
+			add_to_variable = { influence_army_var = 1 }
+			custom_effect_tooltip = influence_army_up_tt
+			if = {
+				limit = { check_variable = { influence_party_var > 0 } }
+				add_to_variable = { influence_party_var = -1 }
+				custom_effect_tooltip = influence_party_down_tt
+			}
+			check_balance_of_power_system = yes
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 3
+				has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 100
+				date > 1947.1.1
+				is_historical_focus_on = yes
+				check_variable = { influence_party_var > 0 }
+			}
+		}
+	}
+	
+	TUR_remove_generals_from_government = {
+
+		icon = generic_police_action
+
+		available = {
+			check_variable = { influence_army_var > 0 }
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { comnand_power_temp_cost = 20 }
+			has_political_power > custom_cost_pp
+			command_power > comnand_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_remove_generals_from_government"
+			add_to_variable = { influence_army_var = -1 }
+			custom_effect_tooltip = influence_army_down_tt
+			check_balance_of_power_system = yes
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = 100
+				date > 1947.1.1
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}
 
 TUR_pasarici_category = {
 	
@@ -723,14 +877,191 @@ TUR_pasarici_category = {
 }
 
 TUR_create_pact_category = {
+
+	TUR_preliminary_negotiations = {
+		icon = hol_exchange_intelligence_data
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		cancel_trigger = {
+		}
+		days_mission_timeout = 365
+		activation = {
+			has_start_date < 1936.1.2
+			NOT = { has_global_flag = TUR_preliminary_negotiations_flag }
+		}
+		is_good = yes
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision TUR_preliminary_negotiations"
+			custom_effect_tooltip = TUR_preliminary_negotiations_tt
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_global_flag = TUR_preliminary_negotiations_flag } }
+					set_global_flag = TUR_preliminary_negotiations_flag
+				}
+				activate_mission = TUR_completion_of_negotiations_on_creation_of_saadabad_pact
+			}
+		}
+	}
+	
+	TUR_completion_of_negotiations_on_creation_of_saadabad_pact = {
+		icon = generic_decision
+		available = {
+			hidden_trigger = {
+				has_country_flag = TUR_refuse_to_sign_flag
+			}
+		}
+		cancel_trigger = {
+			hidden_trigger = {
+				has_country_flag = TUR_refuse_to_sign_flag
+			}
+		}
+		days_mission_timeout = 188
+		activation = {
+			always = no
+		}
+		is_good = yes
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision TUR_completion_of_negotiations_on_creation_of_saadabad_pact"
+			if = {
+				limit = { has_country_flag = saadabad_accept_flag }
+				every_other_country = {
+					limit = {
+						has_country_flag = saadabad_accept_flag
+						NOT = {
+							has_war_with = ROOT
+							has_non_aggression_pact_with = ROOT
+						}
+					}
+					diplomatic_relation = {
+						country = ROOT
+						relation = non_aggression_pact
+						active = yes
+					}
+					add_opinion_modifier = { target = ROOT modifier = expand_the_sadabat_pact }
+					add_ai_strategy = { type = antagonize id = ROOT value = -75 }
+					ROOT = {
+						add_opinion_modifier = { target = PREV modifier = expand_the_sadabat_pact }
+						add_ai_strategy = { type = antagonize id = PREV value = -75 }
+					}
+					every_state = {
+						limit = {
+							is_owned_by = ROOT
+							is_claimed_by = PREV
+						}
+						PREV = { remove_state_claim = PREV }
+					}
+					every_state = {
+						limit = {
+							is_owned_by = PREV
+							is_claimed_by = ROOT
+						}
+						ROOT = { remove_state_claim = PREV }
+					}
+				}
+				custom_effect_tooltip = TUR_completion_of_negotiations_on_creation_of_saadabad_pact_tt
+			}
+			if = {
+				limit = { NOT = { has_global_flag = TUR_create_pact_final_flag } }
+				set_global_flag = TUR_create_pact_final_flag
+			}
+		}
+	}
+	
+	TUR_sign_non_aggression_pact = {
+		icon = eng_trade_unions_support
+		visible = {
+			has_global_flag = TUR_preliminary_negotiations_flag
+		}
+		fire_only_once = yes
+		cost = 10
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				add = 500
+				is_historical_focus_on = yes
+				OR = {
+					tag = TUR
+					tag = PER
+					tag = AFG
+					tag = IRQ
+				}
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				NOT = {
+					tag = TUR
+					tag = PER
+					tag = AFG
+					tag = IRQ
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						original_tag = PER
+						has_completed_focus = PER_islamic_revolution
+					}
+					AND = {
+						original_tag = EGY
+						has_completed_focus = EGY_Premier_Hasan
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision TUR_sign_non_aggression_pact"
+			add_to_array = { global.saadabad_pact_country_array = THIS }
+			set_country_flag = saadabad_accept_flag
+		}
+	}
+	
+	TUR_refuse_to_sign = {
+		icon = generic_break_treaty
+		visible = {
+			has_country_flag = saadabad_accept_flag
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 500
+				OR = {
+					AND = {
+						original_tag = PER
+						has_completed_focus = PER_islamic_revolution
+					}
+					AND = {
+						original_tag = EGY
+						has_completed_focus = EGY_Premier_Hasan
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision TUR_refuse_to_sign"
+			set_country_flag = TUR_refuse_to_sign_flag
+			clr_country_flag = saadabad_accept_flag
+			remove_from_array = { global.saadabad_pact_country_array = THIS }
+		}
+	}
+	
+	
+	
+	## OLD PACT DEC DISABLED
 	
 	#Саадабад. Начало
 	TUR_announce_pact = {
+		
+		allowed = { always = no }
 
 		icon = generic_form_nation
 
 		available = {
-			is_subject = no
 			date > 1937.01.01
 		}
 
@@ -798,6 +1129,8 @@ TUR_create_pact_category = {
 	
 	#Не Турция
 	TUR_create_pact = {
+	
+		allowed = { always = no }
 		
 		allowed = {
 			NOT = {
@@ -813,7 +1146,6 @@ TUR_create_pact_category = {
 		icon = generic_form_nation
 
 		available = {
-			is_subject = no
 			is_in_faction = no
 		}
 
@@ -852,11 +1184,12 @@ TUR_create_pact_category = {
 	}
 	
 	TUR_invite_member = {
+		
+		allowed = { always = no }
 
 		icon = generic_form_nation
 
 		available = {
-			is_subject = no
 			NOT = { has_war_with = FROM }
 			FROM = {
 				is_in_faction = no
@@ -926,11 +1259,12 @@ TUR_create_pact_category = {
 	}
 	
 	TUR_invite_pakistan = {
+	
+		allowed = { always = no }
 
 		icon = generic_form_nation
 
 		available = {
-			is_subject = no
 			num_faction_members > 4
 			if = {
 				limit = { country_exists = PAK }
@@ -3094,6 +3428,78 @@ TUR_unification_of_sunni_middle_east_category = {
 						is_core_of = OMA
 						is_core_of = IOM
 					}
+				}
+				add_core_of = ROOT
+			}
+		}
+		
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	TUR_integrate_afg = {
+		
+		highlight_states = {
+			state = 267
+		}
+	
+		icon = infiltrate_state
+		
+		cost = 50
+		fire_only_once = yes
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_integrate_afg_tt
+				all_of_scopes = {
+					array = AFG.core_states
+					is_controlled_by = ROOT
+				}
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_integrate_oma"
+			every_state = {
+				limit = {
+					is_core_of = AFG
+				}
+				add_core_of = ROOT
+			}
+		}
+		
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	TUR_integrate_pak = {
+		
+		highlight_states = {
+			state = 440
+		}
+	
+		icon = infiltrate_state
+		
+		cost = 50
+		fire_only_once = yes
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = PER_bring_shia_in_pakistan_tt
+				all_of_scopes = {
+					array = PAK.core_states
+					is_controlled_by = ROOT
+				}
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions TUR_integrate_pak"
+			every_state = {
+				limit = {
+					is_core_of = PAK
 				}
 				add_core_of = ROOT
 			}
