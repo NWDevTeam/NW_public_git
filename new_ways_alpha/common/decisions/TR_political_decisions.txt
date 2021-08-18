@@ -5989,6 +5989,145 @@ nw_interactions_with_allies_category = {
 }
 
 nw_anarchy_political_actions = {
+	
+	generic_anarchism_manpower_decision = {
+		icon = generic_military
+		available = {
+			if = {
+				limit = { has_country_flag = anarchism_left_flag }
+				OR = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+				}
+			}
+			else_if = {
+				limit = { has_country_flag = anarchism_right_flag }
+				OR = {
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+			}
+			else = {
+				OR = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+			}
+		}
+		days_mission_timeout = 10
+		activation = {
+			has_government = anarchism
+			#has_focus_tree = generic_anarchism_focus
+			OR = {
+				has_country_flag = anarchism_left_flag
+				has_country_flag = anarchism_right_flag
+				has_country_flag = anarchism_neutrality_flag
+			}
+			NOT = {
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			has_government = anarchism
+			#has_focus_tree = generic_anarchism_focus
+			OR = {
+				has_country_flag = anarchism_left_flag
+				has_country_flag = anarchism_right_flag
+				has_country_flag = anarchism_neutrality_flag
+			}
+			NOT = {
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { has_government = anarchism }
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		is_good = no
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision generic_anarchism_manpower_decision"
+			if = {
+				limit = { check_variable = { anarchism_tendency_sense_of_danger_var < 30 } }
+				if = {
+					limit = { has_country_flag = anarchism_left_flag }
+					add_ideas = peoples_squads
+				}
+				else_if = {
+					limit = { has_country_flag = anarchism_right_flag }
+					add_ideas = mercenary_soldiers
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_squads }
+						50 = { add_ideas = mercenary_soldiers }
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { anarchism_tendency_sense_of_danger_var > 29.999 }
+					check_variable = { anarchism_tendency_sense_of_danger_var < 50 }
+				}
+				if = {
+					limit = { has_country_flag = anarchism_left_flag }
+					add_ideas = peoples_police
+				}
+				else_if = {
+					limit = { has_country_flag = anarchism_right_flag }
+					add_ideas = monopolized_private_armies
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_police }
+						50 = { add_ideas = monopolized_private_armies }
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { has_country_flag = anarchism_left_flag }
+					add_ideas = peoples_militia
+				}
+				else_if = {
+					limit = { has_country_flag = anarchism_right_flag }
+					add_ideas = thriving_private_army_market
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_militia }
+						50 = { add_ideas = thriving_private_army_market }
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_anarchism_manpower_decision"
+		}
+	}
 
 	drop_cosmetic_tag_anarchy = {
 		icon = eng_trade_unions_support
