@@ -3786,6 +3786,10 @@
 		relative_position_id = DEN_support_young_conservatives
 
 		available_if_capitulated = yes
+		
+		available = {
+			NOT = { has_government = anarchism }
+		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_young_workers"
@@ -4603,6 +4607,10 @@
 			}
 		}
 		
+		available = {
+			has_idea = accelerated_industrialization
+		}
+		
 		relative_position_id = DEN_support_communist_party
 
 		available_if_capitulated = yes
@@ -4694,6 +4702,13 @@
 		relative_position_id = DEN_support_communist_party
 
 		available_if_capitulated = yes
+		
+		available = {
+			OR = {
+				has_idea = peoples_police
+				has_idea = peoples_militia
+			}
+		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_use_army"
@@ -5896,6 +5911,7 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_anarchist_revolution"
+			set_country_flag = anarchism_left_flag
 			set_temp_variable = { anarchism_unity_add_var = 15 }
 			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
 			custom_effect_tooltip = anarchism_unity_add_effect
@@ -5944,6 +5960,11 @@
 		
 		available = {
 			has_government = anarchism
+			set_temp_variable = { anarchism_unity_trigger_var = 25 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
 		}
 		
 		ai_will_do = {
@@ -6010,6 +6031,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_amts_focus"
 			add_political_power = 120
+			set_temp_variable = { anarchism_unity_add_var = 10 }
+			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+			custom_effect_tooltip = anarchism_unity_add_effect
 		}
 	}
 	
@@ -6066,6 +6090,11 @@
 		
 		available = {
 			has_government = anarchism
+			set_temp_variable = { anarchism_unity_trigger_var = 20 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
 		}
 		
 		ai_will_do = {
@@ -6119,6 +6148,11 @@
 		
 		available = {
 			has_government = anarchism
+			set_temp_variable = { anarchism_unity_trigger_var = 25 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
 		}
 		
 		ai_will_do = {
@@ -7117,14 +7151,31 @@
 		relative_position_id = DEN_social_reforms_1
 		
 		available = {
-			ICE = { is_subject_of = DEN }
+			100 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+					has_full_control_of_state = PREV
+				}
+			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_icland"
 			add_political_power = 60
-			add_opinion_modifier = { target = ICE modifier = DEN_iceland_modifier }
-			ICE = { add_opinion_modifier = { target = DEN modifier = DEN_iceland_modifier } }
+			if = {
+				limit = {
+					NOT = { owns_state = 100 }
+				}
+				100 = {
+					owner = {
+						add_opinion_modifier = { target = ROOT modifier = DEN_iceland_modifier }
+						ROOT = { add_opinion_modifier = { target = PREV modifier = DEN_iceland_modifier } }
+					}
+				}
+			}
 		}
 	}
 	
@@ -7143,11 +7194,14 @@
 		}
 		
 		available = {
-			OR = {
-				AND = { ICE = { is_subject_of = DEN }
-				ICE = { has_full_control_of_state = 100 }
+			100 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+					has_full_control_of_state = PREV
 				}
-				DEN = { has_full_control_of_state = 100 }
 			}
 		}
 		
