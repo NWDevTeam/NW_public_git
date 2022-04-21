@@ -350,8 +350,17 @@ focus_tree = {
 			}
 		}
 		
-		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_way_to_atlantic" add_tech_bonus = { bonus = 1 uses = 3 category = cat_trade_interdiction name = POR_way_to_atlantic } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_way_to_atlantic"
+			add_doctrine_cost_reduction = {
+				name = POR_way_to_atlantic
+				cost_reduction = 0.5
+				uses = 3
+				category = cat_trade_interdiction
+			}
+		}
 	}
+	
 	focus = {
 		id = POR_defence_portugal_coast
 		icon = GFX_focus_generic_coastal_fort
@@ -375,7 +384,15 @@ focus_tree = {
 			}
 		}
 		
-		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_defence_portugal_coast" add_tech_bonus = { bonus = 1 uses = 3 category = cat_base_strike name = POR_defence_portugal_coast } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_defence_portugal_coast"
+			add_doctrine_cost_reduction = {
+				name = POR_defence_portugal_coast
+				cost_reduction = 0.5
+				uses = 3
+				category = cat_base_strike
+			}
+		}
 	}
 	
 	
@@ -1368,21 +1385,49 @@ focus_tree = {
 		y = 1
 		relative_position_id = POR_politic_anticrelicarism
 		available = {
+			is_subject = no
+			is_in_faction = no
 			has_government = communism
-			country_exists = SOV
-			SOV = {
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
 				has_government = communism
 				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
 			}
-			NOT = { has_war_with = SOV }
-			is_in_faction = no
 		}
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		
 		ai_will_do = { factor = 5 }
-		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_join_to_comintern" SOV = { country_event = { id = NW_portugal.11 } } }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_join_to_comintern"
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = NW_portugal.11
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
+		}
 	}
 	focus = {
 		id = POR_soviet_technologies
@@ -1394,11 +1439,15 @@ focus_tree = {
 		x = 0
 		y = 4
 		relative_position_id = POR_join_to_comintern
-		available = { has_government = communism }
+		available = {
+			is_in_faction = yes
+		}
 		
 		ai_will_do = { factor = 5 }
-		completion_reward = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_soviet_technologies"
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus POR_soviet_technologies"
 			add_to_tech_sharing_group = USSR_research
+			FACTION_LEADER = { add_to_tech_sharing_group = USSR_research }
 		}
 	}
 	focus = {

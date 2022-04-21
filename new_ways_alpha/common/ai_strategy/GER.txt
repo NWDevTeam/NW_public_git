@@ -83,14 +83,14 @@ GER_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = infantry
-		value = 70 #88 to 70
+		value = 75 #88 to 70
 	}
 	
 	#Air unit factors
 	ai_strategy = {
 		type = unit_ratio
 		id = fighter
-		value = 100
+		value = 180
 	}
 	
 	ai_strategy = {
@@ -188,13 +188,13 @@ GER_unit_production = {
 	ai_strategy = {
 		type = equipment_production_factor
 		id = anti_air
-		value = 50
+		value = 35
 	}
 	
 	ai_strategy = {
 		type = equipment_production_factor
 		id = artillery
-		value = 85 #20 to 40
+		value = 100 #20 to 40
 	}
 	
 	ai_strategy = {
@@ -205,12 +205,17 @@ GER_unit_production = {
 	ai_strategy = {
 		type = equipment_production_factor
 		id = motorized
-		value = -70
+		value = -10
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories #Build these up over time, don't stall
+		id = anti_air
+		value = 2
 	}
 	ai_strategy = {
 		type = equipment_production_min_factories
 		id = artillery
-		value = 3
+		value = 4
 	}
 	ai_strategy = {
 		type = equipment_production_min_factories
@@ -231,6 +236,10 @@ GER_unit_production = {
 		type = equipment_variant_production_factor
 		id = support_equipment
 		value = 30
+	}
+	ai_strategy = { #added to railway gun define (set to 0 by default, increased in default strategies)
+		type = railway_gun_divisions_ratio
+		value = 1
 	}
 }	
 
@@ -287,7 +296,7 @@ GER_halt_light_armor_production_in_transitioning = {
 	enable = {
 		has_template_majority_unit = medium_armor
 		OR = {
-			has_equipment = { light_tank_equipment > 600 }
+			has_equipment = { light_tank_chassis > 600 }
 			date > 1939.1.1
 		}		
 	}
@@ -297,7 +306,7 @@ GER_halt_light_armor_production_in_transitioning = {
 
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = light_tank_equipment
+		id = light_tank_chassis
 		value = -100
 	}
 }
@@ -367,18 +376,22 @@ GER_super_boost_light_for_med_armor = {
 	}
 
 	enable = {
-		has_tech = basic_medium_tank
+		OR = {
+			has_tech = basic_medium_tank
+			has_tech = basic_medium_tank_chassis
+		}
 		NOT = { has_template_ai_majority_unit = medium_armor }
 	}
 
-	abort = {	
+	abort = {
 		has_template_ai_majority_unit = medium_armor
 	}
 
 	# lets do changes more often during this period too
 	ai_strategy = {
-		type = template_xp_reserve 
-		value = -125
+		type = land_xp_spend_priority
+		id = division_template
+		value = 100
 	}
 
 	# this is gateway
@@ -407,7 +420,10 @@ GER_super_boost_light_for_modern_armor = {
 		original_tag = GER
 	}
 	enable = {
-		has_tech = main_battle_tank
+		OR = {
+			has_tech = main_battle_tank
+			has_tech = main_battle_tank_chassis
+		}
 		NOT = { has_template_ai_majority_unit = modern_armor }
 	}
 
@@ -417,8 +433,9 @@ GER_super_boost_light_for_modern_armor = {
 
 	# lets do changes more often during this period too
 	ai_strategy = {
-		type = template_xp_reserve 
-		value = -125
+		type = land_xp_spend_priority
+		id = division_template
+		value = 100
 	}
 
 	# this is gateway
@@ -445,6 +462,18 @@ GER_template_design = {
 	}
 	abort = { 
 		date > 1940.1.1
+	}
+	
+	ai_strategy = {
+		type = template_prio
+		id = infantry
+		value = 20
+	}
+
+	ai_strategy = {
+		type = template_prio
+		id = artillery
+		value = 20
 	}
 
 	ai_strategy = {
@@ -625,6 +654,11 @@ war_with_soviets = {
 		type = declare_war
 		id = "SOV"			
 		value = 500
+	}
+	ai_strategy = {
+		type = antagonize
+		id = "SOU" # Yes, SOU is deliberate
+		value = 200
 	}
 }
 
@@ -1327,13 +1361,13 @@ GER_area_priority = {
 	ai_strategy = {
 		type = area_priority
 		id = scandinavia
-		value = 100
+		value = 90
 	}
 
 	ai_strategy = {
 		type = area_priority
 		id = north_america
-		value = 100
+		value = 80
 	}
 	
 	ai_strategy = {
@@ -1444,7 +1478,10 @@ make_sure_poland_is_ganked_before_we_move_1 = {
 		original_tag = GER
 	}
 	enable = {
-		focus_progress = { focus = GER_weserubung progress > 0 }
+		if = {
+			limit = { has_completed_focus = GER_danzig_or_war }
+			NOT = { has_completed_focus = GER_weserubung }
+		}
 		if = {
 			limit = { OR = { has_war_with = BEL has_war_with = HOL } }
 			AND = {
@@ -1488,7 +1525,10 @@ make_sure_poland_is_ganked_before_we_move_2 = {
 		original_tag = GER
 	}
 	enable = {
-		focus_progress = { focus = GER_around_maginot progress > 0 }
+		if = {
+			limit = { has_completed_focus = GER_danzig_or_war }
+			NOT = { has_completed_focus = GER_around_maginot }
+		}
 		OR = {
 			date < 1940.05.10
 			NOT = { has_war_with = event_target:NW_france_scope }
@@ -1512,6 +1552,7 @@ make_sure_poland_is_ganked_before_we_move_2 = {
 			DEN = { has_capitulated = no }
 			DEN = { exists = yes }
 			DEN = { is_subject = no }
+			DEN = { is_subject_of = ROOT }
 			DEN = { NOT = { has_government = fascism } }
 			NOT = { is_in_faction_with = DEN }
 		}
@@ -2261,6 +2302,7 @@ GER_around_the_maginot = {
 			DEN = { has_capitulated = no }
 			DEN = { exists = yes }
 			DEN = { is_subject = no }
+			DEN = { is_subject_of = ROOT }
 			DEN = { NOT = { has_government = fascism } }
 			NOT = { is_in_faction_with = DEN }
 			has_war_with = HOL
@@ -2389,6 +2431,456 @@ ITA_dont_invade_NOR_until_FRA_falls = {
 		value = -100
 	}
 }
+
+
+# lets not invade until we have europe
+GER_dont_invade_until_FRA_falls = {
+	allowed = {
+		original_tag = GER
+		is_historical_focus_on = yes
+	}
+
+	enable = {
+		date < 1941.3.1
+		FRA = {
+			has_capitulated = no
+		}
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = invasion_unit_request
+		country_trigger = { always = yes }
+
+		value = -100
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+
+		# norway
+		state = 110
+		state = 142
+		state = 143
+		state = 144
+
+		value = -100
+	}
+}
+
+GER_have_some_train_production = {
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date > 1936.7.1
+		num_of_military_factories > 50
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_min_factories # This does not seem to work
+		id = train
+		value = 3
+	}
+}
+
+GER_stock_up_on_trains_before_poland = { #but this does work
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date > 1938.7.1
+		date < 1940.7.1
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = min_wanted_supply_trains
+		value = 180
+	}
+}
+
+GER_stock_up_on_trains_before_barbarossa = { 
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date > 1940.7.1
+		date < 1943.1.1
+		has_war = yes
+	}
+	abort = {
+		has_war_with = SOV # Barbarossa has started, let wartime prioritization do its thing
+		date > 1943.1.1
+	}
+
+	ai_strategy = {
+		type = min_wanted_supply_trains
+		value = 600
+	}
+}
+
+GER_xp_upgrade_spending_land = {
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date < 1941.6.1
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = land_xp_spend_priority
+		id = upgrade_xp_cutoff
+		value = 100
+	}
+}
+
+#GER_dont_put_half_your_army_on_vichy = {
+#	allowed = {
+#		original_tag = GER
+#	}
+#
+#	enable = {
+#		any_country_with_original_tag = {
+#			original_tag_to_check = FRA
+#			has_government = fascism
+#			OR = {
+#				is_subject_of = GER
+#				has_focus_tree = vichy_french_focus
+#			}
+#			NOT = { has_war_with = GER }
+#			NOT = { has_country_flag = case_anton }
+#			NOT = {
+#				# Conditions for decision GER_case_anton
+#				count_triggers = {
+#					amount = 3 # lost control of ca half french north africa
+#					458 = { CONTROLLER = { has_war_with = ROOT } }
+#					459 = { CONTROLLER = { has_war_with = ROOT } }
+#					460 = { CONTROLLER = { has_war_with = ROOT } }
+#					461 = { CONTROLLER = { has_war_with = ROOT } }
+#					462 = { CONTROLLER = { has_war_with = ROOT } }
+#					513 = { CONTROLLER = { has_war_with = ROOT } }
+#					665 = { CONTROLLER = { has_war_with = ROOT } }
+#				}
+#			}
+#		}
+#	}
+#	abort_when_not_enabled = yes
+#
+#	ai_strategy = {
+#		type = front_unit_request
+#
+#		# vichy france
+#		state = 26 # Auvergne, which contains Vichy
+#		state = 21
+#		state = 22
+#		state = 25
+#		state = 31
+#		state = 32
+#		state = 33
+#		state = 735
+#
+#		value = -150
+#	}
+#}
+
+GER_vichy_has_served_its_purpose = {
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		country_exists = VIC
+		VIC = {
+			OR = {
+				has_country_flag = case_anton # Germany has activated the decision
+
+				count_triggers = { # Conditions for decision GER_case_anton
+					amount = 3 # lost control of ca half french north africa
+					458 = { CONTROLLER = { has_war_with = ROOT } }
+					459 = { CONTROLLER = { has_war_with = ROOT } }
+					460 = { CONTROLLER = { has_war_with = ROOT } }
+					461 = { CONTROLLER = { has_war_with = ROOT } }
+					462 = { CONTROLLER = { has_war_with = ROOT } }
+					513 = { CONTROLLER = { has_war_with = ROOT } }
+					665 = { CONTROLLER = { has_war_with = ROOT } }
+				}
+			}
+		}
+	}
+
+	ai_strategy = {
+		type = prepare_for_war
+		id = VIC
+		value = 100
+	}
+}
+
+GER_dont_upgrade_to_weapons_3_too_early = {
+	allowed = {
+		original_tag = GER
+	}
+	enable = {
+		is_historical_focus_on = yes
+		has_equipment = { infantry_equipment < 60000 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = production_upgrade_desire_offset
+		id = infantry_equipment_3
+		value = -100
+	}
+}
+
+GER_blitzkrieg_benelux = {
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date < 1940.2.1 #Don't keep pushing wildly if we haven't capitulated benelux in 4 months - we lost anyway
+		OR = {
+			AND = {
+				focus_progress = {
+					focus = GER_around_maginot
+					progress > 0.01
+				}
+				NOT = { has_war_with = HOL }
+			}
+			AND = {
+				has_war_with = HOL
+				HOL = { has_capitulated = no }
+			}
+			AND = {
+				has_war_with = BEL
+				BEL = { has_capitulated = no }
+			}
+		}
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+
+		tag = HOL
+
+		ratio = 0.25
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = BEL
+
+		ratio = 0.25
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+
+		tag = BEL
+
+		value = 50 # lets put more units, should be safe
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+
+		tag = HOL
+
+		value = 50 # lets put more units, should be safe
+	}
+}
+
+GER_blitzkrieg_russia = { #Rolling incursions
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		#always = no #This isn't great
+		date < 1942.4.1 #To space!
+		date > 1941.10.10
+		has_war_with = SOV
+		OR = {
+			has_idea = GER_barbarossa
+			SOV = { has_idea = SOV_desperate_measures_ns }
+		}
+		has_equipment = { infantry_equipment > 15000 } #WE NEED GUNS
+		set_temp_variable = { days = global.num_days }
+		modulo_temp_variable = { days = 40 }
+		check_variable = { days < 20 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+
+		tag = SOV
+
+		ratio = 0.5
+
+		priority = 100
+		ordertype = front
+		execution_type = rush_weak
+		execute_order = yes
+	}
+
+}
+
+GER_normandy_buffer = {
+	allowed = {
+		original_tag = GER
+	}
+	enable = {
+		is_historical_focus_on = yes
+		FRA = {
+			has_capitulated = yes
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = put_unit_buffers
+		states = {
+			42
+			51
+			55
+			57
+		}
+		ratio = 0.07
+		area = normandy_landing_zone
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = yes
+	}
+}
+
+GER_push_back_our_coasts_until_overlord = {
+	allowed = {
+		original_tag = GER
+		is_historical_focus_on = yes
+	}
+
+	enable = {
+		date < 1943.6.6
+		FRA = { has_capitulated = yes }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_control
+
+		tag = HOL
+
+		ratio = 0.25
+
+		priority = 100
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_control
+
+		tag = BEL
+
+		ratio = 0.25
+
+		priority = 100
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+	
+	ai_strategy = {
+		type = front_control
+
+		tag = FRA
+
+		ratio = 0.25
+
+		priority = 100
+		ordertype = front
+		execution_type = balanced
+		execute_order = yes
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+
+		tag = BEL
+
+		value = 25
+	}
+
+	ai_strategy = {
+		type = front_unit_request
+
+		tag = HOL
+
+		value = 25 # lets put more units, should be safe
+	}
+	
+	ai_strategy = {
+		type = front_unit_request
+
+		tag = FRA
+
+		value = 25
+	}
+}
+
+GER_pause_in_SOV = { #We got this far but our home is under siege
+	allowed = {
+		original_tag = GER
+	}
+
+	enable = {
+		date > 1943.1.1
+		is_historical_focus_on = yes
+		SOV = { has_capitulated = no }
+		surrender_progress > 0.25
+	}
+	
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_control
+
+		tag = SOV
+
+		ratio = 0.75
+
+		priority = 100
+		ordertype = front
+		execution_type = careful
+		execute_order = no
+	}
+}
+
 
 
 ###########
@@ -2604,6 +3096,7 @@ NW_GER_prep_for_maginot = {
 			DEN = { has_capitulated = no }
 			DEN = { exists = yes }
 			DEN = { is_subject = no }
+			DEN = { is_subject_of = ROOT }
 			DEN = { NOT = { has_government = fascism } }
 			NOT = { is_in_faction_with = DEN }
 		}
@@ -2742,7 +3235,6 @@ NW_GER_warprep = {
 NW_GER_wardec_YUG = {
 	allowed = {
 		original_tag = GER
-		is_historical_focus_on = yes
 	}
 	enable = {
 		focus_progress = { focus = GER_demand_slovenia progress > 0 }
@@ -3144,7 +3636,7 @@ NW_GER_you_need_to_actually_produce_tanks_noob = {
 	
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = medium_tank_equipment
+		id = medium_tank_chassis
 		value = 40
 	}
 	ai_strategy = {
@@ -3187,18 +3679,14 @@ NW_GER_resume_light_production_1939 = {
 	abort = {
 		OR = {
 			date > 1941.1.1
-			has_equipment = { medium_tank_equipment > 800 }
-			has_equipment = { light_tank_equipment > 2500 }
+			has_equipment = { medium_tank_chassis > 800 }
+			has_equipment = { light_tank_chassis > 2500 }
 		}
 	}
 	
 	ai_strategy = {
-		type = template_xp_reserve 
-		value = -75
-	}
-	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = light_tank_equipment
+		id = light_tank_chassis
 		value = 90
 	}
 	ai_strategy = {

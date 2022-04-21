@@ -16,7 +16,7 @@ country_event = {
 		ai_chance = {
 			factor = 80
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.2 hours = 6 }
 		}
 		
@@ -30,7 +30,7 @@ country_event = {
 		ai_chance = {
 			factor = 20
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.3 hours = 6 }
 		}
 		
@@ -53,7 +53,7 @@ country_event = {
 	option = {
 		name = excellent
 		
-		SOV = { add_to_faction = CZE }
+		FROM = { add_to_faction = ROOT }
 		
 		hidden_effect = {
 			news_event = { days = 1 id = dod_news.3 }
@@ -96,7 +96,7 @@ country_event = {
 		ai_chance = {
 			factor = 80
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.5 hours = 6 }
 		}
 		create_wargoal = {
@@ -115,7 +115,7 @@ country_event = {
 		ai_chance = {
 			factor = 20
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.6 hours = 6 }
 		}
 		
@@ -183,7 +183,7 @@ country_event = {
 		ai_chance = {
 			factor = 80
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.8 hours = 6 }
 		}
 		create_wargoal = {
@@ -201,7 +201,7 @@ country_event = {
 		ai_chance = {
 			factor = 20
 		}
-		CZE = {
+		FROM = {
 			country_event = { id = czech.9 hours = 6 }
 		}
 		
@@ -409,7 +409,17 @@ country_event = {
 		
 		hidden_effect = {
 			SLO = {
-				load_oob = "SLO_independence"
+				if = {
+					limit = {
+						NOT = {
+							has_dlc = "No Step Back"
+						}
+					}
+					load_oob = "SLO_independence"
+				}
+				else = {
+					load_oob = "SLO_independence_nsb"
+				}
 			}
 		}
 	}
@@ -963,3 +973,61 @@ country_event = {
 		}
 	}
 }
+
+# Czechoslovakia becomes just Czech
+country_event = {
+	id = czech.35
+	
+	trigger = {
+		original_tag = CZE
+		NOT = {
+			owns_state = 70
+			owns_state = 71
+			owns_state = 73
+			owns_state = 664
+		}
+		NOT = { has_war_with = SLO }
+		NOT = { has_global_flag = CZE_became_czech }
+	}
+	
+	mean_time_to_happen = { days = 2 }
+
+	hidden = yes
+
+	immediate = {
+		set_cosmetic_tag = CZE_ONLY
+		set_global_flag = CZE_became_czech
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event czech.35"
+	}
+}
+
+# Czechoslovakia becomes Czechoslovakia again
+country_event = {
+	id = czech.36
+	
+	trigger = {
+		original_tag = CZE
+		OR = {
+			owns_state = 70
+			owns_state = 71
+			owns_state = 73
+			owns_state = 664
+		}
+		has_global_flag = CZE_became_czech
+	}
+
+	mean_time_to_happen = { days = 2 }
+
+	hidden = yes
+
+	immediate = {
+		add_state_core = 70
+		add_state_core = 71
+		add_state_core = 73
+		add_state_core = 664
+		drop_cosmetic_tag = yes
+		clr_global_flag = CZE_became_czech
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event czech.36"
+	}
+}
+

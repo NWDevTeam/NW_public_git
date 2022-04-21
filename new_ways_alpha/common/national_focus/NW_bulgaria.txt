@@ -58,7 +58,8 @@ focus_tree = {
 				retire = yes
 			}
 			custom_effect_tooltip = available_political_advisor
-			show_ideas_tooltip = BUL_nikola_zhekov_pol
+			show_ideas_tooltip = BUL_nikola_zhekov
+			show_ideas_tooltip = BUL_nikola_zhekov_theorist
 		}
 	}
 	
@@ -215,6 +216,13 @@ focus_tree = {
 			set_country_flag = BUL_statev_dead
 			remove_unit_leader = 60001
 			remove_unit_leader = 60002
+			
+			custom_effect_tooltip = remove_political_advisor
+			show_ideas_tooltip = BUL_hristo_lukov
+			show_ideas_tooltip = BUL_hristo_lukov1
+			show_ideas_tooltip = BUL_nikola_zhekov
+			show_ideas_tooltip = BUL_nikola_zhekov_theorist
+			show_ideas_tooltip = BUL_hristo_statev
 		}
 	}
 	
@@ -511,9 +519,9 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_plan_balcan_war"
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = land_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -541,16 +549,17 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_come_Lukov"
-			create_country_leader = {
-				name = "Hristo Lukov"
-				desc = "POLITICS_HRISTO_LUKOV_DESC"
-				picture = "GFX_Portrait_bulgaria_hristo_lukov"
-				expire = "1965.1.1"
-				ideology = nazism
-				traits = {
-					antisemit
-					hardened_officer
+			add_country_leader_role = {
+				character = BUL_hristo_lukov
+				country_leader = {
+					ideology = nazism
+					traits = {
+						antisemit
+						hardened_officer
+					}
+					expire = "1965.1.1"
 				}
+				promote_leader = yes
 			}
 		}
 	}
@@ -599,6 +608,24 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_militarize_economy"
 			add_ideas = BUL_militarize_economy_idea
+			random_controlled_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_in_home_area = yes
+					OR = {
+						has_state_flag = BUL_initial_bulgarian_state_flag
+						has_state_flag = BUL_historical_bulgarian_claim_flag
+					}
+				}
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = {
+						limit_to_victory_point = yes
+					}
+				}
+			}
 		}
 	}
 	
@@ -633,7 +660,18 @@ focus_tree = {
 		prerequisite = { focus = BUL_fascist_coup focus = BUL_fascist_coup_lost }
 		mutually_exclusive = { focus = BUL_balkan_alliance }
 		available = {
-			has_government = fascism
+			OR = {
+				has_completed_focus = BUL_fascist_coup
+				has_completed_focus = BUL_fashizacia
+				AND = {
+					has_completed_focus = BUL_own_rejime
+					has_completed_focus = BUL_triple_pact
+				}
+			}
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = 8
@@ -644,6 +682,10 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 5
+			modifier = {
+				factor = 0
+				date > 1937.01.01
+			}
 		}
 
 		completion_reward = {
@@ -658,7 +700,10 @@ focus_tree = {
 		icon = GFX_goal_generic_territory_or_war
 		prerequisite = { focus = BUL_great_bulgaria }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = -3
@@ -691,7 +736,10 @@ focus_tree = {
 		icon = GFX_focus_BUL_support_macedonian_organizations
 		prerequisite = { focus = BUL_great_bulgaria }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = 0
@@ -720,7 +768,10 @@ focus_tree = {
 		icon = GFX_focus_generic_attack_greece
 		prerequisite = { focus = BUL_territory_thrakia }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = 0
@@ -765,7 +816,10 @@ focus_tree = {
 		icon = GFX_goal_generic_secret_weapon
 		prerequisite = { focus = BUL_fight_thrakia }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			owns_state = 184
 			owns_state = 782
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
@@ -808,7 +862,10 @@ focus_tree = {
 		icon = GFX_goal_generic_attack_allies
 		prerequisite = { focus = BUL_macedonian_separates }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			has_country_flag = BUL_macedonian_separates_support1
 			has_country_flag = BUL_macedonian_separates_support2
 			has_country_flag = BUL_macedonian_separates_support3
@@ -956,19 +1013,40 @@ focus_tree = {
 		prerequisite = { focus = BUL_liberate_Macedonia }
 		available = {
 			AND = {
-				BUL = { has_government = fascism }
-				MAC = { NOT = { has_war_with = YUG has_war_with = BUL } }
 				OR = {
-					BUL = { owns_state = 106 }
-					MAC = { owns_state = 106 }
+					has_government = fascism
+					has_government = monarchy
 				}
-				OR = {
-					BUL = { owns_state = 812 }
-					MAC = { owns_state = 812 }
+				MAC = { NOT = { has_war_with = YUG has_war_with = ROOT } }
+				106 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							original_tag = MAC
+						}
+					}
 				}
-				OR = {
-					BUL = { owns_state = 825 }
-					MAC = { owns_state = 825 }
+				812 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							original_tag = MAC
+						}
+					}
+				}
+				825 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+							is_in_faction_with = ROOT
+							original_tag = MAC
+						}
+					}
 				}
 			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
@@ -1013,7 +1091,10 @@ focus_tree = {
 		icon = GFX_goal_generic_territory_or_war
 		prerequisite = { focus = BUL_great_bulgaria }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = 3
@@ -1040,7 +1121,10 @@ focus_tree = {
 		prerequisite = { focus = BUL_territory_dobrudza }
 		mutually_exclusive = { focus = BUL_unite_Hungary }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			is_subject = no
 			country_exists = ROM
 			NOT = { is_in_faction_with = ROM }
@@ -1102,7 +1186,10 @@ focus_tree = {
 		prerequisite = { focus = BUL_territory_dobrudza }
 		mutually_exclusive = { focus = BUL_attack_Romania }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			is_subject = no
 			country_exists = HUN
 			NOT = { has_war_with = HUN }
@@ -1141,7 +1228,10 @@ focus_tree = {
 	#	icon = GFX_goal_generic_propaganda
 	#	prerequisite = { focus = BUL_attack_Romania focus = BUL_unite_Hungary }
 	#	available = {
-	#		has_government = fascism
+	#		OR = {
+	#			has_government = fascism
+	#			has_government = monarchy
+	#		}
 	#		owns_state = 77
 	#		NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 	#	}
@@ -1238,7 +1328,10 @@ focus_tree = {
 		prerequisite = { focus = BUL_one_nation_Macedonia }
 		prerequisite = { focus = BUL_bulgarian_administration_of_the_balkans }
 		available = {
-			has_government = fascism
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
 			NOT = { has_idea = TUR_turkish_bulgarian_agreement }
 		}
 		x = 0
@@ -1285,6 +1378,10 @@ focus_tree = {
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				date > 1938.01.01
 			}
 		}	
 		completion_reward = {
@@ -1533,15 +1630,17 @@ focus_tree = {
 				ruling_party = fascism
 				elections_allowed = no
 			}
-			create_country_leader = {
-				name = "Bogdan Filov"
-				desc = "POLITICS_BOGDAN_FILOV_DESC"
-				picture = "GFX_portrait_bul_bogdan_filov"
-				expire = "1965.1.1"
-				ideology = nationalism_ideology
-				traits = {
-					political_manipulator
+			add_country_leader_role = {
+				character = BUL_bogdan_filov
+				country_leader = {
+					desc = "POLITICS_BOGDAN_FILOV_DESC"
+					ideology = nationalism_ideology
+					traits={
+						political_manipulator
+					}
+					expire = "1965.1.1"
 				}
+				promote_leader = yes
 			}
 			add_ideas = BUL_tsar_boris2
 			if = { limit = { has_idea = BUL_tsar_dictature_idea }
@@ -1557,7 +1656,8 @@ focus_tree = {
 				retire = yes
 			}
 			custom_effect_tooltip = available_political_advisor
-			show_ideas_tooltip = BUL_nikola_zhekov_pol
+			show_ideas_tooltip = BUL_nikola_zhekov
+			show_ideas_tooltip = BUL_nikola_zhekov_theorist
 		}
 	}
 	
@@ -1973,15 +2073,25 @@ focus_tree = {
 		relative_position_id = BUL_friendly_USSR
 		
 		available = {
-			country_exists = SOV
-			NOT = { has_war_with = SOV }
+			is_subject = no
 			is_in_faction = no
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+			}
 		}
 		
 		bypass = {
-			OR = {
-				is_in_faction_with = SOV
-				NOT = { country_exists = SOV }
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
 			}
 		}
 
@@ -1993,7 +2103,24 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_ally_USSR"
-			SOV = { country_event = generic.2 }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -2018,15 +2145,16 @@ focus_tree = {
 				ruling_party = communism
 				elections_allowed = no
 			}
-			create_country_leader = {
-				name = "Boris III"
-				desc = "POLITICS_BORIS_III_DESC"
-				picture = "Portrait_Bulgaria_Boris_III.dds"
-				expire = "1965.1.1"
-				ideology = red_monarchy_ideology
-				traits = {
-					pacifism
+			add_country_leader_role = {
+				character = BUL_boris_iii
+				country_leader = {
+					expire = "1965.1.1"
+					ideology = red_monarchy_ideology
+					traits = {
+						pacifism
+					}
 				}
+				promote_leader = yes
 			}
 			add_popularity = { ideology = communism popularity = 0.15 }
 			every_army_leader = {
@@ -2271,6 +2399,17 @@ focus_tree = {
 			remove_unit_leader = 60001
 			remove_unit_leader = 60002
 			remove_unit_leader = 60003
+			
+			custom_effect_tooltip = remove_political_advisor
+			show_ideas_tooltip = BUL_boris_jocov
+			show_ideas_tooltip = BUL_kiril
+			show_ideas_tooltip = BUL_kiril_high_command
+			show_ideas_tooltip = BUL_dobri_bozhilov
+			show_ideas_tooltip = BUL_asen_kantadziev
+			show_ideas_tooltip = BUL_nikola_geshev
+			show_ideas_tooltip = BUL_alexander_stanishev
+			show_ideas_tooltip = BUL_alex_belev
+			show_ideas_tooltip = BUL_hristo_statev
 		}
 	}
 	
@@ -2868,7 +3007,7 @@ focus_tree = {
 		x = 20
 		y = 0
 
-		cost = 7.2
+		cost = 3
 
 		ai_will_do = {
 			factor = 5
@@ -2908,7 +3047,7 @@ focus_tree = {
 		x = -6
 		y = 1
 
-		cost = 7.2
+		cost = 5
 
 		ai_will_do = {
 			factor = 5
@@ -2916,7 +3055,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_seek_econom_partners"
-			add_political_power = 100
+			add_political_power = 70
 		}
 	}
 	
@@ -2933,7 +3072,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BUL_seek_econom_partners
 
-		cost = 7.2
+		cost = 5
 
 		ai_will_do = {
 			factor = 5
@@ -2984,7 +3123,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BUL_seek_econom_partners
 
-		cost = 7.2
+		cost = 5
 
 		ai_will_do = {
 			factor = 5
@@ -3016,7 +3155,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BUL_seek_econom_partners
 
-		cost = 14.3
+		cost = 10
 
 		ai_will_do = {
 			factor = 5
@@ -3097,7 +3236,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BUL_econom_defence
 
-		cost = 14.3
+		cost = 10
 
 		ai_will_do = {
 			factor = 5
@@ -3583,84 +3722,47 @@ focus_tree = {
 		cost = 7.2
 		
 		bypass = {
-			custom_trigger_tooltip = {
-				tooltip = infrastructure_effort_tt
-				all_owned_state = {			
-					free_building_slots = {
-						building = infrastructure
-						size < 1
-					}
-				}
-			}
-		}
-
-		complete_tooltip = {
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_german_infrastructure_effort"
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 949
+						target_province = 9771
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					level = 2
+					start_province = 949
+					target_province = 9771
 				}
 			}
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 949
+						target_province = 14474
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					level = 2
+					start_province = 949
+					target_province = 14474
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 9919
+					}
+				}
+				build_railway = {
+					level = 2
+					start_province = 949
+					target_province = 9919
 				}
 			}
 		}
@@ -4051,84 +4153,45 @@ focus_tree = {
 		cost = 7.2
 		
 		bypass = {
-			custom_trigger_tooltip = {
-				tooltip = infrastructure_effort_tt
-				all_owned_state = {			
-					free_building_slots = {
-						building = infrastructure
-						size < 1
-					}
-				}
-			}
-		}
-
-		complete_tooltip = {
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
+			
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_french_infrastructure_effort"
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 949
+						target_province = 9771
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					start_province = 949
+					target_province = 9771
 				}
 			}
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 949
+						target_province = 14474
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					start_province = 949
+					target_province = 14474
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 9919
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 9919
 				}
 			}
 		}
@@ -4485,7 +4548,7 @@ focus_tree = {
 		y = 0
 		relative_position_id = BUL_seek_econom_partners
 
-		cost = 7.2
+		cost = 5
 
 		ai_will_do = {
 			factor = 5
@@ -4692,84 +4755,56 @@ focus_tree = {
 		cost = 7.2
 
 		bypass = {
-			custom_trigger_tooltip = {
-				tooltip = infrastructure_effort_tt
-				all_owned_state = {			
-					free_building_slots = {
-						building = infrastructure
-						size < 1
-					}
-				}
-			}
-		}
-
-		complete_tooltip = {
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
-			add_building_construction = {
-				type = infrastructure
-				level = 1
-				instant_build = yes
-			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_support_agrar_land"
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 9919
+						target_province = 9862
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					start_province = 9919
+					target_province = 9862
 				}
 			}
-			random_owned_state = {
+			if = {
 				limit = {
-					free_building_slots = {
-						building = infrastructure
-						size > 0
-					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = infrastructure
-										size > 0
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
+					can_build_railway = {
+						start_province = 9862
+						target_province = 14474
 					}
 				}
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				build_railway = {
+					start_province = 9862
+					target_province = 14474
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 14474
+						target_province = 9771
+					}
+				}
+				build_railway = {
+					start_province = 14474
+					target_province = 9771
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 9771
+						target_province = 9783
+					}
+				}
+				build_railway = {
+					start_province = 9771
+					target_province = 9783
 				}
 			}
 		}
@@ -5072,7 +5107,7 @@ focus_tree = {
 		completion_reward = {
 			if = {
 				limit = {
-					212 = { is_owned_by = BUL }
+					212 = { is_owned_by = ROOT }
 				} 
 				212 = { #PLOVDIV
 					add_extra_state_shared_building_slots = 2
@@ -5262,7 +5297,6 @@ focus_tree = {
 
 	focus = {
 		id = BUL_national_railway_lines
-
 		prerequisite = { focus = BUL_improve_the_road_system }
 		icon = GFX_goal_generic_construct_infrastructure
 		relative_position_id = BUL_improve_the_road_system
@@ -5271,7 +5305,6 @@ focus_tree = {
 		cost = 7.2
 
 		available = {
-
 		}
 		
 		search_filters = {FOCUS_FILTER_INDUSTRY}
@@ -5284,11 +5317,78 @@ focus_tree = {
 					}
 				}
 				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = infrastructure
-					level = 2
-					instant_build = yes
-				}				
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 977
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 977
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 14474
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 14474
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 9862
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 9862
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 3796
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 3796
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 9783
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 9783
+				}
+			}
+			if = {
+				limit = {
+					can_build_railway = {
+						start_province = 949
+						target_province = 9902
+					}
+				}
+				build_railway = {
+					start_province = 949
+					target_province = 9902
+				}
 			}
 		}
 	}
@@ -5387,7 +5487,7 @@ focus_tree = {
 			    category = nuclear
 			}
 			add_ideas = BUL_buhovo_uranium_mines
-			if = { 
+			if = {
 				limit = {
 					any_allied_country = {
 						is_faction_leader = yes
@@ -5467,9 +5567,9 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_RESEARCH}
 		completion_reward = {
 			air_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_pilot_training_program
-			    bonus = 2.0
+			    cost_reduction = 0.65
 			    uses = 2
 			    category = air_doctrine
 			}
@@ -5919,9 +6019,9 @@ focus_tree = {
 		
 		search_filters = {FOCUS_FILTER_RESEARCH FOCUS_FILTER_MANPOWER}
 		completion_reward = {
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_rebuild_the_army
-			    bonus = 1.0
+			    cost_reduction = 0.5
 			    uses = 2
 				category = land_doctrine
 			}
@@ -5966,9 +6066,9 @@ focus_tree = {
 			army_experience = 15
 			navy_experience = 15
 			air_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_vasil_levsky_national_military_university
-			    bonus = 0.75
+			    cost_reduction = 0.4
 			    uses = 2
 				category = land_doctrine
 				category = naval_doctrine
@@ -6039,9 +6139,9 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_RESEARCH}
 		completion_reward = {
 			army_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_national_military_academy
-			    bonus = 1.0
+			    cost_reduction = 0.5
 			    uses = 1
 				category = land_doctrine
 			}
@@ -6089,6 +6189,42 @@ focus_tree = {
 			    bonus = 1
 			    uses = 1
 				category = motorized_equipment
+			}
+			random_controlled_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_in_home_area = yes
+					OR = {
+						has_state_flag = BUL_initial_bulgarian_state_flag
+						has_state_flag = BUL_historical_bulgarian_claim_flag
+					}
+				}
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = {
+						limit_to_victory_point = yes
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_in_home_area = yes
+					OR = {
+						has_state_flag = BUL_initial_bulgarian_state_flag
+						has_state_flag = BUL_historical_bulgarian_claim_flag
+					}
+				}
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = {
+						limit_to_victory_point = yes
+					}
+				}
 			}
 		}
 	}
@@ -6198,9 +6334,9 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_RESEARCH}
 		completion_reward = {
 			navy_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_a_black_sea_fleet
-			    bonus = 0.75
+			    cost_reduction = 0.4
 			    uses = 1
 				category = naval_doctrine
 			}
@@ -7142,8 +7278,13 @@ focus_tree = {
 			add_tech_bonus = {
 				name = BUL_a_powerful_bulgarian_navy
 			    bonus = 1.0
-			    uses = 2
+			    uses = 1
 			    category = bb_tech
+			}
+			add_doctrine_cost_reduction = {
+				name = BUL_a_powerful_bulgarian_navy
+			    cost_reduction = 0.5
+			    uses = 1
 			    category = naval_doctrine
 			}
 		}
@@ -7166,9 +7307,9 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_RESEARCH}
 		completion_reward = {
 			navy_experience = 25
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = BUL_modern_tactics
-			    bonus = 1.0
+			    cost_reduction = 0.5
 			    uses = 2
 			    category = naval_doctrine
 			}

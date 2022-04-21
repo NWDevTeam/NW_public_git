@@ -414,15 +414,48 @@ focus_tree = {
 		}
 		available = {
 			has_global_flag = scw_over
-			SOV = { is_faction_leader = yes }
+			is_subject = no
+			is_in_faction = no
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+			}
 		}
+		
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPC_joining_comintern"
-			country_event = { id = generic.2 }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -454,6 +487,7 @@ focus_tree = {
 			create_wargoal = {
 				type = puppet_wargoal_focus
 				target = POR
+				expire = 0
 			}
 		}
 	}

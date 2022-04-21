@@ -1470,20 +1470,47 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
-			country_exists = SOV
-			NOT = { has_war_with = SOV }
-			SOV = {
-				is_faction_leader = yes
+			is_subject = no
+			is_in_faction = no
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
 				has_government = communism
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
 			}
 		}
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus IRQ_join_comintern"
-			SOV = { country_event = { id = generic.2 } }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -1929,9 +1956,9 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus IRQ_learn_from_british_doctrine"
 			army_experience = 25
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = IRQ_learn_from_british_doctrine
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -6619,9 +6646,9 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus IRQ_learn_from_british_experience"
 			army_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = IRQ_learn_from_british_experience
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}

@@ -866,6 +866,21 @@ generic_policy_interventions_category = {
 					has_government = anarchism
 				}
 			}
+			else_if = {
+				limit = {
+					has_focus_tree = aragon_focus_anarchist
+				}
+				OR = {
+					has_completed_focus = SPR_anarchism_knows_no_borders
+					has_government = trozkism
+				}
+			}
+			else_if = {
+				limit = {
+					has_focus_tree = spain_focus
+				}
+				has_completed_focus = SPR_class_war
+			}
 			else = {
 				OR = {
 					has_government = trozkism
@@ -1945,6 +1960,21 @@ generic_interventions_start_civil_war_category = {
 					has_government = anarchism
 				}
 			}
+			else_if = {
+				limit = {
+					has_focus_tree = aragon_focus_anarchist
+				}
+				OR = {
+					has_completed_focus = SPR_plant_the_seeds_of_revolution
+					has_government = trozkism
+				}
+			}
+			else_if = {
+				limit = {
+					has_focus_tree = spain_focus
+				}
+				has_completed_focus = SPR_class_war
+			}
 			else = {
 				OR = {
 					has_government = trozkism
@@ -2787,9 +2817,9 @@ generic_concept_of_technate_category = {
 						has_country_flag = navy_experience_flag
 					}
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.25
+					cost_reduction = 0.25
 					uses = 1
 					category = land_doctrine
 				}
@@ -2802,9 +2832,9 @@ generic_concept_of_technate_category = {
 						has_country_flag = navy_experience_flag
 					}
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.25
+					cost_reduction = 0.25
 					uses = 1
 					category = air_doctrine
 				}
@@ -2817,9 +2847,9 @@ generic_concept_of_technate_category = {
 						has_country_flag = air_experience_flag
 					}
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.25
+					cost_reduction = 0.25
 					uses = 1
 					category = naval_doctrine
 				}
@@ -2830,9 +2860,9 @@ generic_concept_of_technate_category = {
 					has_country_flag = air_experience_flag
 					NOT = { has_country_flag = navy_experience_flag }
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.33
+					cost_reduction = 0.33
 					uses = 2
 					category = land_doctrine
 					category = air_doctrine
@@ -2844,9 +2874,9 @@ generic_concept_of_technate_category = {
 					has_country_flag = navy_experience_flag
 					NOT = { has_country_flag = air_experience_flag }
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.33
+					cost_reduction = 0.33
 					uses = 2
 					category = land_doctrine
 					category = naval_doctrine
@@ -2858,9 +2888,9 @@ generic_concept_of_technate_category = {
 					has_country_flag = navy_experience_flag
 					NOT = { has_country_flag = army_experience_flag }
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.33
+					cost_reduction = 0.33
 					uses = 2
 					category = air_doctrine
 					category = naval_doctrine
@@ -2872,9 +2902,9 @@ generic_concept_of_technate_category = {
 					has_country_flag = navy_experience_flag
 					has_country_flag = army_experience_flag
 				}
-				add_tech_bonus = {
+				add_doctrine_cost_reduction = {
 					name = generic_use_technopark_for_research_doctrine
-					bonus = 0.5
+					cost_reduction = 0.5
 					uses = 3
 					category = land_doctrine
 					category = air_doctrine
@@ -4195,10 +4225,12 @@ generic_anarchism_tendency_category = {
 			}
 		}
 		custom_cost_trigger = {
-			has_manpower > 500
-			has_equipment = { infantry_equipment > 100 }
+			set_temp_variable = { var_has_manpower_temp = 500 }
+			set_temp_variable = { var_infantry_equipment_temp = 100 }
+			has_manpower > var_has_manpower_temp
+			has_equipment = { infantry_equipment > var_infantry_equipment_temp }
 		}
-		custom_cost_text = generic_follow_trade_convoys_foreign_manufacturers_cost
+		custom_cost_text = infantry_equipment_and_manpower_cost
 		
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_follow_trade_convoys_foreign_manufacturers"
@@ -5742,7 +5774,10 @@ generic_anarchism_private_army_category = {
 				has_idea = thriving_private_army_market
 			}
 			has_tech = motorised_infantry
-			has_tech = basic_light_tank
+			OR = {
+				has_tech = basic_light_tank
+				has_tech = basic_light_tank_chassis
+			}
 		}
 		visible = {
 			OR = {
@@ -6010,8 +6045,16 @@ generic_anarchism_private_army_category = {
 			has_manpower > 27300
 			has_idea = thriving_private_army_market
 			has_tech = motorised_infantry
-			has_tech = basic_light_tank
-			has_tech = basic_medium_tank
+			OR = {
+				AND = {
+					has_tech = basic_light_tank
+					has_tech = basic_medium_tank
+				}
+				AND = {
+					has_tech = basic_light_tank_chassis
+					has_tech = basic_medium_tank_chassis
+				}
+			}
 		}
 		visible = {
 			has_idea = thriving_private_army_market
@@ -6090,7 +6133,13 @@ generic_anarchism_private_army_category = {
 			has_idea = thriving_private_army_market
 			has_tech = motorised_infantry
 			has_tech = armored_car_fire_upgrade
-			has_tech = basic_medium_fire
+			OR = {
+				has_tech = basic_medium_fire
+				AND = {
+					has_tech = tech_flamethrower_squad
+					has_tech = basic_medium_tank_chassis
+				}
+			}
 		}
 		visible = {
 			has_idea = thriving_private_army_market
@@ -6107,9 +6156,9 @@ generic_anarchism_private_army_category = {
 						name = "Fire Tank Corpus Of Mercenary"
 						is_locked = no
 						regiments = {
-							medium_sp_fire_brigade = { x = 0 y = 0 }
-							medium_sp_fire_brigade = { x = 0 y = 1 }
-							medium_sp_fire_brigade = { x = 0 y = 2 }
+							medium_flame_tank = { x = 0 y = 0 }
+							medium_flame_tank = { x = 0 y = 1 }
+							medium_flame_tank = { x = 0 y = 2 }
 							armored_car_fire = { x = 1 y = 0 }
 							armored_car_fire = { x = 1 y = 1 }
 							armored_car_fire = { x = 1 y = 2 }
@@ -7082,6 +7131,10 @@ generic_expand_anarchism_commune_category = {
 					has_completed_focus = libertarian_focus
 					has_completed_focus = agorism_focus
 				}
+			}
+			else_if = {
+				limit = { tag = ARA }
+				has_completed_focus = SPR_global_defense_council
 			}
 			else = {
 				NOT = { tag = BPL }

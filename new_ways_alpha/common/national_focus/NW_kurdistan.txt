@@ -189,19 +189,14 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_build_railway"
 			capital_scope = {
-				add_building_construction = {
-					type = infrastructure
-					level = 2
-					instant_build = yes
-				}
 				every_neighbor_state = {
 					limit = { is_owned_and_controlled_by = ROOT }
-					add_building_construction = {
-						type = infrastructure
+					build_railway = {
 						level = 1
-						instant_build = yes
+						start_state = ROOT.capital
+						target_state = PREV
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -1684,21 +1679,47 @@ focus_tree = {
 		}
 		available = {
 			is_subject = no
-			SOV = {
-				is_faction_leader = yes
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
 				has_government = communism
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
 			}
-			NOT = { has_war_with = SOV }
 		}
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		select_effect = {
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_join_comintern"
-			SOV = { country_event = { id = generic.2 days = 1 } }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -1720,7 +1741,13 @@ focus_tree = {
 			factor = 15
 		}
 		available = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		bypass = {
 		}
@@ -1751,7 +1778,13 @@ focus_tree = {
 			factor = 15
 		}
 		available = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		bypass = {
 		}
@@ -1761,7 +1794,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_promote_kurdish_science"
 			add_to_tech_sharing_group = KRD_kurdish_science_group
-			SOV = { add_to_tech_sharing_group = KRD_kurdish_science_group }
+			FACTION_LEADER = { add_to_tech_sharing_group = KRD_kurdish_science_group }
 		}
 	}
 	
@@ -2782,9 +2815,9 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_establish_royal_guard"
 			army_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = KRD_establish_royal_guard
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -3694,6 +3727,7 @@ focus_tree = {
 			owns_state = 350
 			owns_state = 352
 			owns_state = 786
+			owns_state = 1049			
 			353 = {
 				owner = {
 					NOT = {
@@ -3704,15 +3738,6 @@ focus_tree = {
 				}
 			}
 			354 = {
-				owner = {
-					NOT = {
-						tag = ROOT
-						is_subject_of = ROOT
-						has_war_with = ROOT
-					}
-				}
-			}
-			1049 = {
 				owner = {
 					NOT = {
 						tag = ROOT
@@ -3767,7 +3792,6 @@ focus_tree = {
 			}
 			353 = { is_owned_and_controlled_by = ROOT }
 			354 = {is_owned_and_controlled_by = ROOT }
-			1049 = {is_owned_and_controlled_by = ROOT }
 		}
 		bypass = {
 		}
@@ -3785,7 +3809,6 @@ focus_tree = {
 						OR = {
 							state = 353
 							state = 354
-							state = 1049
 						}
 					}
 					ARM = {
@@ -4268,10 +4291,10 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_implement_experience_of_soviet_volunteers"
 			add_command_power = 15
 			army_experience = 15
-			add_popularity = { ideology = var:SOV.current_party_ideology_group popularity = 0.03 }
-			add_tech_bonus = {
+			add_popularity = { ideology = var:SOU.current_party_ideology_group popularity = 0.03 }
+			add_doctrine_cost_reduction = {
 				name = KRD_implement_experience_of_soviet_volunteers
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = cat_mass_assault
 			}
@@ -4314,9 +4337,9 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_implement_experience_of_german_volunteers"
 			army_experience = 10
 			add_popularity = { ideology = var:GER.current_party_ideology_group popularity = 0.03 }
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = KRD_implement_experience_of_german_volunteers
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = cat_mobile_warfare
 			}
@@ -4356,9 +4379,9 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus KRD_establish_military_academy"
 			army_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = KRD_establish_military_academy
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}

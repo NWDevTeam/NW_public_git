@@ -515,13 +515,48 @@ focus_tree = {
 		available_if_capitulated = yes
 		
 		available = {
-			NOT = { has_war_with = SOV }
-			SOV = { is_faction_leader = yes }
+			is_subject = no
+			is_in_faction = no
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		
+		bypass = {
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		
 		completion_reward = { 
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus CRE_join_the_comintern"
-			SOV = { country_event = { id = nw_greece.23 hours = 3 } }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = nw_greece.23
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -542,12 +577,11 @@ focus_tree = {
 
 		completion_reward = { 
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus CRE_greek_soviet_science"
-			
 			effect_tooltip = {
-				SOV = { add_to_tech_sharing_group = sovgre_research }
+				FACTION_LEADER = { add_to_tech_sharing_group = sovgre_research }
 				ROOT = { add_to_tech_sharing_group = sovgre_research }
 			}
-			SOV = { country_event = { id = nw_greece.22 hours = 3 } }
+			FACTION_LEADER = { country_event = { id = nw_greece.22 hours = 3 } }
 		}
 	}
 	
@@ -604,37 +638,49 @@ focus_tree = {
 		available_if_capitulated = yes
 		
 		available = {
-			is_puppet = no
+			is_subject = no
 			is_in_faction = no
 			OR = {
 				has_government = trozkism
 				trozkism > 0.4
 			}
-			KMX = {
-				exists = yes
-				has_government = trozkism
-				is_in_faction = yes
+			has_global_flag = four_international_flag
+			any_of_scopes = {
+				array = global.is_trozkism
+				tooltip = is_trozkism_tt
+				NOT = { has_war_with = ROOT }
 				is_faction_leader = yes
+				has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
 			}
 		}
 		
 		bypass = {
-			is_in_faction_with = KMX
+			NOT = {
+				any_of_scopes = {
+					array = global.is_trozkism
+					tooltip = is_trozkism_tt
+					NOT = { has_war_with = ROOT }
+					is_faction_leader = yes
+					has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+				}
+			}
 		}
 		
 		completion_reward = { 
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus CRE_join_iv_international"
-			
-			KMX = { country_event = { id = generic.2 days = 0 } }
-			hidden_effect = {
-				KMX = {
-					add_ai_strategy = {
-						type = alliance
-						id = ROOT
-						value = 200
-					}
+			random_other_country = {
+				limit = {
+					NOT = { has_war_with = ROOT }
+					has_government = trozkism
+					is_faction_leader = yes
+					has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
 				}
+				country_event = { id = generic.2 }
 			}
+			set_temp_variable = { troz_threat_temp_var = 2 }
+			add_to_variable = { global.troz_threat_var = troz_threat_temp_var }
+			custom_effect_tooltip = troz_threat_tt1
+			set_var_for_troz_threat_dyn = yes
 		}
 	}
 

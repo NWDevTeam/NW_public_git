@@ -406,9 +406,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_reform_fascist_army"
 			army_experience = 30
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = land_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -588,13 +588,13 @@
 	focus = {
 		id = DEN_antisemitic_laws
 		icon = GFX_z_goal_break_sionism
-		x = -1
-		y = 2
+		x = -3
+		y = 1
 		cost = 10
 		
 		available = {
 			has_country_leader = {
-				name = "Cay Lembcke"
+				character = DEN_cay_lembcke
 				ruling_only = yes
 			}
 		}
@@ -605,7 +605,7 @@
 		
 		available_if_capitulated = yes
 		
-		relative_position_id = DEN_nazist_government
+		relative_position_id = DEN_totalitarianism
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_antisemitic_laws"
@@ -651,7 +651,7 @@
 		}
 		
 		available = {
-			has_country_leader = { name = "Cay Lembcke" ruling_only = yes }
+			has_country_leader = { character = DEN_cay_lembcke ruling_only = yes }
 		}
 		
 		available_if_capitulated = yes
@@ -735,8 +735,8 @@
 	focus = {
 		id = DEN_pursue_masons
 		icon = GFX_z_goal_pursue_masons
-		x = -3
-		y = 2
+		x = -1
+		y = 1
 		cost = 5
 		
 		prerequisite = {
@@ -749,7 +749,7 @@
 		
 		available_if_capitulated = yes
 		
-		relative_position_id = DEN_nazist_government
+		relative_position_id = DEN_totalitarianism
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_pursue_masons"
@@ -786,7 +786,7 @@
 	focus = {
 		id = DEN_boyscout_2
 		icon = GFX_z_goal_DEN_expand_boyscouts
-		x = -2
+		x = 0
 		y = 1
 		cost = 10
 		
@@ -810,8 +810,8 @@
 	focus = {
 		id = DEN_antifeminism
 		icon = GFX_goal_generic_forceful_treaty
-		x = -2
-		y = 2
+		x = 0
+		y = 1
 		cost = 10
 		
 		prerequisite = {
@@ -820,7 +820,7 @@
 		
 		available_if_capitulated = yes
 		
-		relative_position_id = DEN_antisemitic_laws
+		relative_position_id = DEN_boyscout_2
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_antifeminism"
@@ -1976,9 +1976,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_modernization_of_army"
 			army_experience = 10
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = land_doc_bonus
-				bonus = 2.0
+				cost_reduction = 1
 				uses = 1
 				category = land_doctrine
 			}
@@ -2150,6 +2150,10 @@
 			if = {
 				limit = { is_in_faction = yes }
 				custom_effect_tooltip = generic_instant_focus_complete_tt
+			}
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
 			}
 			add_stability = -0.1
 			add_ideas = DEN_provide_military_support_to_trading_partners_idea
@@ -2954,15 +2958,15 @@
 						has_country_flag = DEN_get_masons_flag
 						NOT = {
 							has_country_leader = {
-								name = "Thorvald Stauning"
+								character = DEN_thorvald_stauning
 								ruling_only = yes
 							}
 							has_country_leader = {
-								name = "Vilhelm Buhl"
+								character = DEN_wilhelm_buhl
 								ruling_only = yes
 							}
 							has_country_leader = {
-								name = "Knud Kristensen"
+								character = DEN_knud_kristensen
 								ruling_only = yes
 							}
 						}
@@ -3287,10 +3291,9 @@
 		}
 		
 		available = {
-			has_army_manpower = { size > 149999 }
 			NOR = {
-				is_subject = no
-				exists = yes
+				is_subject_of = ROOT
+				NOT = { is_in_faction_with = ROOT }
 			}
 			has_government = monarchy
 		}
@@ -3298,7 +3301,7 @@
 		bypass = {
 			OR = {
 				has_war_with = NOR
-				NOR = { is_subject_of = DEN }
+				controls_state = 110
 			}
 		}
 		
@@ -3311,13 +3314,33 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_union_with_norway"
 			if = {
-				limit = { NOT = { NOR = { has_government = communism } } }
+				limit = {
+					NOR = {
+						NOT = {
+							has_government = communism
+							has_government = trozkism
+							has_government = anarchism
+						}
+						is_subject = no
+					}
+				}
 				NOR = { country_event = { id = apdenmark.22 hours = 3 } }
-				else = {
-					create_wargoal = {
-						type = puppet_wargoal_focus
-						target = NOR
-						expire = 0
+			}
+			else = {
+				every_state = {
+					limit = {
+						OR = {
+							is_core_of = NOR
+							is_owned_by = NOR
+						}
+					}
+					add_claim_by = ROOT
+					ROOT = {
+						create_wargoal = {
+							type = annex_everything
+							target = PREV
+							expire = 0
+						}
 					}
 				}
 			}
@@ -3507,9 +3530,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_take_back_schlezwig"
 			807 = {
-				add_claim_by = DEN
+				add_claim_by = ROOT
 				controller = {
-					DEN = {
+					ROOT = {
 						create_wargoal = {
 							type = take_state_focus
 							target = PREV
@@ -3520,7 +3543,7 @@
 				}
 			}
 			58 = {
-				add_claim_by = DEN
+				add_claim_by = ROOT
 			}
 		}
 	}
@@ -3546,12 +3569,21 @@
 				NOT = { has_government = communism }
 				exists = yes
 				is_subject = no
-				NOT = { has_war_with = DEN }
-				NOT = { is_in_faction_with = DEN }
+				NOT = { has_war_with = ROOT }
+				NOT = { is_in_faction_with = ROOT }
 			}
 			is_subject = no
 			is_faction_leader = yes
 			has_government = monarchy
+		}
+		
+		bypass = {
+			NOR = {
+				OR = {
+					is_subject_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
 		}
 		
 		mutually_exclusive = { focus = DEN_union_with_norway }
@@ -3789,6 +3821,10 @@
 		
 		available = {
 			NOT = { has_government = anarchism }
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
 		}
 
 		completion_reward = {
@@ -3800,15 +3836,15 @@
 					NOT = { has_country_flag = DEN_disappointment_of_workers_flag }
 					OR = {
 						has_country_leader = {
-							name = "Thorvald Stauning"
+							character = DEN_thorvald_stauning
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Vilhelm Buhl"
+							character = DEN_wilhelm_buhl
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Knud Kristensen"
+							character = DEN_knud_kristensen
 							ruling_only = yes
 						}
 					}
@@ -3822,15 +3858,15 @@
 					NOT = { has_country_flag = DEN_disappointment_of_workers_flag }
 					OR = {
 						has_country_leader = {
-							name = "Thorvald Stauning"
+							character = DEN_thorvald_stauning
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Vilhelm Buhl"
+							character = DEN_wilhelm_buhl
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Knud Kristensen"
+							character = DEN_knud_kristensen
 							ruling_only = yes
 						}
 					}
@@ -3848,6 +3884,13 @@
 		x = -2
 		y = 1
 		cost = 10
+		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
+		}
 		
 		prerequisite = {
 			focus = DEN_support_young_conservatives
@@ -3877,15 +3920,15 @@
 					NOT = { has_country_flag = DEN_disappointment_of_workers_flag }
 					OR = {
 						has_country_leader = {
-							name = "Thorvald Stauning"
+							character = DEN_thorvald_stauning
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Vilhelm Buhl"
+							character = DEN_wilhelm_buhl
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Knud Kristensen"
+							character = DEN_knud_kristensen
 							ruling_only = yes
 						}
 					}
@@ -3899,15 +3942,15 @@
 					NOT = { has_country_flag = DEN_disappointment_of_workers_flag }
 					OR = {
 						has_country_leader = {
-							name = "Thorvald Stauning"
+							character = DEN_thorvald_stauning
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Vilhelm Buhl"
+							character = DEN_wilhelm_buhl
 							ruling_only = yes
 						}
 						has_country_leader = {
-							name = "Knud Kristensen"
+							character = DEN_knud_kristensen
 							ruling_only = yes
 						}
 					}
@@ -3925,6 +3968,13 @@
 		x = -2
 		y = 2
 		cost = 10
+		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
+		}
 		
 		prerequisite = {
 			focus = DEN_support_home_business
@@ -4443,6 +4493,13 @@
 		y = 1
 		cost = 10
 		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+		}
+		
 		prerequisite = {
 			focus = DEN_support_communist_party
 		}
@@ -4457,7 +4514,6 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_support_trade_unions"
-			add_popularity = { ideology = communism popularity = 0.1 }
 			add_stability = -0.05
 			DEN_great_depression_twice_down = yes
 		}
@@ -4469,6 +4525,13 @@
 		x = 2
 		y = 1
 		cost = 10
+		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+		}
 		
 		prerequisite = {
 			focus = DEN_support_communist_party
@@ -4484,7 +4547,6 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_nationalise_industry_1"
-			add_popularity = { ideology = democratic popularity = -0.05 }
 			random_owned_controlled_state = {
 				limit = {
 					is_core_of = ROOT
@@ -4529,6 +4591,13 @@
 		y = 1
 		cost = 10
 		
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+		}
+		
 		prerequisite = {
 			focus = DEN_support_communist_party
 		}
@@ -4543,7 +4612,6 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_nationalise_industry_2"
-			add_popularity = { ideology = democratic popularity = -0.05 }
 			random_owned_controlled_state = {
 				limit = {
 					free_building_slots = {
@@ -4612,6 +4680,10 @@
 				limit = { has_government = anarchism }
 				has_idea = accelerated_industrialization
 			}
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
 		}
 		
 		relative_position_id = DEN_support_communist_party
@@ -4620,7 +4692,6 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_force_industrialisation"
-			add_popularity = { ideology = democratic popularity = -0.2 }
 			add_stability = -0.05
 			random_owned_controlled_state = {
 				limit = {
@@ -4713,6 +4784,11 @@
 					has_idea = peoples_police
 					has_idea = peoples_militia
 				}
+			}
+			OR = {
+				has_government = democratic
+				has_government = communism
+				has_government = neutrality
 			}
 		}
 
@@ -4842,14 +4918,16 @@
 					long_name = DEN_venstre_party_long
 					name = DEN_venstre_party
 				}
-				create_country_leader = {
-					name = "Peter Rochegune Munch"
-					desc = "POLITICS_PETER_ROCHEGUNE_DESC"
-					picture = "gfx/leaders/DEN/Portait_Denmark_Peter_Rochegune_Munch.dds"
-					expire = "1965.1.1"
-					ideology = liberalism
-					traits = {
+				add_country_leader_role = {
+					character = DEN_peter_munch
+					country_leader = {
+						desc = "POLITICS_PETER_ROCHEGUNE_DESC"
+						ideology = liberalism
+						traits={
+						}
+						expire = "1965.1.1"
 					}
+					promote_leader = yes
 				}
 			}
 		}
@@ -5139,9 +5217,8 @@
 				limit = { NOT = { has_government = trozkism } }
 				country_event = { id = apdenmark.34 hours = 3 }
 				else = {
-					create_corps_commander = {
-						name = "Marie Sofie Nielsen"
-						portrait_path = "gfx/leaders/Europe/Portrait_Europe_Generic_land_2.dds"
+					add_corps_commander_role = {
+						character = DEN_marie_nielsen
 						traits = {  }
 						skill = 2
 						attack_skill = 1
@@ -5194,15 +5271,16 @@
 				long_name = DEN_socialist_workers_party_long
 				name = DEN_socialist_workers_party
 			}
-			create_country_leader = {
-				name = "Aksel Larsen"
-				desc = "POLITICS_AKSEL_LARSEN_DESC"
-				picture = "gfx/leaders/DEN/Portait_Denmark_Aksel_Larsen.dds"
-				expire = "1965.1.1"
-				ideology = trozkism1
-				traits = {
-					DEN_larsen_tro_trait
+			add_country_leader_role = {
+				character = DEN_aksel_larsen
+				country_leader = {
+					ideology = trozkism1
+					traits={
+						DEN_larsen_tro_trait
+					}
+					expire = "1965.1.1"
 				}
+				promote_leader = yes
 			}
 			hidden_effect = { country_event = { id = apdenmark.66 hours = 3 } }
 		}
@@ -5566,10 +5644,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_cult_of_a_fisherman"
 			navy_experience = 20
-			add_tech_bonus = {
-				name = ti_bonus
-				name = GER_trade_interdiction
-				bonus = 2.0
+			add_doctrine_cost_reduction = {
+				name = DEN_cult_of_a_fisherman
+				cost_reduction = 0.7
 				uses = 3
 				category = naval_doctrine
 			}
@@ -6610,6 +6687,7 @@
 				limit = { has_idea = DEN_waiting_for_reforms_idea_2 }
 				remove_ideas = DEN_waiting_for_reforms_idea_2
 			}
+			DEN_great_depression_down = yes
 		}
 	}
 	
@@ -7461,9 +7539,9 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_reform_royal_army"
 			army_experience = 10
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = land_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -7606,9 +7684,9 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_military_doctrine_1"
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = land_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -7755,9 +7833,9 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_atlantic_war"
-			add_tech_bonus = {
-				name = fleet_in_being_bonus
-				bonus = 1.0
+			add_doctrine_cost_reduction = {
+				name = DEN_atlantic_war
+				cost_reduction = 0.5
 				uses = 2
 				category = fleet_in_being_tree
 			}
@@ -7877,10 +7955,9 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_baltic_war"
-			add_tech_bonus = {
-				name = ti_bonus
-				name = GER_trade_interdiction
-				bonus = 1.0
+			add_doctrine_cost_reduction = {
+				name = DEN_baltic_war
+				cost_reduction = 0.5
 				uses = 2
 				category = trade_interdiction_tree
 			}
@@ -7972,9 +8049,9 @@
 				uses = 2
 				category = naval_mines
 			}
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = ss_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = naval_doctrine
 			}
@@ -8080,9 +8157,9 @@
 					ROOT = { set_country_flag = aviation_effort_AB }
 				}
 			}
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = air_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}
@@ -8108,9 +8185,9 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_air_doctrine_1"
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = air_doc_bonus
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}

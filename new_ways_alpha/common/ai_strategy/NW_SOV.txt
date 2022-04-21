@@ -15,6 +15,69 @@
 # area_priority
 # declare_war
 
+
+NW_SOV_wardec_GER = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		OR = {
+			focus_progress = { focus = SOV_liberation_of_the_european_proletariat progress > 0 }
+			focus_progress = { focus = SOV_eradicate_western_fascism progress > 0 }
+			GER = { focus_progress = { focus = GER_ussr_war_goal progress > 0 } }
+			has_war_with = GER
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { country_exists = GER }
+			NOT = { has_war_with = GER }
+			GER = { has_capitulated = yes }
+		}
+	}
+	
+	ai_strategy = { type = garrison value = -100 }
+	ai_strategy = { type = prepare_for_war value = 150 }
+	ai_strategy = { type = conquer id = "SOV" value = 500 }
+	ai_strategy = { type = antagonize id = "SOV" value = 500 }
+	ai_strategy = {
+		type = front_unit_request
+		country_trigger = {
+			OR = { tag = GER tag = ITA tag = ROM tag = HUN tag = BUL }
+		}
+		value = 200
+	}
+}
+
+NW_SOV_ignore_JAP = {
+	allowed = { original_tag = SOV }
+	enable = {
+		OR = {
+			is_historical_focus_on = yes
+			date < 1945.06.10
+			focus_progress = { focus = SOV_liberation_of_the_european_proletariat progress > 0 }
+			focus_progress = { focus = SOV_eradicate_western_fascism progress > 0 }
+			GER = { focus_progress = { focus = GER_ussr_war_goal progress > 0 } }
+			has_war_with = GER
+		}
+	}
+	abort = {
+		OR = {
+			focus_progress = { focus = SOV_the_threat_from_the_land_of_the_rising_sun progress > 0 }
+			GER = { has_capitulated = yes }
+			GER = { surrender_progress > 0.75 }
+			NOT = { has_war_with = GER }
+			has_war_with = JAP
+			date > 1945.06.10
+		}
+	}
+	
+	ai_strategy = { type = area_priority	id = asia		value = -100 }
+	ai_strategy = { type = ignore_claim 	id = "JAP"		value = 1 }
+	ai_strategy = { type = declare_war 		id = "JAP"		value = -500 }
+	ai_strategy = { type = ignore			id = "JAP"		value = 500 }
+}
+
 SOV_prepared_for_greate_war = {
 	allowed = {
 		original_tag = SOV
@@ -59,7 +122,8 @@ SOV_dont_be_dumbass_and_dow_germany = {
 	}
 	enable = {
 		OR = {
-			has_completed_focus = SOV_war_with_germany
+			has_completed_focus = SOV_liberation_of_the_european_proletariat
+			has_completed_focus = SOV_eradicate_western_fascism
 			has_wargoal_against = GER
 		}
 		OR = {
@@ -596,7 +660,7 @@ china_struggles_ZET_completed_SOV = {
 		original_tag = SOV
 	}
 	enable = {
-		has_completed_focus = SOV_operation_zet
+		has_completed_focus = SOV_the_threat_from_the_land_of_the_rising_sun
 		has_government = communism
 		CHI = { has_war_with = JAP }
 		NOT = { has_completed_focus = SOV_reconcile_japan }
@@ -636,7 +700,7 @@ attack_japan_sov = {
 		original_tag = SOV
 	}
 	enable = {
-		has_completed_focus = SOV_war_with_japan
+		has_completed_focus = SOV_the_threat_from_the_land_of_the_rising_sun
 		country_exists = JAP
 		JAP = { has_war_with = USA }
 	}
@@ -1065,10 +1129,6 @@ SOV_boost_light_armor_template = {
 
 	# lets do changes more often during this period too
 	ai_strategy = {
-		type = template_xp_reserve 
-		value = -100
-	}
-	ai_strategy = {
 		type = template_prio
 		id = light_armor
 		value = 100
@@ -1095,10 +1155,6 @@ SOV_boost_med_armor_template = {
 	
 	# lets do changes more often during this period too
 	ai_strategy = {
-		type = template_xp_reserve 
-		value = -100	#-125
-	}
-	ai_strategy = {
 		type = template_prio
 		id = medium_armor
 		value = 150
@@ -1116,7 +1172,7 @@ SOV_time_to_leave_light_tanks = {
 			date > 1942.1.1
 			AND = {
 				date > 1941.1.1
-				has_equipment = { light_tank_equipment > 1500 } 
+				has_equipment = { light_tank_chassis > 1500 } 
 			}
 		}
 	}
@@ -1127,12 +1183,12 @@ SOV_time_to_leave_light_tanks = {
 
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = light_tank_equipment
+		id = light_tank_chassis
 		value = -90		#-100
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = medium_tank_equipment
+		id = medium_tank_chassis
 		value = 40
 	}
 }
@@ -1186,7 +1242,7 @@ SOV_expand_navy = {	#note: while historical, it also prevents stupid soviet AI w
 		original_tag = SOV
 	}
 	enable = {
-		has_completed_focus = SOV_ocean_going_navy
+		has_completed_focus = SOV_expand_shipbuilding_plants
 		num_of_military_factories > 70
 		date < 1941.01.01
 		has_war = no
@@ -1358,12 +1414,12 @@ SOV_lategame_tanks_more_useful_now = {
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = medium_tank_equipment
+		id = medium_tank_chassis
 		value = 20	#30
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = light_tank_equipment
+		id = light_tank_chassis
 		value = -50
 	}
 	ai_strategy = {
@@ -1416,7 +1472,8 @@ SOV_GER_non_aggression_pact = {
 	enable = {
 		has_government = communism
 		NOT = {
-			has_completed_focus = SOV_war_with_germany
+			has_completed_focus = SOV_liberation_of_the_european_proletariat
+			has_completed_focus = SOV_eradicate_western_fascism
 			has_war_with = GER
 			is_in_faction_with = GER
 		}
@@ -1484,7 +1541,7 @@ EAI_JAP_SOV_non_aggression_pact = {
 			is_subject = no
 		}
 		NOT = {
-			SOV = { has_completed_focus = SOV_war_with_japan }
+			SOV = { has_completed_focus = SOV_the_threat_from_the_land_of_the_rising_sun }
 			JAP = { has_war_with = SOV }
 			JAP = { is_in_faction_with = SOV }
 		}
@@ -1524,7 +1581,7 @@ EAI_JAP_SOV_non_aggression_pact_2 = {
 		}
 
 		NOT = {
-			SOV = { has_completed_focus = SOV_war_with_japan }
+			SOV = { has_completed_focus = SOV_the_threat_from_the_land_of_the_rising_sun }
 			JAP = { has_war_with = SOV }
 			JAP = { is_in_faction_with = SOV }
 		}

@@ -15,7 +15,6 @@ focus_tree = {
 			add = 10
 			tag = HUN
 			#always = no
-			has_dlc = "Death or Dishonor"
 		}
 	}
 	
@@ -281,28 +280,19 @@ focus_tree = {
 			}
 			else = {
 				save_global_event_target_as = NW_hbbrg_scope
-				create_navy_leader = {
-					name = "Miklós Horthy"
-					gfx = GFX_Portrait_hungary_miklos_horthy_admiral
+				add_naval_commander_role = {
+					character = HUN_miklos_horthy
 					traits = { gunnery_expert navy_media_personality superior_tactician }
 					skill = 3
-					id = 556 #Navy Miklos
+					legacy_id = 556 #Navy Miklos
 					attack_skill = 2
 					defense_skill = 2
 					maneuvering_skill = 2
-					coordination_skill = 4	
+					coordination_skill = 4				
 				}
-				create_country_leader = {
-					name = "Otto von Habsburg"
-					desc = "POLITICS_OTTO_VON_HABSBURG_DESC"
-					picture = GFX_Portrait_hungary_otto_von_hapsburg
-					expire = "1965.1.1"
-					ideology = absolute_monarchy
-					traits = {
-						kingHUN
-					}
-				}
+				promote_character = HBBRG_otto_von_habsburg
 				set_country_flag = kingHUN_flag
+				hidden_effect = { load_all_traits = yes }
 				swap_ideas = {
 					add_idea = HUN_habsburg_restored
 					remove_idea = HUN_hungarian_monarchy_2
@@ -391,12 +381,19 @@ focus_tree = {
 					set_party_name = { ideology = communism long_name = habsburg_communism_party name = habsburg_communism_party }
 					set_party_name = { ideology = fascism long_name = habsburg_fascism_party name = habsburg_fascism_party }
 					set_party_name = { ideology = monarchy long_name = habsburg_monarchy_party name = habsburg_monarchy_party }
-					GER = { country_event = { id = TRpolitical.104 } }
-					CZE = { country_event = { id = TRpolitical.104 } }
-					AUS = { country_event = { id = TRpolitical.104 } }
-					YUG = { country_event = { id = TRpolitical.104 } }
-					ROM = { country_event = { id = TRpolitical.104 } }
-					TUR = { country_event = { id = TRpolitical.104 } }
+					every_other_country = {
+						limit = {
+							OR = {
+								original_tag = GER
+								original_tag = CZE
+								original_tag = AUS
+								original_tag = YUG
+								original_tag = ROM
+								original_tag = TUR
+							}
+						}
+						country_event = { id = TRpolitical.104 }
+					}
 					if = {
 						limit = { SPA = { has_idea = SPA_otto_von_habsburg } }
 						set_autonomy = {
@@ -1013,7 +1010,8 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = yes
-									 
+
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			set_politics = { ruling_party = democratic }
 			hold_election = HUN
@@ -1355,39 +1353,33 @@ focus_tree = {
 					has_government = monarchy
 				}
 				add_popularity = { ideology = fascism popularity = 0.05 }
-				create_country_leader = {
-					name = "Friedrich Franz of Mecklenburg-Schwerin"
-					desc = "POLITICS_FRIEDRICH_FRANZ_OF_MECKLENBURG-SCHWERIN_DESC"
-					picture = GFX_Portrait_hungary_friedrich_franz
-					expire = "1965.1.1"
-					ideology = absolute_monarchy
-					traits = {
-						fascist_sympathies
+				add_country_leader_role = {
+					character = "HUN_franz_friedrich"
+					country_leader = {
+					  ideology=absolute_monarchy
+					  traits = { fascist_sympathies }
+					  expire="1965.1.1"
 					}
-					id = 501 #Neutral Franz
+					promote_leader = yes
 				}
 				hidden_effect = {
-					create_country_leader = {
-						name = "Friedrich Franz of Mecklenburg-Schwerin"
-						desc = "POLITICS_FRIEDRICH_FRANZ_OF_MECKLENBURG-SCHWERIN_DESC"
-						picture = GFX_Portrait_hungary_friedrich_franz
-						expire = "1965.1.1"
-						ideology = nazism
-						traits = {
+					add_country_leader_role = {
+						character = "HUN_franz_friedrich"
+						country_leader = {
+						  ideology=nazism
+						  expire="1965.1.1"
 						}
-						id = 502 #Nazi Franz
+						promote_leader = yes
 					}
 				}
 				else = {
-					create_country_leader = {
-						name = "Friedrich Franz of Mecklenburg-Schwerin"
-						desc = "POLITICS_FRIEDRICH_FRANZ_OF_MECKLENBURG-SCHWERIN_DESC"
-						picture = GFX_Portrait_hungary_friedrich_franz
-						expire = "1965.1.1"
-						ideology = nazism
-						traits = {
+					add_country_leader_role = {
+						character = "HUN_franz_friedrich"
+						country_leader = {
+						  ideology=nazism
+						  expire="1965.1.1"
 						}
-						id = 502 #Nazi Franz
+						promote_leader = yes
 					}
 				}
 			}
@@ -1476,19 +1468,6 @@ focus_tree = {
 			add_timed_idea = { idea = HUN_strengthen_fascists days = 720 }
 			add_popularity = { ideology = fascism popularity = 0.05 }
 			set_party_name = { ideology = fascism long_name = HUN_arrow_cross_party_long name = HUN_arrow_cross_party }
-			hidden_effect = {
-				create_country_leader = {
-					name = "Miklós Horthy"
-					desc = "POLITICS_MIKLOS_HORTHY_DESC"
-					picture = "Portrait_Hungary_Miklos_Horthy.dds"
-					expire = "1965.1.1"
-					ideology = nationalism_ideology
-					traits = {
-						anti_communist
-					}
-					id = 503 #Horthy fascist
-				}
-			}
 		}
 	}
 
@@ -1562,10 +1541,23 @@ focus_tree = {
 						OR = {
 							has_country_leader = { id = 500 }
 							has_country_leader = { id = 505 }
+							has_country_leader = { character = HUN_miklos_horthy }
 						}
 					}
 					hidden_effect = { 
 						retire_country_leader = yes 
+					}
+				}
+				hidden_effect = {
+					add_country_leader_role = {
+						character = "HUN_miklos_horthy"
+						country_leader={
+							ideology=fascism_ideology
+							traits={ anti_communist }
+							expire="1965.1.1.1"
+							id=503
+						}
+						promote_leader = yes
 					}
 				}
 			}
@@ -1577,9 +1569,20 @@ focus_tree = {
 				if = {
 					#Retire Franz if he neutral leader
 					limit = {
-						has_country_leader = { id = 501 }
+						OR = {
+							has_country_leader = { id = 501 }
+							has_country_leader = { character = HUN_franz_friedrich }
+						}
 					}
 					hidden_effect = { retire_country_leader = yes }
+					add_country_leader_role = {
+						character = "HUN_franz_friedrich"
+						country_leader = {
+						  ideology=nazism
+						  expire="1965.1.1"
+						}
+						promote_leader = yes
+					}
 				}
 
 				#Undecided
@@ -2487,7 +2490,7 @@ focus_tree = {
 				}
 				70 = {
 					controller = {
-						country_event = DOD_hungary.100
+						country_event = { id = DOD_hungary.100 hours = 5 } 
 					}
 				}
 			}
@@ -2501,7 +2504,7 @@ focus_tree = {
 						}
 					}
 				}
-				SLO = { country_event = DOD_hungary.107 }
+				SLO = { country_event = { id = DOD_hungary.107 hours = 3 } }
 			}
 			if = {
 				limit = {
@@ -2513,10 +2516,10 @@ focus_tree = {
 						}
 					}
 				}
-				SLO = { OVERLORD = { country_event = DOD_hungary.107 } }
+				SLO = { OVERLORD = { country_event = { id = DOD_hungary.107 hours = 4 } } }
 			}
 			hidden_effect = {
-				news_event = { id = news.309 }
+				news_event = { id = news.309 hours = 8 }
 			}
 		}
 	}
@@ -2659,10 +2662,16 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = yes
+		
         search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			if = {
-				limit = { has_country_leader = { id = 500 } }
+				limit = {
+					OR = {
+						has_country_leader = { id = 500 }
+						has_country_leader = { character = HUN_miklos_horthy }
+					}
+				}
 				kill_country_leader = yes
 			}
 			set_politics = {
@@ -2724,7 +2733,10 @@ focus_tree = {
 		}
 
 		available = {
-
+			SOU = { 
+				exists = yes
+				has_government = communism
+			}
 		}
 
 		bypass = {
@@ -2734,10 +2746,11 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
+		
 		search_filters = { FOCUS_FILTER_RESEARCH }   
 		completion_reward = {
 			add_to_tech_sharing_group = HUN_soviet_hungarian_military_academy_tech_group
-			SOV = { add_to_tech_sharing_group = HUN_soviet_hungarian_military_academy_tech_group }
+			SOU = { add_to_tech_sharing_group = HUN_soviet_hungarian_military_academy_tech_group }
 		}
 	}
 
@@ -2756,32 +2769,31 @@ focus_tree = {
 			factor = 80
 			modifier = {
 				factor = 0
-					SOV = { has_capitulated = yes }
+				SOV = { has_capitulated = yes }
 			}
 		}
 
 		available = {
-			NOT = { has_war_with = SOV }
+			communism > 0.5
+			is_subject = no
+			is_in_faction = no
 			any_of_scopes = {
 				array = global.majors
 				tooltip = is_major_tt
-				hidden_trigger = { NOT = { tag = ROOT } }
-				has_government = communism
+				has_government = ROOT
+				is_faction_leader = yes
 				NOT = { has_war_with = ROOT }
 			}
-			is_in_faction = no
-			NOT = {
-				any_enemy_country = {
-					is_in_faction_with = SOV
-				}
-			}
-			is_subject = no
-			SOV = { is_faction_leader = yes }
-			communism > 0.5
 		}
 
 		bypass = {
-
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = ROOT
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 
 		cancel_if_invalid = yes
@@ -2792,20 +2804,20 @@ focus_tree = {
 		completion_reward = {
 			if = {
 				limit = {
-					SOV = {
-						has_government = communism
+					event_target:NW_comintern_leader_scope = {
 						is_faction_leader = yes
-					}
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
 				}
-				SOV = {
+				event_target:NW_comintern_leader_scope = {
 					country_event = generic.2
 				}
 				if = {
 					limit = {
-						SOV = {
-							NOT = {
-								has_completed_focus = SOV_great_purge
-							}
+						event_target:NW_comintern_leader_scope = { original_tag = SOV }
+						NOT = {
+							has_completed_focus = SOV_the_anti_soviet_trotskyist_center
 						}
 					}
 					retire_country_leader = yes
@@ -2821,11 +2833,11 @@ focus_tree = {
 				}
 			}
 			else = {
-				get_best_alliance_match_communism_effect = yes
-				var:best_leader = {
-					country_event = generic.2
-				}
-			}
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 
@@ -2878,20 +2890,22 @@ focus_tree = {
 		}
 
 		available = {
-			ROM = { 
+			ROM = {
 				exists = yes 
-				NOT = { is_in_faction_with = SOV }
-				NOT = { has_war_with = SOV }
+				NOT = { is_in_faction_with = FACTION_LEADER }
+				NOT = { has_war_with = FACTION_LEADER }
 				OR = {
 					owns_state = 76
 					owns_state = 78
 				}
 			}
-			NOT = { has_war_with = SOV }
-			SOV = { 
-				is_faction_leader = yes 
-				exists = yes
-				is_subject = no
+			FACTION_LEADER = {
+				hidden_trigger = {
+					exists = yes
+					has_capitulated = no
+				}
+				has_government = communism
+				has_civil_war = no
 			}
 		}
 
@@ -2904,7 +2918,7 @@ focus_tree = {
 		available_if_capitulated = no
 
 		completion_reward = {
-			SOV = { country_event = DOD_hungary.110 }
+			FACTION_LEADER = { country_event = DOD_hungary.110 }
 		}
 	}
 
@@ -2924,9 +2938,15 @@ focus_tree = {
 
 		available = {
 			CZE = { exists = yes }
-			NOT = { has_war_with = SOV }
-			CZE = { NOT = { is_in_faction_with = SOV } }
-			SOV = { is_faction_leader = yes }
+			CZE = { NOT = { is_in_faction_with = FACTION_LEADER } }
+			FACTION_LEADER = {
+				hidden_trigger = {
+					exists = yes
+					has_capitulated = no
+				}
+				has_government = communism
+				has_civil_war = no
+			}
 		}
 
 		bypass = {
@@ -2938,7 +2958,7 @@ focus_tree = {
 		available_if_capitulated = no
 
 		completion_reward = {
-			SOV = { country_event = DOD_hungary.120 }
+			FACTION_LEADER = { country_event = DOD_hungary.120 }
 		}
 	}
 
@@ -3998,6 +4018,7 @@ focus_tree = {
         search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			add_ideas = HUN_secret_rearmament
+			custom_effect_tooltip = HUN_secret_rearmament_tt
 		}
 	}
 
@@ -4060,9 +4081,9 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_RESEARCH }										  
 		completion_reward = {
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_theoretical_air_efforts
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}
@@ -4166,9 +4187,9 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_RESEARCH }								
 		completion_reward = {
 			air_experience = 25
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_establish_the_air_force
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}
@@ -4643,9 +4664,9 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_RESEARCH }								
 		completion_reward = {
 			army_experience = 10
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_army_maneuvers
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -4685,9 +4706,9 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_RESEARCH }									   
 		completion_reward = {
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_mobile_focus
-				bonus = 1.0
+				cost_reduction = 0.25
 				uses = 1
 				category = cat_mobile_warfare
 			}
@@ -4944,9 +4965,9 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_RESEARCH }										
 		completion_reward = {
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_mobile_corps_doctrine
-				bonus = 1.0
+				cost_reduction = 0.25
 				uses = 1
 				category = cat_mobile_warfare
 			}
@@ -4986,9 +5007,9 @@ focus_tree = {
 
 		search_filters = { FOCUS_FILTER_RESEARCH }											   
 		completion_reward = {
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_home_defense
-				bonus = 1.0
+				cost_reduction = 0.25
 				uses = 1
 				category = cat_grand_battle_plan
 			}
@@ -5265,13 +5286,12 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_RESEARCH }										
 		completion_reward = {
 			navy_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_restauration
-				bonus = 3.0
+				cost_reduction = 0.5
 				uses = 1
 				category = cat_fleet_in_being
 			}
-
 		}
 	}
 
@@ -5344,14 +5364,13 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_RESEARCH }						   
 		completion_reward = {
 			navy_experience = 15
-			add_tech_bonus = {
+			add_doctrine_cost_reduction = {
 				name = HUN_reform
-				bonus = 1.0
+				cost_reduction = 0.5
 				uses = 2
 				category = cat_trade_interdiction
 				category = cat_base_strike
 			}
-
 		}
 	}
 

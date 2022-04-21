@@ -3,6 +3,7 @@
 ###########################
 
 add_namespace = NWspain
+add_namespace = lar_spain
 
 #Выборы в испанский парламент
 country_event = {
@@ -35,7 +36,6 @@ country_event = {
 		complete_national_focus = SPR_victory_popular_front
 		hidden_effect = {
 			clr_country_flag = democrats_plus_autoritarian_flag
-			clr_country_flag = spain_block_legitimacy_flag
 			country_event = { id = TRlegitimacy.8 }
 			news_event = { id = trworldnews.62 hours = 6 }
 		}
@@ -60,9 +60,44 @@ country_event = {
 		complete_national_focus = SPR_victory_national_block
 		hidden_effect = {
 			clr_country_flag = democrats_plus_autoritarian_flag
-			clr_country_flag = spain_block_legitimacy_flag
 			country_event = { id = TRlegitimacy.8 }
 			news_event = { id = trworldnews.63 hours = 6 }
+			every_unit_leader = {
+				limit = {
+					has_trait = trait_SPA_nationalist_sympathies
+				}
+				remove_unit_leader_trait = trait_SPA_nationalist_sympathies
+			}
+			every_unit_leader = {
+				limit = {
+					has_trait = trait_SPR_republican_loyalties
+				}
+				remove_unit_leader_trait = trait_SPR_republican_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4721
+						has_id = 4722
+						has_id = 4723
+						has_id = 4724
+						has_id = 4731
+						has_id = 4741
+						has_id = 4745
+					}
+				}
+			    add_unit_leader_trait = trait_SPR_stalinist_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4725
+						has_id = 4726
+						has_id = 4727
+					}
+				}
+				add_unit_leader_trait = trait_SPR_anarchist_loyalties
+			}
 		}
 	}
 	
@@ -95,6 +130,74 @@ country_event = {
 			
 			set_variable = { a_agressive_level_var = 2 }
 			set_variable = { a_influence_level_var = 2 }
+			
+			every_unit_leader = {
+				limit = {
+					has_trait = trait_SPR_republican_loyalties
+				}
+				remove_unit_leader_trait = trait_SPR_republican_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4721
+						has_id = 4722
+						has_id = 4723
+						has_id = 4724
+						has_id = 4731
+						has_id = 4741
+						has_id = 4745
+					}
+				}
+			    add_unit_leader_trait = trait_SPR_stalinist_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4725
+						has_id = 4726
+						has_id = 4727
+					}
+				}
+				add_unit_leader_trait = trait_SPR_anarchist_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4709
+						has_id = 4710
+					    has_id = 4704
+						has_id = 4706
+						has_id = 4728
+						has_id = 4730
+						has_id = 4734
+						has_id = 4735
+					}
+				}
+				remove_unit_leader_trait = trait_SPA_nationalist_sympathies
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+						has_id = 4709
+						has_id = 4710
+					}
+				}
+				add_unit_leader_trait = trait_SPA_falangist_loyalties
+			}
+			every_unit_leader = {
+				limit = {
+					OR = {
+					    has_id = 4704
+						has_id = 4706
+						has_id = 4728
+						has_id = 4730
+						has_id = 4734
+						has_id = 4735
+					}
+				}
+				add_unit_leader_trait = trait_SPA_carlist_loyalties
+			}
 		}
 	}
 }
@@ -244,10 +347,41 @@ country_event = {
 		ai_chance = {
 			factor = 75
 		}
-		add_popularity = { ideology = communism popularity = -0.05 }
-		add_popularity = { ideology = trozkism popularity = -0.05 }
-		add_popularity = { ideology = anarchism popularity = -0.02 }
-		add_popularity = { ideology = democratic popularity = 0.12 }
+		if = {
+			limit = { communism < 0.05 }
+			set_temp_variable = { temp_communism = 0 }
+			subtract_from_temp_variable = { temp_communism = party_popularity@communism }
+			add_to_temp_variable = { temp_nf = party_popularity@communism }
+			add_popularity = { ideology = communism popularity = temp_communism }
+		}
+		else = {
+			add_popularity = { ideology = communism popularity = -0.05 }
+			add_to_temp_variable = { temp_nf = 0.05 }
+		}
+		if = {
+			limit = { trozkism < 0.05 }
+			set_temp_variable = { temp_trozkism = 0 }
+			subtract_from_temp_variable = { temp_trozkism = party_popularity@trozkism }
+			add_to_temp_variable = { temp_nf = party_popularity@trozkism }
+			add_popularity = { ideology = trozkism popularity = temp_trozkism }
+		}
+		else = {
+			add_popularity = { ideology = trozkism popularity = -0.05 }
+			add_to_temp_variable = { temp_nf = 0.05 }
+		}
+		if = {
+			limit = { anarchism < 0.05 }
+			set_temp_variable = { temp_anarchism = 0 }
+			subtract_from_temp_variable = { temp_anarchism = party_popularity@anarchism }
+			add_to_temp_variable = { temp_nf = party_popularity@anarchism }
+			add_popularity = { ideology = anarchism popularity = temp_anarchism }
+		}
+		else = {
+			add_popularity = { ideology = anarchism popularity = -0.05 }
+			add_to_temp_variable = { temp_nf = 0.05 }
+		}
+		add_to_temp_variable = { temp_nf = 0.03 }
+		add_popularity = { ideology = democratic popularity = temp_nf }
 		set_party_name = { ideology = democratic name = SPR_popular_front_party long_name = SPR_popular_front_party }
 	}
 	
@@ -1586,17 +1720,17 @@ country_event = {
 		}
 		add_popularity = {
 			ideology = anarchism
-			popularity = 0.17
+			popularity = 0.1
 		}
 		add_popularity = {
-			ideology = trozkism
-			popularity = 0.03
+			ideology = communism
+			popularity = 0.1
 		}
 		set_party_name = { ideology = democratic name = SPR_republic_left long_name = SPR_republic_left }
 	}
 }
 
-#Марксисты и анархисты пытаются отстранить социалистов от власти
+#Марксисты и анархисты пытаются отстранить социалистов от власти // Выборы в III Кортесы Республики
 country_event = {
 	id = NWspain.15
 	title = NWspain.15.t
@@ -1615,8 +1749,17 @@ country_event = {
 		add_political_power = -50
 		add_popularity = {
 			ideology = democratic
-			popularity = 0.05
+			popularity = 0.1
 		}
+		add_popularity = {
+			ideology = communism
+			popularity = -0.05
+		}
+		add_popularity = {
+			ideology = anarchism
+			popularity = -0.05
+		}
+		set_country_flag = democrats_available_second_elections_flag
 	}
 	
 	option = {
@@ -1635,20 +1778,25 @@ country_event = {
 			}
 		}
 		add_stability = -0.07
-		set_politics = {
-			ruling_party = trozkism
-			elections_allowed = yes
+		set_temp_variable = {
+			var = temp1
+			value = party_popularity@democratic
 		}
+		multiply_temp_variable = { temp1 = -1 }
 		add_popularity = {
-			ideology = trozkism
-			popularity = 0.1
+			ideology = democratic
+			popularity = temp1
+		}
+		multiply_temp_variable = { temp1 = -0.5 }
+		add_popularity = {
+			ideology = communism
+			popularity = temp1
 		}
 		add_popularity = {
 			ideology = anarchism
-			popularity = 0.1
+			popularity = temp1
 		}
 		custom_effect_tooltip = democrats_not_available_elections_flag_tt
-		set_country_flag = democrats_available_second_elections_flag
 	}
 }
 
@@ -1665,7 +1813,8 @@ country_event = {
 	immediate = {
 		set_variable = { SPRdemo = party_popularity@democratic }
 		set_variable = { SPRtroz = party_popularity@trozkism }
-		set_variable = { SPRanarch = party_popularity@anarchism }
+		add_to_variable = { SPRtroz = party_popularity@communism }
+		#set_variable = { SPRanarch = party_popularity@anarchism }
 	}
 	
 	#Победа социалистов
@@ -1683,7 +1832,7 @@ country_event = {
 		complete_national_focus = SPR_victory_socialists
 	}
 	
-	#Победа троцкистов
+	#Победа ПОУМ
 	option = {
 		name = NWspain.16.b
 		trigger = {
@@ -1700,16 +1849,17 @@ country_event = {
 			}
 		}
 		add_popularity = {
-			ideology = trozkism
+			ideology = communism
 			popularity = 0.05
 		}
-		complete_national_focus = SPR_victory_trotskyists
+		complete_national_focus = SPR_independent_communists
 	}
 	
 	#Победа анархистов
 	option = {
 		name = NWspain.16.c
 		trigger = {
+			always = no
 			OR = {
 				AND = {
 					has_country_flag = democrats_available_second_elections_flag
@@ -1749,8 +1899,8 @@ country_event = {
 				is_historical_focus_on = no
 				OR = {
 					has_civil_war = yes
-					any_other_country = {
-						is_major = yes
+					any_of_scopes = {
+						array = global.majors
 						has_war_with = ROOT
 					}
 				}
@@ -1771,6 +1921,7 @@ country_event = {
 		create_wargoal = {
 			type = annex_everything
 			target = ARA
+			expire = 0
 		}
 		add_ai_strategy = {
 			type = antagonize
@@ -1846,6 +1997,7 @@ country_event = {
 		create_wargoal = {
 			type = annex_everything
 			target = ARA
+			expire = 0
 		}
 		add_ai_strategy = {
 			type = antagonize
@@ -2148,7 +2300,15 @@ country_event = {
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.23" }
 	immediate = {
 		hidden_effect = {
-			SPR = { country_event = { id = NWspain.66 days = 5 } }
+			if = {
+				limit = {
+					OR = {
+						NOT = { country_exists = ARA }
+						ARA = { NOT = { has_focus_tree = aragon_focus_anarchist } }
+					}
+				}
+				SPR = { country_event = { id = NWspain.66 days = 5 } }
+			}
 		}
 	}
 	
@@ -2171,8 +2331,8 @@ country_event = {
 			}
 			SPA = {
 				inherit_technology = SPR
-				set_stability = 0.9
-				set_war_support = 0.8
+				set_stability = 0.6
+				set_war_support = 0.5
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					amount = 10000
@@ -2193,15 +2353,10 @@ country_event = {
 				}
 				add_core_of = SPA
 			}
-			SPA = {
-				country_event = { id = TRlegitimacy.8 }
-				country_event = { id = tmo.migration.9 }
-				country_event = { id = NWspain.24 days = 1 }
-			}
 			news_event = { hours = 6 id = news.63 }
 			set_global_flag = spanish_civil_war
 			SPR = {
-				set_stability = 0.9
+				set_stability = 0.6
 				set_war_support = 0.5
 				add_popularity = {
 					ideology = monarchy
@@ -2218,6 +2373,104 @@ country_event = {
 				add_civil_war_target = SPA
 				add_timed_idea = { idea = SPR_patriotic_mood days = 180 }
 				add_ideas = SPR_spain_civil_war
+				add_ideas = SPR_disbanded_army_1
+				SPA_jose_sanjurjo = {
+					set_nationality = SPA
+				}
+				SPA_diego_hidalgo_y_duran = {
+					set_nationality = SPA
+				}
+				SPA_ramon_serrano_suner = {
+					set_nationality = SPA
+				}
+				SPA_rafael_garcia_valino = {
+					set_nationality = SPA
+				}
+				SPA_heli_rolando_de_tella = {
+					set_nationality = SPA
+				}
+				SPA_miguel_ponte = {
+					set_nationality = SPA
+				}
+				SPA_joaquin_garcia_morato = {
+					set_nationality = SPA
+				}
+				SPA_wilhelm_ritter_von_thoma = {
+					set_nationality = SPA
+				}
+				SPA_enrique_canovas_lacruz = {
+					set_nationality = SPA
+				}
+				every_unit_leader = {
+					limit = {
+						has_trait = trait_SPA_nationalist_sympathies
+					}
+					set_nationality = SPA
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4721
+							has_id = 4722
+							has_id = 4723
+							has_id = 4724
+							has_id = 4731
+							has_id = 4741
+							has_id = 4725
+							has_id = 4726
+							has_id = 4727
+							has_id = 4745
+						}
+					}
+					remove_unit_leader_trait = trait_SPR_republican_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4721
+							has_id = 4722
+							has_id = 4723
+							has_id = 4724
+							has_id = 4731
+							has_id = 4741
+							has_id = 4745
+						}
+					}
+				    add_unit_leader_trait = trait_SPR_stalinist_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4725
+							has_id = 4726
+							has_id = 4727
+						}
+					}
+					add_unit_leader_trait = trait_SPR_anarchist_loyalties
+				}
+			}
+			SPA = {
+				add_country_leader_role = {
+					character = SPA_jose_sanjurjo
+					country_leader = {
+						desc = "POLITICS_JOSE_SANJURJO_DESC"
+						ideology = authoritarian_democracy
+						traits = {
+							the_lion_of_the_rif
+						}
+						expire = "1965.1.1"
+					}
+					promote_leader = yes
+				}
+				country_event = { id = TRlegitimacy.8 }
+				country_event = { id = tmo.migration.9 }
+				country_event = { id = NWspain.24 days = 1 }
+				every_unit_leader = {
+					limit = {
+						has_trait = trait_SPA_nationalist_sympathies
+					}
+					remove_unit_leader_trait = trait_SPA_nationalist_sympathies
+				}
 				every_unit_leader = {
 					limit = {
 						OR = {
@@ -2225,20 +2478,29 @@ country_event = {
 							has_id = 4702
 							has_id = 4703
 							has_id = 4704
-							has_id = 4705
-							has_id = 4706
 							has_id = 4707
 							has_id = 4708
 							has_id = 4709
 							has_id = 4710
 							has_id = 4711
-							has_id = 4728
-							has_id = 4729
-							has_id = 4730
-							has_id = 4733
+							has_id = 4736
+							has_id = 4746
 						}
 					}
-					set_nationality = SPA
+					add_unit_leader_trait = trait_SPA_falangist_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+						    has_id = 4704
+							has_id = 4706
+							has_id = 4728
+							has_id = 4730
+							has_id = 4734
+							has_id = 4735
+						}
+					}
+					add_unit_leader_trait = trait_SPA_carlist_loyalties
 				}
 			}
 			if = {
@@ -2273,9 +2535,10 @@ country_event = {
 			}
 			SPA = {
 				inherit_technology = SPR
-				set_stability = 0.9
-				set_war_support = 0.8
+				set_stability = 0.6
+				set_war_support = 0.5
 				change_tag_from = ROOT
+				add_ideas = SPR_spain_civil_war
 			}
 			every_state = {
 				limit = {
@@ -2291,19 +2554,18 @@ country_event = {
 				}
 				add_core_of = SPA
 			}
-			SPA = {
-				country_event = { id = TRlegitimacy.8 }
-				country_event = { id = tmo.migration.9 }
-				country_event = { id = NWspain.24 days = 1 }
-			}
 			news_event = { hours = 6 id = news.63 }
 			set_global_flag = spanish_civil_war
 			SPR = {
-				set_stability = 0.9
+				set_stability = 0.6
 				set_war_support = 0.5
 				add_popularity = {
 					ideology = monarchy
 					popularity = -0.2
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = -1
 				}
 				declare_war_on = {
 					target = SPA
@@ -2311,6 +2573,81 @@ country_event = {
 				}
 				add_civil_war_target = SPA
 				add_timed_idea = { idea = SPR_patriotic_mood days = 180 }
+				add_ideas = SPR_spain_civil_war
+				add_ideas = SPR_disbanded_army_1
+				SPA_jose_sanjurjo = {
+					set_nationality = SPA
+				}
+				every_unit_leader = {
+					limit = {
+						has_trait = trait_SPA_nationalist_sympathies
+					}
+					set_nationality = SPA
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4721
+							has_id = 4722
+							has_id = 4723
+							has_id = 4724
+							has_id = 4731
+							has_id = 4741
+							has_id = 4745
+							has_id = 4725
+							has_id = 4726
+							has_id = 4727
+						}
+					}
+					remove_unit_leader_trait = trait_SPR_republican_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4721
+							has_id = 4722
+							has_id = 4723
+							has_id = 4724
+							has_id = 4727
+							has_id = 4731
+							has_id = 4741
+							has_id = 4745
+						}
+					}
+				    add_unit_leader_trait = trait_SPR_stalinist_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_id = 4725
+							has_id = 4726
+						}
+					}
+					add_unit_leader_trait = trait_SPR_anarchist_loyalties
+				}
+			}
+			SPA = {
+				add_country_leader_role = {
+					character = SPA_jose_sanjurjo
+					country_leader = {
+						desc = "POLITICS_JOSE_SANJURJO_DESC"
+						ideology = authoritarian_democracy
+						traits = {
+							the_lion_of_the_rif
+						}
+						expire = "1965.1.1"
+					}
+					promote_leader = yes
+				}
+				country_event = { id = TRlegitimacy.8 }
+				country_event = { id = tmo.migration.9 }
+				country_event = { id = NWspain.24 days = 1 }
+				every_unit_leader = {
+					limit = {
+						has_trait = trait_SPA_nationalist_sympathies
+					}
+					remove_unit_leader_trait = trait_SPA_nationalist_sympathies
+				}
 				every_unit_leader = {
 					limit = {
 						OR = {
@@ -2318,20 +2655,29 @@ country_event = {
 							has_id = 4702
 							has_id = 4703
 							has_id = 4704
-							has_id = 4705
-							has_id = 4706
 							has_id = 4707
 							has_id = 4708
 							has_id = 4709
 							has_id = 4710
 							has_id = 4711
-							has_id = 4728
-					        has_id = 4729
-							has_id = 4730
-							has_id = 4733
+							has_id = 4736
+							has_id = 4746
 						}
 					}
-					set_nationality = SPA
+					add_unit_leader_trait = trait_SPA_falangist_loyalties
+				}
+				every_unit_leader = {
+					limit = {
+						OR = {
+						    has_id = 4704
+							has_id = 4706
+							has_id = 4728
+							has_id = 4730
+							has_id = 4734
+							has_id = 4735
+						}
+					}
+					add_unit_leader_trait = trait_SPA_carlist_loyalties
 				}
 			}
 			if = {
@@ -2454,7 +2800,7 @@ country_event = {
 				limit = { SPR = { has_full_control_of_state = 1066 } }
 				transfer_state = 1066
 			}
-			set_capital = 174
+			set_capital = { state =  174 }
 			#prov
 			if = {
 				limit = {
@@ -2663,6 +3009,7 @@ country_event = {
 				inherit_technology = SPR
 				set_country_flag = aragon_focus_anarchist_flag
 				load_focus_tree = aragon_focus_anarchist
+				add_ideas = SPR_disbanded_army_1
 				set_popularities = {
 					democratic = 20
 					fascism = 20
@@ -2906,6 +3253,7 @@ country_event = {
 				inherit_technology = SPR
 				set_country_flag = aragon_focus_anarchist_flag
 				load_focus_tree = aragon_focus_anarchist
+				add_ideas = SPR_disbanded_army_1
 				set_popularities = {
 					democratic = 20
 					fascism = 20
@@ -3111,10 +3459,7 @@ country_event = {
 		release_puppet = ARA
 		every_unit_leader = {
 		    limit = {
-			    OR = {
-			        has_id = 4725
-			        has_id = 4726
-		        }
+				has_trait = trait_SPR_anarchist_loyalties
 			}
 		    set_nationality = ARA
 	    }
@@ -3133,6 +3478,7 @@ country_event = {
 				inherit_technology = SPR
 				set_country_flag = aragon_focus_anarchist_flag
 				load_focus_tree = aragon_focus_anarchist
+				add_ideas = SPR_disbanded_army_1
 				set_popularities = {
 					democratic = 20
 					fascism = 20
@@ -3207,14 +3553,11 @@ country_event = {
 		hidden_effect = {
 			release_puppet = ARA
 			every_unit_leader = {
-			    limit = {
-			        OR = {
-			            has_id = 4725
-			            has_id = 4726
-		            }
-			    }
-			    set_nationality = ARA
-		    }
+		        limit = {
+			        has_trait = trait_SPR_anarchist_loyalties
+		    	}
+		        set_nationality = ARA
+	   		}
 			if = {
 				limit = { 166 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } } }
 				ARA = { transfer_state = 166 }
@@ -3229,6 +3572,7 @@ country_event = {
 				inherit_technology = SPR
 				set_country_flag = aragon_focus_anarchist_flag
 				load_focus_tree = aragon_focus_anarchist
+				add_ideas = SPR_disbanded_army_1
 				set_popularities = {
 					democratic = 20
 					fascism = 20
@@ -3297,8 +3641,16 @@ country_event = {
 		tag = SPR
 		SPR = {
 			has_war_with = SPA
-			num_of_controlled_states < 12
-			NOT = { has_completed_focus = SPR_transformation_people_republic }
+			surrender_progress > 0.5
+			OR = {
+				communism > 0.45
+				trozkism > 0.45
+				anarchism > 0.45
+				AND = {
+					has_completed_focus = SPR_support_stalinists
+					NOT = { has_completed_focus = SPR_transformation_people_republic }
+				}
+			}
 		}
 		SPA = { controls_state = 41 }
 		date > 1939.02.01
@@ -3324,7 +3676,7 @@ country_event = {
 			desc = "POLITICS_SEGISMUNDO_CASADO_DESC"
 			picture = "gfx/leaders/SPR/Portrait_Segismundo_Casado.dds"
 			expire = "1965.1.1"
-			ideology = militarism
+			ideology = militarism_ideology
 			traits = {
 			}
 		}
@@ -3334,10 +3686,6 @@ country_event = {
 		}
 		remove_unit_leader = 4722
 		complete_national_focus = SPR_stand_junta
-		if = {
-			limit = { has_idea = SPR_desire_for_decentralization }
-			remove_ideas = SPR_desire_for_decentralization
-		}
 	}
 	
 	option = {
@@ -3956,16 +4304,11 @@ country_event = {
 			transfer_state = 172
 		}
 		every_unit_leader = {
-		    limit = {
-				OR = {
-					has_id = 4704
-					has_id = 4730
-					has_id = 4706
-					has_id = 4728
-				}
-		    }
-		    set_nationality = NAV
-	    }
+	        limit = {
+		        has_trait = trait_SPA_carlist_loyalties
+		  	}
+	        set_nationality = NAV
+	   	}
 		hidden_effect = {
 			if = {
 				limit = { check_variable = { karl_influence_level_var = 1 } }
@@ -4019,16 +4362,11 @@ country_event = {
 			transfer_state = 172
 		}
 		every_unit_leader = {
-		    limit = {
-				OR = {
-					has_id = 4704
-					has_id = 4730
-					has_id = 4706
-					has_id = 4728
-				}
-		    }
-		    set_nationality = NAV
-	    }
+	        limit = {
+		        has_trait = trait_SPA_carlist_loyalties
+		  	}
+	        set_nationality = NAV
+	   	}
 		hidden_effect = {
 			if = {
 				limit = { check_variable = { karl_influence_level_var = 1 } }
@@ -4090,25 +4428,16 @@ country_event = {
 		name = NWspain.36.a
 		add_popularity = { ideology = neutrality popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4701
-			        has_id = 4702
-					has_id = 4703
-					has_id = 4705
-					has_id = 4708
-					has_id = 4711
-					has_id = 4729
-					has_id = 4733
-		        }
-			}
-		    set_nationality = SEU
-	    }
+	        limit = {
+		        has_trait = trait_SPA_nationalist_sympathies
+		  	}
+	        set_nationality = SEU
+	   	}
 		SEU = {
 			transfer_state = 290
 			transfer_state = 175
 			transfer_state = 41
-			set_capital = 41
+			set_capital = { state =  41 }
 		}
 		hidden_effect = {
 			if = {
@@ -4170,25 +4499,16 @@ country_event = {
 		trigger = { is_ai = no }
 		add_popularity = { ideology = neutrality popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4701
-			        has_id = 4702
-					has_id = 4703
-					has_id = 4705
-					has_id = 4708
-					has_id = 4711
-					has_id = 4729
-					has_id = 4733
-		        }
-			}
-		    set_nationality = SEU
-	    }
+	        limit = {
+		        has_trait = trait_SPA_nationalist_sympathies
+		  	}
+	        set_nationality = SEU
+	   	}
 		SEU = {
 			transfer_state = 290
 			transfer_state = 175
 			transfer_state = 41
-			set_capital = 41
+			set_capital = { state =  41 }
 		}
 		hidden_effect = {
 			if = {
@@ -4260,18 +4580,11 @@ country_event = {
 		name = NWspain.37.a
 		add_popularity = { ideology = communism popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4721
-			        has_id = 4722
-					has_id = 4723
-			        has_id = 4724
-					has_id = 4727
-					has_id = 4731
-		        }
-			}
-		    set_nationality = SPC
-	    }
+	        limit = {
+		        has_trait = trait_SPR_stalinist_loyalties
+		  	}
+	        set_nationality = SPC
+	   	}
 		SPC = {
 			transfer_state = 170
 		}
@@ -4325,18 +4638,11 @@ country_event = {
 		trigger = { is_ai = no }
 		add_popularity = { ideology = communism popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4721
-			        has_id = 4722
-					has_id = 4723
-			        has_id = 4724
-					has_id = 4727
-					has_id = 4731
-		        }
-			}
-		    set_nationality = SPC
-	    }
+	        limit = {
+		        has_trait = trait_SPR_stalinist_loyalties
+		  	}
+	        set_nationality = SPC
+	   	}
 		SPC = {
 			transfer_state = 170
 		}
@@ -4554,51 +4860,17 @@ country_event = {
 		name = NWspain.39.a
 		add_popularity = { ideology = anarchism popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4725
-			        has_id = 4726
-		        }
-			}
-		    set_nationality = ARA
-	    }
+	        limit = {
+		        has_trait = trait_SPR_anarchist_loyalties
+		  	}
+	        set_nationality = ARA
+	   	}
 		ARA = {
 			transfer_state = 166
 			transfer_state = 794
 			set_country_flag = aragon_focus_anarchist_flag
 			load_focus_tree = aragon_focus_anarchist
-			create_corps_commander = {
-			    name = "Buenaventura Durruti"
-			    id = 4712
-			    gfx = "GFX_portrait_SPR_buenaventura_durruti"
-				traits = { infantry_officer offensive_doctrine aggressive_assaulter }
-				skill = 3
-			    attack_skill = 3
-			    defense_skill = 3
-			    planning_skill = 2
-			    logistics_skill = 2
-			}
-			create_corps_commander = {
-				name = "Eduardo Medrano Rivas"
-				gfx = "GFX_portrait_SPR_eduardo_medrano_rivas"
-				traits = { infantry_leader }
-				skill = 3
-			    attack_skill = 3
-			    defense_skill = 2
-			    planning_skill = 2
-			    logistics_skill = 3
-			}
-			create_corps_commander = {
-				name = "Lina Ódena"
-				gfx = "GFX_portrait_SPR_lina_odena"
-				traits = { adaptable }
-				female = yes
-				skill = 2
-			    attack_skill = 2
-			    defense_skill = 2
-			    planning_skill = 2
-			    logistics_skill = 1
-			}
+			add_ideas = SPR_disbanded_army_1
 		}
 		hidden_effect = {
 			if = {
@@ -4660,51 +4932,17 @@ country_event = {
 		trigger = { is_ai = no }
 		add_popularity = { ideology = anarchism popularity = -0.05 }
 		every_unit_leader = {
-		    limit = {
-			    OR = {
-			        has_id = 4725
-			        has_id = 4726
-		        }
-			}
-		    set_nationality = ARA
-	    }
+	        limit = {
+		        has_trait = trait_SPR_anarchist_loyalties
+		  	}
+	        set_nationality = ARA
+	   	}
 		ARA = {
 			transfer_state = 166
 			transfer_state = 794
 			set_country_flag = aragon_focus_anarchist_flag
 			load_focus_tree = aragon_focus_anarchist
-			create_corps_commander = {
-			    name = "Buenaventura Durruti"
-			    id = 4712
-			    gfx = "GFX_portrait_SPR_buenaventura_durruti"
-				traits = { infantry_officer offensive_doctrine aggressive_assaulter }
-				skill = 3
-			    attack_skill = 3
-			    defense_skill = 3
-			    planning_skill = 2
-			    logistics_skill = 2
-			}
-			create_corps_commander = {
-				name = "Eduardo Medrano Rivas"
-				gfx = "GFX_portrait_SPR_eduardo_medrano_rivas"
-				traits = { infantry_leader }
-				skill = 3
-			    attack_skill = 3
-			    defense_skill = 2
-			    planning_skill = 2
-			    logistics_skill = 3
-			}
-			create_corps_commander = {
-				name = "Lina Ódena"
-				gfx = "GFX_portrait_SPR_lina_odena"
-				traits = { adaptable }
-				female = yes
-				skill = 2
-			    attack_skill = 2
-			    defense_skill = 2
-			    planning_skill = 2
-			    logistics_skill = 1
-			}
+			add_ideas = SPR_disbanded_army_1
 		}
 		hidden_effect = {
 			if = {
@@ -7422,6 +7660,7 @@ country_event = {
 			create_wargoal = {
 				type = annex_everything
 				target = ROOT
+				expire = 0
 			}
 		}
 	}
@@ -7478,6 +7717,7 @@ country_event = {
 		}
 		create_corps_commander = {
 			name = "Eduardo Medrano Rivas"
+			id = 4738
 			gfx = "GFX_portrait_SPR_eduardo_medrano_rivas"
 			traits = { infantry_leader }
 			skill = 3
@@ -7488,6 +7728,7 @@ country_event = {
 		}
 		create_corps_commander = {
 			name = "Lina Ódena"
+			id = 4739
 			gfx = "GFX_portrait_SPR_lina_odena"
 			traits = { adaptable }
 			female = yes
@@ -7666,7 +7907,441 @@ country_event = {
 	}
 }
 
+#Выборы председателя ИСРП
+country_event = {
+	id = NWspain.69
+	title = NWspain.69.t
+	desc = NWspain.69.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.69" }
+	
+	option = {
+		name = NWspain.69.a
+		ai_chance = {
+			factor = 50
+		}
+		create_country_leader = {
+			name = "Largo Caballero"
+			desc = "POLITICS_LARGO_CABALLERO_DESC"
+			picture = "gfx/leaders/SPR/portrait_spr_largo_caballero.dds"
+			expire = "1965.1.1"
+			ideology = socialism
+			traits = {
+				socialist_trait
+				short_sighted_politician
+				trade_union_leader
+				spanish_lenin
+			}
+		}
+	}
+	option = {
+		name = NWspain.69.b
+		ai_chance = {
+			factor = 50
+		}
+		create_country_leader = {
+			name = "Indalecio Prieto Tuero"
+			desc = "POLITICS_INDALECIO_PRIETO_TUERO_DESC"
+			picture = "gfx/leaders/SPR/Portrait_Indalecio_Prieto.dds"
+			expire = "1965.1.1"
+			ideology = democratic_socialism
+			traits = {
+				socialist_trait
+				voice_of_restraint
+				journalist
+				liberal_socialist
+			}
+		}
+		custom_effect_tooltip = SPR_end_fascism_at_all_costs_block_tt
+	}
+}
 
+#Выборы председателя ПОУМ
+country_event = {
+	id = NWspain.70
+	title = NWspain.70.t
+	desc = NWspain.70.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.70" }
+	
+	option = {
+		name = NWspain.70.a
+		ai_chance = {
+			factor = 50
+		}
+		set_temp_variable = { temp1 = party_popularity@communism }
+		add_popularity = {
+			ideology = trozkism
+			popularity = temp1
+		}
+		multiply_temp_variable = { temp1 = -1 }
+		add_popularity = {
+			ideology = communism
+			popularity = temp1
+		}
+		if = {
+			limit = { NOT = { has_government = trozkism } }
+			set_politics = {
+				ruling_party = trozkism
+				elections_allowed = yes
+			}
+		}
+		remove_country_leader_role = { character = SPR_andres_nin_perez		ideology = right_wing_communism }
+		add_country_leader_role = {
+			character = SPR_andres_nin_perez
+			country_leader = {
+				desc = "POLITICS_ANDRES_NIN_PEREZ_DESC"
+				ideology = communism_workers_soviets
+				traits = {
+				}
+				expire = "1965.1.1"
+			}
+			promote_leader = yes
+		}
+		effect_tooltip = {
+			unlock_national_focus = SPR_left_slope
+		}
+	}
+	option = {
+		name = NWspain.70.b
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { NOT = { has_government = communism } }
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = yes
+			}
+		}
+		create_country_leader = {
+			name = "Joaquim Maurín"
+			desc = "POLITICS_JOAQUIM_MAURIN_DESC"
+			picture = "gfx/leaders/SPR/Joaquim_Maurin.dds"
+			expire = "1965.1.1"
+			ideology = right_wing_communism
+			traits = {
+			}
+		}
+		effect_tooltip = {
+			unlock_national_focus = SPR_right_slope
+		}
+	}
+	option = {
+		name = NWspain.70.c
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { NOT = { has_government = communism } }
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = yes
+			}
+		}
+		create_country_leader = {
+			name = "Julián Gorkin"
+			desc = "POLITICS_JULIAN_GORKIN_DESC"
+			picture = "GFX_portrait_SPR_julian_gorkin"
+			expire = "1965.1.1"
+			ideology = right_wing_communism
+			traits = {
+			}
+		}
+		effect_tooltip = {
+			unlock_national_focus = SPR_united_under_socialism
+		}
+	}
+}
+
+#Объединение в 3½ интернационал?
+country_event = {
+	id = NWspain.71
+	title = NWspain.71.t
+	desc = NWspain.71.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.71" }
+	
+	option = {
+		name = NWspain.71.a
+		ai_chance = {
+			factor = 1
+		}
+		ENG = { country_event = { id = NWspain.72 hours = 6 } }
+	}
+	option = {
+		name = NWspain.71.b
+		ai_chance = {
+			factor = 0
+		}
+		if = {
+			limit = { is_faction_leader = yes }
+			set_faction_name = three_half_international
+		}
+		else = {
+			create_faction = three_half_international
+		}
+		hidden_effect = { news_event = { id = lar_news.21 hours = 6 } }
+		every_other_country = {
+			limit = {
+				has_government = communism
+				is_in_faction = no
+				NOT = {
+					capital_scope = {
+						is_on_continent = asia
+					}
+				}
+			}
+			country_event = { id = generic.5 hours = 6 random_hours = 6 }
+		}
+	}
+}
+
+#Объединение в 3½ интернационал? // ENG
+country_event = {
+	id = NWspain.72
+	title = NWspain.71.t
+	desc = NWspain.72.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.72" }
+	
+	option = {
+		name = NWspain.72.a
+		ai_chance = {
+			factor = 90
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = FROM
+				value = 200
+			}
+			add_ai_strategy = {
+				type = protect
+				id = FROM
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
+				}
+				add_ai_strategy = {
+					type = protect
+					id = ROOT
+					value = 200
+				}
+			}
+		}
+		set_faction_name = three_half_international
+		add_to_faction = FROM
+		hidden_effect = { news_event = { id = trworldnews.143 hours = 6 } }
+		every_other_country = {
+			limit = {
+				has_government = communism
+				is_in_faction = no
+				NOT = {
+					capital_scope = {
+						is_on_continent = asia
+					}
+				}
+			}
+			country_event = { id = generic.5 hours = 6 random_hours = 6 }
+		}
+	}
+	option = {
+		name = NWspain.72.b
+		ai_chance = {
+			factor = 10
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = -400
+		}
+        add_ai_strategy = {
+			type = befriend
+			id = FROM
+			value = -200
+		}
+        add_ai_strategy = {
+			type = protect
+			id = FROM
+			value = -200
+		}
+		FROM = { country_event = { id = NWspain.73 hours = 6 } }
+	}
+}
+
+#[From.GetName]: отказ 
+country_event = {
+	id = NWspain.73
+	title = NWspain.73.t
+	desc = NWspain.73.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.73" }
+	
+	option = {
+		name = NWspain.72.a
+		ai_chance = {
+			factor = 10
+		}
+		add_ai_strategy = {
+			type = alliance
+			id = FROM
+			value = -400
+		}
+        add_ai_strategy = {
+			type = befriend
+			id = FROM
+			value = -200
+		}
+        add_ai_strategy = {
+			type = protect
+			id = FROM
+			value = -200
+		}
+		create_faction = three_half_international
+		hidden_effect = { news_event = { id = lar_news.21 hours = 6 } }
+		every_other_country = {
+			limit = {
+				has_government = communism
+				is_in_faction = no
+				NOT = {
+					capital_scope = {
+						is_on_continent = asia
+					}
+				}
+			}
+			country_event = { id = generic.5 hours = 6 random_hours = 6 }
+		}
+	}
+}
+
+#Левый уклон
+country_event = {
+	id = NWspain.74
+	title = NWspain.74.t
+	desc = NWspain.74.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.74" }
+	
+	option = {
+		name = NWspain.74.a
+		ai_chance = {
+			factor = 50
+		}
+		custom_effect_tooltip = NWspain_74a_tt
+		custom_effect_tooltip = NWspain_74a_tt2
+		set_country_flag = NWspain_74a_flag
+	}
+	option = {
+		name = NWspain.74.b
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+#Приглашение в Социнтерн // социалисты
+country_event = {
+	id = NWspain.75
+	title = NWspain.75.t
+	desc = NWspain.75.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWspain.75" }
+	immediate = {
+		hidden_effect = {
+			save_event_target_as = alliance_applicant
+			FROM = {
+				save_event_target_as = alliance_inviter
+			}
+		}
+	}
+	
+	option = {
+		name = NWspain.75.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				has_country_leader = { ruling_only = yes name = "Richard Nikolaus Coudenhove-Kalergi" }
+				OR = {
+					num_subjects > 2
+					is_faction_leader = yes
+					num_of_controlled_states > 30
+					num_of_factories > 150
+				}
+			}
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = FROM
+				value = 200
+			}
+			add_ai_strategy = {
+				type = protect
+				id = FROM
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
+				}
+				add_ai_strategy = {
+					type = protect
+					id = ROOT
+					value = 200
+				}
+			}
+		}
+		FROM = { 
+			add_to_faction = ROOT
+			country_event = { id = generic.6 hours = 6 } 
+		}
+		hidden_effect = {
+			set_country_flag = alliance_applicant@ROOT
+			FROM = { set_country_flag = alliance_inviter@ROOT }
+			news_event = { id = news.289 hours = 12 }
+			if = {
+				limit = {
+					FROM = {
+						original_tag = GER
+						has_government = democratic
+						has_completed_focus = GER_pool_technical_know_how
+					}
+					NOT = { has_idea = GER_pool_technical_know_how }
+				}
+				add_ideas = GER_pool_technical_know_how
+			}
+		}
+	}
+	option = {
+		name = NWspain.75.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = generic.7 hours = 6 } }
+	}
+}
 
 
 ########################
@@ -7689,23 +8364,21 @@ country_event = {
 		add_stability = -0.03
 		if = {
 			limit = {
-				has_country_leader = { name = "José Sanjurjo" }
+				has_country_leader = { character = SPA_jose_sanjurjo }
 			}
-			kill_country_leader = yes
+			retire_character = SPA_jose_sanjurjo
 		}
-		
-		remove_unit_leader = 4699
-		
-		create_country_leader = {
-			name = "Emilio Mola"
-			id = 4698
-			desc = "POLITICS_EMILIO_MOLA_DESC"
-			picture = "gfx/leaders/SPA/portrait_spa_emilio_mola.dds"
-			expire = "1965.1.1"
-			ideology = despotism
-			traits = {
-				the_director
+		add_country_leader_role = {
+			character = SPA_emilio_mola
+			country_leader = {
+				desc = "POLITICS_EMILIO_MOLA_DESC"
+				ideology = despotism
+				traits = {
+					the_director
+				}
+				expire = "1965.1.1"
 			}
+			promote_leader = yes
 		}
 		set_country_flag = SPA_focus_junta_block_flag
 	}
@@ -7753,25 +8426,9 @@ country_event = {
 		add_stability = -0.03
 		if = {
 			limit = {
-				has_country_leader = { name = "Emilio Mola" }
+				has_country_leader = { character = SPA_emilio_mola }
 			}
-			kill_country_leader = yes
-		}
-		random_unit_leader = {
-			limit = {
-				has_id = 4702
-			}
-			retire = yes
-		}
-		hidden_effect = {
-			SPR = {
-				random_unit_leader = {
-					limit = {
-						has_id = 4702
-					}
-					retire = yes
-				}
-			}
+			retire_character = SPA_emilio_mola
 		}
 	}
 }
@@ -8119,9 +8776,15 @@ country_event = {
 			modifier = {
 				factor = 5
 				is_historical_focus_on = no
-				any_country = {
-					has_war_with = ROOT
-					has_war_with = FROM
+				ROOT = {
+					any_enemy_country = {
+						has_war_with = FROM
+					}
+				}
+				FROM = {
+					any_enemy_country = {
+						has_war_with = ROOT
+					}
 				}
 			}
 			modifier = {
@@ -8155,9 +8818,15 @@ country_event = {
 			modifier = {
 				factor = 2
 				is_historical_focus_on = no
-				any_country = {
-					has_war_with = ROOT
-					has_war_with = FROM
+				ROOT = {
+					any_enemy_country = {
+						has_war_with = FROM
+					}
+				}
+				FROM = {
+					any_enemy_country = {
+						has_war_with = ROOT
+					}
 				}
 			}
 			modifier = {
@@ -8631,6 +9300,7 @@ country_event = {
 			create_wargoal = {
 				type = annex_everything
 				target = GER
+				expire = 0
 			}
 		}
 	}
@@ -8775,6 +9445,7 @@ country_event = {
 		create_wargoal = {
 			type = puppet_wargoal_focus
 			target = FROM
+			expire = 0
 		}
 	}
 	
@@ -9111,6 +9782,20 @@ country_event = {
 		set_rule = { can_create_factions = yes }
 		create_faction = ARA_iwa
 		add_to_faction = FROM
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = FROM
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
+				}
+			}
+		}
 	}
 }
 
@@ -9396,8 +10081,1475 @@ country_event = {
 }
 
 
+### VANILA ###
+
+# Portuguese Anarchism - Event for Portugal
+country_event = {
+	id = lar_spain.48
+	title = lar_spain.48.t
+	desc = lar_spain.48.desc
+	picture = GFX_report_event_spr_anarchist_uprising
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_state = {
+				limit = {
+					any_neighbor_state = {
+						is_fully_controlled_by = FROM
+					}
+				}
+				set_state_flag = SPC_portuguese_anarchism_state
+			}
+			set_global_flag = SPR_portuguese_anarchism_flag
+		}
+	}
+	
+	option = { # Ok :'(
+		name = lar_spain.48.a
+		hidden_effect = {
+			start_civil_war = {
+			    ideology = anarchism
+			    size = 0.1
+			    states_filter = { 
+			        has_state_flag = SPC_portuguese_anarchism_state
+			    }
+			    keep_unit_leaders_trigger = {
+			    	always = yes
+			    }
+			}
+			random_country = {
+				limit = {
+					original_tag = POR
+					has_government = communism
+					NOT = { tag = ROOT }
+				}
+				set_political_party = {
+				    ideology = anarchism
+				    popularity = 100
+				}
+				set_party_name = { ideology = anarchism long_name = SPR_neutrality_anarchism_party_long name = SPR_neutrality_anarchism_party }
+				set_cosmetic_tag = SPR_POR_anarchism
+				set_country_flag = SPR_portuguese_anarchism_flag
+				retire_country_leader = yes
+				create_country_leader = {
+					name = "Anarchist Commune"
+					desc = "POLITICS_ANARCHIST_COMMUNE_DESC"
+					picture = "GFX_portrait_SPR_anarchist_commune"
+					expire = "1965.1.1"
+					ideology = anarcho_sindicalism
+					traits = {
+					}
+				}
+			}
+			FROM = {
+				country_event = { id = lar_spain.49 }
+			}
+		}
+	}
+}
+
+# Portuguese Anarchism - Event for Aragon
+country_event = {
+	id = lar_spain.49
+	title = lar_spain.48.t
+	desc = lar_spain.49.desc
+	picture = GFX_report_event_spr_anarchist_uprising
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.49.a
+		random_country = {
+			limit = {
+				original_tag = POR
+				has_government = anarchism
+				NOT = { tag = FROM }
+			}
+			ROOT = {
+				add_to_war = {
+				    targeted_alliance = PREV 
+				    enemy = POR
+				    hostility_reason = asked_to_join
+				}
+				puppet = PREV
+			}
+			set_political_party = {
+			    ideology = anarchism
+			    popularity = 100
+			}
+		}
+		POR = {
+			set_rule = { can_join_factions = no	}
+		}
+	}
+}
+
+# Portuguese Anarchism - Event for Aragon - Portuguese Civil War ends
+country_event = {
+	id = lar_spain.50
+	title = lar_spain.50.t
+	desc = lar_spain.50.desc
+	picture = GFX_report_event_spr_anarchist_success
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.50.a
+		random_country = {
+			limit = {
+				original_tag = POR
+				has_government = anarchism
+				has_country_flag = SPR_portuguese_anarchism_flag
+			}
+			ROOT = {
+				annex_country = {
+				    target = PREV
+				    transfer_troops = yes
+				}
+			}
+		}
+		clr_global_flag = SPR_portuguese_anarchism_flag
+	}
+}
 
 
+# Relocate the Gold Reserves - Event for Spain - Choose target
+country_event = {
+	id = lar_spain.51
+	title = lar_spain.51.t
+	desc = lar_spain.51.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					ROOT = {
+						has_volunteers_amount_from = {
+						    tag = PREV
+						    count > 0
+						}
+					}
+					NOT = { tag = SOV }
+				}
+				set_country_flag = SPR_relocated_gold_reserves_selection_flag1
+				save_event_target_as = SPR_relocated_gold_reserves_selection_1
+			}
+			random_other_country = {
+				limit = {
+					ROOT = {
+						has_volunteers_amount_from = {
+						    tag = PREV
+						    count > 0
+						}
+					}
+					NOT = { tag = SOV }
+					NOT = { has_country_flag = SPR_relocated_gold_reserves_selection_flag1 }
+				}
+				set_country_flag = SPR_relocated_gold_reserves_selection_flag2
+				save_event_target_as = SPR_relocated_gold_reserves_selection_2
+			}
+			random_other_country = {
+				limit = {
+					ROOT = {
+						has_volunteers_amount_from = {
+						    tag = PREV
+						    count > 0
+						}
+					}
+					NOT = { tag = SOV }
+					NOT = { has_country_flag = SPR_relocated_gold_reserves_selection_flag1 }
+					NOT = { has_country_flag = SPR_relocated_gold_reserves_selection_flag2 }
+				}
+				set_country_flag = SPR_relocated_gold_reserves_selection_flag3
+				save_event_target_as = SPR_relocated_gold_reserves_selection_3
+			}
+		}
+	}
+	
+	option = { # Send to SOV
+		name = lar_spain.51.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 2
+				has_volunteers_amount_from = {
+				    tag = SOV
+				    count > 0
+				}
+			}
+		}
+		trigger = {
+			SOV = {
+				exists = yes
+				has_government = communism
+			}
+		}
+		SOV = { set_country_flag = SPR_relocated_gold_reserves_selection_flag_sov }
+		SOV = { country_event = { id = lar_spain.52 hours = 6 random_hours = 6 } }
+	}
+	option = { # Send to #1
+		name = lar_spain.51.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = {
+			any_other_country = {
+				has_country_flag = SPR_relocated_gold_reserves_selection_flag1
+			}
+		}
+		event_target:SPR_relocated_gold_reserves_selection_1 = {
+			country_event = { id = lar_spain.52 hours = 6 random_hours = 6 }
+		}
+	}
+	option = { # Send to #2
+		name = lar_spain.51.c
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = {
+			any_other_country = {
+				has_country_flag = SPR_relocated_gold_reserves_selection_flag2
+			}
+		}
+		event_target:SPR_relocated_gold_reserves_selection_2 = {
+			country_event = { id = lar_spain.52 hours = 6 random_hours = 6 }
+		}
+	}
+	option = { # Send to #3
+		name = lar_spain.51.d
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = {
+			any_other_country = {
+				has_country_flag = SPR_relocated_gold_reserves_selection_flag3
+			}
+		}
+		event_target:SPR_relocated_gold_reserves_selection_3 = {
+			country_event = { id = lar_spain.52 hours = 6 random_hours = 6 }
+		}
+	}
+}
+
+# Relocate the Gold Reserves - Event for Target
+country_event = {
+	id = lar_spain.52
+	title = lar_spain.52.t
+	desc = lar_spain.52.desc
+	picture = GFX_report_event_destroyers
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.52.a
+		set_country_flag = { flag = SPR_relocate_the_gold_reserves_timer_flag value = 1 days = 60 }
+	}
+}
+
+# Relocate the Gold Reserves - Event for Target - Seize the Gold
+country_event = {
+	id = lar_spain.53
+	title = lar_spain.53.t
+	desc = lar_spain.53.desc
+	picture = GFX_report_event_generic_read_write
+	
+	fire_only_once = yes
+
+	trigger = {
+		any_country_with_original_tag = {
+			original_tag_to_check = SPR
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+			has_volunteers_amount_from = {
+			    tag = ROOT
+			    count > 0
+			}
+			has_completed_focus = SPR_relocate_the_gold_reserves
+		}
+		OR = {
+			has_country_flag = SPR_relocated_gold_reserves_selection_flag_sov
+			has_country_flag = SPR_relocated_gold_reserves_selection_flag1
+			has_country_flag = SPR_relocated_gold_reserves_selection_flag2
+			has_country_flag = SPR_relocated_gold_reserves_selection_flag3
+		}
+		NOT = { has_country_flag = SPR_relocate_the_gold_reserves_timer_flag }
+	}
+
+	mean_time_to_happen = {
+		days = 30
+	}
+	
+	option = { # Seize it!
+		name = lar_spain.53.a
+		ai_chance = {
+			base = 50
+		}
+		add_political_power = -25
+		add_timed_idea = { idea = SPR_seized_spanish_gold_reserves days = 365 }
+		hidden_effect = {
+			SPR = {
+				country_event = { id = lar_spain.54 }
+			}
+		}
+	}
+
+	option = { # Let it go.
+		name = lar_spain.53.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}
+
+# Relocate the Gold Reserves - Event for Spain - Gold seized!
+country_event = {
+	id = lar_spain.54
+	title = lar_spain.54.t
+	desc = lar_spain.54.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_ideas = SPR_relocate_the_gold_reserves
+			set_country_flag = SPR_seized_gold_reserves_flag
+		}
+	}
+	
+	option = { # Ok
+		name = lar_spain.54.a
+		effect_tooltip = { remove_ideas = SPR_relocate_the_gold_reserves }
+		custom_effect_tooltip = lar_spain.54.a_tt
+	}
+}
+
+# Relocate the Gold Reserves - Event for Spain - Payback time
+country_event = {
+	id = lar_spain.55
+	title = lar_spain.55.t
+	desc = lar_spain.55.desc
+	picture = GFX_report_event_generic_read_write
+	
+	fire_only_once = yes
+
+	trigger = {
+		original_tag = SPR
+		has_country_flag = SPR_seized_gold_reserves_flag
+		has_global_flag = scw_over
+	}
+
+	mean_time_to_happen = {
+		days = 2
+	}
+	
+	option = { # Dangit
+		name = lar_spain.55.a
+		add_timed_idea = { idea = SPR_seized_spanish_gold_reserves_spain days = 365 }
+	}
+}
+
+# Appeal for Increased Autonomy - Event for SOV
+country_event = {
+	id = lar_spain.56
+	title = lar_spain.56.t
+	desc = lar_spain.56.desc
+	picture = GFX_report_event_generic_parliament
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.56.a
+		end_puppet = FROM
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.57 }
+			}
+		}
+	}
+
+	option = { # Decline
+		name = lar_spain.56.b
+		ai_chance = {
+			base = 0
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.58 }
+			}
+		}
+	}
+}
+
+# Appeal for Increased Autonomy - Event for Spain - SOV accepted
+country_event = {
+	id = lar_spain.57
+	title = lar_spain.57.t
+	desc = lar_spain.57.desc
+	picture = GFX_report_event_generic_sign_treaty3
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.57.a
+		effect_tooltip = {
+			FROM = { end_puppet = ROOT }
+		}
+	}
+}
+
+# Appeal for Increased Autonomy - Event for Spain - SOV declined
+country_event = {
+	id = lar_spain.58
+	title = lar_spain.58.t
+	desc = lar_spain.58.desc
+	picture = GFX_report_event_generic_sign_treaty2
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.58.a
+	}
+}
+
+
+# A Red Iberia - Event for Portugal
+country_event = {
+	id = lar_spain.59
+	title = lar_spain.59.t
+	desc = lar_spain.59.desc
+	picture = GFX_report_event_generic_parliament
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.59.a
+		ai_chance = {
+			base = 50
+		}
+		effect_tooltip = {
+			FROM = {
+				annex_country = { target = ROOT transfer_troops = yes }
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.60 }
+			}
+		}
+		custom_effect_tooltip = GAME_OVER_TT
+	}
+
+	option = { # Decline
+		name = lar_spain.59.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				focus_progress = {
+				    focus = POR_the_iberian_socialist_union
+				    progress > 0
+				}
+			}
+			modifier = {
+				factor = 0.8
+				strength_ratio = { tag = FROM ratio < 0.5 }
+			}
+			modifier = {
+				factor = 0.8
+				has_opinion = { target = FROM value > 99 }
+			}
+			modifier = {
+				factor = 0.8
+				strength_ratio = { tag = FROM ratio < 0.3 }
+			}
+			modifier = {
+				factor = 0.8
+				strength_ratio = { tag = FROM ratio < 0.2 }
+			}
+			modifier = {
+				factor = 0
+				strength_ratio = { tag = FROM ratio < 0.1 }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { has_war_with = FROM }
+				has_war = yes
+				surrender_progress > 0
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { has_war_with = FROM }
+				has_war = yes
+				surrender_progress > 0.3
+			}
+			modifier = {
+				factor = 0.5
+				strength_ratio = { tag = FROM ratio < 0.2 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { has_war_with = FROM }
+				has_war = yes
+				surrender_progress > 0.5
+			}
+		}
+		effect_tooltip = {
+			FROM = {
+				create_wargoal = {
+					type = annex_everything
+					target = ROOT
+				}
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.61 }
+			}
+		}
+	}
+}
+
+# A Red Iberia - Event for Spain - Portugal Accepted
+country_event = {
+	id = lar_spain.60
+	title = lar_spain.60.t
+	desc = lar_spain.60.desc
+	picture = GFX_report_event_generic_sign_treaty3
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.60.a
+		set_cosmetic_tag = ESU_POR_unified
+		every_state = {
+			limit = {
+				is_core_of = POR
+			}
+			add_core_of = ROOT
+		}
+		annex_country = { target = FROM transfer_troops = yes }
+	}
+}
+
+# A Red Iberia - Event for Spain - Portugal Declined
+country_event = {
+	id = lar_spain.61
+	title = lar_spain.61.t
+	desc = lar_spain.61.desc
+	picture = GFX_report_event_generic_sign_treaty2
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.61.a
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+		}
+	}
+}
+
+
+# Support French Communists - Event for France
+country_event = {
+	id = lar_spain.62
+	title = lar_spain.62.t
+	desc = lar_spain.62.desc
+	picture = GFX_report_event_generic_riot
+	
+	is_triggered_only = yes
+	
+	option = { # Ok :'(
+		name = lar_spain.62.a
+		hidden_effect = {
+			if = {
+				limit = {
+					communism > 0.4
+				}
+				start_civil_war = {
+				    ideology = communism
+				    size = 0.3
+				    keep_unit_leaders_trigger = {
+				    	always = yes
+				    }
+				}
+			}
+			else_if = {
+				limit = {
+					communism > 0.3
+				}
+				start_civil_war = {
+				    ideology = communism
+				    size = 0.2
+				    keep_unit_leaders_trigger = {
+				    	always = yes
+				    }
+				}
+			}
+			else = {
+				start_civil_war = {
+				    ideology = communism
+				    size = 0.1
+				    keep_unit_leaders_trigger = {
+				    	always = yes
+				    }
+				}
+			}
+			FROM = {
+				country_event = { id = lar_spain.63 }
+			}
+		}
+	}
+}
+
+# Support French Communists - Event for Spain
+country_event = {
+	id = lar_spain.63
+	title = lar_spain.63.t
+	desc = lar_spain.63.desc
+	picture = GFX_report_event_generic_riot
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.63.a
+		random_country = {
+			limit = {
+				original_tag = FROM
+				has_government = communism
+				NOT = { tag = FROM }
+			}
+			SPR = {
+				puppet = PREV
+				add_to_war = { 
+				    targeted_alliance = PREV
+				    enemy = FROM
+				    hostility_reason = asked_to_join
+				}
+			}
+		}
+	}
+}
+
+
+# Petition for French Aid - Event for France
+country_event = {
+	id = lar_spain.64
+	title = lar_spain.64.t
+	desc = lar_spain.64.desc
+	picture = GFX_report_event_spr_no_pasaran
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.64.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0.5
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0.2
+				has_country_flag = FRA_non_intervention
+			}
+		}
+		add_political_power = -50
+		add_popularity = {
+			ideology = communism
+			popularity = 0.1
+		}
+		add_timed_idea = { idea = SPR_equipment_shipments days = 730 }
+		add_opinion_modifier = { target = FROM modifier = SPA_spanish_civil_war_commitments }
+		FROM = {
+			add_war_support = 0.15
+		}
+		add_ai_strategy = { type = send_lend_lease_desire id = SPR value = 100 }
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.65 }
+			}
+		}
+	}
+
+	option = { # Decline
+		name = lar_spain.64.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = FRA_arms_purchases_allowed
+					has_country_flag = FRA_sending_weapons_allowed
+					has_country_flag = FRA_volunteer_work_allowed
+				}
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.66 }
+			}
+		}
+	}
+}
+
+# Petition for French Aid - Event for Spain - France Accepted
+country_event = {
+	id = lar_spain.65
+	title = lar_spain.65.t
+	desc = lar_spain.65.desc
+	picture = GFX_report_event_spr_no_pasaran
+	
+	is_triggered_only = yes
+	option = { # Ok
+		name = lar_spain.65.a
+		effect_tooltip = { FROM = { add_opinion_modifier = { target = ROOT modifier = SPA_spanish_civil_war_commitments } } }
+		add_war_support = 0.15
+	}
+}
+
+# Petition for French Aid - Event for Spain - France Declined
+country_event = {
+	id = lar_spain.66
+	title = lar_spain.66.t
+	desc = lar_spain.66.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.66.a
+	}
+}
+
+
+# War of Independence - Event for SOV
+country_event = {
+	id = lar_spain.67
+	title = lar_spain.67.t
+	desc = lar_spain.67.desc
+	picture = GFX_report_event_generic_parliament
+	
+	is_triggered_only = yes
+
+	immediate = {
+		end_puppet = FROM
+		remove_from_faction = FROM
+	}
+	
+	option = { # Ok
+		name = lar_spain.67.a
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.33
+				any_of_scopes = {
+					array = global.majors
+					has_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 0
+				surrender_progress > 0.1
+			}
+		}
+		effect_tooltip = {
+			end_puppet = FROM
+			remove_from_faction = FROM
+		}
+		FROM = {
+			declare_war_on = {
+			    target = ROOT
+			    type = topple_government
+			}
+		}
+		hidden_effect = { FROM = { news_event = { id = lar_news.20 hours = 6 } } }
+	}
+
+	option = { # Let them have their independence
+		name = lar_spain.67.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				any_of_scopes = {
+					array = global.majors
+					has_war_with = ROOT
+				}
+			}
+			modifier = {
+				add = 100
+				has_country_flag = SOV_give_them_independence_flag
+			}
+		}
+		effect_tooltip = {
+			end_puppet = FROM
+			remove_from_faction = FROM
+		}
+		delete_unit_template_and_units = {
+			division_template = "Spanish Loyalist Division"
+		}
+		if = {
+			limit = {
+				has_country_flag = SOV_annexed_spanish_land
+			}
+			FROM = {
+				transfer_state = 165
+				transfer_state = 167
+				transfer_state = 794
+			}
+		}
+		FROM = { country_event = lar_spain.89 }
+	}
+}
+
+# Those Who Would Not Help Us - Event for USA/ENG/FRA
+country_event = {
+	id = lar_spain.68
+	title = lar_spain.68.t
+	desc = lar_spain.68.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.68.a
+		ai_chance = {
+			base = 75
+		}
+		add_timed_idea = { idea = SPR_equipment_shipments days = 730 }
+		add_ai_strategy = { type = send_lend_lease_desire id = SPR value = 100 }
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.69 }
+			}
+		}
+	}
+
+	option = { # Decline
+		name = lar_spain.68.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0.5
+				has_opinion = { target = FROM value > 99 }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = SOV
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.70 }
+			}
+		}
+	}
+}
+
+# Those Who Would Not Help Us - Event for Spain - FROM Accepted
+country_event = {
+	id = lar_spain.69
+	title = lar_spain.69.t
+	desc = lar_spain.69.desc
+	picture = GFX_report_event_generic_sign_treaty1
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.69.a
+		effect_tooltip = {
+			FROM = { add_timed_idea = { idea = SPR_equipment_shipments days = 730 } }
+		}
+	}
+}
+
+# Those Who Would Not Help Us - Event for Spain - FROM Declined
+country_event = {
+	id = lar_spain.70
+	title = lar_spain.70.t
+	desc = lar_spain.70.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.70.a
+	}
+}
+
+
+# Enemies of Our Enemy - Event for GER/ITA
+country_event = {
+	id = lar_spain.71
+	title = lar_spain.71.t
+	desc = lar_spain.71.desc
+	picture = GFX_report_event_generic_parliament
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.71.a
+		ai_chance = {
+			base = 75
+		}
+		diplomatic_relation = {
+		    country = FROM
+		    relation = non_aggression_pact
+		    active = yes
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.72 }
+			}
+		}
+	}
+
+	option = { # Decline
+		name = lar_spain.71.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0.5
+				has_opinion = { target = FROM value > 99 }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = SOV
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.73 }
+			}
+		}
+	}
+}
+
+# Enemies of Our Enemy - Event for Spain - FROM Accepted
+country_event = {
+	id = lar_spain.72
+	title = lar_spain.72.t
+	desc = lar_spain.72.desc
+	picture = GFX_report_event_generic_sign_treaty3
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.72.a
+		effect_tooltip = {
+			FROM = {
+				diplomatic_relation = {
+				    country = ROOT
+				    relation = non_aggression_pact
+				    active = yes
+				}
+			}
+		}
+	}
+}
+
+# Enemies of Our Enemy - Event for Spain - FROM Declined
+country_event = {
+	id = lar_spain.73
+	title = lar_spain.73.t
+	desc = lar_spain.73.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.73.a
+	}
+}
+
+# Enemies of Our Enemy - Event for GER
+country_event = {
+	id = lar_spain.74
+	title = lar_spain.74.t
+	desc = lar_spain.74.desc
+	picture = GFX_report_event_generic_parliament
+	
+	is_triggered_only = yes
+	
+	option = { # Accept
+		name = lar_spain.74.a
+		ai_chance = {
+			base = 75
+		}
+		army_experience = -25
+		effect_tooltip = {
+			FROM = {
+				add_timed_idea = { idea = SPR_deal_with_the_devil days = 730 }
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.75 }
+			}
+		}
+	}
+
+	option = { # Decline
+		name = lar_spain.74.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0.5
+				has_opinion = { target = FROM value > 99 }
+			}
+			modifier = {
+				factor = 0
+				has_war_with = SOV
+			}
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = { id = lar_spain.76 }
+			}
+		}
+	}
+}
+
+# Enemies of Our Enemy - Event for Spain - FROM Accepted
+country_event = {
+	id = lar_spain.75
+	title = lar_spain.75.t
+	desc = lar_spain.75.desc
+	picture = GFX_report_event_generic_sign_treaty2
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.75.a
+		add_timed_idea = { idea = SPR_deal_with_the_devil days = 730 }
+	}
+}
+
+# Enemies of Our Enemy - Event for Spain - FROM Declined
+country_event = {
+	id = lar_spain.76
+	title = lar_spain.76.t
+	desc = lar_spain.76.desc
+	picture = GFX_report_event_generic_read_write
+	
+	is_triggered_only = yes
+	
+	option = { # Damn
+		name = lar_spain.76.a
+	}
+}
+
+# End of SCW, Republicans expanded Soviet aid - event for SOV
+country_event = {
+	id = lar_spain.81
+	title = lar_spain.81.t
+	desc = lar_spain.81.desc
+	picture = GFX_report_generic_parliament
+	
+	is_triggered_only = yes
+	
+	option = { # Ok
+		name = lar_spain.81.a
+		effect_tooltip = {
+			puppet = SPR
+		}
+	}
+}
+
+# End of SCW, Republicans expanded Soviet aid - event for SPR
+country_event = {
+	id = lar_spain.82
+	title = lar_spain.82.t
+	desc = lar_spain.82.desc
+	picture = GFX_report_generic_parliament
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_government = democratic
+				}
+				set_country_flag = SPR_democratic_government_flag
+			}
+			set_temp_variable = {
+				var = soviet_puppet_democratic_var
+				value = party_popularity@democratic
+			}
+			SOV = { puppet = SPR }
+			if = {
+				limit = {
+					has_country_flag = SPR_democratic_government_flag
+				}
+				set_politics = {
+					ruling_party = democratic
+				}
+				clr_country_flag = SPR_democratic_government_flag
+			}
+			set_political_party = {
+			    ideology = communism
+			    popularity = 100
+			}
+			add_popularity = {
+			    ideology = democratic
+			    popularity = soviet_puppet_democratic_var
+			}
+		}
+	}
+	
+	option = { # Ok
+		name = lar_spain.82.a
+		effect_tooltip = {
+			SOV = { puppet = SPR }
+		}
+	}
+}
+
+# Soviets get notification SPR is being disloyal
+country_event = {
+	id = lar_spain.83
+	title = lar_spain.83.t
+	desc = lar_spain.83.desc
+	picture = GFX_report_generic_parliament
+
+	trigger = {
+		tag = SOV
+		any_country_with_original_tag = {
+			original_tag_to_check = SPR
+			focus_progress = {
+			    focus = SPR_subvert_soviet_control
+			    progress > 0.1
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 2
+	}
+
+	fire_only_once = yes
+
+	option = { # We must act!
+		name = lar_spain.83.a
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.33
+				any_of_scopes = {
+					array = global.majors
+					has_war_with = ROOT
+				}
+			}
+			modifier = {
+				factor = 0
+				surrender_progress > 0.1
+			}
+		}
+		set_country_flag = SOV_annexed_spanish_land
+		transfer_state = 165
+		transfer_state = 167
+		transfer_state = 794
+		hidden_effect = { SPR = { country_event = { id = lar_spain.84 } } }
+		division_template = {
+			name = "Spanish Loyalist Division"
+			priority = 1
+			division_names_group = SOV_INF_01
+			is_locked = yes
+			regiments = {
+				infantry = { x = 0 y = 0 }
+				infantry = { x = 0 y = 1 }
+				infantry = { x = 0 y = 2 }
+				infantry = { x = 1 y = 0 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+			}
+		}
+		# Catalonia
+		165 = {
+			create_unit = {
+				division = "name = \"1. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"2. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+		}
+		# Valencia
+		167 = {
+			create_unit = {
+				division = "name = \"3. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"4. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"5. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"6. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"7. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+		}
+		 # Eastern Aragon
+		794 = {
+			create_unit = {
+				division = "name = \"8. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"9. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"10. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"11. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"12. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"13. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"14. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"15. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+			create_unit = {
+				division = "name = \"16. Spanish Loyalist Division\" division_template = \"Spanish Loyalist Division\" start_experience_factor = 0.1" 
+				owner = ROOT
+			}
+		}
+	}
+
+	option = { # Everything will be fine
+		name = lar_spain.83.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 100
+				any_of_scopes = {
+					array = global.majors
+					has_war_with = ROOT
+				}
+			}
+		}
+		set_country_flag = SOV_give_them_independence_flag
+		add_political_power = -50
+	}
+}
+
+# Event for SPR that Soviets are seizing land
+country_event = {
+	id = lar_spain.84
+	title = lar_spain.84.t
+	desc = lar_spain.84.desc
+	picture = GFX_report_event_soviet_army_greeted
+
+	is_triggered_only = yes
+
+	option = { # Bastards!
+		name = lar_spain.84.a
+		set_country_flag = SOV_took_spanish_states
+		effect_tooltip = {
+			SOV = {
+				transfer_state = 165
+				transfer_state = 167
+				transfer_state = 794
+			}
+		}
+	}
+}
+
+# SPR has Catalonia returned
+country_event = {
+	id = lar_spain.85
+	title = lar_spain.85.t
+	desc = lar_spain.85.desc
+	picture = GFX_report_event_soldiers_marching
+
+	trigger = {
+		original_tag = SPR
+		has_completed_focus = SPR_war_of_independence
+		has_country_flag = SOV_took_spanish_states
+		has_war_with = SOV
+		SOV = { owns_state = 165 }
+		has_full_control_of_state = 165
+	}
+
+	mean_time_to_happen = {
+		days = 2
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			165 = { save_event_target_as = SPR_stolen_state_name }
+		}
+	}
+
+	option = { # Excellent!
+		name = lar_spain.85.a
+		transfer_state = 165
+		hidden_effect = { SOV = { country_event = { id = lar_spain.88 } } }
+	}
+}
+
+# SPR has Valencia returned
+country_event = {
+	id = lar_spain.86
+	title = lar_spain.85.t
+	desc = lar_spain.85.desc
+	picture = GFX_report_event_soldiers_marching
+
+	trigger = {
+		original_tag = SPR
+		has_completed_focus = SPR_war_of_independence
+		has_country_flag = SOV_took_spanish_states
+		has_war_with = SOV
+		SOV = { owns_state = 167 }
+		has_full_control_of_state = 167
+	}
+
+	mean_time_to_happen = {
+		days = 2
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			167 = { save_event_target_as = SPR_stolen_state_name }
+		}
+	}
+
+	option = { # Excellent!
+		name = lar_spain.85.a
+		transfer_state = 167
+		hidden_effect = { SOV = { country_event = { id = lar_spain.88 } } }
+	}
+}
+
+# SPR has Eastern Aragon returned
+country_event = {
+	id = lar_spain.87
+	title = lar_spain.85.t
+	desc = lar_spain.85.desc
+	picture = GFX_report_event_soldiers_marching
+
+	trigger = {
+		original_tag = SPR
+		has_completed_focus = SPR_war_of_independence
+		has_country_flag = SOV_took_spanish_states
+		has_war_with = SOV
+		SOV = { owns_state = 794 }
+		has_full_control_of_state = 794
+	}
+
+	mean_time_to_happen = {
+		days = 2
+	}
+
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			794 = { save_event_target_as = SPR_stolen_state_name }
+		}
+	}
+
+	option = { # Excellent!
+		name = lar_spain.85.a
+		transfer_state = 794
+		hidden_effect = { SOV = { country_event = { id = lar_spain.88 } } }
+	}
+}
+
+# Event for SOV informing them of losing a state to SPR
+country_event = {
+	id = lar_spain.88
+	title = lar_spain.88.t
+	desc = lar_spain.88.desc
+	picture = GFX_report_event_soldiers_marching
+
+	is_triggered_only = yes
+
+	option = { # Excellent!
+		name = lar_spain.88.a
+		effect_tooltip = { FROM = { transfer_state = event_target:SPR_stolen_state_name } }
+	}
+}
+
+# Event for SPR that Soviets are giving them independence
+country_event = {
+	id = lar_spain.89
+	title = lar_spain.89.t
+	desc = lar_spain.89.desc
+	picture = GFX_report_event_soviet_army_greeted
+
+	is_triggered_only = yes
+
+	option = { # Ok
+		name = lar_spain.89.a
+		if = {
+			limit = {
+				SOV = { has_country_flag = SOV_annexed_spanish_land }
+			}
+			SOV = { clr_country_flag = SOV_annexed_spanish_land }
+			effect_tooltip = {
+				FROM = {
+					transfer_state = 165
+					transfer_state = 167
+					transfer_state = 794
+				}
+			}
+		}
+	}
+}
 
 
 #Юниты каталонии
@@ -9650,7 +11802,6 @@ country_event = {
 			}
 		}
 	}
-	
 }
 
 
@@ -9782,6 +11933,7 @@ country_event = {
 				transfer_state = 794
 				set_country_flag = aragon_focus_anarchist_flag
 				load_focus_tree = aragon_focus_anarchist
+				add_ideas = SPR_disbanded_army_1
 				set_popularities = {
 					democratic = 10
 					monarchy = 5
@@ -9827,7 +11979,7 @@ country_event = {
 				transfer_state = 290
 				transfer_state = 175
 				transfer_state = 41
-				set_capital = 41
+				set_capital = { state =  41 }
 			}
 			SPC = { transfer_state = 170 }
 			ANL = {

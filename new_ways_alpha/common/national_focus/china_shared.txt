@@ -283,9 +283,9 @@ shared_focus = {
 
 	completion_reward = {
 		add_ideas = CHI_wargaming_division
-		add_tech_bonus = {
+		add_doctrine_cost_reduction = {
 			name = CHI_wargaming_division
-			bonus = 1.0
+			cost_reduction = 1.0
 			uses = 1
 			category = land_doctrine
 		}
@@ -296,7 +296,7 @@ shared_focus = {
 	id = CHI_closer_ties_with_germany
 	icon = GFX_goal_generic_improve_relations
 	prerequisite = { focus = CHI_mission_to_germany }
-	mutually_exclusive = { focus = CHI_rapprochement_with_soviet_union }
+	#mutually_exclusive = { focus = CHI_rapprochement_with_soviet_union }
 	x = 1
 	y = 1
 	relative_position_id = CHI_mission_to_germany
@@ -316,9 +316,30 @@ shared_focus = {
 	}
 
 	available = {
-		NOT = { has_war_with = GER }
-		NOT = { has_global_flag = falkenhausen_recalled }
-		GER_will_support = yes
+		OR = {
+			AND = {
+				NOT = { has_completed_focus = CHI_rapprochement_with_soviet_union }
+				NOT = { has_global_flag = falkenhausen_recalled }
+				GER_will_support = yes
+			}
+			AND = {
+				GBF = { has_completed_focus = GER_turning_to_asia }
+				GBF = {
+					exists = yes
+					has_capitulated = no
+					NOT = {
+						has_war_with = ROOT
+					}
+					OR = {
+						has_opinion = { target = ROOT value > 74 }
+						is_in_faction_with = ROOT
+						ROOT = {
+							is_subject_of = PREV
+						}
+					}
+				}
+			}
+		}
 	}
 
 	bypass = {
@@ -386,13 +407,13 @@ shared_focus = {
 				limit = {
 					has_completed_focus = CHI_closer_ties_with_germany
 				}
-				add_equipment_to_stockpile = { type = light_tank_equipment_1 amount = 100 producer = GER }
+				add_equipment_to_stockpile = { type = light_tank_chassis_1 amount = 100 producer = GER }
 			}
 			if = {
 				limit = {
 					has_completed_focus = CHI_rapprochement_with_soviet_union
 				}
-				add_equipment_to_stockpile = { type = light_tank_equipment_1 amount = 100 producer = SOV }
+				add_equipment_to_stockpile = { type = light_tank_chassis_1 amount = 100 producer = SOV }
 			}
 		}
 	}
@@ -1166,7 +1187,7 @@ shared_focus = {
 	id = CHI_rapprochement_with_soviet_union
 	icon = GFX_goal_support_communism
 	prerequisite = { focus = CHI_mission_to_the_soviet_union }
-	mutually_exclusive = { focus = CHI_closer_ties_with_germany }
+	#mutually_exclusive = { focus = CHI_closer_ties_with_germany }
 	x = -1
 	y = 1
 	relative_position_id = CHI_mission_to_the_soviet_union
@@ -1178,6 +1199,7 @@ shared_focus = {
 	}
 
 	available = {
+		NOT = { has_completed_focus = CHI_rapprochement_with_soviet_union }
 		SOV_will_support = yes
 	}
 

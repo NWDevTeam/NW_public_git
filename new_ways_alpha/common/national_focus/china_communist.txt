@@ -1,3 +1,10 @@
+### search_filters = {FOCUS_FILTER_POLITICAL}
+### search_filters = {FOCUS_FILTER_RESEARCH}
+### search_filters = {FOCUS_FILTER_INDUSTRY}
+### search_filters = {FOCUS_FILTER_STABILITY}
+### search_filters = {FOCUS_FILTER_WAR_SUPPORT}
+### search_filters = {FOCUS_FILTER_MANPOWER}
+### search_filters = {FOCUS_FILTER_ANNEXATION}
 focus_tree = {
 	id = china_communist_focus
 	
@@ -79,6 +86,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL }											 
 		completion_reward = {
 			add_political_power = 120
 		}
@@ -121,7 +129,7 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
-
+		search_filters = { FOCUS_FILTER_POLITICAL }        
 		completion_reward = {
             add_timed_idea = {
 				idea = revolution_focus
@@ -159,7 +167,7 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
-
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			swap_ideas = {
 				remove_idea = PRC_the_long_march_1
@@ -193,7 +201,7 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
-
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			remove_ideas = PRC_power_struggles
             add_popularity = { ideology = trozkism popularity = 0.25 }
@@ -232,6 +240,7 @@ focus_tree = {
 		ai_will_do = {
 			factor = 50
 		}
+		search_filters = { FOCUS_FILTER_POLITICAL }		
 		completion_reward = {
 			set_rule = { can_create_factions = yes }
 			if = {
@@ -306,6 +315,7 @@ focus_tree = {
 		ai_will_do = {
 			factor = 10
 		}
+		search_filters = { FOCUS_FILTER_POLITICAL }		
 		completion_reward = {
 			add_political_power = 100
 			set_rule = { can_create_factions = yes }
@@ -342,6 +352,7 @@ focus_tree = {
 
 		available = {
 			has_government = communism
+			SOV = { has_government = communism }						   
 			OR = {
 				is_subject = no
 				is_subject_of = SOV
@@ -356,16 +367,23 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL }									 
 		completion_reward = {
-			create_country_leader = {
-				name = "Wang Ming"
-				desc = "POLITICS_WANG_MING_DESC"
-				picture = "GFX_portrait_prc_wang_ming"
-				expire = "1965.1.1"
-				ideology = marxism
-				traits = {
-					
+			if = {
+				limit = {
+					original_tag = PRC
 				}
+				PRC_wang_ming = {
+					add_country_leader_role = {
+						country_leader = {
+						    desc="POLITICS_WANG_MING_DESC"
+							expire = "1965.1.1"
+							ideology = marxism
+							traits = { favorite_of_moscow }	
+						}
+						promote_leader = yes
+					}
+				}	
 			}
 		}
 	}
@@ -388,6 +406,7 @@ focus_tree = {
 			NOT = {
 				has_war_with = SOV
 			}
+			SOV = { has_government = ROOT }					  
 			OR = {
 				is_subject = no
 				is_subject_of = SOV
@@ -402,6 +421,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL }									 
 		completion_reward = {
 			remove_ideas = PRC_power_struggles
 		}
@@ -423,6 +443,7 @@ focus_tree = {
 
 		available = {
 			NOT = { has_war_with = SOV }
+			SOV = { has_government = ROOT }					  
 			OR = {
 				is_subject = no
 				is_subject_of = SOV
@@ -438,6 +459,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }									
 		completion_reward = {
 			if = {
 				limit = { has_idea = PRC_the_long_march_1 }
@@ -464,27 +486,51 @@ focus_tree = {
 		}
 
 		available = {
-			SOV = { has_government = ROOT }
-			NOT = {
-				has_war_with = SOV
-			}
-			OR = {
-				is_subject = no
-				is_subject_of = SOV
-			}
+			is_subject = no
 			is_in_faction = no
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = ROOT
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+			}
 		}
 
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = ROOT
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL }									 
 		completion_reward = {
-			SOV = { country_event = generic.2 }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 
@@ -515,6 +561,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }									
 		completion_reward = {
 			swap_ideas = {
 				remove_idea = PRC_the_long_march_1
@@ -580,6 +627,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
 		completion_reward = {
 			add_stability = 0.05
 			add_ideas = PRC_maoism
@@ -617,6 +665,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_POLITICAL }											 
 		completion_reward = {
 			set_rule = { can_create_factions = yes }
 			if = {
@@ -658,15 +707,11 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			set_cosmetic_tag = PRC_proclaimed
 			hidden_effect = {
-				news_event = { id = wtt_news.37 days = 3 random_days = 72 }
+				news_event = { id = wtt_news.37 days = 3 random_days = 3 }
 			}
 		}
 	}
@@ -700,13 +745,11 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 
 		completion_reward = {
 			custom_effect_tooltip = available_political_advisor
-			show_ideas_tooltip = PRC_deng_xiaoping
+			show_ideas_tooltip = PRC_deng_xiaoping_political_advisor
 			if = {
 				limit = { has_idea = PRC_the_long_march_1 }
 				remove_ideas = PRC_the_long_march_1
@@ -757,21 +800,29 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
 
 		completion_reward = {
-			create_country_leader = {
-				name = "Zhang Lan"
-				desc = "POLITICS_ZHANG_LAN_DESC"
-				picture = "GFX_portrait_prc_zhang_lan"
-				expire = "1965.1.1"
-				ideology = right_wing_communism
-				traits = {
-					
+			if = {
+				limit = {
+					original_tag = PRC
+				}
+				PRC_wang_ming = {
+					add_country_leader_role = {
+						country_leader = {
+						    desc="POLITICS_WANG_MING_DESC"
+							expire = "1965.1.1"
+							ideology = right_wing_communism
+							traits = { }	
+						}
+						promote_leader = yes
+					}
 				}
 			}
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = yes
+			}			
 		}
 	}
 
@@ -812,9 +863,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_ANNEXATION }
 
 		completion_reward = {
 			event_target:WTT_current_china_leader = {
@@ -854,10 +903,6 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
 		completion_reward = {
 			remove_ideas = PRC_power_struggles
 		}
@@ -889,10 +934,6 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
 		completion_reward = {
 			CHI = { add_stability = -0.05 } 
 		}
@@ -921,7 +962,7 @@ focus_tree = {
 		bypass = {
 			OR = {
 				WTT_CHI_is_not_leader = yes
-				NOT = { CHI = { has_country_leader = { name = "Chiang Kai-Shek" } } }
+				NOT = { CHI = { has_country_leader = { character = CHI_chiang_kaishek } } }
 			}
 		}
 
@@ -929,31 +970,27 @@ focus_tree = {
 		continue_if_invalid = yes
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
 		completion_reward = {
 			CHI = {
 				kill_country_leader = yes
 				custom_effect_tooltip = loses_political_support_points_15
 				subtract_from_variable = { other_political_support = 15 }
-			}
-			WTT_political_struggle_recalculate_support = yes	
-            hidden_effect = {
-				create_country_leader = {
-					name = "He Yingqin"
-					desc = "POLITICS_HE_YINGQIN_DESC"
-					picture = "GFX_portrait_chi_he_yingqin"
-					expire = "1965.1.1"
-					ideology = despotism
-					traits = {
-						military_genius
-						projapanese
-						anti_communist
-				   	}
+				CHI_he_yingqin = {
+					add_country_leader_role = {
+						country_leader = {
+							expire = "1965.1.1"
+							ideology = despotism
+							traits = {
+								military_genius
+								projapanese
+								anti_communist
+							}	
+						}
+					    promote_leader = yes
+					}
 				}
-			}			
+			}
+			WTT_political_struggle_recalculate_support = yes
 		}
 	}
 
@@ -1017,6 +1054,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
+		search_filters = { FOCUS_FILTER_INDUSTRY }							   
 		complete_tooltip = {
 			1123 = {
 				add_building_construction = {
@@ -1112,12 +1150,20 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
 		completion_reward = {
-			event_target:WTT_current_china_leader = { country_event = wtt_prc.1 }
+			if = {
+				limit = {
+					event_target:WTT_current_china_leader = {
+						is_puppet = no
+						exists = yes
+					}
+				}
+				event_target:WTT_current_china_leader = { country_event = wtt_prc.1 }
+			}
+			else = {
+				set_rule = { can_create_factions = yes }
+				create_faction = PRC_government_of_national_defense
+			}
 		}
 	}
 
@@ -1232,10 +1278,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			hidden_effect = {
 				if = {
@@ -1776,10 +1819,6 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
-
 		completion_reward = {
 			add_ideas = PRC_focus_on_china
 		}
@@ -1907,16 +1946,14 @@ focus_tree = {
 		}
 
 		bypass = {
-
+			event_target:WTT_current_china_leader = { tag = ROOT }
 		}
 
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_ANNEXATION }
 
 		completion_reward = {
 			unlock_decision_category_tooltip = PRC_infiltrate_nationalist_areas
@@ -1954,9 +1991,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 
 		completion_reward = {
 			PRC_low_popular_support_level_down = yes
@@ -1990,9 +2025,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
 
 		completion_reward = {
 			add_ideas = PRC_permit_opium_trade
@@ -2027,9 +2060,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_STABILITY }
 
 		completion_reward = {
 			add_stability = 0.05
@@ -2091,9 +2122,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = no
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 
 		completion_reward = {
 			if = { limit = { has_idea = PRC_low_popular_support_1 } remove_ideas = PRC_low_popular_support_1 }
@@ -2130,9 +2159,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = yes
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
 			add_research_slot = 1
@@ -2166,9 +2193,7 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = yes
 
-		complete_tooltip = {
-
-		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
 			add_research_slot = 1
@@ -2202,10 +2227,8 @@ focus_tree = {
 		continue_if_invalid = no
 		available_if_capitulated = yes
 
-		complete_tooltip = {
-
-		}
-
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		
 		completion_reward = {
 			add_research_slot = 1
 

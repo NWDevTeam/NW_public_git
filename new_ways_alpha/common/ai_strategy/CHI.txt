@@ -47,7 +47,7 @@ CHI_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = armor
-		value = 0
+		value = -10
 	}
 
 	ai_strategy = {
@@ -266,6 +266,33 @@ CHI_you_should_be_prepared_for_war = {
     }
 }
 
+CHI_buffer_in_mainland = {
+	allowed = {
+		is_literally_china = yes
+	}
+	enable = {
+		date < 1941.1.1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = put_unit_buffers
+		states = {
+			620 #Mainland china, without coast. This should slow down japanese advance due to tendency for china to retreat in disarray.
+			602
+			600
+			750
+			603
+			748
+			605
+		}
+		ratio = 0.15
+		area = asia
+		subtract_invasions_from_need = no
+		subtract_fronts_from_need = no
+	}
+}
+
 CHI_division_limiter_historical = {
 	allowed = {
 		is_literally_china = yes
@@ -467,7 +494,12 @@ CHI_defensive_vs_JAP_careful_north = {
 		NOT = { JAP = { surrender_progress > 0.2 } }
 		
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
-		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		set_temp_variable = { target_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		if = {
+			limit = { check_variable = { target_eq_ratio = 0 } }
+			add_to_temp_variable = { target_eq_ratio = 1 }
+		}
+		divide_temp_variable = { fielded_eq_ratio = target_eq_ratio }
 		add_to_temp_variable = { tot_fielded_eq_ratio = fielded_eq_ratio }
 		add_to_temp_variable = { equipment_count = 1 }
 		divide_temp_variable = { tot_fielded_eq_ratio = equipment_count }
@@ -519,7 +551,12 @@ CHI_defensive_vs_JAP_coastal = {
 		}
 		
 		set_temp_variable = { fielded_eq_ratio = num_equipment_in_armies_k@infantry_equipment }
-		divide_temp_variable = { fielded_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		set_temp_variable = { target_eq_ratio = num_target_equipment_in_armies_k@infantry_equipment }
+		if = {
+			limit = { check_variable = { target_eq_ratio = 0 } }
+			add_to_temp_variable = { target_eq_ratio = 1 }
+		}
+		divide_temp_variable = { fielded_eq_ratio = target_eq_ratio }
 		add_to_temp_variable = { tot_fielded_eq_ratio = fielded_eq_ratio }
 		add_to_temp_variable = { equipment_count = 1 }
 		divide_temp_variable = { tot_fielded_eq_ratio = equipment_count }

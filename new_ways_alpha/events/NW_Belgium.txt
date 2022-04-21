@@ -148,7 +148,7 @@ country_event = {
 	trigger = {
 		tag = BEL
 		has_country_leader = {
-			name = "Paul Van Zeeland"
+			character = BEL_paul_van_zeeland
 			ruling_only = yes
 		}
 		date > 1937.10.20
@@ -158,15 +158,17 @@ country_event = {
 	
 	option = {
 		name = NWbelgium.3.a
-		create_country_leader = {
-			name = "Paul-Emile Janson"
-			desc = "POLITICS_PAUL_EMILE_JANSON_DESC"
-			picture = "gfx/leaders/BEL/Portrait_Paul-Emile_Janson.dds"
-			expire = "1965.1.1"
-			ideology = democratic_socialism
-			traits = {
-				socialist_trait
+		add_country_leader_role = {
+			character = BEL_paul_emile_janson
+			country_leader = {
+				desc = "POLITICS_PAUL_EMILE_JANSON_DESC"
+				ideology = democratic_socialism
+				traits={
+					socialist_trait
+				}
+				expire = "1965.1.1"
 			}
+			promote_leader = yes
 		}
 	}
 }
@@ -395,10 +397,26 @@ country_event = {
 			capital = 6
 			states = { 34 1061 6 }
 		}
-		set_autonomy = {
-			target = FLA
-			autonomy_state = autonomy_reichsprotectorate
+		if = {
+			limit = {
+				has_dlc = "Death or Dishonor"
+			}
+			set_autonomy = { target = FLA autonomy_state = autonomy_reichsprotectorate }
 		}
+		if = {
+			limit = { 
+				has_dlc = "Together for Victory"
+				NOT = { has_dlc = "Death or Dishonor" } 
+			}
+			set_autonomy = { target = FLA autonomy_state = autonomy_puppet }
+		}
+		if = {
+			limit = { 
+				NOT = { has_dlc = "Together for Victory" }
+				NOT = { has_dlc = "Death or Dishonor" }
+			}
+			FROM = { puppet = FLA }
+		}		
 		if = {
 			limit = { COG = { is_subject_of = ROOT } }
 			COG = { add_ideas = BEL_war_in_metropolis }
@@ -599,7 +617,20 @@ country_event = {
 			factor = 90
 		}
 		WLN = {
-			transfer_state = 975
+			transfer_state = 34		
+			transfer_state = 1061
+			if = {
+				limit = {
+					973 = { is_owned_by = FROM }
+				}
+				transfer_state = 973
+			}
+			if = {
+				limit = {
+					766 = { is_owned_by = FROM }
+				}
+				transfer_state = 766
+			}			
 			declare_war_on = {
 				target = ROOT
 				type = annex_everything
@@ -627,7 +658,22 @@ country_event = {
 			factor = 10
 		}
 		trigger = { NOT = { WLN = { is_subject_of = ROOT } } }
-		WLN = { transfer_state = 975 }
+		WLN = { 
+			transfer_state = 34		
+			transfer_state = 1061
+			if = {
+				limit = {
+					973 = { is_owned_by = FROM }
+				}
+				transfer_state = 973
+			}
+			if = {
+				limit = {
+					766 = { is_owned_by = FROM }
+				}
+				transfer_state = 766
+			}			
+		}
 		puppet = WLN
 		hidden_effect = {
 			set_popularities = {
@@ -708,7 +754,7 @@ country_event = {
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWbelgium.150" }
 	immediate = {
 		if = {
-			limit = { has_country_leader = { name = "Émile Vandervelde" ruling_only = yes } }
+			limit = { has_country_leader = { character = BEL_emile_vandervelde ruling_only = yes } }
 			country_event = { id = NWbelgium.15 }
 		}
 	}
@@ -733,16 +779,18 @@ country_event = {
 				has_government = communism
 			}
 		}
-		create_country_leader = {
-			name = "Henri de Man"
-			desc = "POLITICS_HENRI_DE_MAN_DESC"
-			picture = "gfx/leaders/BEL/Portrait_Henri_de_Man.dds"
-			expire = "1965.1.1"
-			ideology = socialism
-			traits = {
-				socialist_trait
-				planning_theorist
+		add_country_leader_role = {
+			character = BEL_henri_de_man
+			country_leader = {
+				desc = "POLITICS_HENRI_DE_MAN_DESC"
+				ideology = socialism
+				traits = {
+					socialist_trait
+					planning_theorist
+				}
+				expire = "1965.1.1"
 			}
+			promote_leader = yes
 		}
 		custom_effect_tooltip = unlock_BEL_rotate_right_tt
 		set_country_flag = BEL_rotate_right_flag
@@ -774,16 +822,18 @@ country_event = {
 			ruling_party = communism
 			elections_allowed = no
 		}
-		create_country_leader = {
-			name = "Henri de Man"
-			desc = "POLITICS_HENRI_DE_MAN_DESC"
-			picture = "gfx/leaders/BEL/Portrait_Henri_de_Man.dds"
-			expire = "1965.1.1"
-			ideology = socialism
-			traits = {
-				socialist_trait
-				planning_theorist
+		add_country_leader_role = {
+			character = BEL_henri_de_man
+			country_leader = {
+				desc = "POLITICS_HENRI_DE_MAN_DESC"
+				ideology = socialism
+				traits = {
+					socialist_trait
+					planning_theorist
+				}
+				expire = "1965.1.1"
 			}
+			promote_leader = yes
 		}
 		custom_effect_tooltip = unlock_BEL_step_left_tt
 		set_country_flag = BEL_step_left_flag
@@ -1113,15 +1163,15 @@ country_event = {
 		NOT = { has_focus_tree = nw_collaborationist_belgium_focus }
 		OR = {
 			has_country_leader = {
-				name = "Paul-Henri Spaak"
+				character = BEL_paul_henri_spaak
 				ruling_only = yes
 			}
 			has_country_leader = {
-				name = "Émile Vandervelde"
+				character = BEL_emile_vandervelde
 				ruling_only = yes
 			}
 			has_country_leader = {
-				name = "Paul-Emile Janson"
+				character = BEL_paul_emile_janson
 				ruling_only = yes
 			}
 			AND = {
@@ -1191,15 +1241,17 @@ country_event = {
 				elections_allowed = no
 			}
 		}
-		create_country_leader = {
-			name = "Henri de Man"
-			desc = "POLITICS_HENRI_DE_MAN_DESC"
-			picture = "gfx/leaders/BEL/Portrait_Henri_de_Man.dds"
-			expire = "1965.1.1"
-			ideology = centrism
-			traits = {
-				planning_theorist
+		add_country_leader_role = {
+			character = BEL_henri_de_man
+			country_leader = {
+				desc = "POLITICS_HENRI_DE_MAN_DESC"
+				ideology = centrism
+				traits={
+					planning_theorist
+				}
+				expire = "1965.1.1"
 			}
+			promote_leader = yes
 		}
 		add_popularity = {
 			ideology = neutrality

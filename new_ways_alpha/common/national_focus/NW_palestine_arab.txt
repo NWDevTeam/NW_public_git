@@ -769,15 +769,24 @@ focus_tree = {
 		}
 		available = {
 			is_subject = no
-			country_exists = SOV
-			NOT = { has_war_with = SOV }
-			SOV = {
+			is_in_faction = no
+			has_government = communism
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
 				has_government = communism
 				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
 			}
 		}
 		bypass = {
-			is_in_faction_with = SOV
+			any_of_scopes = {
+				array = global.majors
+				tooltip = is_major_tt
+				has_government = communism
+				is_faction_leader = yes
+				is_in_faction_with = ROOT
+			}
 		}
 		
 		select_effect = {
@@ -785,7 +794,24 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus PAL_join_comintern_arab"
-			SOV = { country_event = { id = generic.2 } }
+			if = {
+				limit = {
+					event_target:NW_comintern_leader_scope = {
+						is_faction_leader = yes
+						has_government = communism
+						NOT = { has_war_with = ROOT }
+					}	
+				}
+				event_target:NW_comintern_leader_scope = {
+					country_event = generic.2
+				}
+			}
+			else = {
+                get_best_alliance_match_communism_effect = yes
+                var:best_leader = {
+                    country_event = generic.2
+                }
+            }
 		}
 	}
 	
@@ -807,7 +833,7 @@ focus_tree = {
 			factor = 10
 		}
 		available = {
-			is_in_faction_with = SOV
+			is_in_faction = yes
 		}
 		bypass = {
 		}
@@ -818,7 +844,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus PAL_scientific_cooperation_comm"
 			add_to_tech_sharing_group = BPL_scientific_cooperation_comm_group
-			SOV = { add_to_tech_sharing_group = BPL_scientific_cooperation_comm_group }
+			FACTION_LEADER = { add_to_tech_sharing_group = BPL_scientific_cooperation_comm_group }
 		}
 	}
 	
