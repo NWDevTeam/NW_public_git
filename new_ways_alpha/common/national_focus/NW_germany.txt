@@ -38,7 +38,7 @@ focus_tree = {
 		available_if_capitulated = no
 
 		ai_will_do = {
-			factor = 10
+			factor = 50
 		}
 		available = {
 			#NOT = { has_decision = multi_focus_GER_continue_expansion_of_wehrmacht }
@@ -100,7 +100,10 @@ focus_tree = {
 					add_idea = scraping_the_barrel
 				}
 			}
-			custom_effect_tooltip = GER_continue_expansion_of_wehrmacht_tt
+			if = {
+				limit = { tag = GFA }
+				custom_effect_tooltip = GER_continue_expansion_of_wehrmacht_tt
+			}
 		}
 	}
 	
@@ -1196,7 +1199,7 @@ focus_tree = {
 	
 	focus = {
 		id = GER_nordstern
-		icon = GFX_z_goal_generic_naval
+		icon = GFX_z_goal_nordstern
 		prerequisite = { focus = GER_atlantikwall }
 		x = 0
 		y = 1
@@ -1730,6 +1733,11 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 10
+			modifier = {
+				factor = 0.5
+				has_country_leader = { character = GER_adolf_hitler ruling_only = yes }
+				date < 1939.11.10
+			}
 		}
 		available = {
 			NOT = {
@@ -5298,6 +5306,15 @@ focus_tree = {
 		ai_will_do = {
 			factor = 12
 		}
+		allow_branch = {
+			NOT = {
+				has_completed_focus = GER_alternative_government_of_nsdap
+				has_completed_focus = GER_start_implementing_wehrstaat
+				has_completed_focus = GER_imperial_constitution
+				has_completed_focus = GER_transfer_power_to_reformers
+				has_completed_focus = GER_where_thalmann
+			}
+		}
 		available = {
 			has_completed_focus = GER_rhineland
 		}
@@ -5483,6 +5500,15 @@ focus_tree = {
 			factor = 10
 		}
 		
+		allow_branch = {
+			NOT = {
+				has_completed_focus = GER_alternative_government_of_nsdap
+				has_completed_focus = GER_start_implementing_wehrstaat
+				has_completed_focus = GER_imperial_constitution
+				has_completed_focus = GER_transfer_power_to_reformers
+				has_completed_focus = GER_where_thalmann
+			}
+		}
 		available = {
 			OR = {
 				has_completed_focus = GER_rhineland
@@ -5724,11 +5750,19 @@ focus_tree = {
 		search_filters = {  }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_preservation_of_national_economy"
-			add_to_variable = { GER_mefo_bills_timeout_days = 60 }
-			hidden_effect = {
-				add_days_mission_timeout = { mission = GER_mefo_bills_mission days = 60 }
+			if = {
+				limit = { tag = GFA }
+				add_to_variable = { GER_mefo_bills_timeout_days = 60 }
+				hidden_effect = {
+					add_days_mission_timeout = { mission = GER_mefo_bills_mission days = 60 }
+				}
+				custom_effect_tooltip = GER_preservation_of_national_economy_tt
 			}
-			custom_effect_tooltip = GER_preservation_of_national_economy_tt
+			else = {
+				set_variable = { var = GER_mefo_bills_timeout_days value = 180 }
+				add_ideas = GER_mefo_bills_1
+				activate_mission = GER_mefo_bills_mission
+			}
 		}
 	}
 	
@@ -5830,8 +5864,18 @@ focus_tree = {
 		search_filters = {  }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_consider_economic_benefits"
-			custom_effect_tooltip = GER_consider_economic_benefits_tt
-			GER_remove_mefo_bills = yes
+			if = {
+				limit = { tag = GFA }
+				custom_effect_tooltip = GER_consider_economic_benefits_tt
+				GER_remove_mefo_bills = yes
+			}
+			else = {
+				add_to_variable = { GER_mefo_bills_timeout_days = 60 }
+				hidden_effect = {
+					add_days_mission_timeout = { mission = GER_mefo_bills_mission days = 60 }
+				}
+				custom_effect_tooltip = GER_preservation_of_national_economy_tt
+			}
 		}
 	}
 	
@@ -6246,16 +6290,12 @@ focus_tree = {
 				add = 500
 				OR = {
 					is_historical_focus_on = yes
-					has_country_flag = NW_GER_AI_FASCIST
+					has_global_flag = NW_GER_AI_FASCIST
 				}
 			}
 			modifier = {
 				factor = 0
-				OR = {
-					has_country_flag = NW_GER_AI_KAISER
-					has_country_flag = NW_GER_AI_REVOLTREICH
-					has_country_flag = NW_GER_AI_DEMOCRATIC
-				}
+				has_global_flag = NW_GER_AI_OPPOSE_HITLER
 			}
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL }	
@@ -9983,6 +10023,7 @@ focus_tree = {
 		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_european_scientific_cooperation"
+			add_research_slot = 1
 			add_to_tech_sharing_group = GER_european_scientific_cooperation
 			every_other_country = {
 				limit = { is_in_faction_with = ROOT }
@@ -10771,7 +10812,7 @@ focus_tree = {
 			modifier = {
 				factor = 0
 				OR = {
-					has_country_flag = NW_GER_AI_FASCIST
+					has_global_flag = NW_GER_AI_FASCIST
 					has_game_rule = {
 						rule = GER_ai_behavior
 						option = DEFAULT
@@ -10780,11 +10821,7 @@ focus_tree = {
 			}
 			modifier = {
 				add = 500
-				OR = {
-					has_country_flag = NW_GER_AI_KAISER
-					has_country_flag = NW_GER_AI_REVOLTREICH
-					has_country_flag = NW_GER_AI_DEMOCRATIC
-				}
+				has_global_flag = NW_GER_AI_OPPOSE_HITLER
 			}
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL }
@@ -11732,6 +11769,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_nationalization_of_economy"
 			add_ideas = GER_nationalization_of_economy
+			add_research_slot = 1
 		}
 	}
 	
@@ -11853,6 +11891,7 @@ focus_tree = {
 		search_filters = {   }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_apply_arplan_experience"
+			add_research_slot = 1
 			swap_ideas = {
 				remove_idea = GER_nationalization_of_economy
 				add_idea = GER_state_planning_of_economy_idea
@@ -12119,6 +12158,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_hammer_blows"
 			add_stability = 0.05
+			add_research_slot = 1
 			set_temp_variable = { GER_aggressiveness_of_strasserism_temp = -5 }
 			add_to_variable = { GER_aggressiveness_of_strasserism = GER_aggressiveness_of_strasserism_temp }
 			custom_effect_tooltip = GER_aggressiveness_of_strasserism_tt
@@ -12167,7 +12207,8 @@ focus_tree = {
 				divide_variable = { GER_aggressiveness_of_strasserism_minus_var = -50 }
 				force_update_dynamic_modifier = yes
 			}
-			add_timed_idea = { idea = GER_federalization_of_germany days = 100 }
+			add_ideas = GER_federalization_of_germany
+			add_timed_idea = { idea = GER_federalization_of_germany_temp days = 100 }
 		}
 	}
 	
@@ -12343,6 +12384,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_deproletarization_of_germans"
 			add_ideas = GER_deproletarization_of_germans
+			add_research_slot = 1
 		}
 	}
 	
@@ -12763,6 +12805,7 @@ focus_tree = {
 		search_filters = {   }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_european_academy"
+			add_research_slot = 1
 			add_to_tech_sharing_group = GER_european_academy
 			every_other_country = {
 				limit = { is_in_faction_with = ROOT }
@@ -13409,20 +13452,8 @@ focus_tree = {
 		ai_will_do = {
 			factor = 100
 			modifier = {
-				factor = 10
-				has_country_flag = ger_second_chance_nonazi
-			}
-			modifier = {
-				add = 500
-				has_country_flag = NW_GER_AI_KAISER
-			}
-			modifier = {
 				factor = 0
-				has_country_flag = NW_GER_AI_REVOLTREICH
-			}
-			modifier = {
-				factor = 0
-				has_country_flag = NW_GER_AI_DEMOCRATIC
+				has_global_flag = NW_GWR_AI_POWER_TO_REFORMERS
 			}
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL }
@@ -13462,6 +13493,13 @@ focus_tree = {
 		cost = 10
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = NW_GWR_AI_KAISER
+					has_global_flag = NW_GWR_AI_IMPERIAL_CONSTITUTION
+				}
+			}
 		}
 		
 		search_filters = {}
@@ -13495,6 +13533,7 @@ focus_tree = {
 				drop_cosmetic_tag = yes
 			}
 			set_cosmetic_tag = GER_wehrstaat
+			mark_focus_tree_layout_dirty = yes
 		}
 	}
 	
@@ -13672,6 +13711,7 @@ focus_tree = {
 		search_filters = {FOCUS_FILTER_RESEARCH}
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_financing_of_military_developments"
+			add_research_slot = 1
 			add_tech_bonus = {
 				name = GER_financing_of_military_developments
 				bonus = 0.5
@@ -13775,6 +13815,13 @@ focus_tree = {
 		cost = 10
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = NW_GWR_AI_WEHRSTAAT
+					has_global_flag = NW_GWR_AI_IMPERIAL_CONSTITUTION
+				}
+			}
 		}
 		
 		search_filters = {FOCUS_FILTER_POLITICAL}
@@ -14419,6 +14466,13 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = NW_GWR_AI_WEHRSTAAT
+					has_global_flag = NW_GWR_AI_KAISER
+				}
+			}
 		}
 		available = {
 			is_subject = no
@@ -14434,6 +14488,7 @@ focus_tree = {
 			custom_effect_tooltip = set_country_leader_ideology_dual_monarchy
 			add_popularity = { ideology = neutrality popularity = -0.125 }
 			add_popularity = { ideology = monarchy popularity = 0.125 }
+			mark_focus_tree_layout_dirty = yes
 		}
 	}
 
@@ -16977,6 +17032,14 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = NW_GWR_AI_WEHRSTAAT
+					has_global_flag = NW_GWR_AI_KAISER
+					has_global_flag = NW_GWR_AI_IMPERIAL_CONSTITUTION
+				}
+			}
 		}
 		available = {
 			has_civil_war = no
@@ -17009,6 +17072,7 @@ focus_tree = {
 				drop_cosmetic_tag = yes
 			}
 			set_cosmetic_tag = GER_german_monarchy		#Переходное правительство Германии
+			mark_focus_tree_layout_dirty = yes
 		}
 	}
 	
@@ -19720,6 +19784,16 @@ focus_tree = {
 			hidden_effect = {
 				drop_cosmetic_tag = yes
 				set_cosmetic_tag = GER_red_front_2
+				if = {
+					limit = { has_character = GER_ernst_thalmann }
+					GER_ernst_thalmann = {
+						set_portraits = {
+							civilian = {
+								large = "gfx/leaders/GER/Portrait_Ernst_Thalmann.dds"
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -19778,6 +19852,7 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_centralization_of_management"
+			add_research_slot = 1
 			set_temp_variable = { temp1 = 2 }
 			add_to_variable = { reorganization_of_state = temp1 }
 			clamp_variable = { var = reorganization_of_state min = 0 max = 10 }
@@ -21142,6 +21217,7 @@ focus_tree = {
 		search_filters = {   }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_cultural_revolution"
+			add_research_slot = 1
 			add_popularity = { ideology = communism popularity = 0.15 }
 			add_stability = 0.05
 			if = {
