@@ -1,4 +1,5 @@
 on_actions = {
+	
 	# ROOT is capitulated country, FROM is winner
 	on_capitulation = {
 		effect = {
@@ -10,10 +11,14 @@ on_actions = {
 							original_tag = FROM
 						}
 						is_major = no
+						is_in_faction = yes
+						num_faction_members > 1
+						any_allied_country = {
+							has_capitulated = no
+						}
 					}
-					
 				}
-				ROOT = { country_event = { id = NW_capitulation.1 days = 2 } }
+				ROOT = { country_event = { id = NW_capitulation.1 hours = 8 } }
 			}
 			
 			if = {
@@ -165,8 +170,56 @@ on_actions = {
 				}
 				set_global_flag = FIN_has_defeat_from_ussr_flag
 			}
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+							original_tag = PER
+						}
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+				}
+				hidden_effect = {
+					add_to_variable = { global.var_unity_of_islamic_union = 1 }
+					clamp_temp_variable = { var = global.var_unity_of_islamic_union min = 1 max = 10 }
+					set_temp_variable = { var_unity_of_islamic_union_conscription_temp = 0.005 }
+					multiply_temp_variable = { var_unity_of_islamic_union_conscription_temp = global.var_unity_of_islamic_union }
+					set_temp_variable = { var_unity_of_islamic_union_war_support_temp = 0.02 }
+					multiply_temp_variable = { var_unity_of_islamic_union_war_support_temp = global.var_unity_of_islamic_union }
+					set_variable = { global.var_unity_of_islamic_union_conscription = var_unity_of_islamic_union_conscription_temp }
+					set_variable = { global.var_unity_of_islamic_union_war_support = var_unity_of_islamic_union_war_support_temp }
+				}
+				every_country = {
+					limit = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+							original_tag = PER
+						}
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					force_update_dynamic_modifier = yes
+				}
+			}
 		}
-	}
+	}	# ROOT is capitulated country, FROM is winner
 	
 	#ROOT is winner #FROM gets annexed - This will also fire on_annex
 	on_civil_war_end = {
@@ -346,8 +399,6 @@ on_actions = {
 		}
 	}
 	
-	
-	
 	on_unit_leader_created = { # This uses the UNIT LEADER sub scope of a character, FROM == country
 		effect = {
 			character = {
@@ -409,5 +460,71 @@ on_actions = {
 			}
 		}
 	}
+	
+	
+	#FROM is invited guest, ROOT is faction leader.
+	on_offer_join_faction = {
+		effect = {
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = PER
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					FROM = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+						}
+						NOT = { has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn } }
+					}
+				}
+				FROM = {
+					add_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+	}	#FROM is invited guest, ROOT is faction leader.
+	
+	#FROM is faction leader on join faction requests. THIS DOES NOT FIRE ON ADD_TO_FACTION EFFECT! USE ON_OFFER_JOIN_FACTION!
+	on_join_faction = {
+		effect = {
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					FROM = {
+						original_tag = PER
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					ROOT = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+						}
+						NOT = { has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn } }
+					}
+				}
+				ROOT = {
+					add_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+	}
 }
-

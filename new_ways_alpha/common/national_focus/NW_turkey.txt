@@ -487,7 +487,7 @@ focus_tree = {
 			}
 			modifier = {
 				factor = 0.5
-				has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes }
+				has_country_leader = { character = TUR_fevzi_cakmak ruling_only = yes }
 			}
 			modifier = {
 				factor = 2
@@ -2353,7 +2353,7 @@ focus_tree = {
 			}
 			modifier = {
 				factor = 10
-				has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes }
+				has_country_leader = { character = TUR_fevzi_cakmak ruling_only = yes }
 			}
 			modifier = {
 				factor = 2
@@ -6321,9 +6321,12 @@ focus_tree = {
 			}
 		}
 		available = {
-			all_country_with_original_tag = {
-				original_tag_to_check = ROOT
-				NOT = { has_country_leader = { character = TUR_ismet_inonu ruling_only = yes } }
+			NOT = {
+				any_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					NOT = { tag = ROOT }
+					has_country_leader = { character = TUR_ismet_inonu ruling_only = yes }
+				}
 			}
 			if = {
 				limit = { is_subject = no }
@@ -6473,12 +6476,14 @@ focus_tree = {
 		
 		available = {
 			NOT = { has_country_leader = { name = "Mustafa Kemal Atatürk" ruling_only = yes } }
-			OR = {
-				all_country_with_original_tag = {
+			NOT = {
+				any_country_with_original_tag = {
 					original_tag_to_check = ROOT
-					NOT = { has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes } }
+					NOT = { tag = ROOT }
+					has_country_leader = { character = TUR_fevzi_cakmak ruling_only = yes }
 				}
-				has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes }
+			}
+			OR = {
 				has_country_flag = TUR_dictatorship_cakmak_flag
 				NOT = { has_country_flag = TUR_heir_was_chosen_flag }
 				has_war_with = TRK
@@ -6495,40 +6500,40 @@ focus_tree = {
 				ideology = neutrality
 				popularity = 0.15
 			}
-			if = {
-				limit = { NOT = { has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes } } }
-				create_country_leader = {
-					name = "Fevzi Çakmak"
-					desc = "POLITICS_FEVZI_CAKMAK_DESC"
-					picture = "gfx/leaders/TUR/portrait_tur_fevzi_cakmak.dds"
-					expire = "1965.1.1"
-					ideology = despotism
-					traits = {
-						maresal
+			effect_tooltip = {
+				if = {
+					limit = { NOT = { has_character = TUR_fevzi_cakmak } }
+					create_country_leader = {
+						name = TUR_fevzi_cakmak
+						desc = "POLITICS_FEVZI_CAKMAK_DESC"
+						picture = "gfx/leaders/TUR/portrait_tur_fevzi_cakmak.dds"
+						expire = "1965.1.1"
+						ideology = despotism
+						traits = {
+							maresal
+						}
+					}
+					create_field_marshal = {
+						name = "Fevzi Çakmak"
+						id = 1800
+						portrait_path = "gfx/leaders/TUR/portrait_tur_fevzi_cakmak.dds"
+						traits = { offensive_doctrine politically_connected war_hero }
+						skill = 4
+						attack_skill = 5
+						defense_skill = 4
+						planning_skill = 2
+						logistics_skill = 2
 					}
 				}
 			}
-			effect_tooltip = {
-				create_field_marshal = {
-					name = "Fevzi Çakmak"
-					id = 1800
-					portrait_path = "gfx/leaders/TUR/portrait_tur_fevzi_cakmak.dds"
-					traits = { offensive_doctrine politically_connected war_hero }
-					skill = 4
-					attack_skill = 5
-					defense_skill = 4
-					planning_skill = 2
-					logistics_skill = 2
-				}
-			}
 			hidden_effect = {
-				every_country_with_original_tag = {
-					original_tag_to_check = ROOT
-					random_unit_leader = {
-						limit = {
-							has_id = 1800
-						}
+				every_country = {
+					limit = {
+						has_character = TUR_fevzi_cakmak
+					}
+					TUR_fevzi_cakmak = {
 						set_nationality = ROOT
+						promote_leader = yes
 					}
 				}
 				set_global_flag = NO_FEVZI_CAKMAK_FLAG
@@ -6550,10 +6555,6 @@ focus_tree = {
 						NOT = {
 							has_country_flag = TUR_heir_was_chosen_flag
 							has_country_leader = { name = "Mustafa Kemal Atatürk" ruling_only = yes }
-						}
-						all_country_with_original_tag = {
-							original_tag_to_check = ROOT
-							NOT = { has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes } }
 						}
 						NOT = { has_war_with = TRK }
 						has_civil_war = no
@@ -7140,7 +7141,7 @@ focus_tree = {
 			add_to_variable = { influence_party_var = 12 }
 			add_to_variable = { influence_army_var = 10 }
 			if = {
-				limit = { has_country_leader = { name = "Fevzi Çakmak" ruling_only = yes } }
+				limit = { has_country_leader = { character = TUR_fevzi_cakmak ruling_only = yes } }
 				add_to_variable = { influence_party_var = -2 }
 				add_to_variable = { influence_army_var = 2 }
 				custom_effect_tooltip = TUR_create_balance_of_power_system_tt4
@@ -13117,18 +13118,30 @@ focus_tree = {
 			add_ideas = TUR_turkey_communist_party
 			hidden_effect = {
 				retire_ideology_leader = communism
-				add_country_leader_role = {
-					character = TUR_Şefik_hüsnü
-					country_leader = {
-						desc = "POLITICS_SEFIK_HUSNU_DESC"
-						ideology = marxism
-						traits = {
-							reluctant_stalinist
-						}
-						expire = "1965.1.1"
+				
+				random_other_country = {
+					limit = {
+						has_character = TUR_Şefik_hüsnü
 					}
-					promote_leader = yes
+					TUR_Şefik_hüsnü = {
+						set_nationality = ROOT
+					}
 				}
+				if = {
+					limit = { ROOT = { has_character = TUR_Şefik_hüsnü } }
+					add_country_leader_role = {
+						character = TUR_Şefik_hüsnü
+						country_leader = {
+							desc = "POLITICS_SEFIK_HUSNU_DESC"
+							ideology = marxism
+							traits = {
+								reluctant_stalinist
+							}
+							expire = "1965.1.1"
+						}
+						promote_leader = yes
+					}
+				}	
 				drop_cosmetic_tag = yes
 				set_cosmetic_tag = TUR_prosoviet_tag
 			}
@@ -13727,10 +13740,13 @@ focus_tree = {
 		id = TUR_soviet_tank_factories
 		icon = GFX_focus_generic_tank_production
 		available = {
-			FACTION_LEADER = {
-				has_opinion = {
-					target = ROOT
-					value > 74
+			if = {
+				limit = { is_in_faction = yes }
+				FACTION_LEADER = {
+					has_opinion = {
+						target = ROOT
+						value > 74
+					}
 				}
 			}
 		}
@@ -15822,7 +15838,6 @@ focus_tree = {
 					}
 				}
 			}
-			
 		}
 	}
 	
