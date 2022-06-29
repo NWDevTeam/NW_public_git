@@ -9,7 +9,7 @@ country_event = {
 	id = NWpersian.1
 	title = NWpersian.1.t
 	desc = NWpersian.1.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_1
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.1" }
@@ -21,6 +21,7 @@ country_event = {
 			create_wargoal = {
 				type = annex_everything
 				target = FROM
+				expire = 7
 			}
 			add_ai_strategy = {
 				type = antagonize
@@ -36,13 +37,11 @@ country_event = {
 		add_opinion_modifier = { target = FROM modifier = PER_nationalize_oil_industry_op }
 		FROM = { add_opinion_modifier = { target = ENG modifier = PER_nationalize_oil_industry_op } }
 		effect_tooltip = {
-			remove_resource_rights = 411
-			remove_resource_rights = 412
 			remove_resource_rights = 413
+			remove_resource_rights = 1187
 		}
-		add_state_claim = 411
-		add_state_claim = 412
 		add_state_claim = 413
+		add_state_claim = 1187
 	}
 }
 
@@ -89,7 +88,7 @@ country_event = {
 	id = NWpersian.3
 	title = NWpersian.3.t
 	desc = NWpersian.3.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_3
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.3" }
@@ -118,7 +117,7 @@ country_event = {
 	id = NWpersian.4
 	title = NWpersian.3.t
 	desc = NWpersian.4.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_4
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.4" }
@@ -146,7 +145,7 @@ country_event = {
 	id = NWpersian.5
 	title = NWpersian.5.t
 	desc = NWpersian.5.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_5
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.5" }
@@ -178,6 +177,8 @@ country_event = {
 		#	has_completed_focus = PER_allow_women_serve_in_military
 		#}
 		check_variable = { opinion_with_clergy_var = -10 }
+		check_variable = { influence_of_clergy_var < 8 }
+		NOT = { has_country_flag = PER_last_blow_to_confessors_flag }
 	}
 	
 	option = {
@@ -193,27 +194,13 @@ country_event = {
 		start_civil_war = {
 			ideology = fascism
 			size = var_temp1
-			states = { 416 410 414 }
+			states = { 410 411 412 414 416 1187 1188 }
+			keep_unit_leaders_trigger = {
+				always = yes
+			}
 		}
 		hidden_effect = {
-			random_other_country = {
-				limit = {
-					original_tag = ROOT
-					has_government = fascism
-				}
-		   		PER_abu_l_hasan_al_isfahani = {
-					add_country_leader_role = {
-						country_leader = {
-							expire = "1965.1.1"
-							ideology = rexism
-							traits = {
-						 	   outstanding_lawyer
-							}	
-						}
-				        promote_leader = yes
-					}
-				}
-				set_party_name = { ideology = fascism long_name = PER_shiite_clergy name = PER_shiite_clergy }
+			PEI = {
 				load_focus_tree = { tree = persian_focus keep_completed = yes }
 				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
 				complete_national_focus = PER_empowerment_women
@@ -237,25 +224,123 @@ country_event = {
 					limit = { original_tag = ROOT }
 					remove_all_catastrophic_disintegration_of_army_ideas = yes
 				}
+				if = {
+					limit = { NOT = { has_template = "Islamist Division" } }
+					division_template = {
+						name = "Islamist Division"
+						is_locked = yes
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Islamist Division\" division_template = \"Islamist Division\" start_experience_factor = 0.3" 
+						owner = PEI
+						count = 10
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_template = "Persian Guards" } }
+				division_template = {
+					name = "Persian Guards"
+					is_locked = yes
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Persian Guards\" division_template = \"Persian Guards\" start_experience_factor = 0.3" 
+					owner = ROOT
+					count = 10
+				}
+			}
+			PER_sayyid_hasan_mudarris = {
+				set_nationality = PEI
+			}
+			PER_seyed_hossein_boroujerdi = {
+				set_nationality = PEI
+			}
+			PER_hossein_tabatabaei_qomi = {
+				set_nationality = PEI
+			}
+			PER_hassan_tabatabaei_qomi = {
+				set_nationality = PEI
+			}
+			PER_fazlollah_zahedi = {
+				set_nationality = PEI
+			}
+			PER_abolghasem_kashani = {
+				set_nationality = PEI
+			}
+			PER_mahmoud_taleghani = {
+				set_nationality = PEI
+			}
+			PEI = {
+				add_field_marshal_role = {
+					character = PER_sayyid_hasan_mudarris
+					traits = { old_guard media_personality infantry_officer organisational_leader }
+					skill = 4
+					attack_skill = 3
+					defense_skill = 1
+					planning_skill = 4
+					logistics_skill = 4
+				}	
+				add_corps_commander_role = {
+					character = PER_abolghasem_kashani
+					traits={ old_guard politically_connected infantry_officer }
+					skill=3
+					attack_skill=2
+					defense_skill=3
+					planning_skill=3
+					logistics_skill=2
+				}		
+				add_corps_commander_role = {
+					character = PER_seyed_hossein_boroujerdi
+					traits={ old_guard politically_connected infantry_officer infantry_leader }
+					skill=3
+					attack_skill=3
+					defense_skill=3
+					planning_skill=2
+					logistics_skill=3
+				}	
+				add_corps_commander_role = {
+					character = PER_hossein_tabatabaei_qomi
+					traits={ old_guard politically_connected infantry_officer trickster }
+					skill=2
+					attack_skill=3
+					defense_skill=2
+					planning_skill=2
+					logistics_skill=1
+				}	
+				add_corps_commander_role = {
+					character = PER_hassan_tabatabaei_qomi
+					traits={ infantry_officer politically_connected }
+					skill=1
+					attack_skill=1
+					defense_skill=2
+					planning_skill=1
+					logistics_skill=2
+				}	
 			}
 			if = {
 				limit = { NOT = { has_completed_focus = PER_weakening_influence_clergy } }
-				random_other_country = {
-					limit = {
-						original_tag = ROOT
-						has_government = fascism
-					}
-					transfer_state = 411
+				PEI = {
+					transfer_state = 413
 				}
 			}
 			if = {
 				limit = { NOT = { has_completed_focus = PER_weakening_influence_aristocracy } }
-				random_other_country = {
-					limit = {
-						original_tag = ROOT
-						has_government = fascism
-					}
-					transfer_state = 412
+				PEI = {
+					transfer_state = 1187
 				}
 			}
 			if = {
@@ -306,39 +391,65 @@ country_event = {
 			ruling_party = fascism
 			elections_allowed = no
 		}
-		random_other_country = {
+		add_field_marshal_role = {
+			character = PER_sayyid_hasan_mudarris
+			traits = { old_guard media_personality infantry_officer organisational_leader }
+			skill = 4
+			attack_skill = 3
+			defense_skill = 1
+			planning_skill = 4
+			logistics_skill = 4
+		}		
+		add_corps_commander_role = {
+			character = PER_abolghasem_kashani
+			traits={ old_guard politically_connected infantry_officer }
+			skill=3
+			attack_skill=2
+			defense_skill=3
+			planning_skill=3
+			logistics_skill=2
+		}		
+		add_corps_commander_role = {
+			character = PER_seyed_hossein_boroujerdi
+			traits={ old_guard infantry_officer infantry_leader }
+			skill=3
+			attack_skill=3
+			defense_skill=2
+			planning_skill=2
+			logistics_skill=3
+		}
+		add_corps_commander_role = {
+			character = PER_hossein_tabatabaei_qomi
+			traits={ old_guard politically_connected infantry_officer trickster }
+			skill=2
+			attack_skill=3
+			defense_skill=2
+			planning_skill=2
+			logistics_skill=1
+		}	
+		add_corps_commander_role = {
+			character = PER_hassan_tabatabaei_qomi
+			traits={ infantry_officer politically_connected }
+			skill=1
+			attack_skill=1
+			defense_skill=2
+			planning_skill=1
+			logistics_skill=2
+		}
+		IF = { 
 			limit = {
-				has_character = PER_abu_l_hasan_al_isfahani
+				ROOT = { is_faction_leader = yes }
 			}
-			PER_abu_l_hasan_al_isfahani = {
-				set_nationality = ROOT
-			}
+			ROOT = { dismantle_faction = yes }
 		}
-		if = {
-			limit = { ROOT = { has_character = PER_abu_l_hasan_al_isfahani } }
-			ROOT = {
-		   		PER_abu_l_hasan_al_isfahani = {
-					add_country_leader_role = {
-						country_leader = {
-							expire = "1965.1.1"
-							ideology = rexism
-							traits = {
-						 	   outstanding_lawyer
-							}	
-						}
-				        promote_leader = yes
-					}
-				}
-			}	
-		}
-		set_party_name = { ideology = fascism long_name = PER_shiite_clergy name = PER_shiite_clergy }
 		complete_national_focus = PER_islamic_revolution
+		remove_ideas = PER_self_confidence_of_iranian_elites
 		if = {
 			limit = { has_country_flag = PER_NWpersian_3a_flag }
 			start_civil_war = {
 				ideology = neutrality
 				size = var_temp2
-				states = { 416 410 414 }
+				states = { 419 963 421 420 417 418 1099 }
 			}
 			remove_all_catastrophic_disintegration_of_army_ideas = yes
 			random_other_country = {
@@ -388,15 +499,14 @@ country_event = {
 			start_civil_war = {
 				ideology = monarchy
 				size = var_temp2
-				states = { 416 410 414 }
+				states = { 416 410 414 1187 1188 }
+				keep_unit_leaders_trigger = {
+					always = no
+				}
 			}
 		}
 		hidden_effect = {
-			random_other_country = {
-				limit = {
-					original_tag = ROOT
-					has_government = monarchy
-				}
+			PEH = {
 				load_focus_tree = { tree = persian_focus keep_completed = yes }
 				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
 				complete_national_focus = PER_empowerment_women
@@ -422,6 +532,114 @@ country_event = {
 				add_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier }
 				set_opinion_with_clergy_var = yes
 				set_influence_clergy_Value = yes
+				remove_ideas = PER_self_confidence_of_iranian_elites
+				if = {
+					limit = { NOT = { has_template = "Persian Guards" } }
+					division_template = {
+						name = "Persian Guards"
+						is_locked = yes
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Persian Guards\" division_template = \"Persian Guards\" start_experience_factor = 0.3" 
+						owner = PEH
+						count = 10
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_template = "Islamist Division" } }
+				division_template = {
+					name = "Islamist Division"
+					is_locked = yes
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Islamist Division\" division_template = \"Islamist Division\" start_experience_factor = 0.3" 
+					owner = ROOT
+					count = 10
+				}
+			}
+			PER_mohammed_ali_foroughi = {
+				set_nationality = PEH
+			}
+			PER_mohammed_reza_pahlavi = {
+				set_nationality = PEH
+			}
+			PER_ernest_perron = {
+				set_nationality = PEH
+			}
+			PER_mohamed_tadayon = {
+				set_nationality = PEH
+			}
+			PER_gholam_ali_farivar = {
+				set_nationality = PEH
+			}
+			PER_mostafa_fateh = {
+				set_nationality = PEH
+			}
+			PER_muhammad_taqi_bahar = {
+				set_nationality = PEH
+			}
+			PER_arthur_millsp = {
+				set_nationality = PEH
+			}
+			PER_ali_mansur = {
+				set_nationality = PEH
+			}
+			PER_abolqasem_nadjm = {
+				set_nationality = PEH
+			}
+			PER_javad_sad = {
+				set_nationality = PEH
+			}
+			PER_khalil_fahimi = {
+				set_nationality = PEH
+			}
+			PER_amanullah_jahanbani = {
+				set_nationality = PEH
+			}
+			PER_karim_buzarjomehri = {
+				set_nationality = PEH
+			}
+			PER_hassan_arfa = {
+				set_nationality = PEH
+			}
+			PER_haj_ali_razmara = {
+				set_nationality = PEH
+			}
+			PER_assadollah_hosseinpoor = {
+				set_nationality = PEH
+			}
+			PER_ahmad_amir_ahmadi = {
+				set_nationality = PEH
+			}
+			PER_morteza_yazdanpanah = {
+				set_nationality = PEH
+			}
+			PER_jafar_shafaghat = {
+				set_nationality = PEH
+			}
+			PER_mohammadvali_gharani = {
+				set_nationality = PEH
+			}
+			PER_teymur_bakhtiar = {
+				set_nationality = PEH
+			}
+			every_navy_leader = {
+				set_nationality = PEH
 			}
 			if = {
 				limit = { NOT = { has_completed_focus = PER_weakening_influence_clergy } }
@@ -430,7 +648,7 @@ country_event = {
 						original_tag = ROOT
 						NOT = { tag = ROOT }
 					}
-					transfer_state = 411
+					transfer_state = 413
 				}
 			}
 			if = {
@@ -440,7 +658,7 @@ country_event = {
 						original_tag = ROOT
 						NOT = { tag = ROOT }
 					}
-					transfer_state = 412
+					transfer_state = 1187
 				}
 			}
 			if = {
@@ -457,7 +675,7 @@ country_event = {
 	id = NWpersian.6
 	title = NWpersian.6.t
 	desc = NWpersian.6.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_6
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.6" }
@@ -490,7 +708,7 @@ country_event = {
 	id = NWpersian.7
 	title = NWpersian.6.t
 	desc = NWpersian.7.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_7
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.7" }
@@ -555,7 +773,7 @@ country_event = {
 	id = NWpersian.9
 	title = NWpersian.9.t
 	desc = NWpersian.9.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_9
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.9" }
@@ -575,7 +793,7 @@ country_event = {
 	id = NWpersian.10
 	title = NWpersian.10.t
 	desc = NWpersian.10.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_10
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.10" }
@@ -598,7 +816,7 @@ country_event = {
 	id = NWpersian.11
 	title = NWpersian.11.t
 	desc = NWpersian.11.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_11_13
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.11" }
@@ -614,7 +832,7 @@ country_event = {
 	id = NWpersian.12
 	title = NWpersian.12.t
 	desc = NWpersian.12.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_12
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.12" }
@@ -630,7 +848,7 @@ country_event = {
 	id = NWpersian.13
 	title = NWpersian.13.t
 	desc = NWpersian.13.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_11_13
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.13" }
@@ -670,7 +888,7 @@ country_event = {
 	id = NWpersian.14
 	title = NWpersian.14.t
 	desc = NWpersian.14.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_14
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.14" }
@@ -681,11 +899,13 @@ country_event = {
 				country_event = { id = NWpersian.73 days = 14 }
 			}
 			ENG = {
-				remove_resource_rights = 411
-				remove_resource_rights = 412
 				remove_resource_rights = 413
+				remove_resource_rights = 1187
+				clr_country_flag = resource_rights_from_per_flag
 				add_opinion_modifier = { target = ROOT modifier = PER_nationalize_oil_industry_op }
 			}
+			413 = { clr_state_flag = resource_rights_state_flag }
+			1187 = { clr_state_flag = resource_rights_state_flag }
 			add_opinion_modifier = { target = ENG modifier = PER_nationalize_oil_industry_op }
 			if = {
 				limit = { has_civil_war = no }
@@ -709,7 +929,11 @@ country_event = {
 		start_civil_war = {
 			ideology = communism
 			size = 0.5
-			states = { 419 963 421 420 416 418 }
+			states = { 419 963 421 420 417 413 418 1099 }
+			navy_ratio = 0.0
+			keep_unit_leaders_trigger = {
+				always = yes
+			}
 		}
 		hidden_effect = {
 			if = {
@@ -736,18 +960,148 @@ country_event = {
 				complete_national_focus = PER_prohibit_schools_attached_mosques
 				complete_national_focus = PER_translate_persian_into_latin
 				complete_national_focus = PER_allow_women_serve_in_military
-				complete_national_focus = PER_primacy_of_army
 				complete_national_focus = PER_weakening_influence_clergy
 				complete_national_focus = PER_weakening_influence_aristocracy
 				complete_national_focus = PER_last_blow_to_confessors
 				complete_national_focus = PER_keep_personal_dictatorship
 				complete_national_focus = PER_coup_of_peoples_party_iran
+				
+				country_event = { id = NWpersian.432 hours = 15 }
 				if = {
 					limit = { country_exists = QAS }
 					declare_war_on = {
 						target = QAS
 						type = annex_everything
 					}
+				}
+				if = {
+					limit = { NOT = { has_template = "Red Guards" } }
+					division_template = {
+						name = "Red Guards"
+						is_locked = yes
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Red Guards\" division_template = \"Red Guards\" start_experience_factor = 0.3" 
+						owner = PREV
+						count = 10
+					}
+				}
+				add_ideas = PER_for_revolution
+				
+				random_other_country = {
+					limit = {
+						OR = {
+							has_character = PER_khosro_roozbeh
+							has_character = PER_lahak_khan_bavand
+							has_character = PER_ezatullah_siamak
+							has_character = PER_gholamhossein_bigdeli
+							has_character = PER_abdulsamad_adl_qajar
+							has_character = PER_mohammad_ali_mobashery
+							has_character = PER_seyyed_jalal_al_e_ahmad
+							has_character = PER_mohammad_ali_khanji
+							has_character = PER_suleiman_eskandari
+							has_character = PER_anvar_hamai
+							has_character = PER_ehsan_tabari
+							has_character = PER_fereydoun_keshavarz
+							has_character = PER_reza_radmanesh
+							has_character = PER_morteza_yazdi
+						}
+					}
+					PER_khosro_roozbeh = {
+						set_nationality = PREV.PREV
+					}
+					PER_lahak_khan_bavand = {
+						set_nationality = PREV.PREV
+					}
+					PER_ezatullah_siamak = {
+						set_nationality = PREV.PREV
+					}
+					PER_gholamhossein_bigdeli = {
+						set_nationality = PREV.PREV
+					}
+					PER_abdulsamad_adl_qajar = {
+						set_nationality = PREV.PREV
+					}
+					PER_mohammad_ali_mobashery = {
+						set_nationality = PREV.PREV
+					}
+				}
+				add_ideas = {
+					PER_lack_of_command_experience_generals
+					PER_lack_of_army_structure_officers
+					PER_lack_of_training_base_sergeants
+					PER_lack_of_combat_training_soldiers
+				}
+				add_corps_commander_role = {
+					character = PER_khosro_roozbeh
+					traits = { art_leader art_expert guerilla_fighter }
+					skill = 3
+					attack_skill = 2
+					defense_skill = 3
+					planning_skill = 4
+					logistics_skill = 2
+				}
+				add_corps_commander_role = {
+					character = PER_ezatullah_siamak
+					traits = { old_guard brilliant_strategist politically_connected }
+					skill = 2
+					attack_skill = 3
+					defense_skill = 1
+					planning_skill = 3
+					logistics_skill = 2
+				}
+				add_corps_commander_role = {
+					character = PER_gholamhossein_bigdeli
+					traits = { infantry_officer }
+					skill = 1
+					attack_skill = 2
+					defense_skill = 2
+					planning_skill = 1
+					logistics_skill = 1
+				}
+				add_corps_commander_role = {
+					character = PER_abdulsamad_adl_qajar
+					traits = { cavalry_officer combined_avia_leader the_red_prince }
+					skill = 3
+					attack_skill = 3
+					defense_skill = 3
+					planning_skill = 2
+					logistics_skill = 1
+				}
+				add_corps_commander_role = {
+					character = PER_mohammad_ali_mobashery
+					traits = { career_officer politically_connected }
+					skill = 2
+					attack_skill = 1
+					defense_skill = 2
+					planning_skill = 2
+					logistics_skill = 2
+				}
+			}
+			if = {
+				limit = { NOT = { has_template = "Persian Guards" } }
+				division_template = {
+					name = "Persian Guards"
+					is_locked = yes
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Persian Guards\" division_template = \"Persian Guards\" start_experience_factor = 0.3" 
+					owner = ROOT
+					count = 10
 				}
 			}
 		}
@@ -770,19 +1124,73 @@ country_event = {
 		start_civil_war = {
 			ideology = monarchy
 			size = 0.5
-			states = { 410 414 412 411 413 }
+			states = { 410 411 412 414 416 1187 1188 }
+			navy_ratio = 1.0
+			keep_unit_leaders_trigger = {
+				always = no
+			}
 		}
 		hidden_effect = {
+		    remove_ideas = PER_self_confidence_of_iranian_elites
+			country_event = { id = NWpersian.432 hours = 15 }
+			add_ideas = PER_for_revolution
 			if = {
 				limit = { has_country_flag = PER_NWpersian_13a_flag }
 				country_event = { id = NWpersian.15 hours = 3 }
 				clr_country_flag = PER_NWpersian_13a_flag
 			}
-			random_other_country = {
-				limit = {
-					original_tag = ROOT
-					has_government = monarchy
-				}
+			add_ideas = {
+				PER_lack_of_command_experience_generals
+				PER_lack_of_army_structure_officers
+				PER_lack_of_training_base_sergeants
+				PER_lack_of_combat_training_soldiers
+			}
+			add_corps_commander_role = {
+				character = PER_khosro_roozbeh
+				traits = { art_leader art_expert guerilla_fighter }
+				skill = 3
+				attack_skill = 2
+				defense_skill = 3
+				planning_skill = 4
+				logistics_skill = 2
+			}
+			add_corps_commander_role = {
+				character = PER_ezatullah_siamak
+				traits = { old_guard brilliant_strategist politically_connected }
+				skill = 2
+				attack_skill = 3
+				defense_skill = 1
+				planning_skill = 3
+				logistics_skill = 2
+			}
+			add_corps_commander_role = {
+				character = PER_gholamhossein_bigdeli
+				traits = { infantry_officer }
+				skill = 1
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 1
+				logistics_skill = 1
+			}
+			add_corps_commander_role = {
+				character = PER_abdulsamad_adl_qajar
+				traits = { cavalry_officer combined_avia_leader the_red_prince }
+				skill = 3
+				attack_skill = 3
+				defense_skill = 3
+				planning_skill = 2
+				logistics_skill = 1
+			}
+			add_corps_commander_role = {
+				character = PER_mohammad_ali_mobashery
+				traits = { career_officer politically_connected }
+				skill = 2
+				attack_skill = 1
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 2
+			}
+			PEH = {
 				load_focus_tree = { tree = persian_focus keep_completed = yes }
 				unlock_national_focus = PER_nationalize_oil_industry
 				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
@@ -797,12 +1205,126 @@ country_event = {
 				complete_national_focus = PER_last_blow_to_confessors
 				complete_national_focus = PER_keep_personal_dictatorship
 				complete_national_focus = PER_eliminate_left_wing_parties
+				remove_ideas = PER_self_confidence_of_iranian_elites
 				if = {
 					limit = { country_exists = QAS }
 					declare_war_on = {
 						target = QAS
 						type = annex_everything
 					}
+				}
+				if = {
+					limit = { NOT = { has_template = "Persian Guards" } }
+					division_template = {
+						name = "Persian Guards"
+						is_locked = yes
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Persian Guards\" division_template = \"Persian Guards\" start_experience_factor = 0.3" 
+						owner = PREV
+						count = 10
+					}
+				}
+			}
+			PER_mohammed_ali_foroughi = {
+				set_nationality = PEH
+			}
+			PER_mohammed_reza_pahlavi = {
+				set_nationality = PEH
+			}
+			PER_ernest_perron = {
+				set_nationality = PEH
+			}
+			PER_mohamed_tadayon = {
+				set_nationality = PEH
+			}
+			PER_gholam_ali_farivar = {
+				set_nationality = PEH
+			}
+			PER_mostafa_fateh = {
+				set_nationality = PEH
+			}
+			PER_muhammad_taqi_bahar = {
+				set_nationality = PEH
+			}
+			PER_arthur_millsp = {
+				set_nationality = PEH
+			}
+			PER_ali_mansur = {
+				set_nationality = PEH
+			}
+			PER_abolqasem_nadjm = {
+				set_nationality = PEH
+			}
+			PER_javad_sad = {
+				set_nationality = PEH
+			}
+			PER_khalil_fahimi = {
+				set_nationality = PEH
+			}
+			PER_ibrahim_hakimi = {
+				set_nationality = PEH
+			}
+			PER_seyed_bagher_qasemi = {
+				set_nationality = PEH
+			}
+			PER_amanullah_jahanbani = {
+				set_nationality = PEH
+			}
+			PER_karim_buzarjomehri = {
+				set_nationality = PEH
+			}
+			PER_hassan_arfa = {
+				set_nationality = PEH
+			}
+			PER_haj_ali_razmara = {
+				set_nationality = PEH
+			}
+			PER_assadollah_hosseinpoor = {
+				set_nationality = PEH
+			}
+			PER_ahmad_amir_ahmadi = {
+				set_nationality = PEH
+			}
+			PER_morteza_yazdanpanah = {
+				set_nationality = PEH
+			}
+			PER_jafar_shafaghat = {
+				set_nationality = PEH
+			}
+			PER_mohammadvali_gharani = {
+				set_nationality = PEH
+			}
+			PER_teymur_bakhtiar = {
+				set_nationality = PEH
+			}
+			every_navy_leader = {
+				set_nationality = PEH
+			}
+			if = {
+				limit = { NOT = { has_template = "Red Guards" } }
+				division_template = {
+					name = "Red Guards"
+					is_locked = yes
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Red Guards\" division_template = \"Red Guards\" start_experience_factor = 0.3" 
+					owner = ROOT
+					count = 10
 				}
 			}
 		}
@@ -814,7 +1336,7 @@ country_event = {
 	id = NWpersian.15
 	title = NWpersian.15.t
 	desc = NWpersian.15.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_15
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.15" }
@@ -841,7 +1363,7 @@ country_event = {
 	id = NWpersian.16
 	title = NWpersian.16.t
 	desc = NWpersian.16.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_16_17_24_25
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.16" }
@@ -878,7 +1400,7 @@ country_event = {
 	id = NWpersian.17
 	title = NWpersian.17.t
 	desc = NWpersian.17.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_16_17_24_25
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.17" }
@@ -979,7 +1501,7 @@ country_event = {
 	id = NWpersian.20
 	title = NWpersian.20.t
 	desc = NWpersian.20.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_20_22_23
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.20" }
@@ -1085,7 +1607,7 @@ country_event = {
 	id = NWpersian.21
 	title = NWpersian.21.t
 	desc = NWpersian.21.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_21
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.21" }
@@ -1101,13 +1623,13 @@ country_event = {
 	id = NWpersian.22
 	title = NWpersian.22.t
 	desc = NWpersian.22.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_20_22_23
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.22" }
 	
 	option = {
-		name = NWpersian.22.a
+		name = NWpersian.19.a
 	}
 }
 
@@ -1116,7 +1638,7 @@ country_event = {
 	id = NWpersian.23
 	title = NWpersian.23.t
 	desc = NWpersian.23.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_20_22_23
 	fire_only_once = yes
 	
 	immediate = {
@@ -1165,7 +1687,7 @@ country_event = {
 	id = NWpersian.24
 	title = NWpersian.24.t
 	desc = NWpersian.24.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_16_17_24_25
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.24" }
@@ -1197,7 +1719,7 @@ country_event = {
 	id = NWpersian.25
 	title = NWpersian.25.t
 	desc = NWpersian.25.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_16_17_24_25
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.25" }
@@ -1226,7 +1748,7 @@ country_event = {
 	id = NWpersian.26
 	title = NWpersian.26.t
 	desc = NWpersian.26.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_26
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.26"	}
@@ -1287,7 +1809,7 @@ country_event = {
 	id = NWpersian.27
 	title = NWpersian.27.t
 	desc = NWpersian.27.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_27_84
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.27" }
@@ -1392,7 +1914,7 @@ country_event = {
 	id = NWpersian.29
 	title = NWpersian.29.t
 	desc = NWpersian.29.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_29_30
 	fire_only_once = yes
 	
 	immediate = {
@@ -1408,6 +1930,16 @@ country_event = {
 			OR = {
 				has_completed_focus = PER_involvement_german_advisers
 				NOT = { has_idea = neutrality_idea }
+			}
+			OR = {
+				is_in_faction = no
+				is_faction_leader = no
+			}
+			OR = {
+				has_government = monarchy
+				has_government = neutrality
+				has_government = fascism
+				has_government = democratic
 			}
 			NOT = {
 				is_in_faction_with = SOV
@@ -1451,7 +1983,7 @@ country_event = {
 	id = NWpersian.30
 	title = NWpersian.30.t
 	desc = NWpersian.30.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_29_30
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.30" }
@@ -1515,7 +2047,7 @@ country_event = {
 	id = NWpersian.31
 	title = NWpersian.31.t
 	desc = NWpersian.31.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_31_55_58
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.31" }
@@ -1530,7 +2062,7 @@ country_event = {
 	id = NWpersian.32
 	title = NWpersian.32.t
 	desc = NWpersian.32.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_32
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.32" }
@@ -1639,7 +2171,7 @@ country_event = {
 	id = NWpersian.33
 	title = NWpersian.33.t
 	desc = NWpersian.33.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_33
 	fire_only_once = yes
 	
 	immediate = {
@@ -1757,7 +2289,7 @@ country_event = {
 	id = NWpersian.330
 	title = NWpersian.330.t
 	desc = NWpersian.330.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	#fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.330" }
@@ -1808,15 +2340,19 @@ country_event = {
 			limit = { PER = { is_subject_of = ENG } }
 			PER = { 
 				load_focus_tree = persian_probritain_focus
-				give_resource_rights = { receiver = ENG state = 411 }
-				give_resource_rights = { receiver = ENG state = 412 }
 				give_resource_rights = { receiver = ENG state = 413 }
+				give_resource_rights = { receiver = ENG state = 1187 }
+			}
+			hidden_effect = {
+				ENG = { set_country_flag = resource_rights_from_per_flag }
+				413 = { set_state_flag = resource_rights_state_flag }
+				1187 = { set_state_flag = resource_rights_state_flag }
 			}
 			SOV = {
 				transfer_state = 419
 				transfer_state = 420
 				transfer_state = 963
-				transfer_state = 1099
+				transfer_state = 417
 			}
 			hidden_effect = {
 				if = {
@@ -1835,9 +2371,8 @@ country_event = {
 			}
 			PER = { load_focus_tree = persian_prosoviet_focus }
 			ENG = {
-				transfer_state = 411
-				transfer_state = 412
 				transfer_state = 413
+				transfer_state = 1187
 			}
 		}
 	}
@@ -1862,15 +2397,19 @@ country_event = {
 			limit = { PER = { is_subject_of = ENG } }
 			PER = { 
 				load_focus_tree = persian_probritain_focus
-				give_resource_rights = { receiver = ENG state = 411 }
-				give_resource_rights = { receiver = ENG state = 412 }
 				give_resource_rights = { receiver = ENG state = 413 }
+				give_resource_rights = { receiver = ENG state = 1187 }
+			}
+			hidden_effect = {
+				ENG = { set_country_flag = resource_rights_from_per_flag }
+				413 = { set_state_flag = resource_rights_state_flag }
+				1187 = { set_state_flag = resource_rights_state_flag }
 			}
 			SOV = {
 				transfer_state = 419
 				transfer_state = 420
 				transfer_state = 963
-				transfer_state = 1099
+				transfer_state = 417
 			}
 		}
 		if = {
@@ -1883,9 +2422,8 @@ country_event = {
 			}
 			PER = { load_focus_tree = persian_prosoviet_focus }
 			ENG = {
-				transfer_state = 411
-				transfer_state = 412
 				transfer_state = 413
+				transfer_state = 1187
 			}
 		}
 	}
@@ -1896,7 +2434,7 @@ country_event = {
 	id = NWpersian.34
 	title = NWpersian.34.t
 	desc = NWpersian.34.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.34" }
@@ -1923,15 +2461,19 @@ country_event = {
 				elections_allowed = yes
 			}
 			load_focus_tree = persian_probritain_focus
-			give_resource_rights = { receiver = ENG state = 411 }
-			give_resource_rights = { receiver = ENG state = 412 }
 			give_resource_rights = { receiver = ENG state = 413 }
+			give_resource_rights = { receiver = ENG state = 1187 }
+		}
+		hidden_effect = {
+			ENG = { set_country_flag = resource_rights_from_per_flag }
+			413 = { set_state_flag = resource_rights_state_flag }
+			1187 = { set_state_flag = resource_rights_state_flag }
 		}
 		SOV = {
 			transfer_state = 419
 			transfer_state = 420
 			transfer_state = 963
-			transfer_state = 1099
+			transfer_state = 417
 			clr_country_flag = persian_intervention_flag
 		}
 		hidden_effect = {
@@ -1967,9 +2509,8 @@ country_event = {
 			load_focus_tree = persian_prosoviet_focus
 		}
 		ENG = {
-			transfer_state = 411
-			transfer_state = 412
 			transfer_state = 413
+			transfer_state = 1187
 		}
 	}
 	
@@ -1991,7 +2532,7 @@ country_event = {
 	id = NWpersian.35
 	title = NWpersian.35.t
 	desc = NWpersian.35.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_35_36_37
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.35" }
@@ -2023,17 +2564,34 @@ country_event = {
 			}
 		}
 		random_owned_controlled_state = {
-			limit = { industrial_complex > 1 }
-			remove_building = {
-				type = industrial_complex
-				level = 2
-			}
-		}
-		random_owned_controlled_state = {
 			limit = { industrial_complex > 0 }
 			remove_building = {
 				type = industrial_complex
 				level = 1
+			}
+		}
+		if = {
+			limit = { FROM = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries } }
+			random_owned_controlled_state = {
+				limit = { industrial_complex > 1 }
+				remove_building = {
+					type = industrial_complex
+					level = 2
+				}
+			}
+			random_owned_controlled_state = {
+				limit = { industrial_complex > 1 }
+				remove_building = {
+					type = industrial_complex
+					level = 2
+				}
+			}
+			random_owned_controlled_state = {
+				limit = { industrial_complex > 0 }
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
 			}
 		}
 		unlock_decision_tooltip = PER_develop_north_iran_oil_deposits
@@ -2044,7 +2602,6 @@ country_event = {
 			set_country_flag = PER_develop_north_iran_oil_deposits_block_flag
 			country_event = { id = NWpersian.36 days = 1 }
 		}
-		
 	}
 	
 	option = {
@@ -2061,7 +2618,7 @@ country_event = {
 	id = NWpersian.36
 	title = NWpersian.36.t
 	desc = NWpersian.36.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_35_36_37
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.36" }
@@ -2069,11 +2626,22 @@ country_event = {
 	option = {
 		name = NWpersian.36.a
 		419 = {
-			add_extra_state_shared_building_slots = 11
-			add_building_construction = {
-				type = industrial_complex
-				level = 5
-				instant_build = yes
+			if = {
+				limit = { ROOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries } }
+				add_extra_state_shared_building_slots = 8
+				add_building_construction = {
+					type = industrial_complex
+					level = 5
+					instant_build = yes
+				}
+			}
+			else = {
+				add_extra_state_shared_building_slots = 6
+				add_building_construction = {
+					type = industrial_complex
+					level = 3
+					instant_build = yes
+				}
 			}
 			add_building_construction = {
 				type = infrastructure
@@ -2082,11 +2650,22 @@ country_event = {
 			}
 		}
 		420 = {
-			add_extra_state_shared_building_slots = 3
-			add_building_construction = {
-				type = industrial_complex
-				level = 1
-				instant_build = yes
+			if = {
+				limit = { ROOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries } }
+				add_extra_state_shared_building_slots = 4
+				add_building_construction = {
+					type = industrial_complex
+					level = 3
+					instant_build = yes
+				}
+			}
+			else = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
 			}
 			add_building_construction = {
 				type = infrastructure
@@ -2095,16 +2674,34 @@ country_event = {
 			}
 		}
 		capital_scope = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = {
-				type = industrial_complex
-				level = 1
-				instant_build = yes
+			if = {
+				limit = { ROOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries } }
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			else = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
 			}
 		}
 		hidden_effect = {
 			if = {
-				limit = { SOV = { has_government = communism } }
+				limit = {
+					FROM = {
+						OR = {
+							has_government = communism
+							has_government = trozkism
+						}
+					}
+				}
 				country_event = { id = NWpersian.38 days = 1 }
 			}
 		}
@@ -2116,7 +2713,7 @@ country_event = {
 	id = NWpersian.37
 	title = NWpersian.37.t
 	desc = NWpersian.37.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_35_36_37
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.37" }
@@ -2139,6 +2736,9 @@ country_event = {
 	
 	option = {
 		name = NWpersian.38.a
+		trigger = {
+			NOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries }
+		}
 		ai_chance = {
 			factor = 50
 			modifier = {
@@ -2154,26 +2754,62 @@ country_event = {
 		add_stability = -0.05
 	}
 	
-	option = {
-		name = NWpersian.38.b
-		ai_chance = {
-			factor = 50
-			modifier = {
-				factor = 0
-				has_country_flag = NW_PER_AI_TROZKIST
-			}
-		}
-		add_political_power = -100
-		add_stability = -0.05
-		add_popularity = {
-			ideology = communism
-			popularity = -0.1
-		}
-		add_timed_idea = { idea = PER_hate_cooperation_with_kremlin_1 days = 180 }
-	}
+#	option = {
+#		name = NWpersian.38.b
+#		trigger = {
+#			NOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries }
+#		}
+#		ai_chance = {
+#			factor = 50
+#			modifier = {
+#				factor = 0
+#				has_country_flag = NW_PER_AI_TROZKIST
+#			}
+#		}
+#		add_political_power = -100
+#		add_stability = -0.05
+#		add_popularity = {
+#			ideology = communism
+#			popularity = -0.1
+#		}
+#		add_timed_idea = { idea = PER_hate_cooperation_with_kremlin_1 days = 180 }
+#	}
+	
+#	option = {
+#		name = NWpersian.38.c
+#		trigger = {
+#			NOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries }
+#		}
+#		ai_chance = {
+#			factor = 50
+#			modifier = {
+#				factor = 0
+#				has_country_flag = NW_PER_AI_COMMUNIST
+#			}
+#		}
+#		add_stability = -0.05
+#		add_popularity = {
+#			ideology = communism
+#			popularity = -0.1
+#		}
+#		add_popularity = {
+#			ideology = democratic
+#			popularity = 0.05
+#		}
+#		add_popularity = {
+#			ideology = trozkism
+#			popularity = 0.05
+#		}
+#		add_timed_idea = { idea = PER_hate_cooperation_with_kremlin_2 days = 360 }
+#		set_party_name = { ideology = trozkism long_name = PER_trozkism_third_power_party name = PER_trozkism_third_power_party }
+#		set_country_flag = PER_dem_tro_revolt_flag
+#	}
 	
 	option = {
 		name = NWpersian.38.c
+		trigger = {
+			NOT = { has_completed_focus = PER_establish_equal_cooperation_with_other_countries }
+		}
 		ai_chance = {
 			factor = 50
 			modifier = {
@@ -2182,213 +2818,211 @@ country_event = {
 			}
 		}
 		add_stability = -0.05
-		add_popularity = {
-			ideology = communism
-			popularity = -0.1
+		hidden_effect = {
+			country_event = { id = NWpersian.419 days = 14 }
 		}
-		add_popularity = {
-			ideology = democratic
-			popularity = 0.05
+	}
+	
+	option = {
+		name = NWpersian.38.d
+		trigger = {
+			has_completed_focus = PER_establish_equal_cooperation_with_other_countries
 		}
-		add_popularity = {
-			ideology = trozkism
-			popularity = 0.05
+		hidden_effect = {
+			country_event = { id = NWpersian.418 days = 2 }
 		}
-		add_timed_idea = { idea = PER_hate_cooperation_with_kremlin_2 days = 360 }
-		set_party_name = { ideology = trozkism long_name = PER_trozkism_third_power_party name = PER_trozkism_third_power_party }
-		set_country_flag = PER_dem_tro_revolt_flag
 	}
 }
 
 #Ведомые оппозицией буржуа поднимают восстание // PER
-country_event = {
-	id = NWpersian.39
-	title = NWpersian.39.t
-	desc = NWpersian.39.desc
-	picture = GFX_report_event_generic_rally_3
-	fire_only_once = yes
-	
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.39" }
-	immediate = { hidden_effect = { news_event = { hours = 6 id = trworldnews.101 } } }
-	
-	mean_time_to_happen = { days = 5 }
-	
-	trigger = {
-		tag = PER
-		has_country_flag = PER_dem_tro_revolt_flag
-		set_temp_variable = { PER_ideology_dem_tro = party_popularity@trozkism }
-		set_temp_variable = { PER_ideology_democratic = party_popularity@democratic }
-		add_to_temp_variable = { PER_ideology_dem_tro = PER_ideology_democratic }
-		check_variable = { PER_ideology_dem_tro > 0.3 }
-	}
-	
-	option = {
-		name = NWpersian.39.a
-		trigger = { NOT = { has_completed_focus = PER_create_armed_militias  } }
-		hidden_effect = {
-			if = {
-				limit = {
-					is_subject = no
-					is_in_faction = yes
-				}
-				leave_faction = yes
-			}
-		}
-		start_civil_war = {
-			ideology = communism
-			size = 0.49
-			states = { 1099 413 412 411 414 410 }
-		}
-		clr_country_flag = PER_develop_north_iran_oil_deposits_block_flag
-		SOV = {
-			remove_resource_rights = 420
-			remove_resource_rights = 419
-			add_state_claim = 420
-			add_state_claim = 419
-			add_state_claim = 963
-			clr_country_flag = PER_develop_north_iran_oil_deposits_available_flag
-		}
-		complete_national_focus = PER_fully_independent_iran
-		hidden_effect = {
-			add_ideas = PER_civil_war
-			if = {
-				limit = { has_completed_focus = PER_give_autonomy_minorities }
-				random_other_country = {
-					limit = {
-						original_tag = ROOT
-						has_government = communism
-					}
-					puppet = MHB
-					puppet = APG
-				}
-				
-			}
-			remove_ideas = {
-				PER_growing_popularity_of_npi
-				PER_hate_cooperation_with_kremlin_1
-				PER_hate_cooperation_with_kremlin_2
-			}
-			random_other_country = {
-				limit = {
-					original_tag = ROOT
-					has_government = communism
-				}
-				every_enemy_country = {
-					limit = {
-						is_subject = no
-						OR = { is_faction_leader = yes is_in_faction = no }
-						NOT = { original_tag = ROOT }
-					}
-					white_peace = PREV
-					white_peace = ROOT
-				}
-				add_ideas = PER_civil_war
-				load_focus_tree = { tree = persian_focus keep_completed = yes }
-				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
-				complete_national_focus = PER_empowerment_women
-				complete_national_focus = PER_continued_reform
-				complete_national_focus = PER_prohibit_schools_attached_mosques
-				complete_national_focus = PER_translate_persian_into_latin
-				complete_national_focus = PER_allow_women_serve_in_military
-				complete_national_focus = PER_primacy_of_army
-				complete_national_focus = PER_weakening_influence_clergy
-				complete_national_focus = PER_weakening_influence_aristocracy
-				complete_national_focus = PER_last_blow_to_confessors
-				complete_national_focus = PER_keep_personal_dictatorship
-				complete_national_focus = PER_coup_of_peoples_party_iran
-				set_country_flag = PER_troz_revolt_flag
-			}
-		}
-	}
-	
-	option = {
-		name = NWpersian.39.b
-		trigger = { has_completed_focus = PER_create_armed_militias  }
-		hidden_effect = {
-			if = {
-				limit = {
-					is_subject = no
-					is_in_faction = yes
-				}
-				leave_faction = yes
-			}
-		}
-		add_popularity = {
-			ideology = democratic
-			popularity = -0.3
-		}
-		start_civil_war = {
-			ideology = trozkism
-			size = 0.49
-			states = { 417 412 1099 }
-		}
-		hidden_effect = {
-			add_ideas = PER_civil_war
-			if = {
-				limit = { NOT = { has_completed_focus = PER_give_autonomy_minorities } }
-				every_owned_state = {
-					limit = {
-						OR = {
-							state = 420
-							state = 419
-							state = 963
-						}
-					}
-					random_other_country = {
-						limit = {
-							original_tag = ROOT
-							has_government = trozkism
-						}
-						transfer_state = PREV
-					}
-				}
-			}
-			random_other_country = {
-				limit = {
-					original_tag = ROOT
-					has_government = trozkism
-				}
-				every_enemy_country = {
-					limit = {
-						is_subject = no
-						OR = { is_faction_leader = yes is_in_faction = no }
-						NOT = { original_tag = ROOT }
-					}
-					white_peace = PREV
-					white_peace = ROOT
-				}
-				add_ideas = PER_civil_war
-				load_focus_tree = { tree = persian_focus keep_completed = yes }
-				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
-				complete_national_focus = PER_empowerment_women
-				complete_national_focus = PER_continued_reform
-				complete_national_focus = PER_prohibit_schools_attached_mosques
-				complete_national_focus = PER_translate_persian_into_latin
-				complete_national_focus = PER_allow_women_serve_in_military
-				complete_national_focus = PER_primacy_of_army
-				complete_national_focus = PER_weakening_influence_clergy
-				complete_national_focus = PER_weakening_influence_aristocracy
-				complete_national_focus = PER_last_blow_to_confessors
-				complete_national_focus = PER_keep_personal_dictatorship
-				unlock_national_focus = PER_coup_of_peoples_party_iran
-				unlock_national_focus = PER_legacy_of_gilyana
-				unlock_national_focus = PER_unite_with_social_democrats
-				unlock_national_focus = PER_provide_soviet_oil_concession
-				unlock_national_focus = PER_create_armed_militias
-				unlock_national_focus = PER_fully_independent_iran
-				add_popularity = {
-					ideology = democratic
-					popularity = 0.4
-				}
-				remove_ideas = {
-					PER_growing_popularity_of_npi
-					PER_hate_cooperation_with_kremlin_1
-					PER_hate_cooperation_with_kremlin_2
-				}
-			}
-		}
-	}
-}
+#country_event = {
+#	id = NWpersian.39
+#	title = NWpersian.39.t
+#	desc = NWpersian.39.desc
+#	picture = GFX_report_event_generic_rally_3
+#	fire_only_once = yes
+#	
+#	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.39" }
+#	immediate = { hidden_effect = { news_event = { hours = 6 id = trworldnews.101 } } }
+#	
+#	mean_time_to_happen = { days = 5 }
+#	
+#	trigger = {
+#		tag = PER
+#		has_country_flag = PER_dem_tro_revolt_flag
+#		set_temp_variable = { PER_ideology_dem_tro = party_popularity@trozkism }
+#		set_temp_variable = { PER_ideology_democratic = party_popularity@democratic }
+#		add_to_temp_variable = { PER_ideology_dem_tro = PER_ideology_democratic }
+#		check_variable = { PER_ideology_dem_tro > 0.3 }
+#	}
+#	
+#	option = {
+#		name = NWpersian.39.a
+#		trigger = { NOT = { has_completed_focus = PER_create_armed_militias  } }
+#		hidden_effect = {
+#			if = {
+#				limit = {
+#					is_subject = no
+#					is_in_faction = yes
+#				}
+#				leave_faction = yes
+#			}
+#		}
+#		start_civil_war = {
+#			ideology = communism
+#			size = 0.49
+#			states = { 417 413 414 1188 410 1187 }
+#		}
+#		clr_country_flag = PER_develop_north_iran_oil_deposits_block_flag
+#		SOV = {
+#			remove_resource_rights = 420
+#			remove_resource_rights = 419
+#			add_state_claim = 420
+#			add_state_claim = 419
+#			add_state_claim = 963
+#			clr_country_flag = PER_develop_north_iran_oil_deposits_available_flag
+#		}
+#		complete_national_focus = PER_fully_independent_iran
+#		hidden_effect = {
+#			add_ideas = PER_civil_war
+#			if = {
+#				limit = { has_completed_focus = PER_give_autonomy_minorities }
+#				random_other_country = {
+#					limit = {
+#						original_tag = ROOT
+#						has_government = communism
+#					}
+#					puppet = MHB
+#					puppet = APG
+#				}
+#				
+#			}
+#			remove_ideas = {
+#				PER_growing_popularity_of_npi
+#				PER_hate_cooperation_with_kremlin_1
+#				PER_hate_cooperation_with_kremlin_2
+#			}
+#			random_other_country = {
+#				limit = {
+#					original_tag = ROOT
+#					has_government = communism
+#				}
+#				every_enemy_country = {
+#					limit = {
+#						is_subject = no
+#						OR = { is_faction_leader = yes is_in_faction = no }
+#						NOT = { original_tag = ROOT }
+#					}
+#					white_peace = PREV
+#					white_peace = ROOT
+#				}
+#				add_ideas = PER_civil_war
+#				load_focus_tree = { tree = persian_focus keep_completed = yes }
+#				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
+#				complete_national_focus = PER_empowerment_women
+#				complete_national_focus = PER_continued_reform
+#				complete_national_focus = PER_prohibit_schools_attached_mosques
+#				complete_national_focus = PER_translate_persian_into_latin
+#				complete_national_focus = PER_allow_women_serve_in_military
+#				complete_national_focus = PER_primacy_of_army
+#				complete_national_focus = PER_weakening_influence_clergy
+#				complete_national_focus = PER_weakening_influence_aristocracy
+#				complete_national_focus = PER_last_blow_to_confessors
+#				complete_national_focus = PER_keep_personal_dictatorship
+#				complete_national_focus = PER_coup_of_peoples_party_iran
+#				set_country_flag = PER_troz_revolt_flag
+#			}
+#		}
+#	}
+#	
+#	option = {
+#		name = NWpersian.39.b
+#		trigger = { has_completed_focus = PER_create_armed_militias  }
+#		hidden_effect = {
+#			if = {
+#				limit = {
+#					is_subject = no
+#					is_in_faction = yes
+#				}
+#				leave_faction = yes
+#			}
+#		}
+#		add_popularity = {
+#			ideology = democratic
+#			popularity = -0.3
+#		}
+#		start_civil_war = {
+#			ideology = trozkism
+#			size = 0.49
+#			states = { 412 417 }
+#		}
+#		hidden_effect = {
+#			add_ideas = PER_civil_war
+#			if = {
+#				limit = { NOT = { has_completed_focus = PER_give_autonomy_minorities } }
+#				every_owned_state = {
+#					limit = {
+#						OR = {
+#							state = 420
+#							state = 419
+#							state = 963
+#						}
+#					}
+#					random_other_country = {
+#						limit = {
+#							original_tag = ROOT
+#							has_government = trozkism
+#						}
+#						transfer_state = PREV
+#					}
+#				}
+#			}
+#			random_other_country = {
+#				limit = {
+#					original_tag = ROOT
+#					has_government = trozkism
+#				}
+#				every_enemy_country = {
+#					limit = {
+#						is_subject = no
+#						OR = { is_faction_leader = yes is_in_faction = no }
+#						NOT = { original_tag = ROOT }
+#					}
+#					white_peace = PREV
+#					white_peace = ROOT
+#				}
+#				add_ideas = PER_civil_war
+#				load_focus_tree = { tree = persian_focus keep_completed = yes }
+#				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
+#				complete_national_focus = PER_empowerment_women
+#				complete_national_focus = PER_continued_reform
+#				complete_national_focus = PER_prohibit_schools_attached_mosques
+#				complete_national_focus = PER_translate_persian_into_latin
+#				complete_national_focus = PER_allow_women_serve_in_military
+#				complete_national_focus = PER_primacy_of_army
+#				complete_national_focus = PER_weakening_influence_clergy
+#				complete_national_focus = PER_weakening_influence_aristocracy
+#				complete_national_focus = PER_last_blow_to_confessors
+#				complete_national_focus = PER_keep_personal_dictatorship
+#				unlock_national_focus = PER_coup_of_peoples_party_iran
+#				unlock_national_focus = PER_legacy_of_gilyana
+#				unlock_national_focus = PER_unite_with_social_democrats
+#				unlock_national_focus = PER_provide_soviet_oil_concession
+#				unlock_national_focus = PER_create_armed_militias
+#				unlock_national_focus = PER_fully_independent_iran
+#				add_popularity = {
+#					ideology = democratic
+#					popularity = 0.4
+#				}
+#				remove_ideas = {
+#					PER_growing_popularity_of_npi
+#					PER_hate_cooperation_with_kremlin_1
+#					PER_hate_cooperation_with_kremlin_2
+#				}
+#			}
+#		}
+#	}
+#}
 
 #Иран призывает малые нации к объединению // not PER
 country_event = {
@@ -2443,7 +3077,7 @@ country_event = {
 	id = NWpersian.41
 	title = NWpersian.41.t
 	desc = NWpersian.41.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.41" }
@@ -2522,7 +3156,7 @@ country_event = {
 	id = NWpersian.42
 	title = NWpersian.42.t
 	desc = NWpersian.42.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_42
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.42" }
@@ -2583,7 +3217,7 @@ country_event = {
 	id = NWpersian.43
 	title = NWpersian.43.t
 	desc = NWpersian.43.desc
-	picture = GFX_report_event_generic_funeral
+	picture = GFX_report_event_per_43
 	fire_only_once = yes
 	
 	trigger = {
@@ -2620,7 +3254,7 @@ country_event = {
 	id = NWpersian.44
 	title = NWpersian.44.t
 	desc = NWpersian.44.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.44" }
@@ -2651,7 +3285,7 @@ country_event = {
 	id = NWpersian.45
 	title = NWpersian.45.t
 	desc = NWpersian.45.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.45" }
@@ -2677,7 +3311,7 @@ country_event = {
 	id = NWpersian.46
 	title = NWpersian.46.t
 	desc = NWpersian.46.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.46" }
@@ -2690,9 +3324,8 @@ country_event = {
 		every_owned_state = {
 			limit = {
 				OR = {
-					state = 411
-					state = 412
 					state = 413
+					state = 1187
 				}
 			}
 			FROM = { transfer_state = PREV }
@@ -2713,7 +3346,7 @@ country_event = {
 	id = NWpersian.47
 	title = NWpersian.47.t
 	desc = NWpersian.47.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.47" }
@@ -2730,7 +3363,7 @@ country_event = {
 		declare_war_on = {
 			target = FROM
 			type = take_state
-			generator = { 411 412 413 }
+			generator = { 413 1187 }
 		}
 		FROM = { country_event = { id = NWpersian.48 days = 1 } }
 	}
@@ -2748,7 +3381,7 @@ country_event = {
 	id = NWpersian.48
 	title = NWpersian.48.t
 	desc = NWpersian.48.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.48" }
@@ -2770,7 +3403,7 @@ country_event = {
 			start_civil_war = {
 				ideology = democratic
 				size = 0.5
-				states = { 411 412 413 }
+				states = { 413 1187 }
 			}
 		}
 		random_other_country = {
@@ -2811,7 +3444,7 @@ country_event = {
 			start_civil_war = {
 				ideology = neutrality
 				size = 0.5
-				states = { 411 412 413 }
+				states = { 413 1187 }
 			}
 		}
 		random_other_country = {
@@ -2845,7 +3478,7 @@ country_event = {
 	id = NWpersian.49
 	title = NWpersian.49.t
 	desc = NWpersian.49.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.49" }
@@ -2907,7 +3540,7 @@ country_event = {
 	id = NWpersian.50
 	title = NWpersian.50.t
 	desc = NWpersian.50.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.50" }
@@ -2963,7 +3596,7 @@ country_event = {
 	id = NWpersian.51
 	title = NWpersian.51.t
 	desc = NWpersian.51.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.51" }
@@ -2980,7 +3613,7 @@ country_event = {
 		declare_war_on = {
 			target = FROM
 			type = take_state
-			generator = { 420 419 963 1099 }
+			generator = { 420 419 963 417 }
 		}
 		FROM = { country_event = { id = NWpersian.52 days = 1 } }
 	}
@@ -3005,12 +3638,12 @@ country_event = {
 	}
 }
 
-#Судьба северного  Ирана // SOV
+#Судьба северного Ирана // SOV
 country_event = {
 	id = NWpersian.52
 	title = NWpersian.52.t
 	desc = NWpersian.52.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.52" }
@@ -3055,12 +3688,96 @@ country_event = {
 				complete_national_focus = PER_prohibit_schools_attached_mosques
 				complete_national_focus = PER_translate_persian_into_latin
 				complete_national_focus = PER_allow_women_serve_in_military
-				complete_national_focus = PER_primacy_of_army
 				complete_national_focus = PER_weakening_influence_clergy
 				complete_national_focus = PER_weakening_influence_aristocracy
 				complete_national_focus = PER_last_blow_to_confessors
 				complete_national_focus = PER_keep_personal_dictatorship
 				complete_national_focus = PER_coup_of_peoples_party_iran
+				
+				country_event = { id = NWpersian.432 hours = 15 }
+				add_ideas = PER_for_revolution
+				
+				every_other_country = {
+					limit = {
+						OR = {
+							has_character = PER_khosro_roozbeh
+							has_character = PER_lahak_khan_bavand
+							has_character = PER_ezatullah_siamak
+							has_character = PER_gholamhossein_bigdeli
+							has_character = PER_abdulsamad_adl_qajar
+							has_character = PER_mohammad_ali_mobashery
+						}
+					}
+					PER_khosro_roozbeh = {
+						set_nationality = ROOT
+					}
+					PER_lahak_khan_bavand = {
+						set_nationality = ROOT
+					}
+					PER_ezatullah_siamak = {
+						set_nationality = ROOT
+					}
+					PER_gholamhossein_bigdeli = {
+						set_nationality = ROOT
+					}
+					PER_abdulsamad_adl_qajar = {
+						set_nationality = ROOT
+					}
+					PER_mohammad_ali_mobashery = {
+						set_nationality = ROOT
+					}
+				}
+				add_ideas = {
+					PER_lack_of_command_experience_generals
+					PER_lack_of_army_structure_officers
+					PER_lack_of_training_base_sergeants
+					PER_lack_of_combat_training_soldiers
+				}
+				add_corps_commander_role = {
+					character = PER_khosro_roozbeh
+					traits = { art_leader art_expert guerilla_fighter }
+					skill = 3
+					attack_skill = 2
+					defense_skill = 3
+					planning_skill = 4
+					logistics_skill = 2
+				}
+				add_corps_commander_role = {
+					character = PER_ezatullah_siamak
+					traits = { old_guard brilliant_strategist politically_connected }
+					skill = 2
+					attack_skill = 3
+					defense_skill = 1
+					planning_skill = 3
+					logistics_skill = 2
+				}
+				add_corps_commander_role = {
+					character = PER_gholamhossein_bigdeli
+					traits = { infantry_officer }
+					skill = 1
+					attack_skill = 2
+					defense_skill = 2
+					planning_skill = 1
+					logistics_skill = 1
+				}
+				add_corps_commander_role = {
+					character = PER_abdulsamad_adl_qajar
+					traits = { cavalry_officer combined_avia_leader the_red_prince }
+					skill = 3
+					attack_skill = 3
+					defense_skill = 3
+					planning_skill = 2
+					logistics_skill = 1
+				}
+				add_corps_commander_role = {
+					character = PER_mohammad_ali_mobashery
+					traits = { career_officer politically_connected }
+					skill = 2
+					attack_skill = 1
+					defense_skill = 2
+					planning_skill = 2
+					logistics_skill = 2
+				}
 			}
 		}
 	}
@@ -3071,7 +3788,7 @@ country_event = {
 	id = NWpersian.53
 	title = NWpersian.53.t
 	desc = NWpersian.53.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_34_330_46to53
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.53" }
@@ -3165,7 +3882,7 @@ country_event = {
 	id = NWpersian.55
 	title = NWpersian.55.t
 	desc = NWpersian.55.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_31_55_58
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.55" }
@@ -3262,7 +3979,7 @@ country_event = {
 	id = NWpersian.58
 	title = NWpersian.58.t
 	desc = NWpersian.58.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_31_55_58
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.58" }
@@ -3279,7 +3996,7 @@ country_event = {
 	id = NWpersian.59
 	title = NWpersian.59.t
 	desc = NWpersian.59.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_59
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.59" }
@@ -3322,10 +4039,32 @@ country_event = {
 				}
 			}
 		}
+		if = {
+			limit = { is_faction_leader = yes }
+			dismantle_faction = yes
+		}
+		else_if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		PER_habiballah_nowbakt = {
+			add_country_leader_role = {
+				country_leader = {
+					desc="POLITICS_HABIB_ALLAH_NOWBAKT_DESC"
+					expire = "1965.1.1"
+					ideology = nationalism_ideology
+					traits = {
+						 knave
+					}	
+				}
+				promote_leader = yes	
+			}
+		}
 		set_politics = {
 			ruling_party = fascism
 			elections_allowed = no
 		}
+		set_party_name = { ideology = fascism long_name = PER_nazi_faction name = PER_nazi_faction }
 		add_stability = -0.05
 		if = {
 			limit = { NOT = { has_country_flag = PER_tadj_ol_molouk_flag } }
@@ -3337,10 +4076,13 @@ country_event = {
 			set_cosmetic_tag = PER_nazi
 			news_event = { hours = 6 id = trworldnews.93 }
 			ENG = {
-				remove_resource_rights = 411
-				remove_resource_rights = 412
 				remove_resource_rights = 413
+				remove_resource_rights = 1187
+				clr_country_flag = resource_rights_from_per_flag
 			}
+			413 = { clr_state_flag = resource_rights_state_flag }
+			1187 = { clr_state_flag = resource_rights_state_flag }
+			mark_focus_tree_layout_dirty = yes
 		}
 		set_country_flag = PER_concessions_for_germanophiles_flag
 	}
@@ -3360,7 +4102,7 @@ country_event = {
 	id = NWpersian.60
 	title = NWpersian.60.t
 	desc = NWpersian.60.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_60_61
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.60" }
@@ -3405,7 +4147,7 @@ country_event = {
 	id = NWpersian.61
 	title = NWpersian.61.t
 	desc = NWpersian.61.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_60_61
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.61" }
@@ -3437,7 +4179,7 @@ country_event = {
 	id = NWpersian.62
 	title = NWpersian.62.t
 	desc = NWpersian.62.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_62_63_225
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.62" }
@@ -3454,7 +4196,7 @@ country_event = {
 	id = NWpersian.63
 	title = NWpersian.63.t
 	desc = NWpersian.63.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_62_63_225
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.63" }
@@ -3468,7 +4210,6 @@ country_event = {
 					is_owned_and_controlled_by = PER
 					OR = {
 						state = 421
-						state = 417
 						state = 418
 						state = 411
 					}
@@ -3534,7 +4275,6 @@ country_event = {
 					is_owned_and_controlled_by = PER
 					OR = {
 						state = 421
-						state = 417
 						state = 418
 						state = 411
 					}
@@ -3598,7 +4338,7 @@ country_event = {
 	id = NWpersian.64
 	title = NWpersian.64.t
 	desc = NWpersian.64.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_64_66_67
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.64" }
@@ -3639,7 +4379,7 @@ country_event = {
 	id = NWpersian.66
 	title = NWpersian.66.t
 	desc = NWpersian.66.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_64_66_67
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.66" }
@@ -3703,7 +4443,7 @@ country_event = {
 	id = NWpersian.67
 	title = NWpersian.67.t
 	desc = NWpersian.67.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_64_66_67
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.67" }
@@ -3750,7 +4490,7 @@ country_event = {
 	id = NWpersian.68
 	title = NWpersian.68.t
 	desc = NWpersian.68.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.68" }
@@ -3788,7 +4528,7 @@ country_event = {
 	id = NWpersian.69
 	title = NWpersian.69.t
 	desc = NWpersian.69.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.69" }
@@ -3814,7 +4554,7 @@ country_event = {
 	id = NWpersian.70
 	title = NWpersian.70.t
 	desc = NWpersian.70.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.70" }
@@ -3847,7 +4587,7 @@ country_event = {
 	id = NWpersian.71
 	title = NWpersian.71.t
 	desc = NWpersian.71.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.71" }
@@ -3864,7 +4604,7 @@ country_event = {
 	id = NWpersian.72
 	title = NWpersian.72.t
 	desc = NWpersian.72.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.72" }
@@ -3893,7 +4633,7 @@ country_event = {
 	id = NWpersian.73
 	title = NWpersian.73.t
 	desc = NWpersian.73.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.73" }
@@ -3906,7 +4646,27 @@ country_event = {
 			transfer_state = 412
 			add_state_core = 412
 			hidden_effect = {
-				load_oob = "QAS_1936"
+				if = {
+					limit = { NOT = { has_template = "Qashqai Cavalry" } }
+					division_template = {
+						name = "Qashqai Cavalry"
+						is_locked = no
+						regiments = {
+							cavalry = { x = 0 y = 0 }
+							cavalry = { x = 0 y = 1 }
+							cavalry = { x = 1 y = 0 }
+							cavalry = { x = 1 y = 1 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Qashqai Cavalry\" division_template = \"Qashqai Cavalry\" start_experience_factor = 0.4"
+						owner = PREV
+						count = 3
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
 				set_rule = { can_join_factions = no }
 			}
 			random_other_country = {
@@ -3926,17 +4686,27 @@ country_event = {
 			}
 		}
 		hidden_effect = {
-		    PER_mohammad_mosaddegh = {
-			    set_nationality = QAS
-				add_country_leader_role = {
-					country_leader = {
-						expire = "1965.1.1"
-						ideology = national_liberalism
-						traits = {
-						    antiimperialist
-						}	
-					}
-					promote_leader = yes
+			random_other_country = {
+				limit = {
+					has_character = PER_mohammad_mosaddegh
+				}
+				PER_mohammad_mosaddegh = {
+					set_nationality = QAS
+				}
+			}
+			if = {
+				limit = { QAS = { has_character = PER_mohammad_mosaddegh } }
+				QAS = {
+					PER_mohammad_mosaddegh = {
+						add_country_leader_role = {
+							country_leader = {
+								expire = "1965.1.1"
+								ideology = national_liberalism
+								traits = { antiimperialist }	
+							}
+							promote_leader = yes
+						}
+					}	
 				}
 			}
 		}	
@@ -3976,17 +4746,27 @@ country_event = {
 			}
 		}
 		hidden_effect = {
-		    PER_mohammad_mosaddegh = {
-			    set_nationality = QAS
-				add_country_leader_role = {
-					country_leader = {
-						expire = "1965.1.1"
-						ideology = national_liberalism
-						traits = {
-						    antiimperialist
-						}	
-					}
-					promote_leader = yes
+			random_other_country = {
+				limit = {
+					has_character = PER_mohammad_mosaddegh
+				}
+				PER_mohammad_mosaddegh = {
+					set_nationality = QAS
+				}
+			}
+			if = {
+				limit = { QAS = { has_character = PER_mohammad_mosaddegh } }
+				QAS = {
+					PER_mohammad_mosaddegh = {
+						add_country_leader_role = {
+							country_leader = {
+								expire = "1965.1.1"
+								ideology = national_liberalism
+								traits = { antiimperialist }	
+							}
+							promote_leader = yes
+						}
+					}	
 				}
 			}
 		}	
@@ -4012,7 +4792,7 @@ country_event = {
 	id = NWpersian.74
 	title = NWpersian.74.t
 	desc = NWpersian.74.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.74" }
@@ -4059,7 +4839,7 @@ country_event = {
 	id = NWpersian.75
 	title = NWpersian.75.t
 	desc = NWpersian.75.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_75_100_101_102_103
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.75" }
@@ -4123,7 +4903,7 @@ country_event = {
 	id = NWpersian.77
 	title = NWpersian.77.t
 	desc = NWpersian.77.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_77
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.77" }
@@ -4173,7 +4953,7 @@ country_event = {
 	id = NWpersian.78
 	title = NWpersian.78.t
 	desc = NWpersian.78.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_78
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.78" }
@@ -4239,7 +5019,7 @@ country_event = {
 	id = NWpersian.79
 	title = NWpersian.79.t
 	desc = NWpersian.79.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_79_80
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.79" }
@@ -4335,7 +5115,7 @@ country_event = {
 	id = NWpersian.80
 	title = NWpersian.80.t
 	desc = NWpersian.80.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_79_80
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.80" }
@@ -4354,7 +5134,7 @@ country_event = {
 	id = NWpersian.81
 	title = NWpersian.81.t
 	desc = NWpersian.81.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_81_82_83
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.81" }
@@ -4385,7 +5165,7 @@ country_event = {
 	id = NWpersian.82
 	title = NWpersian.82.t
 	desc = NWpersian.82.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_81_82_83
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.82" }
@@ -4402,7 +5182,7 @@ country_event = {
 	id = NWpersian.83
 	title = NWpersian.83.t
 	desc = NWpersian.83.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_81_82_83
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.83" }
@@ -4453,7 +5233,7 @@ country_event = {
 	id = NWpersian.84
 	title = NWpersian.84.t
 	desc = NWpersian.84.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_27_84
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.84" }
@@ -4479,7 +5259,7 @@ country_event = {
 	id = NWpersian.85
 	title = NWpersian.85.t
 	desc = NWpersian.85.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_85
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.85" }
@@ -4519,7 +5299,7 @@ country_event = {
 	id = NWpersian.86
 	title = NWpersian.86.t
 	desc = NWpersian.86.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_86
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.86" }
@@ -4576,7 +5356,7 @@ country_event = {
 	id = NWpersian.87
 	title = NWpersian.87.t
 	desc = NWpersian.87.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_87
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.87" }
@@ -4625,7 +5405,7 @@ country_event = {
 	id = NWpersian.88
 	title = NWpersian.88.t
 	desc = NWpersian.88.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_88_89_90
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.88" }
@@ -4665,7 +5445,7 @@ country_event = {
 	id = NWpersian.89
 	title = NWpersian.89.t
 	desc = NWpersian.89.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_88_89_90
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.89" }
@@ -4684,7 +5464,7 @@ country_event = {
 	id = NWpersian.90
 	title = NWpersian.90.t
 	desc = NWpersian.90.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_88_89_90
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.90" }
@@ -4710,7 +5490,7 @@ country_event = {
 	id = NWpersian.91
 	title = NWpersian.91.t
 	desc = NWpersian.91.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_91_211_212_213
 	is_triggered_only = yes
 	
 	immediate = {
@@ -4807,7 +5587,7 @@ country_event = {
 	id = NWpersian.92
 	title = NWpersian.92.t
 	desc = NWpersian.92.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.92" }
@@ -4987,7 +5767,7 @@ country_event = {
 	id = NWpersian.93
 	title = NWpersian.93.t
 	desc = NWpersian.93.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_93
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.93" }
@@ -5003,14 +5783,14 @@ country_event = {
 	id = NWpersian.94
 	title = NWpersian.94.t
 	desc = NWpersian.94.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_94
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.94" }
 	
 	option = {
 		name = NWpersian.94.a
-		remove_unit_leader = 5074
+		PER_mohammadhosayn_ayrom = { retire = yes }
 	}
 }
 
@@ -5019,7 +5799,7 @@ country_event = {
 	id = NWpersian.95
 	title = NWpersian.95.t
 	desc = NWpersian.95.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.95" }
@@ -5065,7 +5845,7 @@ country_event = {
 	id = NWpersian.96
 	title = NWpersian.96.t
 	desc = NWpersian.96.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_96_152
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.96" }
@@ -5073,6 +5853,7 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = PER_invest_flag
 			random_list = {
+				seed = random
 				50 = { set_country_flag = PER_want_invest_flag }
 				50 = { }
 			}
@@ -5081,7 +5862,7 @@ country_event = {
 	
 	option = {
 		name = NWpersian.96.a
-		unlock_decision_tooltip = { decision = PER_invest_in_infrastructure_of_mashhad show_effect_tooltip = yes }
+		activate_mission = PER_invest_in_infrastructure_of_mashhad
 		hidden_effect = {
 			416 = {
 				set_state_flag = PER_invest_in_infrastructure_of_mashhad_flag
@@ -5097,7 +5878,7 @@ country_event = {
 	id = NWpersian.97
 	title = NWpersian.97.t
 	desc = NWpersian.97.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.97" }
@@ -5189,7 +5970,7 @@ country_event = {
 	id = NWpersian.99
 	title = NWpersian.99.t
 	desc = NWpersian.99.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_68_69_70_71_72_73_74_99
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.99" }
@@ -5235,7 +6016,7 @@ country_event = {
 	id = NWpersian.150
 	title = NWpersian.150.t
 	desc = NWpersian.150.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.150" }
@@ -5283,7 +6064,7 @@ country_event = {
 	id = NWpersian.151
 	title = NWpersian.151.t
 	desc = NWpersian.151.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_41_44_45_92_95_97_150_151
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.151" }
@@ -5315,7 +6096,7 @@ country_event = {
 	id = NWpersian.152
 	title = NWpersian.152.t
 	desc = NWpersian.152.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_96_152
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.152" }
@@ -5401,6 +6182,7 @@ country_event = {
 				}
 				country_event = { id = NWpersian.153 days = 60 random_days = 10 }
 				random_list = {
+					seed = random
 					50 = {
 						country_event = { id = NWpersian.95 }
 					}
@@ -5408,7 +6190,7 @@ country_event = {
 						modifier = {
 							factor = 0
 							OR = {
-								416 = { infrastructure > 9 }
+								416 = { infrastructure > 5 }
 								has_country_flag = PER_invest_flag
 							}
 						}
@@ -5464,7 +6246,7 @@ country_event = {
 	id = NWpersian.100
 	title = NWpersian.100.t
 	desc = NWpersian.100.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_75_100_101_102_103
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.100" }
@@ -5517,7 +6299,7 @@ country_event = {
 	id = NWpersian.101
 	title = NWpersian.101.t
 	desc = NWpersian.101.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_75_100_101_102_103
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.101" }
@@ -5582,7 +6364,7 @@ country_event = {
 	id = NWpersian.102
 	title = NWpersian.102.t
 	desc = NWpersian.102.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_75_100_101_102_103
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.102" }
@@ -5621,7 +6403,7 @@ country_event = {
 		}
 	}
 	desc = NWpersian.103.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_75_100_101_102_103
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.103" }
@@ -5687,7 +6469,7 @@ country_event = {
 	id = NWpersian.200
 	title = NWpersian.200.t
 	desc = NWpersian.200.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.200" }
@@ -5741,7 +6523,7 @@ country_event = {
 	id = NWpersian.201
 	title = NWpersian.201.t
 	desc = NWpersian.201.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.201" }
@@ -5791,7 +6573,7 @@ country_event = {
 	id = NWpersian.203
 	title = NWpersian.203.t
 	desc = NWpersian.203.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.203" }
@@ -5831,7 +6613,7 @@ country_event = {
 	id = NWpersian.204
 	title = NWpersian.204.t
 	desc = NWpersian.204.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.204" }
@@ -5867,7 +6649,7 @@ country_event = {
 	id = NWpersian.205
 	title = NWpersian.205.t
 	desc = NWpersian.205.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.205" }
@@ -5885,7 +6667,7 @@ country_event = {
 	id = NWpersian.206
 	title = NWpersian.206.t
 	desc = NWpersian.206.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.206" }
@@ -5903,7 +6685,7 @@ country_event = {
 	id = NWpersian.207
 	title = NWpersian.207.t
 	desc = NWpersian.207.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.207" }
@@ -5921,7 +6703,7 @@ country_event = {
 	id = NWpersian.208
 	title = NWpersian.208.t
 	desc = NWpersian.208.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.208" }
@@ -5939,7 +6721,7 @@ country_event = {
 	id = NWpersian.209
 	title = NWpersian.209.t
 	desc = NWpersian.209.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.209" }
@@ -5957,7 +6739,7 @@ country_event = {
 	id = NWpersian.210
 	title = NWpersian.210.t
 	desc = NWpersian.210.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.210" }
@@ -5972,7 +6754,7 @@ country_event = {
 	id = NWpersian.211
 	title = NWpersian.211.t
 	desc = NWpersian.211.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_91_211_212_213
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.211" }
@@ -5990,7 +6772,7 @@ country_event = {
 	id = NWpersian.212
 	title = NWpersian.212.t
 	desc = NWpersian.212.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_91_211_212_213
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.212" }
@@ -6008,7 +6790,7 @@ country_event = {
 	id = NWpersian.213
 	title = NWpersian.213.t
 	desc = NWpersian.213.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_91_211_212_213
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.213" }
@@ -6027,7 +6809,7 @@ country_event = {
 	id = NWpersian.214
 	title = NWpersian.214.t
 	desc = NWpersian.214.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.214" }
@@ -6045,7 +6827,7 @@ country_event = {
 	id = NWpersian.215
 	title = NWpersian.214.t
 	desc = NWpersian.215.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_200to210_214_215
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.215" }
@@ -6064,7 +6846,7 @@ country_event = {
 	id = NWpersian.216
 	title = NWpersian.216.t
 	desc = NWpersian.216.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.216" }
@@ -6098,7 +6880,7 @@ country_event = {
 	id = NWpersian.217
 	title = NWpersian.217.t
 	desc = NWpersian.217.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.217" }
@@ -6114,7 +6896,7 @@ country_event = {
 	id = NWpersian.218
 	title = NWpersian.218.t
 	desc = NWpersian.218.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.218" }
@@ -6133,7 +6915,7 @@ country_event = {
 	id = NWpersian.219
 	title = NWpersian.219.t
 	desc = NWpersian.219.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.219" }
@@ -6168,7 +6950,7 @@ country_event = {
 	id = NWpersian.220
 	title = NWpersian.220.t
 	desc = NWpersian.220.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.220" }
@@ -6216,7 +6998,7 @@ country_event = {
 	id = NWpersian.221
 	title = NWpersian.221.t
 	desc = NWpersian.221.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.221" }
@@ -6236,7 +7018,7 @@ country_event = {
 	id = NWpersian.222
 	title = NWpersian.222.t
 	desc = NWpersian.222.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.222" }
@@ -6256,7 +7038,7 @@ country_event = {
 	id = NWpersian.223
 	title = NWpersian.223.t
 	desc = NWpersian.223.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.223" }
@@ -6276,7 +7058,7 @@ country_event = {
 	id = NWpersian.224
 	title = NWpersian.224.t
 	desc = NWpersian.224.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_224
 	fire_only_once = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.224" }
@@ -6339,7 +7121,7 @@ country_event = {
 	id = NWpersian.225
 	title = NWpersian.225.t
 	desc = NWpersian.225.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_62_63_225
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.225" }
@@ -6398,7 +7180,7 @@ country_event = {
 	id = NWpersian.227
 	title = NWpersian.227.t
 	desc = NWpersian.227.desc
-	picture = GFX_report_event_generic_rally_3
+	picture = GFX_report_event_per_216to223_227
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.227" }
@@ -6676,5 +7458,2085 @@ country_event = {
 		name = NWpersian.306.a
 		959 = { set_demilitarized_zone = no }
 		add_opinion_modifier = { target = FROM modifier = KHU_waiver_of_claims_for_el_wafr_op }
+	}
+}
+
+
+### NW 0.5.1
+
+#Распространение исламистской литературы // PER
+country_event = {
+	id = NWpersian.401
+	title = NWpersian.401.t
+	desc = NWpersian.401.desc
+	picture = GFX_report_event_per_islam_revolt
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.401" }
+	
+	mean_time_to_happen = { days = 5 }
+	
+	trigger = {
+		tag = PER
+		has_government = monarchy
+		has_stability < 0.660
+		check_variable = { opinion_with_clergy_var < -6 }
+		check_variable = { influence_of_clergy_var > 7 }
+	}
+	
+	option = {
+		name = NWpersian.401.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
+				check_variable = { opinion_with_clergy_var < -6 }
+			}
+		}
+		add_political_power = -20
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_opinion_with_clergy_temp = -1 }
+			add_to_variable = { opinion_with_clergy_var = PER_opinion_with_clergy_temp }
+			custom_effect_tooltip = PER_opinion_with_clergy_minus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+	}
+	
+	option = {
+		name = NWpersian.401.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
+				check_variable = { influence_of_clergy_var > 5 }
+			}
+		}
+		add_stability = -0.1
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_influence_of_clergy_temp = 1 }
+			add_to_variable = { influence_of_clergy_var = PER_influence_of_clergy_temp }
+			custom_effect_tooltip = PER_influence_of_clergy_plus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+	}
+	
+	option = {
+		name = NWpersian.401.c
+		ai_chance = {
+			factor = 150
+		}
+		trigger = {
+			has_completed_focus = PER_use_clergy_in_propaganda
+		}
+		add_political_power = -40
+		add_stability = 0.1
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_influence_of_clergy_temp = 1 }
+			add_to_variable = { influence_of_clergy_var = PER_influence_of_clergy_temp }
+			custom_effect_tooltip = PER_influence_of_clergy_plus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+	}
+}
+
+#Антишахская демонстрация в Мешхеде // PER
+country_event = {
+	id = NWpersian.402
+	title = NWpersian.402.t
+	desc = NWpersian.402.desc
+	picture = GFX_report_event_per_islam_revolt
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.402" }
+	
+	mean_time_to_happen = { days = 6 }
+	
+	trigger = {
+		tag = PER
+		has_government = monarchy
+		has_stability < 0.560
+		check_variable = { opinion_with_clergy_var < -7 }
+		check_variable = { influence_of_clergy_var > 7 }
+	}
+	
+	option = {
+		name = NWpersian.402.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -35
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_influence_of_clergy_temp = 2 }
+			add_to_variable = { influence_of_clergy_var = PER_influence_of_clergy_temp }
+			custom_effect_tooltip = PER_influence_of_clergy_plus_tt
+			set_temp_variable = { PER_opinion_with_clergy_temp = 2 }
+			add_to_variable = { opinion_with_clergy_var = PER_opinion_with_clergy_temp }
+			custom_effect_tooltip = PER_opinion_with_clergy_plus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+		add_timed_idea = { idea = PER_financing_of_mashhad_clergy days = 60 }
+	}
+	
+	option = {
+		name = NWpersian.402.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_influence_of_clergy_temp = 1 }
+			add_to_variable = { influence_of_clergy_var = PER_influence_of_clergy_temp }
+			custom_effect_tooltip = PER_influence_of_clergy_plus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+	}
+	
+	option = {
+		name = NWpersian.402.c
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				check_variable = { opinion_with_clergy_var < -6 }
+			}
+		}
+		add_political_power = -25
+		if = {
+			limit = { has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier } }
+			set_temp_variable = { PER_opinion_with_clergy_temp = -1 }
+			add_to_variable = { opinion_with_clergy_var = PER_opinion_with_clergy_temp }
+			custom_effect_tooltip = PER_opinion_with_clergy_minus_tt
+			set_opinion_with_clergy_var = yes
+			set_influence_clergy_Value = yes
+		}
+	}
+	
+	option = {
+		name = NWpersian.402.d
+		ai_chance = {
+			factor = 150
+		}
+		trigger = {
+			has_completed_focus = PER_stop_promotion_of_westernization
+		}
+		add_political_power = -40
+	}
+}
+
+#Антишахское шествие в Тегеране // PER
+country_event = {
+	id = NWpersian.403
+	title = NWpersian.403.t
+	desc = NWpersian.403.desc
+	picture = GFX_report_event_per_islam_revolt
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.403" }
+	
+	mean_time_to_happen = { days = 7 }
+	
+	trigger = {
+		tag = PER
+		has_government = monarchy
+		check_variable = { opinion_with_clergy_var < -8 }
+		check_variable = { influence_of_clergy_var > 7 }
+		NOT = { has_country_flag = PER_last_blow_to_confessors_flag }
+	}
+	
+	option = {
+		name = NWpersian.403.a
+		ai_chance = {
+			factor = 20
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.3
+		}
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		complete_national_focus = PER_islamic_revolution
+		set_country_flag = PER_islamic_revolution_flag
+		hidden_effect = {
+			if = {
+				limit = { has_stability < 0.50 }
+				country_event = { id = NWpersian.404 days = 1 }
+			}
+			else = { country_event = { id = NWpersian.405 days = 1 } }
+		}
+	}
+	
+	option = {
+		name = NWpersian.403.b
+		ai_chance = {
+			factor = 80
+		}
+		start_civil_war = {
+			ideology = fascism
+			size = var_temp1
+			states = { 416 410 414 1187 1188 }
+		}
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					original_tag = ROOT
+					has_government = fascism
+				}
+				load_focus_tree = { tree = persian_focus keep_completed = yes }
+				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
+				complete_national_focus = PER_empowerment_women
+				complete_national_focus = PER_continued_reform
+				complete_national_focus = PER_prohibit_schools_attached_mosques
+				complete_national_focus = PER_translate_persian_into_latin
+				complete_national_focus = PER_allow_women_serve_in_military
+				complete_national_focus = PER_islamic_revolution
+				complete_national_focus = PER_primacy_of_army
+				#
+				set_variable = { start_barrow_x = 235 }
+				set_variable = { start_barrow_text_x = 243 }
+				set_variable = { opinion_with_clergy_var = 10 }
+				set_variable = { influence_of_clergy_var = 10 }
+				#start position
+				set_variable = { min_barrow_x = 24 }
+				set_opinion_with_clergy_var = yes
+				set_influence_clergy_Value = yes
+				add_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier }
+				random_other_country = {
+					limit = { original_tag = ROOT }
+					remove_all_catastrophic_disintegration_of_army_ideas = yes
+				}
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = PER_weakening_influence_clergy } }
+				random_other_country = {
+					limit = {
+						original_tag = ROOT
+						has_government = fascism
+					}
+					transfer_state = 413
+				}
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = PER_weakening_influence_aristocracy } }
+				random_other_country = {
+					limit = {
+						original_tag = ROOT
+						has_government = fascism
+					}
+					transfer_state = 1187
+				}
+			}
+			if = {
+				limit = { has_country_flag = PER_NWpersian_3a_flag }
+				country_event = { id = NWpersian.6 days = 10 }
+			}
+			if = {
+				limit = { has_country_flag = PER_NWpersian_4a_flag }
+				country_event = { id = NWpersian.7 days = 10 }
+			}
+			if = {
+				limit = { has_completed_focus = PER_trial_communists }
+				country_event = { id = NWpersian.9 days = 14 }
+			}
+			if = {
+				limit = { has_stability < 0.4 }
+				country_event = { id = NWpersian.406 days = 1 }
+				else = {
+					country_event = { id = NWpersian.407 days = 1 }
+				}
+			}
+		}
+		set_country_flag = PER_last_blow_to_confessors_flag
+		effect_tooltip = { unlock_national_focus = PER_last_blow_to_confessors }
+		set_variable = { opinion_with_clergy_var = -10 }
+		set_variable = { influence_of_clergy_var = 0 }
+	}
+}
+
+#Народ поддерживает исламскую революцию // PER
+country_event = {
+	id = NWpersian.404
+	title = NWpersian.404.t
+	desc = NWpersian.404.desc
+	picture = GFX_report_event_per_islam_revolt
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.404" }
+	
+	option = {
+		name = NWpersian.215.a
+		add_stability = 0.05
+	}
+}
+
+#Народ не поддерживает исламскую революцию // PER
+country_event = {
+	id = NWpersian.405
+	title = NWpersian.405.t
+	desc = NWpersian.405.desc
+	picture = GFX_report_event_per_islam_revolt
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.405" }
+	
+	option = {
+		name = NWpersian.405.a
+		add_stability = -0.1
+		set_country_flag = people_not_support_islamic_revolution_flag
+		add_timed_idea = { idea = PER_restructuring_of_state_apparatus days = 360 }
+	}
+}
+
+#Офицеры переходят на сторону исламистов // PER
+country_event = {
+	id = NWpersian.406
+	title = NWpersian.406.t
+	desc = NWpersian.406.desc
+	picture = GFX_report_event_per_islam_revolt
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.406" }
+	
+	option = {
+		name = NWpersian.406.a
+		add_timed_idea = { idea = PER_officers_switch_to_islamists days = 90 }
+	}
+}
+
+#Народ поддерживает шахиншаха в борьбе с исламистами // PER
+country_event = {
+	id = NWpersian.407
+	title = NWpersian.407.t
+	desc = NWpersian.407.desc
+	picture = GFX_report_event_per_islam_revolt
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.407" }
+	
+	option = {
+		name = NWpersian.21.a
+		add_popularity = {
+			ideology = monarchy
+			popularity = 0.3
+		}
+		add_timed_idea = { idea = PER_support_of_people_in_fight_against_islamic_revolution days = 90 }
+	}
+}
+
+#Духовное пробуждение иранцев // PER
+country_event = {
+	id = NWpersian.408
+	title = NWpersian.408.t
+	desc = NWpersian.408.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.408" }
+	
+	option = {
+		name = NWpersian.217.a
+		set_temp_variable = { var_god_fearing_temp = 3 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+	}
+}
+
+# Остережение от вечных мук и т.д богобоязненность // PER
+country_event = {
+	id = NWpersian.409
+	title = {
+		text = NWpersian.409.t1
+		trigger = {
+			has_idea = PER_level_of_god_fearing_1
+		}
+	}
+	title = {
+		text = NWpersian.409.t2
+		trigger = {
+			has_idea = PER_level_of_god_fearing_2
+		}
+	}
+	title = {
+		text = NWpersian.409.t3
+		trigger = {
+			has_idea = PER_level_of_god_fearing_3
+		}
+	}
+	desc = {
+		text = NWpersian.409.desc1
+		trigger = {
+			has_idea = PER_level_of_god_fearing_1
+		}
+	}
+	desc = {
+		text = NWpersian.409.desc2
+		trigger = {
+			has_idea = PER_level_of_god_fearing_2
+		}
+	}
+	desc = {
+		text = NWpersian.409.desc3
+		trigger = {
+			has_idea = PER_level_of_god_fearing_3
+		}
+	}
+	picture = GFX_report_event_per_islam_1
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.409" }
+
+	option = {
+		name = NWpersian.409.a
+		if = {
+			limit = { has_idea = PER_level_of_god_fearing_1 }
+			swap_ideas = {
+				remove_idea = PER_level_of_god_fearing_1
+				add_idea = PER_level_of_god_fearing_2
+			}
+		}
+		else_if = {
+			limit = { has_idea = PER_level_of_god_fearing_2 }
+			swap_ideas = {
+				remove_idea = PER_level_of_god_fearing_2
+				add_idea = PER_level_of_god_fearing_3
+			}
+		}
+		else_if = {
+			limit = { has_idea = PER_level_of_god_fearing_3 }
+			swap_ideas = {
+				remove_idea = PER_level_of_god_fearing_3
+				add_idea = PER_level_of_god_fearing_4
+			}
+		}
+		set_temp_variable = { var_god_fearing_temp = -5 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+	}
+}
+
+#Богобоязненность II: generic-события пульсар // PER
+country_event = {
+	id = NWpersian.4010
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.408" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_government = fascism
+					NOT = {
+						has_idea = PER_level_of_god_fearing_4
+					}
+				}
+				country_event = { id = NWpersian.4010 days = 40 random_days = 10 }
+				random_list = {
+					seed = random
+					5 = { country_event = NWpersian.410 }	#Арестован интеллигент из провинции 
+					5 = {
+						modifier = {
+							factor = 0
+							OR = {
+								has_country_flag = NWpersian_411_flag
+								NOT = {
+									any_owned_state = {
+										hospital > 2
+									}
+								}
+							}
+						}
+						country_event = NWpersian.411		#В одной из военных больниц была предпринята попытка переливания крови
+					}
+					5 = { country_event = NWpersian.412 }	#В тегеранском политическом кружке прозвучала идея о введении конституции
+					5 = {
+						modifier = {
+							factor = 0
+							NOT = {
+								any_owned_state = {
+									has_dynamic_modifier = { modifier = PER_conflict_with_large_landowner_dyn }
+								}
+							}
+						}
+						country_event = NWpersian.413		#Сын крупного землевладельца из провинции
+					}
+					5 = {
+						modifier = {
+							factor = 0
+							has_idea = PER_weakening_of_control_over_tribes
+						}
+						country_event = NWpersian.414		#Эмир из провинции
+					}
+					5 = {
+						modifier = {
+							factor = 0
+							OR = {
+								has_idea = PER_blow_to_professor
+								has_completed_focus = PER_islamization_of_universities
+							}
+						}
+						country_event = NWpersian.415		#Задержан профессор Тегеранского университета, критиковавший труды исламских правоведов
+					}
+					5 = {
+						modifier = {
+							factor = 0
+							NOT = {
+								has_completed_focus = PER_prohibit_riba
+								any_owned_state = {
+									industrial_complex > 0
+								}
+							}
+						}
+						country_event = NWpersian.416		#Крупный ростовщик из провинции
+					}
+				}
+			}
+		}
+	}
+}
+
+#Арестован интеллигент из провинции // PER
+country_event = {
+	id = NWpersian.410
+	title = NWpersian.410.t
+	desc = NWpersian.410.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.410" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_event_target = is_random_owned_controlled_state_2 }
+				clear_global_event_target = is_random_owned_controlled_state_2
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				save_global_event_target_as = is_random_owned_controlled_state_2
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.410.a
+		ai_chance = {
+			factor = 50
+		}
+		event_target:is_random_owned_controlled_state_2 = {
+			add_manpower = -1
+			add_dynamic_modifier = { modifier = PER_regional_governance_disorder_dyn days = 30 }
+		}
+		add_political_power = -20
+		add_timed_idea = { idea = PER_regional_governance_disorder days = 30 }
+		
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+		
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+	
+	option = {
+		name = NWpersian.410.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+}
+
+#В одной из военных больниц была предпринята попытка переливания крови // PER
+country_event = {
+	id = NWpersian.411
+	title = NWpersian.411.t
+	desc = NWpersian.411.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.411" }
+	immediate = { set_country_flag = NWpersian_411_flag }
+	
+	option = {
+		name = NWpersian.411.a
+		ai_chance = {
+			factor = 50
+		}
+		add_ideas = PER_prohibition_of_blood_transfusion
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.411.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -2 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+	}
+}
+
+#В тегеранском политическом кружке прозвучала идея о введении конституции // PER
+country_event = {
+	id = NWpersian.412
+	title = NWpersian.412.t
+	desc = NWpersian.412.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.412" }
+	
+	option = {
+		name = NWpersian.412.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -80
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.412.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -2 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+	}
+}
+
+#Сын крупного землевладельца из провинции  // PER
+country_event = {
+	id = NWpersian.413
+	title = NWpersian.413.t
+	desc = NWpersian.413.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.413" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_event_target = is_random_owned_controlled_state_2 }
+				clear_global_event_target = is_random_owned_controlled_state_2
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				save_global_event_target_as = is_random_owned_controlled_state_2
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.413.a
+		ai_chance = {
+			factor = 50
+		}
+		event_target:is_random_owned_controlled_state_2 = {
+			add_dynamic_modifier = { modifier = PER_conflict_with_large_landowner_dyn days = 60 }
+		}
+
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+		
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+	
+	option = {
+		name = NWpersian.413.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+}
+
+#Эмир из провинции // PER
+country_event = {
+	id = NWpersian.414
+	title = NWpersian.414.t
+	desc = NWpersian.414.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.414" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_event_target = is_random_owned_controlled_state_2 }
+				clear_global_event_target = is_random_owned_controlled_state_2
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				save_global_event_target_as = is_random_owned_controlled_state_2
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.414.a
+		ai_chance = {
+			factor = 50
+		}
+		add_timed_idea = { idea = PER_weakening_of_control_over_tribes days = 60 }
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+		
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+	
+	option = {
+		name = NWpersian.414.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+}
+
+#Задержан профессор Тегеранского университета, критиковавший труды исламских правоведов // PER
+country_event = {
+	id = NWpersian.415
+	title = NWpersian.415.t
+	desc = NWpersian.415.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.415" }
+	
+	option = {
+		name = NWpersian.415.a
+		ai_chance = {
+			factor = 50
+		}
+		add_political_power = -25
+		add_timed_idea = { idea = PER_blow_to_professor days = 60 }
+		
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.415.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -2 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+	}
+}
+
+#Крупный ростовщик из провинции // PER
+country_event = {
+	id = NWpersian.416
+	title = NWpersian.416.t
+	desc = NWpersian.416.desc
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.416" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_event_target = is_random_owned_controlled_state_2 }
+				clear_global_event_target = is_random_owned_controlled_state_2
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					industrial_complex > 0
+				}
+				save_global_event_target_as = is_random_owned_controlled_state_2
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.416.a
+		ai_chance = {
+			factor = 50
+		}
+		event_target:is_random_owned_controlled_state_2 = {
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		
+		set_temp_variable = { var_god_fearing_temp = 1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { var_god_fearing = 5 }
+					OR = {
+						has_idea = PER_level_of_god_fearing_1
+						has_idea = PER_level_of_god_fearing_2
+						has_idea = PER_level_of_god_fearing_3
+					}
+				}
+				country_event = { id = NWpersian.409 days = 10 random_days = 5 }
+			}
+		}
+		
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+	
+	option = {
+		name = NWpersian.416.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.05
+		set_temp_variable = { var_god_fearing_temp = -1 }
+		add_to_variable = { var_god_fearing = var_god_fearing_temp }
+		clamp_variable = { var = var_god_fearing min = 0 max = 5 }
+		custom_effect_tooltip = PER_god_fearing_tt
+		clear_global_event_target = is_random_owned_controlled_state_2
+	}
+}
+
+#Увеличение поступления садаки // PER
+country_event = {
+	id = NWpersian.417
+	title = {
+		text = NWpersian.417.t1
+		trigger = {
+			has_country_flag = NWpersian_417_empty
+		}
+	}
+	title = {
+		text = NWpersian.417.t2
+		trigger = {
+			NOT = { has_country_flag = NWpersian_417_empty }
+		}
+	}
+	desc = {
+		text = NWpersian.417.desc1
+		trigger = {
+			has_country_flag = NWpersian_417_empty
+		}
+	}
+	desc = {
+		text = NWpersian.417.desc2
+		trigger = {
+			NOT = { has_country_flag = NWpersian_417_empty }
+		}
+	}
+	picture = GFX_report_event_per_islam_generic
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.417" }
+	
+	option = {
+		name = NWpersian.417.a
+		trigger = { has_country_flag = NWpersian_417_empty }
+		clr_country_flag = NWpersian_417_empty
+	}
+	option = {
+		name = NWpersian.417.b
+		trigger = { has_country_flag = NWpersian_417_hospital }
+		random_owned_controlled_state = {
+			limit = {
+				is_core_of = ROOT
+				hospital < 5
+			}
+			add_building_construction = {
+				type = hospital
+				level = 1
+				instant_build = yes
+			}
+		}
+		clr_country_flag = NWpersian_417_hospital
+	}
+	option = {
+		name = NWpersian.417.b
+		trigger = { has_country_flag = NWpersian_417_infrastructure }
+		random_owned_controlled_state = {
+			limit = {
+				is_core_of = ROOT
+				infrastructure < 5
+			}
+			add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+			}
+		}
+		clr_country_flag = NWpersian_417_infrastructure
+	}
+	option = {
+		name = NWpersian.417.b
+		trigger = { has_country_flag = NWpersian_417_industrial_complex }
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+				is_core_of = ROOT
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+		clr_country_flag = NWpersian_417_industrial_complex
+	}
+	option = {
+		name = NWpersian.417.b
+		trigger = { has_country_flag = NWpersian_417_arms_factory }
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = arms_factory
+					size > 0
+					include_locked = yes
+				}
+				is_core_of = ROOT
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = arms_factory
+				level = 1
+				instant_build = yes
+			}
+		}
+		clr_country_flag = NWpersian_417_arms_factory
+	}
+}
+
+#Люди удовлетворены условиями // PER
+country_event = {
+	id = NWpersian.418
+	title = NWpersian.418.t
+	desc = NWpersian.418.desc
+	picture = GFX_report_event_per_418
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.418" }
+	
+	option = {
+		name = NWpersian.418.a
+		add_political_power = 50
+		add_popularity = { ideology = var:ROOT.current_party_ideology_group popularity = 0.1 }
+		set_country_flag = NWpersian_418_flag
+	}
+}
+
+#Обсуждение зашло в тупик // PER
+country_event = {
+	id = NWpersian.419
+	title = NWpersian.419.t
+	desc = NWpersian.419.desc
+	picture = GFX_report_event_per_419
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.419" }
+	
+	option = {
+		name = NWpersian.419.a
+		add_stability = -0.05
+		add_political_power = -50
+		add_popularity = { ideology = var:ROOT.current_party_ideology_group popularity = -0.05 }
+		hidden_effect = {
+			country_event = { id = NWpersian.420 days = 29 random_days = 5 }
+		}
+	}
+}
+
+#Переворот «Третьей Силы» // PER
+country_event = {
+	id = NWpersian.420
+	title = NWpersian.420.t
+	desc = NWpersian.420.desc
+	picture = GFX_report_event_per_420
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.420" }
+	
+	option = {
+		name = NWpersian.420.a
+		random_other_country = {
+			limit = {
+				has_opinion_modifier = PER_economic_cooperation_op
+			}
+			remove_opinion_modifier = { target = ROOT modifier = PER_economic_cooperation_op }
+			remove_resource_rights = 420
+			remove_resource_rights = 419
+			clr_country_flag = PER_develop_north_iran_oil_deposits_block_flag
+		}
+		if = {
+			limit = {
+				NOT = { has_government = communism }
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = 0.3
+			}
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = no
+			}
+		}
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					has_character = PER_khalil_maleki
+				}
+				PER_khalil_maleki = {
+					set_nationality = ROOT
+				}
+			}
+		}
+		add_country_leader_role = {
+			character = PER_khalil_maleki
+			country_leader = {
+				desc = "POLITICS_KHALIL_MALEKI_DESC"
+				ideology = national_communism
+				traits = {
+					hater_of_ussr
+				}
+				expire = "1965.1.1"
+			}
+			promote_leader = yes
+		}
+		set_party_name = { ideology = communism long_name = PER_third_power_party name = PER_third_power_party }
+	}
+}
+
+#Первое чтение закона о расширении женских прав // PER
+country_event = {
+	id = NWpersian.421
+	title = NWpersian.421.t
+	desc = NWpersian.421.desc
+	picture = GFX_report_event_per_421
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.421" }
+	
+	option = {
+		name = NWpersian.421.a
+		add_stability = -0.05
+		add_political_power = -30
+		add_popularity = { ideology = var:ROOT.current_party_ideology_group popularity = -0.05 }
+	}
+}
+
+#Выступление Халила Малеки // PER
+country_event = {
+	id = NWpersian.422
+	title = NWpersian.422.t
+	desc = NWpersian.422.desc
+	picture = GFX_report_event_per_422
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.422" }
+	
+	option = {
+		name = NWpersian.422.a
+		add_stability = 0.01
+		add_political_power = 20
+		add_popularity = { ideology = communism popularity = 0.05 }
+	}
+}
+
+#Иран требует передать Ормузский пролив // 935.owner
+country_event = {
+	id = NWpersian.423
+	title = NWpersian.423.t
+	desc = NWpersian.423.desc
+	picture = GFX_report_event_per_423
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.423" }
+	
+	option = {
+		name = NWpersian.423.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				has_war = yes
+			}
+		}
+		FROM = {
+			add_state_claim = 935
+			create_wargoal = {
+				type = take_state_focus
+				target = ROOT
+				generator = { 935 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.423.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.9
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.8
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.7
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.6
+				}
+			}
+			modifier = {
+				add = 50
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.5
+				}
+			}
+		}
+		FROM = {
+			transfer_state = 935
+		}
+	}
+}
+
+#Предложение Ирана // is_core_of = KRD.owner
+country_event = {
+	id = NWpersian.424
+	title = NWpersian.424.t
+	desc = NWpersian.424.desc
+	picture = GFX_report_event_per_424_425
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.424" }
+	
+	option = {
+		name = NWpersian.424.a
+		trigger = {
+			NOT = { is_subject_of = FROM }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.9
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.8
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.7
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.6
+				}
+			}
+			modifier = {
+				add = 50
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.5
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_war = yes
+			}
+		}
+		every_owned_state = {
+			limit = {
+				OR = {
+					is_core_of = KRD
+					is_core_of = ERB
+					is_core_of = ROJ
+					is_core_of = MHB
+				}
+			}
+			MHB = { transfer_state = PREV }
+		}
+	}
+	
+	option = {
+		name = NWpersian.424.b
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = ROOT
+				expire = 0
+			}
+		}
+	}
+}
+
+#Предложение Ирана // is_core_of = AZR.owner
+country_event = {
+	id = NWpersian.425
+	title = NWpersian.424.t
+	desc = NWpersian.425.desc
+	picture = GFX_report_event_per_424_425
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.425" }
+	
+	option = {
+		name = NWpersian.424.a
+		trigger = {
+			NOT = { is_subject_of = FROM }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.9
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.8
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.7
+				}
+			}
+			modifier = {
+				add = 10
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.6
+				}
+			}
+			modifier = {
+				add = 50
+				strength_ratio = {
+					tag = FROM
+					ratio < 0.5
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_war = yes
+			}
+		}
+		every_owned_state = {
+			limit = {
+				is_core_of = AZR
+			}
+			APG = { transfer_state = PREV }
+		}
+	}
+	
+	option = {
+		name = NWpersian.424.b
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = ROOT
+				expire = 0
+			}
+		}
+	}
+}
+
+#Волнения среди исламистов // PER
+country_event = {
+	id = NWpersian.426
+	title = NWpersian.426.t
+	desc = NWpersian.426.desc
+	picture = GFX_report_event_per_426
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.426" }
+	
+	option = {
+		name = NWpersian.426.a
+		add_stability = -0.1
+		add_popularity = { ideology = communism popularity = -0.1 }
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_country_flag = NWpersian_428_flag } }
+				country_event = { id = NWpersian.428 days = 7 }
+			}
+			else = {
+				country_event = { id = NWpersian.429 days = 7 }
+			}
+		}
+	}
+}
+
+#Волнения среди духовников // PER
+country_event = {
+	id = NWpersian.427
+	title = NWpersian.427.t
+	desc = NWpersian.427.desc
+	picture = GFX_report_event_per_427
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.427" }
+	
+	option = {
+		name = NWpersian.427.a
+		add_stability = -0.1
+		add_popularity = { ideology = communism popularity = -0.1 }
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_country_flag = NWpersian_428_flag } }
+				country_event = { id = NWpersian.428 days = 7 }
+			}
+			else = {
+				country_event = { id = NWpersian.429 days = 7 }
+			}
+		}
+	}
+}
+
+#Образование нового учения // PER
+country_event = {
+	id = NWpersian.428
+	title = NWpersian.428.t
+	desc = NWpersian.428.desc
+	picture = GFX_report_event_per_428
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.428" }
+	immediate = { set_country_flag = NWpersian_428_flag }
+	
+	option = {
+		name = NWpersian.428.a
+		add_popularity = { ideology = trozkism popularity = 0.1 }
+	}
+}
+
+#Теологическое движение набирает силу // PER
+country_event = {
+	id = NWpersian.429
+	title = NWpersian.429.t
+	desc = NWpersian.429.desc
+	picture = GFX_report_event_per_429
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.429" }
+	
+	option = {
+		name = NWpersian.429.a
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = 0.05
+		add_political_power = -100
+		add_popularity = { ideology = trozkism popularity = 0.1 }
+		remove_ideas = PER_forced_secularization
+		remove_ideas = PER_empower_women_idea
+	}
+	
+	option = {
+		name = NWpersian.429.b
+		ai_chance = {
+			factor = 50
+		}
+		add_stability = -0.1
+		add_popularity = { ideology = communism popularity = -0.1 }
+		hidden_effect = {
+			country_event = { id = NWpersian.4300 days = 14 }
+		}
+	}
+}
+
+#Восстание исламистов пульсар // PER
+country_event = {
+	id = NWpersian.4300
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.4300" }
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_completed_focus = PER_create_armed_militias }
+				country_event = NWpersian.435
+			}
+			else = {
+				country_event = NWpersian.430
+			}
+		}
+	}
+}
+
+#Восстание исламистов // PER
+country_event = {
+	id = NWpersian.430
+	title = NWpersian.430.t
+	desc = NWpersian.430.desc
+	picture = GFX_report_event_per_430
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.430" }
+	immediate = { set_country_flag = PER_islamic_revolution }
+	
+	option = {
+		name = NWpersian.430.a
+		ai_chance = {
+			factor = 50
+		}
+		start_civil_war = {
+			ideology = trozkism
+			size = 0.5
+		}
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					original_tag = ROOT
+					has_government = trozkism
+				}
+				load_focus_tree = { tree = persian_focus keep_completed = yes }
+				unlock_national_focus = PER_nationalize_oil_industry
+				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
+				complete_national_focus = PER_empowerment_women
+				complete_national_focus = PER_continued_reform
+				complete_national_focus = PER_prohibit_schools_attached_mosques
+				complete_national_focus = PER_translate_persian_into_latin
+				complete_national_focus = PER_allow_women_serve_in_military
+				complete_national_focus = PER_weakening_influence_clergy
+				complete_national_focus = PER_weakening_influence_aristocracy
+				complete_national_focus = PER_last_blow_to_confessors
+				complete_national_focus = PER_keep_personal_dictatorship
+				complete_national_focus = PER_coup_of_peoples_party_iran
+				
+				unlock_national_focus = PER_unite_with_social_democrats
+				unlock_national_focus = PER_empower_women
+				
+				unlock_national_focus = PER_organization_councils_in_country
+				unlock_national_focus = PER_labor_law
+				add_ideas = PER_labor_law
+				unlock_national_focus = PER_forced_secularization
+				
+				country_event = { id = NWpersian.431 days = 3 }
+			}
+			GIL = {
+				add_popularity = {
+					ideology = trozkism
+					popularity = 0.55
+				}
+				set_politics = {
+					ruling_party = trozkism
+					elections_allowed = yes
+				}
+			}
+			country_event = { id = NWpersian.431 days = 3 }
+			every_other_country = {
+				limit = {
+					OR = {
+						has_character = PER_khosro_roozbeh
+						has_character = PER_lahak_khan_bavand
+						has_character = PER_ezatullah_siamak
+						has_character = PER_gholamhossein_bigdeli
+						has_character = PER_abdulsamad_adl_qajar
+						has_character = PER_mohammad_ali_mobashery
+					}
+				}
+				PER_khosro_roozbeh = {
+					set_nationality = ROOT
+				}
+				PER_lahak_khan_bavand = {
+					set_nationality = ROOT
+				}
+				PER_ezatullah_siamak = {
+					set_nationality = ROOT
+				}
+				PER_gholamhossein_bigdeli = {
+					set_nationality = ROOT
+				}
+				PER_abdulsamad_adl_qajar = {
+					set_nationality = ROOT
+				}
+				PER_mohammad_ali_mobashery = {
+					set_nationality = ROOT
+				}
+			}
+			random_enemy_country = {
+				limit = {
+					original_tag = ROOT
+					NOT = { tag = ROOT }
+				}
+				if = {
+					limit = { ROOT = { has_completed_focus = PER_follow_khosro_doctrine } }
+					PER_lahak_khan_bavand = {
+						set_nationality = PREV
+					}
+				}
+				else_if = {
+					limit = { ROOT = { has_completed_focus = PER_modern_red_army } }
+					PER_khosro_roozbeh = {
+						set_nationality = PREV
+					}
+				}
+				else = {
+					random_list = {
+						50 = {
+							PER_khosro_roozbeh = {
+								set_nationality = PREV
+							}
+						}
+						50 = {
+							PER_lahak_khan_bavand = {
+								set_nationality = PREV
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.430.b
+		ai_chance = {
+			factor = 50
+		}
+		start_civil_war = {
+			ruling_party = trozkism
+			ideology = ROOT
+			size = 0.5
+		}
+		hidden_effect = {
+			random_other_country = {
+				limit = {
+					original_tag = ROOT
+					NOT = { has_government = trozkism }
+				}
+				load_focus_tree = { tree = persian_focus keep_completed = yes }
+				unlock_national_focus = PER_nationalize_oil_industry
+				complete_national_focus = PER_dictatorship_of_reza_shah_pahlavi
+				complete_national_focus = PER_empowerment_women
+				complete_national_focus = PER_continued_reform
+				complete_national_focus = PER_prohibit_schools_attached_mosques
+				complete_national_focus = PER_translate_persian_into_latin
+				complete_national_focus = PER_allow_women_serve_in_military
+				complete_national_focus = PER_weakening_influence_clergy
+				complete_national_focus = PER_weakening_influence_aristocracy
+				complete_national_focus = PER_last_blow_to_confessors
+				complete_national_focus = PER_keep_personal_dictatorship
+				complete_national_focus = PER_coup_of_peoples_party_iran
+				
+				unlock_national_focus = PER_unite_with_social_democrats
+				unlock_national_focus = PER_empower_women
+				add_ideas = PER_empower_women_idea
+				
+				unlock_national_focus = PER_organization_councils_in_country
+				unlock_national_focus = PER_labor_law
+				add_ideas = PER_labor_law
+				unlock_national_focus = PER_forced_secularization
+				add_ideas = PER_forced_secularization
+				
+				country_event = { id = NWpersian.431 days = 3 }
+				
+				every_other_country = {
+					limit = {
+						OR = {
+							has_character = PER_khosro_roozbeh
+							has_character = PER_lahak_khan_bavand
+							has_character = PER_ezatullah_siamak
+							has_character = PER_gholamhossein_bigdeli
+							has_character = PER_abdulsamad_adl_qajar
+							has_character = PER_mohammad_ali_mobashery
+						}
+					}
+					PER_khosro_roozbeh = {
+						set_nationality = PREV.PREV
+					}
+					PER_lahak_khan_bavand = {
+						set_nationality = PREV.PREV
+					}
+					PER_ezatullah_siamak = {
+						set_nationality = PREV.PREV
+					}
+					PER_gholamhossein_bigdeli = {
+						set_nationality = PREV.PREV
+					}
+					PER_abdulsamad_adl_qajar = {
+						set_nationality = PREV.PREV
+					}
+					PER_mohammad_ali_mobashery = {
+						set_nationality = PREV.PREV
+					}
+				}
+			}
+			random_enemy_country = {
+				limit = {
+					original_tag = ROOT
+					NOT = { tag = ROOT }
+				}
+				if = {
+					limit = { ROOT = { has_completed_focus = PER_follow_khosro_doctrine } }
+					PER_lahak_khan_bavand = {
+						set_nationality = PREV
+					}
+				}
+				else_if = {
+					limit = { ROOT = { has_completed_focus = PER_modern_red_army } }
+					PER_khosro_roozbeh = {
+						set_nationality = PREV
+					}
+				}
+				else = {
+					random_list = {
+						50 = {
+							PER_khosro_roozbeh = {
+								set_nationality = PREV
+							}
+						}
+						50 = {
+							PER_lahak_khan_bavand = {
+								set_nationality = PREV
+							}
+						}
+					}
+				}
+			}
+			GIL = {
+				add_popularity = {
+					ideology = trozkism
+					popularity = 0.55
+				}
+				set_politics = {
+					ruling_party = trozkism
+					elections_allowed = yes
+				}
+			}
+			country_event = { id = NWpersian.431 days = 3 }
+		}
+	}
+}
+
+#Теологическое движение набирает силу // PER
+country_event = {
+	id = NWpersian.431
+	title = NWpersian.431.t
+	desc = NWpersian.431.desc
+	picture = GFX_report_event_per_431
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.431" }
+	
+	option = {
+		name = NWpersian.431.a
+		trigger = {
+			has_government = trozkism
+		}
+		effect_tooltip = {
+			GIL = {
+				transfer_state = 420
+				random_other_country = {
+					limit = {
+						original_tag = ROOT
+						NOT = { has_government = trozkism }
+					}
+					PREV = {
+						declare_war_on = {
+							target = PREV
+							type = annex_everything
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = NWpersian.431.b
+		trigger = {
+			NOT = { has_government = trozkism }
+		}
+		GIL = {
+			transfer_state = 420
+			declare_war_on = {
+				target = ROOT
+				type = annex_everything
+			}
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Infantry Division" } }
+					division_template = {
+						name = "Infantry Division"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"1. Infantry Division\" division_template = \"Infantry Division\" start_experience_factor = 0.4" 
+						owner = ROOT
+					}
+					create_unit = {
+						division = "name = \"2. Infantry Division\" division_template = \"Infantry Division\" start_experience_factor = 0.4" 
+						owner = ROOT
+					}
+				}
+			}
+		}
+	}
+}
+
+#Возвращение Лохака Хан Баванда // PER
+country_event = {
+	id = NWpersian.432
+	title = NWpersian.432.t
+	desc = NWpersian.432.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.432" }
+	
+	option = {
+		name = NWpersian.432.a
+		set_country_flag = PER_lahak_khan_bavand_is_back
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Lahak Division" } }
+				division_template = {
+					name = "Lahak Division"
+					is_locked = no
+					regiments = {
+						infantry = { x = 0 y = 0 }
+					}
+					support = {
+						artillery = { x = 0 y = 0 }  
+					}
+				}
+			}
+			random_other_country = {
+				limit = {
+					has_character = PER_lahak_khan_bavand
+				}
+				PER_lahak_khan_bavand = {
+					set_nationality = ROOT
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"Lahak Division\" division_template = \"Lahak Division\" start_experience_factor = 1.0" 
+				owner = ROOT
+			}
+		}
+		add_corps_commander_role = {
+			character = PER_lahak_khan_bavand
+			traits = { career_officer trait_cautious art_leader art_expert }
+			skill = 3
+			attack_skill = 3
+			defense_skill = 3
+			planning_skill = 2
+			logistics_skill = 3
+		}
+	}
+}
+
+#Капитуляция флота // PER
+country_event = {
+	id = NWpersian.433
+	title = NWpersian.433.t
+	desc = NWpersian.433.desc
+	picture = GFX_report_event_per_433
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.433" }
+	immediate = {
+		random_enemy_country = {
+			limit = {
+				original_tag = ROOT
+				has_government = communism
+			}
+			save_event_target_as = communism_persia_civil_war
+		}
+	}
+	
+	mean_time_to_happen = { days = 1 }
+	
+	trigger = {
+		original_tag = PER
+		has_civil_war = yes
+		surrender_progress > 0.65
+		has_government = monarchy
+		any_country_with_original_tag = {
+			original_tag_to_check = PER
+			has_war_with = ROOT
+			has_government = communism
+			exists = yes
+		}
+	}
+	
+	option = {
+		name = NWpersian.433.a
+		transfer_navy = {
+			target = event_target:communism_persia_civil_war
+		}
+		every_navy_leader = {
+			set_nationality = event_target:communism_persia_civil_war
+		}
+	}
+}
+
+#Иран вернул острова Ормузского пролива // ENG
+country_event = {
+	id = NWpersian.434
+	title = NWpersian.434.t
+	desc = NWpersian.434.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.434" }
+	
+	option = {
+		name = NWpersian.434.a
+		add_opinion_modifier = { target = FROM modifier = PER_occupation_of_strait_of_hormuz_islands_op }
+	}
+}
+
+#Подавление волнений среди исламистов // PER
+country_event = {
+	id = NWpersian.435
+	title = NWpersian.435.t
+	desc = NWpersian.435.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.435" }
+	
+	option = {
+		name = NWpersian.435.a
+		add_stability = 0.05
+		add_popularity = { ideology = trozkism popularity = -0.1 }
+	}
+}
+
+
+
+#TEST
+country_event = {
+	id = NWpersian.999
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWpersian.999" }
+
+	option = {
+		name = 1
+	}
+	option = {
+		name = 2
 	}
 }

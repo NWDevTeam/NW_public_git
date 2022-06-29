@@ -10,6 +10,7 @@ NDefines.NCountry.MIN_FOCUSES_FOR_CONTINUOUS = 0							-- Focuses needed to unlo
 NDefines.NCountry.MAJOR_MIN_FACTORIES = 45									-- need at least these many factories to become a major
 NDefines.NMilitary.MIN_DIVISION_DEPLOYMENT_TRAINING = 0.3					-- Min level of division training
 NDefines.NMilitary.PLAN_EXECUTE_RUSH = -10									-- When looking for an attach target, this score limit is required in the battle plan to consider province for attack
+NDefines.NMilitary.SLOWEST_SPEED = 1
 
 -- Diplomatic
 NDefines.NDiplomacy.MAX_OPINION_VALUE = 200									-- Max opinion value cap.

@@ -1152,3 +1152,567 @@ log_service_categories = {
 		}
 	}
 }
+
+debug_decisions_2 = {
+	all_remove_half_division = {
+		icon = generic_tank
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_in_peace_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_navy_global_flag
+					has_global_flag = all_remove_half_navy_in_peace_global_flag
+					has_global_flag = all_remove_half_avia_global_flag
+					has_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): decision all_remove_half_division"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_division_global_flag } }
+					set_global_flag = all_remove_half_division_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = { is_ai = yes NOT = { tag = SAI } }
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.5
+							navy_ratio = 0.0
+							air_ratio = 0.0
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					random_country = {
+						set_variable = { global.total_division = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_division = THIS.num_divisions }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_division_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	all_remove_half_division_in_peace = {
+		icon = generic_tank
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_navy_global_flag
+					has_global_flag = all_remove_half_navy_in_peace_global_flag
+					has_global_flag = all_remove_half_avia_global_flag
+					has_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): all_remove_half_division_in_peace"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_division_in_peace_global_flag } }
+					set_global_flag = all_remove_half_division_in_peace_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = {
+							NOT = { tag = SAI }
+							is_ai = yes
+							has_war = no
+							any_neighbor_country = {
+								OR = {
+									has_wargoal_against = PREV
+									is_justifying_wargoal_against = PREV
+									PREV = {
+										OR = {
+											has_wargoal_against = PREV
+											is_justifying_wargoal_against = PREV
+											
+										}
+									}
+								}
+							}
+						}
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.5
+							navy_ratio = 0.0
+							air_ratio = 0.0
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					random_country = {
+						set_variable = { global.total_division = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_division = THIS.num_divisions }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_division_in_peace_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	
+	all_remove_half_navy = {
+		icon = generic_naval
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_division_in_peace_global_flag
+					has_global_flag = all_remove_half_navy_in_peace_global_flag
+					has_global_flag = all_remove_half_avia_global_flag
+					has_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): decision all_remove_half_navy"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_navy_global_flag } }
+					set_global_flag = all_remove_half_navy_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = { is_ai = yes NOT = { tag = SAI } }
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.0
+							navy_ratio = 0.5
+							air_ratio = 0.0
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					random_country = {
+						set_variable = { global.total_ships = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_ships = THIS.num_ships }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_navy_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	all_remove_half_navy_in_peace = {
+		icon = generic_naval
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_division_in_peace_global_flag
+					has_global_flag = all_remove_half_navy_global_flag
+					has_global_flag = all_remove_half_avia_global_flag
+					has_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): all_remove_half_navy_in_peace"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_navy_in_peace_global_flag } }
+					set_global_flag = all_remove_half_navy_in_peace_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = {
+							is_ai = yes
+							has_war = no
+							NOT = { tag = SAI }
+						}
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.0
+							navy_ratio = 0.5
+							air_ratio = 0.0
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					random_country = {
+						set_variable = { global.total_ships = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_ships = THIS.num_ships }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_navy_in_peace_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	
+	all_remove_half_avia = {
+		icon = generic_air
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_division_in_peace_global_flag
+					has_global_flag = all_remove_half_navy_global_flag
+					has_global_flag = all_remove_half_navy_in_peace_global_flag
+					has_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): decision all_remove_half_avia"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_avia_global_flag } }
+					set_global_flag = all_remove_half_avia_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+						if = {
+							limit = { air_base < 1 }
+							set_state_flag = add_air_base_flag
+							add_building_construction = {
+								type = air_base
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = { is_ai = yes NOT = { tag = SAI } }
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.0
+							navy_ratio = 0.0
+							air_ratio = 0.5
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					713 = {
+						if = {
+							limit = { has_state_flag = add_air_base_flag }
+							clr_state_flag = add_air_base_flag
+							remove_building = {
+								type = air_base
+								level = 1
+							}
+						}
+					}
+					random_country = {
+						set_variable = { global.total_avia = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_avia = THIS.num_deployed_planes  }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_avia_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	all_remove_half_avia_in_peace = {
+		icon = generic_air
+		available = {
+			NOT = { has_global_flag = all_remove_half_division_global_flag }
+			hidden_trigger = {
+				NOT = {
+					has_global_flag = all_remove_half_division_in_peace_global_flag
+					has_global_flag = all_remove_half_navy_global_flag
+					has_global_flag = all_remove_half_navy_in_peace_global_flag
+					has_global_flag = all_remove_half_avia_global_flag
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): all_remove_half_avia_in_peace"
+			hidden_effect = {
+				set_variable = { global.total_no_ai_player = 0 }
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
+				}
+				if = {
+					limit = { any_other_country = { NOT = { has_country_flag = vote_initiator_flag } } }
+					set_country_flag = vote_initiator_flag
+				}
+				if = {
+					limit = { NOT = { has_global_flag = all_remove_half_avia_in_peace_global_flag } }
+					set_global_flag = all_remove_half_avia_in_peace_global_flag
+				}
+				if = {
+					limit = { NOT = { has_country_flag = counter_vote_flag } }
+					set_country_flag = counter_vote_flag
+					add_to_variable = { global.counter_vote_var = 1 }
+				}
+				if = {
+					limit = { check_variable = { global.counter_vote_var = global.total_no_ai_player } }
+					713 = {
+						controller = { save_event_target_as = controller_713 }
+						owner = { save_event_target_as = owner_713 }
+						if = {
+							limit = { air_base < 1 }
+							set_state_flag = add_air_base_flag
+							add_building_construction = {
+								type = air_base
+								level = 1
+								instant_build = yes
+							}
+						}
+					}
+					SAI = {
+						transfer_state = 713
+					}
+					every_country = {
+						limit = {
+							NOT = { tag = SAI }
+							is_ai = yes
+							has_war = no
+						}
+						transfer_units_fraction = {
+							target = SAI
+							size = 0.0
+							stockpile_ratio = 0.0
+							army_ratio = 0.0
+							navy_ratio = 0.0
+							air_ratio = 0.5
+						}
+					}
+					event_target:owner_713 = {
+						annex_country = {
+							target = SAI
+							transfer_troops = no
+						}
+						set_state_owner = 713
+					}
+					event_target:owner_713 = { set_state_controller = 713 }
+					713 = {
+						if = {
+							limit = { has_state_flag = add_air_base_flag }
+							clr_state_flag = add_air_base_flag
+							remove_building = {
+								type = air_base
+								level = 1
+							}
+						}
+					}
+					random_country = {
+						set_variable = { global.total_avia = 0 }
+						every_country = {
+							limit = { NOT = { tag = SAI } }
+							add_to_variable = { global.total_avia = THIS.num_deployed_planes  }
+						}
+					}
+					every_country = {
+						clr_country_flag = counter_vote_flag
+						clr_country_flag = vote_initiator_flag
+					}
+					clr_global_flag = all_remove_half_avia_in_peace_global_flag
+					set_variable = { global.counter_vote_var = 0 }
+				}
+			}
+		}
+	}
+	drop_current_vote = {
+		icon = generic_break_treaty
+		visible = {
+			has_country_flag = vote_initiator_flag
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): decision drop_current_vote"
+			hidden_effect = {
+				set_variable = { global.counter_vote_var = 0 }
+				every_country = {
+					clr_country_flag = counter_vote_flag
+					clr_country_flag = vote_initiator_flag
+				}
+				clr_global_flag = all_remove_half_division_global_flag
+				clr_global_flag = all_remove_half_division_in_peace_global_flag
+				clr_global_flag = all_remove_half_navy_global_flag
+				clr_global_flag = all_remove_half_navy_in_peace_global_flag
+				clr_global_flag = all_remove_half_avia_global_flag
+				clr_global_flag = all_remove_half_avia_in_peace_global_flag
+			}
+		}
+	}
+}

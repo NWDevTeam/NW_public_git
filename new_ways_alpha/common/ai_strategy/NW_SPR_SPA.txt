@@ -14,6 +14,30 @@
 # contain
 # area_priority
 
+SPR_pp_spend_amount = {
+	allowed = {
+		original_tag = SPR
+	}
+	enable = {
+		has_completed_focus = SPR_victory_popular_front
+		date < 1936.7.19
+	}
+	abort = {
+		date > 1936.7.18
+	}
+
+	ai_strategy = {
+		type = pp_spend_amount
+		id = idea
+		value = -999
+	}
+
+	ai_strategy = {
+		type = pp_spend_amount
+		id = decision
+		value = -999
+	}
+}
 
 spanish_civil_war_GER_expatriate = {
 	allowed = {
@@ -77,7 +101,7 @@ SOV_help_SPR_win_civil_war = {
 		has_war_with = SPA
 		NOT = {
 			has_completed_focus = SPR_independent_communists
-			has_completed_focus = SPR_stand_junta
+			#has_completed_focus = SPR_stand_junta
 		}
 		NOT = { has_global_flag = scw_over }
 	}
@@ -100,7 +124,7 @@ SOV_not_help_independent_communists_SPR = {
 		exists = yes
 		OR = {
 			has_completed_focus = SPR_independent_communists
-			has_completed_focus = SPR_stand_junta
+			#has_completed_focus = SPR_stand_junta
 		}
 	}
 	abort_when_not_enabled = yes
@@ -366,7 +390,7 @@ SPA_friend_GER = {
 	ai_strategy = {
 		type = befriend
 		id = "GER"			
-		value = 150
+		value = 100
 	}	
 }
 
@@ -384,7 +408,7 @@ SPA_friend_ITA = {
 	ai_strategy = {
 		type = befriend
 		id = "ITA"			
-		value = 150
+		value = 100
 	}	
 }
 
@@ -399,7 +423,7 @@ SOV_friend_SPR = {
 			has_war_with = SPA
 			NOT = {
 				has_completed_focus = SPR_independent_communists
-				has_completed_focus = SPR_stand_junta
+				#has_completed_focus = SPR_stand_junta
 			}
 		}
 		NOT = { has_global_flag = scw_over }
@@ -421,7 +445,7 @@ SPR_friend_SOV = {
 		has_war_with = SPA
 		NOT = {
 			has_completed_focus = SPR_independent_communists
-			has_completed_focus = SPR_stand_junta
+			#has_completed_focus = SPR_stand_junta
 		}
 		NOT = { has_global_flag = scw_over }
 	}
@@ -901,7 +925,7 @@ subject_support_SPR_in_SCW = {
 	}
 	ai_strategy = {
 		type = force_defend_ally_borders
-		value = 100
+		value = 500
 		target = europe
 	}
 	ai_strategy = {
@@ -933,5 +957,244 @@ SPR_socialist_faction = {
 		type = alliance
 		id = "SPR"
 		value = 200
+	}
+}
+
+SPR_no_def_subject = {
+	allowed = {
+		tag = SPR
+		is_historical_focus_on = yes
+	}
+	
+	enable = {
+		tag = SPR
+		has_war_with = SPA
+		is_historical_focus_on = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "ARA"
+		value = 100
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "CAT"
+		value = 100
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "VLA"
+		value = 100
+	}
+}
+
+
+
+
+SPA_default_front_control = {
+	allowed = {
+		tag = SPA
+	}
+	
+	enable = {
+		tag = SPA
+		has_war_with = SPR
+		SPA = {
+			OR = {
+				controls_province = 3873
+				controls_province = 6817
+				controls_province = 9896
+				controls_province = 6906
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		state = 167
+		
+		value = 25
+	}
+
+	ai_strategy = {
+		type = front_control
+		priority = 4
+		state = 167
+		
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+SPA_default_front_control_1 = {
+	allowed = {
+		tag = SPA
+	}
+	
+	enable = {
+		tag = SPA
+		OR = {
+			has_war_with = ASU
+			has_war_with = SNT
+			has_war_with = BAS
+		}
+		OR = {
+			AND = {
+				has_war_with = ASU
+				ASU = { has_capitulated = no }
+			}
+			AND = {
+				has_war_with = SNT
+				SNT = { has_capitulated = no }
+			}
+			AND = {
+				has_war_with = BAS
+				BAS = { has_capitulated = no }
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		state = 166
+		state = 794
+		state = 165
+		
+		value = 25
+	}
+
+	ai_strategy = {
+		type = front_control
+		priority = 2
+		country_trigger = {
+			OR = {
+				original_tag = ASU
+				original_tag = SNT
+				original_tag = BAS
+			}
+		}
+		
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+SPA_default_front_control_2 = {
+	allowed = {
+		tag = SPA
+	}
+	
+	enable = {
+		tag = SPA
+		has_war_with = SPR
+		OR = {
+			country_exists = ARA
+			country_exists = CAT
+		}
+		OR = {
+			date < 1938.6.1
+			OR = {
+				ARA = { has_capitulated = no }
+				CAT = { has_capitulated = no }
+			}
+		}
+		OR = {
+			NOT = { country_exists = ASU }
+			ASU = { has_capitulated = yes }
+		}
+		OR = {
+			NOT = { country_exists = SNT }
+			SNT = { has_capitulated = yes }
+		}
+		OR = {
+			NOT = { country_exists = BAS }
+			BAS = { has_capitulated = yes }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = front_unit_request
+		strategic_region = 41
+		
+		value = 25
+	}
+
+	ai_strategy = {
+		type = front_control
+		priority = 3
+		strategic_region = 41
+		
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+SPA_close_up_madrid_after_CAT_ARA_falls = {
+	allowed = {
+		tag = SPA
+	}
+	
+	enable = {
+		tag = SPA
+		has_war_with = SPR
+		OR = {
+			country_exists = ARA
+			country_exists = CAT
+		}
+		OR = {
+			date < 1938.6.1
+			AND = {
+				OR = {
+					ARA = { has_capitulated = yes }
+					NOT = { country_exists = ARA }
+				}
+				OR = {
+					CAT = { has_capitulated = yes }
+					NOT = { country_exists = CAT }
+				}
+			}
+		}
+		NOT = { has_full_control_of_state = 41 }
+		controls_province = 9767
+		controls_province = 3794
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = front_control
+	
+		state = 41
+		
+		priority = 2
+		ordertype = front
+		execute_order = no
+		manual_attack = no
+	}
+	
+	ai_strategy = {
+		type = front_unit_request
+		state = 41
+		
+		value = 25
+	}
+	
+	ai_strategy = {
+		type = front_control
+		priority = 2
+		state_trigger = {
+			OR = {
+				region = 166
+				region = 794
+				region = 165
+			}
+		}
+		
+		execution_type = balanced
+		execute_order = yes
 	}
 }

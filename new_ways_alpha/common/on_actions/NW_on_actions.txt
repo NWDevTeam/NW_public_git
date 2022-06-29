@@ -39,7 +39,7 @@ on_actions = {
 			every_state = {
 				limit = {
 					OR = {
-						state = 408 state = 409 state = 657 state = 561 state = 666 state = 863 state = 585 state = 584 state = 407 state = 573 state = 957 state = 329 state = 565 state = 567 state = 563 state = 376 state = 377 state = 393 state = 276 state = 1089 state = 1086 state = 331 state = 1083 state = 1082 state = 1081 state = 1079 state = 1085 state = 271 state = 1080 state = 550 state = 269 state = 547 state = 295 state = 1065 state = 542 state = 681 state = 719 state = 272 state = 755 state = 607 state = 620 state = 602 state = 600 state = 598 state = 596 state = 595 state = 593 state = 599 state = 594 state = 524 state = 527 state = 539 state = 521 state = 285 state = 519 state = 520 state = 723 state = 924 state = 468 state = 487 state = 499 state = 496 state = 505 state = 792 state = 172 state = 680 state = 416 state = 411 state = 414 state = 410 state = 412 state = 425 state = 424 state = 427 state = 436 state = 438 state = 433 state = 440 state = 228 state = 640 state = 670 state = 671 state = 672 state = 334 state = 669 state = 482 state = 483 state = 484 state = 456 state = 769 state = 797 state = 1115 state = 293 state = 343 state = 348 state = 350 state = 352 state = 786 state = 344 state = 837 state = 106 state = 185 state = 47 state = 148 state = 587 state = 402 state = 1118 state = 1049
+						state = 408 state = 409 state = 657 state = 561 state = 666 state = 863 state = 585 state = 584 state = 407 state = 573 state = 957 state = 329 state = 565 state = 567 state = 563 state = 376 state = 377 state = 393 state = 276 state = 1089 state = 1086 state = 331 state = 1083 state = 1082 state = 1081 state = 1079 state = 1085 state = 271 state = 1080 state = 550 state = 269 state = 547 state = 295 state = 1065 state = 542 state = 681 state = 719 state = 272 state = 755 state = 607 state = 620 state = 602 state = 600 state = 598 state = 596 state = 595 state = 593 state = 599 state = 594 state = 524 state = 527 state = 539 state = 521 state = 285 state = 519 state = 520 state = 723 state = 924 state = 468 state = 487 state = 499 state = 496 state = 505 state = 792 state = 172 state = 680 state = 416 state = 411 state = 414 state = 1188 state = 410 state = 412 state = 425 state = 424 state = 427 state = 436 state = 438 state = 433 state = 440 state = 228 state = 640 state = 670 state = 671 state = 672 state = 334 state = 669 state = 482 state = 483 state = 484 state = 456 state = 769 state = 797 state = 1115 state = 293 state = 343 state = 348 state = 350 state = 352 state = 786 state = 344 state = 837 state = 106 state = 185 state = 47 state = 148 state = 587 state = 402 state = 1118 state = 1049
 					}
 				}
 				set_variable = { state_infra_var = -0.25 }
@@ -110,8 +110,17 @@ on_actions = {
 			### AI_DIVISION_LIMITER_DYNAMIC
 			random_country = {
 				set_variable = { global.total_division = 0 }
+				set_variable = { global.total_ships = 0 }
+				set_variable = { global.total_avia = 0 }
+				set_variable = { global.total_no_ai_player = 0 }
 				every_country = {
 					add_to_variable = { global.total_division = THIS.num_divisions }
+					add_to_variable = { global.total_ships = THIS.num_ships }
+					add_to_variable = { global.total_avia = THIS.num_deployed_planes }
+				}
+				every_country = {
+					limit = { is_ai = no }
+					add_to_variable = { global.total_no_ai_player = 1 }
 				}
 			}
 			if = {
@@ -228,13 +237,14 @@ on_actions = {
 				every_country = {
 					limit = {
 						has_government = trozkism
-						NOT = {
-							has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-						}
+						not_is_really_trozkist = yes
 					}
 					add_to_variable = { global.total_trozkist = 1 }
 					if = {
-						limit = { NOT = { has_dynamic_modifier = { modifier = troz_threat_dyn } } }
+						limit = {
+							NOT = { has_dynamic_modifier = { modifier = troz_threat_dyn } }
+							not_is_really_trozkist = yes
+						}
 						add_dynamic_modifier = { modifier = troz_threat_dyn }
 					}
 					if = {
@@ -259,9 +269,7 @@ on_actions = {
 				random_country = {
 					limit = {
 						has_government = trozkism
-						NOT = {
-							has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-						}
+						not_is_really_trozkist = yes
 					}
 					set_var_for_troz_threat_dyn = yes
 				}
@@ -721,6 +729,7 @@ on_actions = {
 				611 = { set_state_flag = great_wall_wonder_flag }
 				608 = { set_state_flag = great_wall_wonder_flag }
 				609 = { set_state_flag = great_wall_wonder_flag }
+				816 = { set_state_flag = great_wall_wonder_flag }
 				494 = { set_state_flag = machu_pikchu_wonder_flag }
 				455 = { set_state_flag = petra_wonder_flag }
 				437 = { set_state_flag = taj_mahal_wonder_flag }
@@ -747,6 +756,7 @@ on_actions = {
 				611 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } } }
 				608 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } } }
 				609 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } } }
+				816 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } } }
 				494 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } add_ideas = machu_pikchu_wonder } }
 				455 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } add_ideas = petra_wonder } }
 				437 = { controller = { add_to_variable = { var = wonder_thief_score value = 1 } add_ideas = taj_mahal_wonder } }
@@ -946,7 +956,7 @@ on_actions = {
 						is_core_of = VIN
 						is_core_of = LKA
 						is_core_of = SKM
-						state = 672 state = 333 state = 336 state = 1184 state = 1183 state = 1152 state = 288 state = 1147 state = 1151 state = 1150 state = 1148 state = 640 state = 444 state = 410 state = 414 state = 412 state = 413 state = 440 state = 443
+						state = 672 state = 333 state = 336 state = 1184 state = 1183 state = 1152 state = 288 state = 1147 state = 1151 state = 1150 state = 1148 state = 640 state = 444 state = 410 state = 414 state = 1188 state = 412 state = 413 state = 440 state = 443
 					}
 					NOT = { state = 1042 state = 1066 state = 290 state = 461 state = 806 state = 462 state = 1015 state = 699 state = 178 state = 697 state = 1068 state = 557 state = 1017 state = 1014 state = 514 state = 515 state = 1007 state = 1057 state = 273 state = 1059 state = 1067 state = 513 state = 459 state = 460 state = 458 state = 665 state = 661 state = 448 state = 662 state = 449 state = 663 state = 450 state = 451 state = 552 state = 452 state = 447 state = 446 state = 456 state = 457 state = 1000 state = 551 state = 543 state = 706 state = 707 state = 709 state = 708 state = 704 state = 705 state = 703 }
 				}
@@ -1174,6 +1184,22 @@ on_actions = {
 						country_event = { id = NWgermany.760 days = 286 }
 					}
 				}
+			}
+			
+			### Сауд стартпак
+			if = {
+				limit = {
+					has_start_date < 1936.01.02
+				}
+				SAU = {
+					give_resource_rights = { receiver = USA state = 1115 }
+				}
+				797 = { add_dynamic_modifier = { modifier = autonomous_state } }
+				1115 = { add_dynamic_modifier = { modifier = autonomous_state } }
+				679 = { add_dynamic_modifier = { modifier = SAU_disparity_between_nejd_and_hijaz_dyn } }
+				1073 = { add_dynamic_modifier = { modifier = SAU_disparity_between_nejd_and_hijaz_dyn } }
+				292 = { add_dynamic_modifier = { modifier = SAU_disparity_between_nejd_and_hijaz_2_dyn } }
+				769 = { add_dynamic_modifier = { modifier = SAU_disparity_between_nejd_and_hijaz_2_dyn } }
 			}
 			
 			
@@ -1686,6 +1712,50 @@ on_actions = {
 					country_event = { id = TR.wonder.28 }
 				}
 			}
+			# Нефтянка Ирана для ВБ	413 / 1187
+			if = {
+				limit = {
+					FROM.FROM = {
+						has_state_flag = resource_rights_state_flag
+					}
+					ROOT = {
+						NOT = { original_tag = PER }
+					}
+				}
+				FROM.FROM = {
+					clr_state_flag = resource_rights_state_flag
+					set_state_flag = ex_resource_rights_state_flag
+				}
+				ENG = { remove_resource_rights = FROM.FROM }
+			}
+			if = {
+				limit = {
+					FROM.FROM = {
+						has_state_flag = ex_resource_rights_state_flag
+						NOT = { has_state_flag = resource_rights_state_flag }
+					}
+					ROOT = {
+						original_tag = PER
+						NOT = {
+							is_left_ideology = yes
+							has_completed_focus = PER_nationalize_oil_industry
+						}
+					}
+				}
+				FROM.FROM = {
+					clr_state_flag = ex_resource_rights_state_flag
+					set_state_flag = resource_rights_state_flag
+				}
+				ROOT = {
+					if = {
+						limit = { has_completed_focus = PER_coup_progerman_officers }
+						give_resource_rights = { receiver = GFA state = FROM.FROM }
+					}
+					else = {
+						give_resource_rights = { receiver = ENG state = FROM.FROM }
+					}
+				}
+			}
 		}
 		#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
 	}
@@ -1706,9 +1776,7 @@ on_actions = {
 			every_country = {
 				limit = {
 					has_government = trozkism
-					NOT = {
-						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-					}
+					not_is_really_trozkist = yes
 				}
 				add_to_variable = { global.total_trozkist = 1 }
 				if = {
@@ -1719,9 +1787,7 @@ on_actions = {
 			if = {
 				limit = {
 					has_government = trozkism
-					NOT = {
-						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-					}
+					not_is_really_trozkist = yes
 				}
 				if = {
 					limit = { NOT = { has_country_flag = is_trozkist_country_flag } }
@@ -2225,43 +2291,39 @@ on_actions = {
 							has_completed_focus = ALB_invite_fan_noli
 						}
 						NOT = {
-							has_unit_leader = 448002
-							has_unit_leader = 448003
-							has_unit_leader = 448014
+							OR = {
+							    has_character = ALB_prenk_pervizi
+							    has_character = ALB_xhemal_aranitasi
+							    has_character = ALB_king_zog
+							}	
 						}
 					}
-					create_corps_commander = {
-						name = ALB_prenk_pervizi
-						id = 448002
-						portrait_path = "gfx/leaders/ALB/Portrait_Prenk_Pervizi.dds"
-						traits = { infantry_officer politically_connected }
-						skill = 3
-						attack_skill = 3
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 1
+					random_other_country = {
+						limit = {
+							has_character = ALB_prenk_pervizi
+						}
+						ALB_prenk_pervizi = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_xhemal_aranitasi
-						id = 448003
-						portrait_path = "gfx/leaders/ALB/Portrait_Xhemal_Aranitasi.dds"
-						traits = { war_hero }
-						skill = 3
-						attack_skill = 3
-						defense_skill = 2
-						planning_skill = 2
-						logistics_skill = 1
+					random_other_country = {
+						limit = {
+							has_character = ALB_xhemal_aranitasi
+						}
+						ALB_xhemal_aranitasi = {
+							set_nationality = ALB
+						}
 					}
-					create_field_marshal = {
-						name = ALB_king_zog
-						id = 448014
-						portrait_path = "gfx/leaders/ALB/Portrait_Albania_King_Zog_field.dds"
-						traits = { old_guard }
-						skill = 2
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_king_zog
+						}
+						ALB_king_zog = {
+							set_nationality = ALB
+						}
+					}
+					ALB_king_zog = {
+						promote_leader = yes
 					}
 				
 					else_if = {
@@ -2273,14 +2335,20 @@ on_actions = {
 								}
 							}
 							OR = {
-								has_unit_leader = 448002
-								has_unit_leader = 448003
-								has_unit_leader = 448014
+								has_character = ALB_prenk_pervizi
+								has_character = ALB_xhemal_aranitasi
+								has_character = ALB_king_zog
 							}
 						}
-						remove_unit_leader = 448002
-						remove_unit_leader = 448003
-						remove_unit_leader = 448014
+						ALB_prenk_pervizi = {
+							set_nationality = SAI
+						}
+						ALB_xhemal_aranitasi = {
+							set_nationality = SAI
+						}
+						ALB_king_zog = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2292,19 +2360,18 @@ on_actions = {
 								has_government = communism
 								has_government = trozkism
 							}
-							has_unit_leader = 448001
-						}
+							NOT = {
+								has_character = ALB_gustav_von_myrdacz
+							}
+						}	
 					}
-					create_field_marshal = {
-						name = ALB_gustav_von_myrdacz
-						id = 448001
-						portrait_path = "gfx/leaders/ALB/Portrait_Gustav_von_Myrdacz.dds"
-						traits = { war_hero old_guard brilliant_strategist }
-						skill = 5
-						attack_skill = 3
-						defense_skill = 3
-						planning_skill = 5
-						logistics_skill = 3
+					random_other_country = {
+						limit = {
+							has_character = ALB_gustav_von_myrdacz
+						}
+						ALB_gustav_von_myrdacz = {
+							set_nationality = ALB
+						}
 					}
 				
 					else_if = {
@@ -2314,9 +2381,11 @@ on_actions = {
 								has_government = communism
 								has_government = trozkism
 							}
-							has_unit_leader = 448001
+							has_character = ALB_gustav_von_myrdacz
 						}
-						remove_unit_leader = 448001
+						ALB_gustav_von_myrdacz = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2327,21 +2396,17 @@ on_actions = {
 							has_government = monarchy
 						}
 						NOT = {
-							has_unit_leader =  448004
+							has_character = ALB_fiqri_dine
 						}
 					}
-					create_corps_commander = {
-						name = ALB_fiqri_dine
-						id = 448004
-						portrait_path = "gfx/leaders/ALB/Portrait_Fiqri_Dine.dds"
-						traits = { politically_connected }
-						skill = 2
-						attack_skill = 2
-						defense_skill = 1
-						planning_skill = 2
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_fiqri_dine
+						}
+						ALB_fiqri_dine = {
+							set_nationality = ALB
+						}
 					}
-				
 					else_if = {
 						limit = {
 							NOT = {
@@ -2350,9 +2415,11 @@ on_actions = {
 									has_government = monarchy
 								}
 							}
-							has_unit_leader = 448004
+							has_character = ALB_fiqri_dine
 						}
-						remove_unit_leader = 448004
+						ALB_fiqri_dine = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2361,67 +2428,54 @@ on_actions = {
 					limit = {
 						has_government = communism
 						NOT = {
-							has_unit_leader = 448005
-							has_unit_leader = 448010
-							has_unit_leader = 448011
-							has_unit_leader = 448012
-							has_unit_leader = 448013
+							OR = {
+							    has_character = ALB_spiro_moisiu
+							    has_character = ALB_enver_hoxha
+							    has_character = ALB_koci_xoxe
+							    has_character = ALB_mehmet_shehu
+							    has_character = ALB_beqir_balluku
+					        } 						
 						}
 					}
-					create_corps_commander = {
-						name = ALB_spiro_moisiu
-						id = 448005
-						portrait_path = "gfx/leaders/ALB/Portrait_Spiro_Moisiu.dds"
-						traits = { harsh_leader career_officer}
-						skill = 3
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 3
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_spiro_moisiu
+						}
+						ALB_spiro_moisiu = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_enver_hoxha
-						id = 448010
-						portrait_path = "gfx/leaders/ALB/Portrait_Enver_Hoxha.dds"
-						traits = { trickster guerilla_fighter }
-						skill = 2
-						attack_skill = 1
-						defense_skill = 3
-						planning_skill = 2
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_enver_hoxha
+						}
+						ALB_enver_hoxha = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_koci_xoxe
-						id = 448011
-						portrait_path = "gfx/leaders/ALB/Portrait_Koсi_Xoxe.dds"
-						traits = { harsh_leader }
-						skill = 2
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 4
-						logistics_skill = 1
+					random_other_country = {
+						limit = {
+							has_character = ALB_koci_xoxe
+						}
+						ALB_koci_xoxe = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_mehmet_shehu
-						id = 448012
-						portrait_path = "gfx/leaders/ALB/Portrait_Mehmet_Shehu.dds"
-						traits = { harsh_leader }
-						skill = 2
-						attack_skill = 3
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_mehmet_shehu
+						}
+						ALB_mehmet_shehu = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_beqir_balluku
-						id = 448013
-						portrait_path = "gfx/leaders/ALB/Portrait_Beqir_Balluku.dds"
-						traits = { guerilla_fighter }
-						skill = 2
-						attack_skill = 1
-						defense_skill = 3
-						planning_skill = 2
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_beqir_balluku
+						}
+						ALB_beqir_balluku = {
+							set_nationality = ALB
+						}
 					}
 					
 					else_if = {
@@ -2430,18 +2484,28 @@ on_actions = {
 								has_government = communism
 							}
 							OR = {
-								has_unit_leader = 448005
-								has_unit_leader = 448010
-								has_unit_leader = 448011
-								has_unit_leader = 448012
-								has_unit_leader = 448013
+							    has_character = ALB_spiro_moisiu
+							    has_character = ALB_enver_hoxha
+							    has_character = ALB_koci_xoxe
+							    has_character = ALB_mehmet_shehu
+							    has_character = ALB_beqir_balluku
 							}
 						}
-						remove_unit_leader = 448005
-						remove_unit_leader = 448010
-						remove_unit_leader = 448011
-						remove_unit_leader = 448012
-						remove_unit_leader = 448013
+						ALB_spiro_moisiu = {
+							set_nationality = SAI
+						}
+						ALB_enver_hoxha = {
+							set_nationality = SAI
+						}
+						ALB_koci_xoxe = {
+							set_nationality = SAI
+						}
+						ALB_mehmet_shehu = {
+							set_nationality = SAI
+						}
+						ALB_beqir_balluku = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2450,59 +2514,57 @@ on_actions = {
 					limit = {
 						has_government = trozkism
 						NOT = {
-							has_unit_leader = 448005
-							has_unit_leader = 448012
-							has_unit_leader = 448013
+							OR = {
+							    has_character = ALB_spiro_moisiu
+							    has_character = ALB_mehmet_shehu
+							    has_character = ALB_beqir_balluku
+					        } 						
 						}
 					}
-					create_corps_commander = {
-						name = ALB_spiro_moisiu
-						id = 448005
-						portrait_path = "gfx/leaders/ALB/Portrait_Spiro_Moisiu.dds"
-						traits = { harsh_leader career_officer}
-						skill = 3
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 3
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_spiro_moisiu
+						}
+						ALB_spiro_moisiu = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_mehmet_shehu
-						id = 448012
-						portrait_path = "gfx/leaders/ALB/Portrait_Mehmet_Shehu.dds"
-						traits = { harsh_leader }
-						skill = 2
-						attack_skill = 3
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_mehmet_shehu
+						}
+						ALB_mehmet_shehu = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_beqir_balluku
-						id = 448013
-						portrait_path = "gfx/leaders/ALB/Portrait_Beqir_Balluku.dds"
-						traits = { guerilla_fighter }
-						skill = 2
-						attack_skill = 1
-						defense_skill = 3
-						planning_skill = 2
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_beqir_balluku
+						}
+						ALB_beqir_balluku = {
+							set_nationality = ALB
+						}
 					}
-					
 					else_if = {
 						limit = {
 							NOT = {
 								has_government = trozkism
 							}
 							OR = {
-								has_unit_leader = 448005
-								has_unit_leader = 448012
-								has_unit_leader = 448013
+							    has_character = ALB_spiro_moisiu
+							    has_character = ALB_mehmet_shehu
+							    has_character = ALB_beqir_balluku
 							}
 						}
-						remove_unit_leader = 448005
-						remove_unit_leader = 448012
-						remove_unit_leader = 448013
+						ALB_spiro_moisiu = {
+							set_nationality = SAI
+						}
+						ALB_mehmet_shehu = {
+							set_nationality = SAI
+						}
+						ALB_beqir_balluku = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2511,19 +2573,16 @@ on_actions = {
 					limit = {
 						has_government = fascism
 						NOT = {
-							has_unit_leader = 448006
+							has_character = ALB_ndok_gjeloshi
 						}
 					}
-					create_corps_commander = {
-						name = ALB_ndok_gjeloshi
-						id = 448006
-						portrait_path = "gfx/leaders/ALB/Portrait_Ndok_Gjeloshi.dds"
-						traits = { politically_connected }
-						skill = 2
-						attack_skill = 1
-						defense_skill = 2
-						planning_skill = 2
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_ndok_gjeloshi
+						}
+						ALB_ndok_gjeloshi = {
+							set_nationality = ALB
+						}
 					}
 					
 					else_if = {
@@ -2531,9 +2590,11 @@ on_actions = {
 							NOT = {
 								has_government = fascism
 							}
-							has_unit_leader = 448006
+							has_character = ALB_ndok_gjeloshi
 						}
-						remove_unit_leader = 448006
+						ALB_ndok_gjeloshi = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
@@ -2542,94 +2603,90 @@ on_actions = {
 					limit = {
 						has_government = neutrality
 						NOT = {
-							has_unit_leader = 448007
-							has_unit_leader = 448015
+							OR = {
+							    has_character = ALB_prek_cali
+							    has_character = ALB_gjon_markagjoni
+							}	
 						}
 					}
-					create_corps_commander = {
-						name = ALB_prek_cali
-						id = 448007
-						portrait_path = "gfx/leaders/ALB/Portrait_Prek_Cali.dds"
-						traits = { trait_mountaineer trickster guerilla_fighter }
-						skill = 2
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 2
+					random_other_country = {
+						limit = {
+							has_character = ALB_prek_cali
+						}
+						ALB_prek_cali = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_gjon_markagjoni
-						id = 448015
-						portrait_path = "gfx/leaders/ALB/Portrait_Gjon_Markagjoni.dds"
-						traits = { trait_mountaineer }
-						skill = 2
-						attack_skill = 1
-						defense_skill = 2
-						planning_skill = 1
-						logistics_skill = 3
+					random_other_country = {
+						limit = {
+							has_character = ALB_gjon_markagjoni
+						}
+						ALB_gjon_markagjoni = {
+							set_nationality = ALB
+						}
 					}
-					
 					else_if = {
 						limit = {
 							NOT = {
 								has_government = neutrality
 							}
 							OR = {
-								has_unit_leader = 448007
-								has_unit_leader = 448015
+							    has_character = ALB_prek_cali
+							    has_character = ALB_gjon_markagjoni
 							}
 						}
-						remove_unit_leader = 448007
-						remove_unit_leader = 448015
+						ALB_prek_cali = {
+							set_nationality = SAI
+						}
+						ALB_gjon_markagjoni = {
+							set_nationality = SAI
+						}
 					}
 				}
 				
 				#КАМБЕТАР
 				if = {
 					limit = {
-						has_government = democratic
 						has_country_leader_with_trait =	father_of_albanian_nationalism
 						NOT = {
-							has_unit_leader = 448008
-							has_unit_leader = 448009
+							OR = {
+							    has_character = ALB_muharrem_bajraktari
+							    has_character = ALB_aziz_cami
+							}	
 						}
 					}
-					create_corps_commander = {
-						name = ALB_muharrem_bajraktari
-						id = 448008
-						portrait_path = "gfx/leaders/ALB/Portrait_Muharrem_Bajraktari.dds"
-						traits = { infantry_officer trickster guerilla_fighter }
-						skill = 3
-						attack_skill = 1
-						defense_skill = 3
-						planning_skill = 1
-						logistics_skill = 3
+					random_other_country = {
+						limit = {
+							has_character = ALB_muharrem_bajraktari
+						}
+						ALB_muharrem_bajraktari = {
+							set_nationality = ALB
+						}
 					}
-					create_corps_commander = {
-						name = ALB_aziz_cami
-						id = 448009
-						portrait_path = "gfx/leaders/Europe/Portrait_Europe_Generic_land_2.dds"
-						traits = { infantry_officer }
-						skill = 2
-						attack_skill = 2
-						defense_skill = 2
-						planning_skill = 2
-						logistics_skill = 1
+					random_other_country = {
+						limit = {
+							has_character = ALB_aziz_cami
+						}
+						ALB_aziz_cami = {
+							set_nationality = ALB
+						}
 					}
-					
 					else_if = {
 						limit = {
 							NOT = {
-								has_government = democratic
 								has_country_leader_with_trait =	father_of_albanian_nationalism
 							}
 							OR = {
-								has_unit_leader = 448008
-								has_unit_leader = 448009
+							    has_character = ALB_muharrem_bajraktari
+							    has_character = ALB_aziz_cami
 							}
 						}
-						remove_unit_leader = 448008
-						remove_unit_leader = 448009
+						ALB_muharrem_bajraktari = {
+							set_nationality = SAI
+						}
+						ALB_aziz_cami = {
+							set_nationality = SAI
+						}
 					}
 				}
 			}
@@ -2650,7 +2707,7 @@ on_actions = {
 			if = {
 				limit = {
 					tag = BPL
-					has_cosmetic_tag = BPL_UK
+					has_cosmetic_tag = BPL_ENG
 				}
 				drop_cosmetic_tag = yes
 			}
@@ -2830,9 +2887,7 @@ on_actions = {
 			every_country = {
 				limit = {
 					has_government = trozkism
-					NOT = {
-						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-					}
+					not_is_really_trozkist = yes
 				}
 				add_to_variable = { global.total_trozkist = 1 }
 				if = {
@@ -2844,9 +2899,7 @@ on_actions = {
 				limit = {
 					ROOT = {
 						has_government = trozkism
-						NOT = {
-							has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-						}
+						not_is_really_trozkist = yes
 					}
 				}
 				if = {
@@ -2872,19 +2925,6 @@ on_actions = {
 			######### END TROZKISM BLOCK #########
 			ROOT = { country_event = { id = TRpolitical.106 } }
 			#Смена подидеологии в случае ошибочной генерации
-			if = {
-				limit = {
-					has_government = trozkism
-					NOT = { tag = TUR }
-					NOT = {
-						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-					}
-				}
-				random_list = {
-					50 = { set_country_leader_ideology = marxism1 }
-					50 = { set_country_leader_ideology = trozkism1 }
-				}
-			}
 			if = {
 				limit = {
 					has_government = neutrality
@@ -3134,6 +3174,30 @@ on_actions = {
 				}
 				set_cosmetic_HBBRG_use_subject = yes
 			}
+			if = {
+				limit = {
+					original_tag = PER
+					has_government = communism
+					has_country_leader = { ruling_only = yes character = PER_khalil_maleki }
+					is_subject_of = SOV
+					SOV = {
+						has_country_leader = { character = SOV_iosif_stalin }
+					}
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_iraj_eskandari
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = stalinism
+							traits = {
+								staunch_stalinist
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
 		}
 		#ROOT = nation being puppeted, FROM = overlord
 	}
@@ -3147,19 +3211,6 @@ on_actions = {
 		effect = {
 			ROOT = { country_event = { id = TRpolitical.106 } }
 			#Смена подидеологии в случае ошибочной генерации
-			if = {
-				limit = {
-					has_government = trozkism
-					NOT = { tag = TUR }
-					NOT = {
-						has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-					}
-				}
-				random_list = {
-					50 = { set_country_leader_ideology = marxism1 }
-					50 = { set_country_leader_ideology = trozkism1 }
-				}
-			}
 			if = {
 				limit = {
 					has_government = neutrality
@@ -3871,16 +3922,14 @@ on_actions = {
 					FROM = {
 						tag = PER
 						OR = {
-							owns_state = 411
-							owns_state = 412
 							owns_state = 413
+							owns_state = 1187
 						}
 					}
 				}
 				ENG = {
-					remove_resource_rights = 411
-					remove_resource_rights = 412
 					remove_resource_rights = 413
+					remove_resource_rights = 1187
 				}
 				PER = {
 					if = {
@@ -3969,9 +4018,9 @@ on_actions = {
 					tag = GER
 					DEN = {
 						OR = {
-							has_idea = DEN_crhistian_x
-							has_idea = DEN_crhistian_x_1
-							has_idea = DEN_crhistian_x_2
+							has_idea = DEN_christian_x
+							has_idea = DEN_christian_x_1
+							has_idea = DEN_christian_x_2
 						}
 						has_government = democratic
 						NOT = { has_completed_focus = DEN_bunkers_zealand_2 }
@@ -4541,9 +4590,7 @@ on_actions = {
 				limit = {
 					ROOT = {
 						has_government = trozkism
-						NOT = {
-							has_country_leader = { name = "Nikolas Roerich" ruling_only = yes }
-						}
+						not_is_really_trozkist = yes
 					}
 				}
 				add_to_variable = { global.troz_threat_var = -1 }
@@ -5047,7 +5094,7 @@ on_actions = {
 			if = {
 				limit = {
 					tag = BPL
-					has_cosmetic_tag = BPL_UK
+					has_cosmetic_tag = BPL_ENG
 					FROM = { NOT = { original_tag = ENG } }
 				}
 				drop_cosmetic_tag = yes
@@ -5525,38 +5572,6 @@ on_actions = {
 							remove_core_of = POL
 							add_core_of = SOV
 						}
-					}
-				}
-			}
-			if = {
-				limit = {
-					ROOT = { original_tag = JAP }
-					FROM = { original_tag = MAN }
-					MAN = { 
-					    OR = {
-					        has_government = monarchy 
-							has_government = fascism 
-						}
-					}	
-				}
-				MAN = {
-					set_cosmetic_tag = MAN_kwantung_army
-					create_country_leader = {
-						name = "Kenkichi Ueda"
-						picture = "gfx/leaders/JAP/Portrait_Japan_Kenkichi_Ueda.dds"
-						expire = "1965.1.1"
-						ideology = absolute_monarchy
-						traits = {
-   					    }
-					}
-					create_country_leader = {
-						name = "Kenkichi Ueda"
-						picture = "gfx/leaders/JAP/Portrait_Japan_Kenkichi_Ueda.dds"
-						expire = "1965.1.1"
-						ideology = fascism_ideology
-						traits = {
-						   
-   					    }
 					}
 				}
 			}
@@ -6368,8 +6383,17 @@ on_actions = {
 				}
 				random_country = {
 					set_variable = { global.total_division = 0 }
+					set_variable = { global.total_ships = 0 }
+					set_variable = { global.total_avia = 0 }
+					set_variable = { global.total_no_ai_player = 0 }
 					every_country = {
 						add_to_variable = { global.total_division = THIS.num_divisions }
+						add_to_variable = { global.total_ships = THIS.num_ships }
+						add_to_variable = { global.total_avia = THIS.num_deployed_planes }
+					}
+					every_country = {
+						limit = { is_ai = no }
+						add_to_variable = { global.total_no_ai_player = 1 }
 					}
 				}
 			}
@@ -6470,6 +6494,42 @@ on_actions = {
 					add_manpower = -5000
 				}
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): минус 5000 менпавера"
+			}
+			#Промышленность 1 // Нацдух китайцев
+			if = {
+				limit = {
+					has_idea = CHI_backward_industry
+					num_of_civilian_factories > 25
+				}
+				swap_ideas = {
+					remove_idea = CHI_backward_industry
+					add_idea = CHI_backward_industry1
+				}
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): промка 2 уровня"
+			}
+			#Промышленность 2 // Нацдух китайцев
+			if = {
+				limit = {
+					has_idea = CHI_backward_industry1
+					num_of_civilian_factories > 50
+				}
+				swap_ideas = {
+					remove_idea = CHI_backward_industry1
+					add_idea = CHI_backward_industry2
+				}
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): промка 3 уровня"
+			}
+			#Промышленность 3 // Нацдух китайцев
+			if = {
+				limit = {
+					has_idea = CHI_backward_industry2
+					num_of_civilian_factories > 75
+				}
+				swap_ideas = {
+					remove_idea = CHI_backward_industry2
+					add_idea = CHI_backward_industry3
+				}
+				log = "[GetDateText]: [This.GetName] ([This.GetTag]): промка 4 уровня"
 			}
 			#ETH_ethiopism_trait_1500 // Еженедельный прирост населения: §R-1500§!
 			if = {
@@ -6632,6 +6692,21 @@ on_actions = {
 				}
 				else = { set_variable = { OMA_pakistani_mercenaries_dyn_weekly_manpower = 0 } }
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): ЕЖЕНЕДЕЛЬНЫЙ ПРИРОСТ МЕНПАВЕРА ИЗ ПАКИСТАНА: [?OMA_pakistani_mercenaries_dyn_weekly_manpower]"
+			}
+		}
+	}
+	
+	on_weekly_PER = {
+		effect = {
+			#PER_operative_slot_from_army_idea_dyn
+			if = {
+				limit = {
+					has_intelligence_agency = yes
+					has_dynamic_modifier = { modifier = PER_operative_slot_from_army_idea_dyn }
+				}
+				set_variable = { PER_operative_slot_var = num_divisions }
+				divide_variable = { PER_operative_slot_var = 10 }
+				round_variable = PER_operative_slot_var
 			}
 		}
 	}
@@ -7023,7 +7098,7 @@ on_actions = {
 			if = {
 				limit = {
 					tag = BPL
-					has_cosmetic_tag = BPL_UK
+					has_cosmetic_tag = BPL_ENG
 				}
 				drop_cosmetic_tag = yes
 			}

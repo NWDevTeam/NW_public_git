@@ -2830,8 +2830,66 @@ news_event = {
 # End of the Expand Spanish Civil War (SPA victory)
 news_event = {
 	id = trworldnews.69
-	title = trworldnews.69.t
-	desc = trworldnews.69.desc
+	#title = trworldnews.69.t
+	#desc = trworldnews.69.desc
+	
+	title = {
+		text = lar_news.1.t_franco
+		trigger = {
+			has_global_flag = SPR_franco_won
+		}
+	}
+	title = {
+		text = lar_news.1.t_falangist
+		trigger = {
+			has_global_flag = SPR_falange_won
+		}
+	}
+	title = {
+		text = lar_news.1.t_carlists
+		trigger = {
+			has_global_flag = SPR_carlists_won
+		}
+	}
+	
+	desc = {
+		text = lar_news.1.desc_franco
+		trigger = {
+			has_global_flag = SPR_franco_won
+			NOT = {
+				has_global_flag = SPR_carlist_uprising_flag
+				has_global_flag = scw_early_end
+			}
+		}
+	}
+	desc = {
+		text = lar_news.1.desc_franco_unified
+		trigger = {
+			has_global_flag = SPR_franco_won
+			NOT = { has_global_flag = SPR_carlist_uprising_flag }
+			has_global_flag = scw_early_end
+		}
+	}
+	desc = {
+		text = lar_news.1.desc_franco_uprising
+		trigger = {
+			has_global_flag = SPR_franco_won
+			has_global_flag = SPR_carlist_uprising_flag
+		}
+	}
+	desc = {
+		text = lar_news.1.desc_falangist
+		trigger = {
+			has_global_flag = SPR_falange_won
+		}
+	}
+	desc = {
+		text = lar_news.1.desc_carlists
+		trigger = {
+			has_global_flag = SPR_carlists_won
+		}
+	}
+	
 	picture = GFX_news_event_033
 	major = yes
 	
@@ -2844,10 +2902,12 @@ news_event = {
 			NOT = {
 				has_war_with = SPR
 				has_war_with = ARA
+				has_war_with = SPJ
 			}
 		}
 		SPR = { exists = no }
 		ARA = { exists = no }
+		SPJ = { exists = no }
 	}
 	
 	mean_time_to_happen = {
@@ -2858,11 +2918,140 @@ news_event = {
 		set_global_flag = nationalist_victory
 		set_global_flag = scw_over
 	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_completed_focus = SPA_the_phalanx_ascendant
+				}
+				set_global_flag = SPR_falange_won
+			}
+			if = {
+				limit = {
+					has_completed_focus = SPA_unify_the_nationalist_front
+				}
+				set_global_flag = SPR_franco_won
+			}
+			if = {
+				limit = {
+					has_completed_focus = SPA_supremacy_of_the_communion
+				}
+				set_global_flag = SPR_carlists_won
+			}
+			
+			if = {
+				limit = {
+					original_tag = SPA
+					NOT = { tag = SPB }
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_nationalists_flag
+					}
+					remove_core_of = SPB
+					remove_core_of = SPP
+					remove_core_of = SPD
+					remove_core_of = SPJ
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_republicans_flag
+					}
+					remove_core_of = ROOT
+					remove_core_of = SPB
+					remove_core_of = SPP
+					remove_core_of = SPD
+					remove_core_of = SPJ
+					start_resistance = yes
+				}
+				118 = {
+					if = {
+						limit = {
+							is_controlled_by = ROOT
+						}
+						remove_core_of = SPB
+						remove_core_of = SPD
+						remove_core_of = SPP
+						remove_core_of = SPJ
+						add_core_of = ROOT
+					}
+					else = {
+						remove_claim_by = SPB
+						remove_claim_by = SPP
+						remove_claim_by = SPD
+						remove_claim_by = SPJ
+						add_claim_by = ROOT
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					tag = SPB
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_nationalists_flag
+					}
+					remove_core_of = SPA
+					remove_core_of = SPP
+					remove_core_of = SPD
+					remove_core_of = SPJ
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_republicans_flag
+					}
+					remove_core_of = SPB
+					remove_core_of = SPA
+					remove_core_of = SPP
+					remove_core_of = SPD
+					remove_core_of = SPJ
+					start_resistance = yes
+				}
+				118 = {
+					if = {
+						limit = {
+							is_controlled_by = ROOT
+						}
+						remove_core_of = SPA
+						remove_core_of = SPD
+						remove_core_of = SPP
+						remove_core_of = SPJ
+						add_core_of = ROOT							
+					}
+					else = {
+						remove_claim_by = SPA
+						remove_claim_by = SPP
+						remove_claim_by = SPD
+						remove_claim_by = SPJ
+						add_claim_by = SPB
+					}
+				}
+			}
+			remove_ideas = SPA_death_before_surrender
+			if = {
+				limit = {
+					has_idea = SPA_foreign_training_staff
+				}
+				remove_ideas = SPA_foreign_training_staff
+			}
+			if = {
+				limit = {
+					has_idea = SPA_a_methodical_approach
+				}
+				remove_ideas = SPA_a_methodical_approach
+			}
+		}
+	}
 	
 	option = {
 		name = trworldnews.69.a
 		trigger = {
-			NOT = { tag = SPA }
+			NOT = { original_tag = SPA }
 		}
 		hidden_effect = {
 			delete_unit_template_and_units = { division_template = "People Militia" disband = yes }
@@ -2870,9 +3059,9 @@ news_event = {
 	}
 	option = {
 		name = trworldnews.69.b
-		trigger = { tag = SPA }
+		trigger = { original_tag = SPA }
 		remove_ideas = SPR_spain_civil_war
-		add_timed_idea = { idea = SPA_recovering_from_civil_war days = 1825 }
+		add_timed_idea = { idea = SPA_recovering_from_civil_war days = 2190 }
 		hidden_effect = {
 			delete_unit_template_and_units = { division_template = "Brigada Legionario" disband = yes }
 			delete_unit_template_and_units = { division_template = "Guarnición Nacionalista" disband = yes }
@@ -2887,6 +3076,10 @@ news_event = {
 			every_state = {
 				limit = { is_core_of = SPR }
 				remove_core_of = SPR
+			}
+			every_state = {
+				limit = { is_core_of = SPJ }
+				remove_core_of = SPJ
 			}
 			if = {
 				limit = {
@@ -2936,8 +3129,66 @@ news_event = {
 # End of the Expand Spanish Civil War (SPR victory)
 news_event = {
 	id = trworldnews.70
-	title = trworldnews.69.t
-	desc = trworldnews.70.desc
+	#title = trworldnews.69.t
+	#desc = trworldnews.70.desc
+	
+	title = {
+		text = lar_news.1.t_republic
+		trigger = {
+			has_global_flag = SPR_democrats_won
+		}
+	}
+	title = {
+		text = lar_news.1.t_stalinist
+		trigger = {
+			has_global_flag = SPR_stalinists_won
+		}
+	}
+	title = {
+		text = lar_news.1.t_independent_communist
+		trigger = {
+			has_global_flag = SPR_poum_won
+		}
+	}
+#	title = {
+#		text = lar_news.1.t_anarchists
+#		trigger = {
+#			has_global_flag = SPR_anarchists_won
+#		}
+#	}
+	desc = {
+		text = lar_news.2.desc_republic_no_help
+		trigger = {
+			has_global_flag = SPR_democrats_won
+			NOT = { SPD = {  has_completed_focus = SPR_expand_soviet_aid } }
+		}
+	}
+	desc = {
+		text = lar_news.2.desc_republic_soviet_help
+		trigger = {
+			has_global_flag = SPR_democrats_won
+			SPD = { has_completed_focus = SPR_expand_soviet_aid }
+		}
+	}
+	desc = {
+		text = lar_news.2.desc_stalinist
+		trigger = {
+			has_global_flag = SPR_stalinists_won
+		}
+	}
+	desc = {
+		text = lar_news.2.desc_independent_communist
+		trigger = {
+			has_global_flag = SPR_poum_won
+		}
+	}
+#	desc = {
+#		text = lar_news.2.desc_anarchists
+#		trigger = {
+#			has_global_flag = SPR_anarchists_won
+#		}
+#	}
+	
 	picture = GFX_news_event_034
 	major = yes
 	
@@ -2945,11 +3196,15 @@ news_event = {
 		has_global_flag = spanish_civil_war
 		has_global_flag = expand_spanish_civil_war
 		NOT = { has_global_flag = scw_over }
-		SPR = { NOT = { has_war_with = SPA } }
-		SPR = { NOT = { has_war_with = ARA } }
-		SPR = { exists = yes }
+		SPR = {
+			exists = yes
+			NOT = { has_war_with = SPA }
+			NOT = { has_war_with = ARA }
+			NOT = { has_war_with = SPJ }
+		}
 		SPA = { exists = no }
 		ARA = { exists = no }
+		SPJ = { exists = no }
 	}
 	
 	mean_time_to_happen = {
@@ -2960,11 +3215,87 @@ news_event = {
 		set_global_flag = republican_victory
 		set_global_flag = scw_over
 	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_completed_focus = SPR_independent_communists
+				}
+				set_global_flag = SPR_poum_won
+			}
+			if = {
+				limit = {
+					has_completed_focus = SPR_support_stalinists
+				}
+				set_global_flag = SPR_stalinists_won
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = SPR_support_stalinists
+						has_completed_focus = SPR_independent_communists
+					}
+				}
+				set_global_flag = SPR_democrats_won
+			}
+			remove_ideas = SPR_death_before_surrender
+			if = {
+				limit = { tag = SPD }
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_republicans_flag
+					}
+					remove_core_of = SPP
+					remove_core_of = SPA
+					remove_core_of = SPB
+					remove_core_of = SPJ
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_nationalists_flag
+					}
+					remove_core_of = SPP
+					remove_core_of = SPB
+					remove_core_of = SPA
+					remove_core_of = SPD
+					remove_core_of = SPJ
+					start_resistance = yes
+				}
+			}
+			if = {
+				limit = { tag = SPP }
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_republicans_flag
+					}
+					remove_core_of = SPD
+					remove_core_of = SPA
+					remove_core_of = SPB
+					remove_core_of = SPJ
+				}
+				every_state = {
+					limit = {
+						has_state_flag = SPR_core_of_spain_flag
+						has_state_flag = SPR_sided_with_nationalists_flag
+					}
+					remove_core_of = SPP
+					remove_core_of = SPB
+					remove_core_of = SPA
+					remove_core_of = SPD
+					remove_core_of = SPJ
+					start_resistance = yes
+				}
+			}
+		}
+	}
 	
 	option = {
 		name = trworldnews.71.a
 		trigger = {
-			NOT = { tag = SPR }
+			NOT = { original_tag = SPR }
 		}
 		hidden_effect = {
 			delete_unit_template_and_units = { division_template = "People Militia" disband = yes }
@@ -2972,9 +3303,9 @@ news_event = {
 	}
 	option = {
 		name = trworldnews.69.b
-		trigger = { tag = SPR }
+		trigger = { original_tag = SPR }
 		remove_ideas = SPR_spain_civil_war
-		add_timed_idea = { idea = SPA_recovering_from_civil_war days = 1825 }
+		add_timed_idea = { idea = SPA_recovering_from_civil_war days = 2190 }
 		hidden_effect = {
 			delete_unit_template_and_units = { division_template = "Brigada Internacionales" disband = yes }
 			delete_unit_template_and_units = { division_template = "People Militia" disband = yes }
@@ -2985,6 +3316,9 @@ news_event = {
 			delete_unit_template_and_units = { division_template = "Brigada Popular" disband = yes }
 			delete_unit_template_and_units = { division_template = "Brigada de Juventudes Sindicales" disband = yes }
 			delete_unit_template_and_units = { division_template = "Brigada Anarquista" disband = yes }
+			
+			delete_unit_template_and_units = { division_template = "International Marxist Brigades" disband = yes }
+			delete_unit_template_and_units = { division_template = "Soviet Special Brigades" disband = yes }
 	
 			every_state = {
 				limit = { is_core_of = ARA }
@@ -3002,6 +3336,10 @@ news_event = {
 			every_state = {
 				limit = { is_core_of = SPA }
 				remove_core_of = SPA
+			}
+			every_state = {
+				limit = { is_core_of = SPJ }
+				remove_core_of = SPJ
 			}
 			clr_country_flag = spain_block_legitimacy_flag
 		}
@@ -3038,14 +3376,34 @@ news_event = {
 			}
 			country_event = { id = lar_spain.82 hours = 6 }
 		}
+		hidden_effect = {
+			#If POUM supported by SOV and won and SOV has not won/bypasssed their civil war yet -> POUM will help SOV in their CW
+			if = {
+				limit = {
+					has_global_flag = SOV_covert_support_for_poum_flag
+					has_global_flag = SPR_poum_won
+					SOV = {
+						OR = { #Do not trigger if Soviet civil war has finished or was bypassed
+							NOT = {	has_completed_focus = SOV_coup_detat }
+							has_global_flag = SOV_soviet_civil_war
+						}
+					}
+				}
+				SOV = { country_event = { id = NSB_soviet_spanish_civil_war.6 days = 8 random_days = 4 } }
+			}
+		}
 	}
 }
 
 # End of the Expand Spanish Civil War (ARA victory)
 news_event = {
 	id = trworldnews.71
-	title = trworldnews.69.t
-	desc = trworldnews.71.desc
+	#title = trworldnews.69.t
+	#desc = trworldnews.71.desc
+	
+	title = lar_news.1.t_anarchists
+	desc = lar_news.2.desc_anarchists
+	
 	picture = GFX_news_event_034
 	major = yes
 	
@@ -3053,11 +3411,15 @@ news_event = {
 		has_global_flag = spanish_civil_war
 		has_global_flag = expand_spanish_civil_war
 		NOT = { has_global_flag = scw_over }
-		ARA = { NOT = { has_war_with = SPR } }
-		ARA = { NOT = { has_war_with = SPA } }
-		ARA = { exists = yes }
+		ARA = {
+			exists = yes
+			NOT = { has_war_with = SPR }
+			NOT = { has_war_with = SPA }
+			NOT = { has_war_with = SPJ }
+		}
 		SPR = { exists = no }
 		SPA = { exists = no }
+		SPJ = { exists = no }
 	}
 	
 	mean_time_to_happen = {
@@ -3065,6 +3427,7 @@ news_event = {
 	}
 	
 	immediate = {
+		set_global_flag = SPR_anarchists_won
 		set_global_flag = anarchist_victory
 		set_global_flag = scw_over
 	}
@@ -3128,6 +3491,10 @@ news_event = {
 			every_state = {
 				limit = { is_core_of = SPA }
 				remove_core_of = SPA
+			}
+			every_state = {
+				limit = { is_core_of = SPJ }
+				remove_core_of = SPJ
 			}
 		}
 	}
@@ -3312,18 +3679,36 @@ news_event = {
 			complete_national_focus = SPA_create_coordinating_junta
 			if = {
 				limit = { tag = CAS }
-				complete_national_focus = SPA_nationalists
-				unlock_national_focus = SPA_edilas_presidency
+				complete_national_focus = SPA_the_phalanx_ascendant
+				complete_national_focus = SPA_secure_the_national_defense_council
+				complete_national_focus = SPA_suspend_the_constitution
+				unlock_national_focus = SPA_eliminate_the_carlists
+				complete_national_focus = SPA_primo_de_rivera_prisoner_exchange
+				complete_national_focus = SPA_establish_the_directory
 			}
 			if = {
 				limit = { tag = NAV }
-				complete_national_focus = SPA_crusaders
-				unlock_national_focus = SPA_invite_javier_parma
+				complete_national_focus = SPA_supremacy_of_the_communion
+				complete_national_focus = SPA_prepare_the_carlist_insurrection
+				complete_national_focus = SPA_contact_the_union_militar_espanola
+				complete_national_focus = SPA_head_the_junta_nacional
+				complete_national_focus = SPA_unite_the_requetes
+				unlock_national_focus = SPA_no_compromise_on_carlist_ideals
 			}
 			if = {
-				limit = { tag = CAS }
-				complete_national_focus = SPA_nationalists
-				unlock_national_focus = SPA_dictatorship_of_franco
+				limit = { tag = SEU }
+				complete_national_focus = SPA_unify_the_nationalist_front
+				unlock_national_focus = SPA_save_the_alcazar
+				complete_national_focus = SPA_martyrdom_for_primo_de_rivera
+				complete_national_focus = SPA_caudillo_of_spain
+				complete_national_focus = SPA_extol_the_martyrs_of_the_war
+				complete_national_focus = SPA_consolidate_the_north
+				complete_national_focus = SPA_foment_a_carlist_split
+				unlock_national_focus = SPA_a_methodical_approach
+				unlock_national_focus = SPA_tackle_the_vulnerable_fronts
+				unlock_national_focus = SPA_portuguese_aid
+				unlock_national_focus = SPA_banish_the_party_leaders
+				complete_national_focus = SPA_fuse_the_parties
 			}
 		}
 		if = {
@@ -4165,7 +4550,10 @@ news_event = {
 			original_tag = PER
 		}
 		custom_effect_tooltip = can_join_factions_tt
-		hidden_effect = { set_rule = { can_join_factions = yes } }
+		hidden_effect = {
+			set_rule = { can_join_factions = yes }
+			delete_unit_template_and_units = { division_template = "Islamist Division" disband = no }
+		}
 	}
 	option = {
 		name = trworldnews.95.b
@@ -4286,7 +4674,10 @@ news_event = {
 			original_tag = PER
 		}
 		custom_effect_tooltip = can_join_factions_tt
-		hidden_effect = { set_rule = { can_join_factions = yes } }
+		hidden_effect = {
+			set_rule = { can_join_factions = yes }
+			delete_unit_template_and_units = { division_template = "Persian Guards" disband = no }
+		}
 	}
 	option = {
 		name = trworldnews.96.b
@@ -4393,6 +4784,12 @@ news_event = {
 	picture = GFX_news_event_trworldnews_100
 	is_triggered_only = yes
 	major = yes
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = trworldnews_100_flag
+		}
+	}
 	
 	option = {
 		name = trworldnews.100.a
@@ -4803,6 +5200,7 @@ news_event = {
 		trigger = {
 			original_tag = ETH
 		}
+		delete_unit_template_and_units = { division_template = "Congolese volunteers" disband = no }
 		transfer_state = 1080
 		add_state_core = 559
 		if = {
@@ -7259,11 +7657,13 @@ news_event = {
 	title = wtt_news.8.t
 	desc = trworldnews.162.desc
 	picture = GFX_news_event_german_reichstag_ruins_2
-	
 	major = yes
-	
 	is_triggered_only = yes
-		
+	
+	immediate = {
+		set_global_flag = GFA_win_in_GCW
+	}
+
 	option = {
 		name = wtt_news.8.a
 		trigger = {
@@ -7353,10 +7753,12 @@ news_event = {
 	title = wtt_news.8.t
 	desc = trworldnews.163.desc
 	picture = GFX_news_event_german_reichstag_ruins_2
-	
 	major = yes
-	
 	is_triggered_only = yes
+	
+	immediate = {
+		set_global_flag = GBF_win_in_GCW
+	}
 	
 	option = {
 		name = wtt_news.8.a
@@ -7447,10 +7849,12 @@ news_event = {
 	title = wtt_news.8.t
 	desc = trworldnews.163.desc
 	picture = GFX_news_event_german_reichstag_ruins_2
-	
 	major = yes
-	
 	is_triggered_only = yes
+	
+	immediate = {
+		set_global_flag = GRF_win_in_GCW
+	}
 	
 	option = {
 		name = trworldnews.164.a

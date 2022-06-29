@@ -88,7 +88,7 @@ focus_tree = {
 			factor = 3
 		}	
 		completion_reward = {
-			add_ideas = GER_lebensraum
+			add_ideas = ITA_spazio_vitale
 		}
 	}
 	
@@ -1569,6 +1569,21 @@ focus_tree = {
 					ratio > 2
 				}
 			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_war_with = event_target:NW_france_scope
+					surrender_progress > 0
+					AND = {
+						strength_ratio = {
+							tag = GER
+							ratio < 1
+						}
+						GER = { has_war = no }
+					}
+				}
+				GER = { has_war = no }
+			}
 		}
 		
 		select_effect = {
@@ -1590,19 +1605,25 @@ focus_tree = {
 		}
 		
 		completion_reward = {
-			create_wargoal = {
-				type = annex_everything
-				target = GER
-			}
-			add_ai_strategy = {
-				type = antagonize
-				id = "GER"
-				value = 500
-			}
-			add_ai_strategy = {
-				type = conquer
-				id = "GER" 
-				value = 500
+			every_other_country = {
+				limit = { original_tag = GER }
+				ROOT = {
+					create_wargoal = {
+						type = annex_everything
+						target = PREV
+						expire = 0
+					}
+					add_ai_strategy = {
+						type = antagonize
+						id = PREV
+						value = 500
+					}
+					add_ai_strategy = {
+						type = conquer
+						id = PREV
+						value = 500
+					}
+				}
 			}
 		}
 	}
@@ -1661,12 +1682,27 @@ focus_tree = {
 			modifier = {
 				factor = 5
 				event_target:NW_france_scope = { has_war = yes }
-				ROOT = { NOT = { has_war_with = GER } }
+				NOT = { has_war_with = GER }
 			}
 			modifier = {
 				factor = 5
 				FRC = { has_war = yes }
-				ROOT = { NOT = { has_war_with = GER } }
+				NOT = { has_war_with = GER }
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_war_with = GER
+					surrender_progress > 0
+					AND = {
+						strength_ratio = {
+							tag = event_target:NW_france_scope
+							ratio < 1
+						}
+						event_target:NW_france_scope = { has_war = no }
+					}
+				}
+				event_target:NW_france_scope = { has_war = no }
 			}
 		}
 		
@@ -1689,19 +1725,31 @@ focus_tree = {
 		}
 		
 		completion_reward = {
-			create_wargoal = {
-				type = annex_everything
-				target = event_target:NW_france_scope
-			}
-			add_ai_strategy = {
-				type = antagonize
-				id = "event_target:NW_france_scope"
-				value = 500
-			}
-			add_ai_strategy = {
-				type = conquer
-				id = "event_target:NW_france_scope" 
-				value = 500
+			every_other_country = {
+				limit = {
+					OR = {
+						original_tag = FRA
+						original_tag = FRC
+						original_tag = FRR
+					}
+				}
+				ROOT = {
+					create_wargoal = {
+						type = annex_everything
+						target = PREV
+						expire = 0
+					}
+					add_ai_strategy = {
+						type = antagonize
+						id = PREV
+						value = 500
+					}
+					add_ai_strategy = {
+						type = conquer
+						id = PREV
+						value = 500
+					}
+				}
 			}
 		}
 	}

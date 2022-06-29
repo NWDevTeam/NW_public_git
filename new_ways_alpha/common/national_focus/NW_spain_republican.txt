@@ -138,6 +138,18 @@ focus_tree = {
 				popularity = 0.35
 			}
 			add_ideas = SPR_niceto_torres
+			add_country_leader_role = {
+				character = SPR_diego_martinez_barrio
+				country_leader = {
+					desc = "POLITICS_DIEGO_MARTINEZ_BARRIO_DESC"
+					ideology = social_liberalism
+					traits = {
+						acting_president
+					}
+					expire = "1965.1.1"
+				}
+				promote_leader = yes
+			}
 			hidden_effect = {
 				if = {
 					limit = {
@@ -169,7 +181,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = SPR_victory_popular_front
 		
-		cost = 10
+		cost = 7.15
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -179,34 +191,42 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
-		}
-		bypass = {
-			custom_trigger_tooltip = {
-				tooltip = infrastructure_effort_tt
-				all_owned_state = {
-					free_building_slots = {
-						building = infrastructure
-						size < 1
+			OR = {
+				NOT = {
+					has_global_flag = spanish_civil_war
+					hidden_trigger = {
+						has_global_flag = spanish_civil_war
+						has_global_flag = anarcho_spanish_civil_war
+						has_global_flag = expand_spanish_civil_war
+						has_global_flag = liberal_spanish_civil_war
+						has_global_flag = haos_liberal_spanish_civil_war
 					}
 				}
+				has_global_flag = scw_over
 			}
+		}
+		bypass = {
 		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_acceleration_agrarian_reform"
 			41 = {
-				add_building_construction = {
-					type = infrastructure
-					level = 2
-					instant_build = yes
-				}
+				add_extra_state_shared_building_slots = 2
 				every_neighbor_state = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
+					add_extra_state_shared_building_slots = 1
 				} 
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				add_state_modifier = {
+					modifier = {
+						local_supplies = 0.1
+						local_manpower = 0.1
+						resistance_target_on_our_occupied_states = 0.1
+					}
+				}
 			}
 		}
 	}
@@ -219,7 +239,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = SPR_acceleration_agrarian_reform
 		
-		cost = 10
+		cost = 7.15
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -248,6 +268,17 @@ focus_tree = {
 					type = industrial_complex
 					level = 1
 					instant_build = yes
+				}
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				add_state_modifier = {
+					modifier = {
+						resistance_decay_on_our_occupied_states = -0.1
+						resistance_damage_to_garrison_on_our_occupied_states = 0.1
+					}
 				}
 			}
 		}
@@ -303,7 +334,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = SPR_acceleration_agrarian_reform
 		
-		cost = 10
+		cost = 7.15
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -332,6 +363,17 @@ focus_tree = {
 					type = industrial_complex
 					level = 2
 					instant_build = yes
+				}
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				add_state_modifier = {
+					modifier = {
+						starting_compliance = 0.05
+						local_manpower = 0.1
+					}
 				}
 			}
 		}
@@ -377,6 +419,17 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				add_state_modifier = {
+					modifier = {
+						state_production_speed_buildings_factor = 0.05
+						state_resources_factor = 0.05
+					}
+				}
+			}
 		}
 	}
 	
@@ -419,6 +472,17 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+				}
+				add_state_modifier = {
+					modifier = {
+						local_building_slots = 1
+						mobilization_speed = 0.1
+					}
+				}
+			}
 		}
 	}
 	
@@ -442,6 +506,9 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			NOT = {
+				country_exists = VAT
+			}
 		}
 
 		completion_reward = {
@@ -562,6 +629,28 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_election_new_president"
 			add_political_power = 50
 			remove_ideas = SPR_niceto_torres
+			SPR_diego_martinez_barrio = {
+				remove_country_leader_role = { ideology = social_liberalism }
+			}
+			effect_tooltip = {
+				add_country_leader_role = {
+					character = SPR_manuel_azana
+					country_leader = {
+						ideology = socialism
+						traits = {
+							socialist_trait
+							figurehead_president
+						}
+						expire = "1965.1.1"
+					}
+					promote_leader = yes
+				}
+			}
+			hidden_effect = {
+				SPR_manuel_azana = {
+					promote_leader = yes
+				}
+			}
 		}
 	}
 	
@@ -575,7 +664,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = SPR_amnesty_political_prisoners
 		
-		cost = 10
+		cost = 5
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -585,6 +674,10 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 10
 				is_historical_focus_on = yes
 			}
 			modifier = {
@@ -724,7 +817,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = SPR_election_new_president
 		
-		cost = 10
+		cost = 5
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -733,7 +826,7 @@ focus_tree = {
 		ai_will_do = {
 			factor = 5
 			modifier = {
-				factor = 10
+				factor = 0
 				is_historical_focus_on = yes
 			}
 			modifier = {
@@ -905,7 +998,7 @@ focus_tree = {
 	focus = {
 		id = SPR_demand_ministerial_positions
 		available = {
-			NOT = { has_completed_focus = SPR_stand_junta }
+			#NOT = { has_completed_focus = SPR_stand_junta }
 		}
 		bypass = {
 			has_global_flag = scw_over
@@ -929,93 +1022,96 @@ focus_tree = {
 		}
 	}
 	
-	focus = {
-		id = SPR_stand_junta
-		icon = GFX_z_goal_stand_junta
-		prerequisite = { focus = SPR_repression_against_trotskyists }
-		mutually_exclusive = { focus = SPR_transformation_people_republic }
-		x = -3
-		y = 1
-		relative_position_id = SPR_repression_against_trotskyists
-		
-		cost = 10
-		
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
+#	focus = {
+#		id = SPR_stand_junta
+#		icon = GFX_z_goal_stand_junta
+#		prerequisite = { focus = SPR_repression_against_trotskyists }
+#		mutually_exclusive = { focus = SPR_transformation_people_republic }
+#		x = -3
+#		y = 1
+#		relative_position_id = SPR_repression_against_trotskyists
+#		
+#		cost = 10
+#		
+#		cancel_if_invalid = yes
+#		continue_if_invalid = no
+#		available_if_capitulated = yes
 
-		ai_will_do = {
-			factor = 5
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-			}
-		}
-		available = {
-			hidden_trigger = {
-				always = no
-			}
-		}
-		bypass = {
-		}
+#		ai_will_do = {
+#			factor = 5
+#			modifier = {
+#				factor = 0
+#				is_historical_focus_on = yes
+#			}
+#		}
+#		available = {
+#			hidden_trigger = {
+#				always = no
+#			}
+#		}
+#		bypass = {
+#		}
 
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_stand_junta"
-			add_popularity = {
-				ideology = neutrality
-				popularity = 0.2
-			}
-			set_politics = {
-				ruling_party = neutrality
-				elections_allowed = no
-			}
-			remove_ideas = SPR_desire_for_decentralization
-			custom_effect_tooltip = TUR_focus_autocomplete_tt
-			set_cosmetic_tag = SPR_junta
-		}
-	}
+#		completion_reward = {
+#			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_stand_junta"
+#			add_popularity = {
+#				ideology = neutrality
+#				popularity = 0.2
+#			}
+#			set_politics = {
+#				ruling_party = neutrality
+#				elections_allowed = no
+#			}
+#			remove_ideas = SPR_desire_for_decentralization
+#			custom_effect_tooltip = TUR_focus_autocomplete_tt
+#			set_cosmetic_tag = SPR_junta
+#		}
+#	}
 	
-	focus = {
-		id = SPR_fight_against_communists
-		icon = GFX_goal_anti_comintern_pact
-		prerequisite = { focus = SPR_stand_junta }
-		x = 0
-		y = 1
-		relative_position_id = SPR_stand_junta
-		
-		cost = 5
-		
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = yes
+#	focus = {
+#		id = SPR_fight_against_communists
+#		icon = GFX_goal_anti_comintern_pact
+#		prerequisite = { focus = SPR_stand_junta }
+#		x = 0
+#		y = 1
+#		relative_position_id = SPR_stand_junta
+#		
+#		cost = 5
+#		
+#		cancel_if_invalid = yes
+#		continue_if_invalid = no
+#		available_if_capitulated = yes
 
-		ai_will_do = {
-			factor = 5
-		}
-		available = {
-		}
-		bypass = {
-		}
+#		ai_will_do = {
+#			factor = 5
+#		}
+#		available = {
+#		}
+#		bypass = {
+#		}
 
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_fight_against_communists"
-			add_popularity = {
-				ideology = communism
-				popularity = -0.1
-			}
-		}
-	}
+#		completion_reward = {
+#			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_fight_against_communists"
+#			add_popularity = {
+#				ideology = communism
+#				popularity = -0.1
+#			}
+#		}
+#	}
 	
 	focus = {
 		id = SPR_elections_third_cortes_republic
 		icon = GFX_z_goal_elections
-		prerequisite = { focus = SPR_stand_junta focus = SPR_saving_democracy }
+		prerequisite = {
+			#focus = SPR_stand_junta
+			focus = SPR_saving_democracy
+		}
 		mutually_exclusive = { focus = SPR_save_state_emergency }
 		x = -2
 		y = 1
 		relative_position_id = SPR_saving_democracy
 		
-		cost = 10
+		cost = 7.15
 		
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -1033,8 +1129,8 @@ focus_tree = {
 		
 		select_effect = {
 			set_country_flag = spain_block_legitimacy_flag
-			country_event = { id = NWspain.14 days = 20 random_days = 5 }
-			country_event = { id = NWspain.15 days = 50 random_days = 5 }
+			country_event = { id = NWspain.14 days = 10 random_days = 5 }
+			country_event = { id = NWspain.15 days = 35 random_days = 5 }
 		}
 
 		completion_reward = {
@@ -1047,11 +1143,14 @@ focus_tree = {
 	focus = {
 		id = SPR_save_state_emergency
 		icon = GFX_focus_generic_self_management
-		prerequisite = { focus = SPR_saving_democracy focus = SPR_stand_junta }
+		prerequisite = {
+			focus = SPR_saving_democracy
+			#focus = SPR_stand_junta
+		}
 		mutually_exclusive = { focus = SPR_elections_third_cortes_republic }
-		x = -2
+		x = 19
 		y = 1
-		relative_position_id = SPR_stand_junta
+		relative_position_id = SPR_saving_democracy
 		
 		cost = 10
 		
@@ -1061,6 +1160,23 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 7.5
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						is_historical_focus_on = yes
+						has_game_rule = {
+							rule = SPR_ai_behavior 
+							option = DEFAULT
+						}
+					}
+					has_country_flag = NW_SPR_AI_DEMOCRATIC
+					has_game_rule = {
+						rule = SPR_ai_behavior 
+						option = DEMOCRATIC
+					}
+				}
+			}
 		}
 		available = {
 		}
@@ -1658,7 +1774,7 @@ focus_tree = {
 		}
 		prerequisite = { focus = SPR_arm_the_workers_militias_tro }
 		
-		icon = GFX_focus_usa_reestablish_the_gold_standard
+		icon = GFX_z_goal_gold_for_ppl
 		x = -4
 		y = 1
 		relative_position_id = SPR_arm_the_workers_militias_tro
@@ -4138,31 +4254,42 @@ focus_tree = {
 				limit = {
 					MEX = {
 						has_country_leader = {
-						    name = "Leon Trotsky"
-						    ruling_only = yes
+							character = SOV_lev_trotsky
+							ruling_only = yes
 						}
 					}
 				}
 				create_wargoal = {
-				    type = puppet_wargoal_focus
-				    target = MEX
-				    expire = 0
+					type = puppet_wargoal_focus
+					target = MEX
+					expire = 0
 				}
 			}
 			if = {
 				limit = {
-					SOV = {
-						has_country_leader = {
-						    name = "Joseph Stalin"
-						    ruling_only = yes
+					any_country = {
+						original_tag = SOV
+						has_government = communism
+						NOT = { has_completed_focus = SOV_the_right_opposition }
+					}
+				}
+				hidden_effect = {
+					every_other_country = {
+						limit = {
+							original_tag = SOV
+							has_government = communism
+							NOT = { has_completed_focus = SOV_the_right_opposition }
+						}
+						ROOT = {
+							create_wargoal = {
+								type = puppet_wargoal_focus
+								target = PREV
+								expire = 0
+							}
 						}
 					}
 				}
-				create_wargoal = {
-				    type = puppet_wargoal_focus
-				    target = SOV
-				    expire = 0
-				}
+				custom_effect_tooltip = SPR_against_trotskyism_and_stalinism_tt
 			}
 		}
 	}
@@ -4487,19 +4614,24 @@ focus_tree = {
 				ruling_party = democratic
 				elections_allowed = yes
 			}
-			hidden_effect = {
-				create_country_leader = {
-					name = "Largo Caballero"
+			SPR_jose_giral_pereyra = {
+				remove_country_leader_role = { ideology = social_liberalism }
+			}
+			add_country_leader_role = {
+				character = SPR_francisco_largo_caballero
+				country_leader = {
 					desc = "POLITICS_LARGO_CABALLERO_DESC"
-					picture = "gfx/leaders/SPR/portrait_spr_largo_caballero.dds"
-					expire = "1965.1.1"
 					ideology = socialism
 					traits = {
 						socialist_trait
 						short_sighted_politician
 						trade_union_leader
 					}
+					expire = "1965.1.1"
 				}
+				promote_leader = yes
+			}
+			hidden_effect = {
 				set_cosmetic_tag = SPR_socialist
 			}
 			set_party_name = { ideology = democratic name = SPR_soc_part long_name = SPR_soc_part_long }
@@ -4580,7 +4712,13 @@ focus_tree = {
 		cancel_if_invalid = yes
 		continue_if_invalid = no
 		available_if_capitulated = yes
-
+		
+		historical_ai = {
+			OR = {
+				NOT = { controls_province = 3938 }
+				surrender_progress > 0.4
+			}
+		}
 		ai_will_do = {
 			factor = 7.5
 		}
@@ -4607,7 +4745,7 @@ focus_tree = {
 		x = 1
 		y = 1
 		relative_position_id = SPR_victory_socialists
-		cost = 10
+		cost = 5
 		
 		ai_will_do = {
 			factor = 10
@@ -4748,7 +4886,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_save_state_emergency }
 
 		icon = GFX_goal_generic_political_pressure
-		x = -1
+		x = -2
 		y = 1
 		relative_position_id = SPR_save_state_emergency
 		cost = 10
@@ -4775,7 +4913,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_save_state_emergency }
 
 		icon = GFX_goal_generic_military_sphere
-		x = 1
+		x = 0
 		y = 1
 		relative_position_id = SPR_save_state_emergency
 		cost = 5
@@ -4867,9 +5005,9 @@ focus_tree = {
 		prerequisite = { focus = SPR_victory_socialists focus = SPR_ensure_loyalty focus = SPR_enlist_the_carabineros }
 
 		icon = GFX_z_goal_bet_on_militia
-		x = 1
+		x = 0
 		y = 1
-		relative_position_id = SPR_ensure_loyalty
+		relative_position_id = SPR_enlist_the_carabineros
 		cost = 10
 		
 		ai_will_do = {
@@ -4937,6 +5075,13 @@ focus_tree = {
 		relative_position_id = SPR_the_popular_army
 		cost = 5
 		
+		historical_ai = {
+			OR = {
+				NOT = { controls_province = 3938 }
+				surrender_progress > 0.4
+			}
+		}
+		
 		ai_will_do = {
 			factor = 5
 		}
@@ -4947,7 +5092,15 @@ focus_tree = {
 			add_timed_idea = { idea = SPR_anti_nationalist_offensive days = 365 }
 			if = {
 				limit = { has_war_with = ARA }
-				add_timed_idea = { idea = SPA_anti_anarchist_offensive days = 365 }
+				add_timed_idea = { idea = SPR_anti_anarchist_offensive days = 365 }
+			}
+			if = {
+				limit = { has_war_with = CAT }
+				add_timed_idea = { idea = SPR_anti_catalon_offensive days = 365 }
+			}
+			if = {
+				limit = { has_war_with = SPB }
+				add_timed_idea = { idea = SPR_anti_carlist_offensive days = 365 }
 			}
 		}
 	}
@@ -5056,7 +5209,7 @@ focus_tree = {
 		icon = GFX_goal_demand_sudetenland
 		prerequisite = { focus = SPR_save_state_emergency }
 		mutually_exclusive = { focus = SPR_reaffirm_the_popular_front_strategy }
-		x = 3
+		x = 2
 		y = 1
 		relative_position_id = SPR_save_state_emergency
 		
@@ -5124,7 +5277,7 @@ focus_tree = {
 	focus = {
 		id = SPR_reaffirm_the_popular_front_strategy
 		available = {
-			NOT = { has_completed_focus = SPR_stand_junta }
+			#NOT = { has_completed_focus = SPR_stand_junta }
 		}
 		bypass = {
 			has_global_flag = scw_over
@@ -5133,7 +5286,7 @@ focus_tree = {
 		mutually_exclusive = { focus = SPR_abolition_autonomy }
 		
 		icon = GFX_goal_generic_propaganda
-		x = 5
+		x = 4
 		y = 1
 		relative_position_id = SPR_save_state_emergency
 		cost = 5
@@ -5190,13 +5343,13 @@ focus_tree = {
 			custom_effect_tooltip = remove_political_advisor
 			show_ideas_tooltip = SPR_jesus_hernandez_tomas
 			add_timed_idea = { idea = SPR_crush_the_revolution days = 60 }
-			if = {
-				limit = { NOT = { has_completed_focus = SPR_stand_junta } }
+			#if = {
+			#	limit = { NOT = { has_completed_focus = SPR_stand_junta } }
 				swap_ideas = {
 					remove_idea = SPR_popular_front_1
 					add_idea = SPR_popular_front_2
 				}
-			}
+			#}
 			if = {
 				limit = { has_idea = SPR_an_army_of_all_classes_1 }
 				swap_ideas = {
@@ -5436,7 +5589,7 @@ focus_tree = {
 					}
 				}
 			}
-			NOT = { has_completed_focus = SPR_stand_junta }
+			#NOT = { has_completed_focus = SPR_stand_junta }
 		}
 		bypass = {
 			AND = {
@@ -6149,8 +6302,8 @@ focus_tree = {
 			OR = {
 				has_country_leader = { character = SPR_manuel_azana ruling_only = yes }
 				has_country_leader = { name = "Segismundo Casado" ruling_only = yes }
-				has_country_leader = { name = "Indalecio Prieto Tuero" ruling_only = yes }
-				has_country_leader = { name = "Largo Caballero" ruling_only = yes }
+				has_country_leader = { character = SPR_indalecio_prieto ruling_only = yes }
+				has_country_leader = { character = SPR_francisco_largo_caballero ruling_only = yes }
 			}
 		}
 		bypass = {
@@ -6205,7 +6358,7 @@ focus_tree = {
 		}
 		prerequisite = { focus = SPR_oppose_the_communists }
 
-		icon = GFX_focus_generic_diplomatic_treaty
+		icon = GFX_z_goal_generic_state1
 		x = 0
 		y = 1
 		relative_position_id = SPR_oppose_the_communists
@@ -6264,7 +6417,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_soviet_recovery_aid }
 		prerequisite = { focus = SPR_secure_democratic_principles }
 
-		icon = GFX_goal_generic_demand_territory
+		icon = GFX_z_goal_broken_red_star
 		x = -1
 		y = 1
 		relative_position_id = SPR_secure_democratic_principles
@@ -6741,7 +6894,7 @@ focus_tree = {
 		}
 		prerequisite = { focus = SPR_fortify_the_central_government focus = SPR_communists_in_the_government }
 
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_z_goal_brutality_is_bringing_people_together
 		x = -1
 		y = 1
 		relative_position_id = SPR_fortify_the_central_government
@@ -6761,14 +6914,14 @@ focus_tree = {
 	focus = {
 		id = SPR_end_fascism_at_all_costs
 		available = {
-			NOT = { has_country_leader = { name = "Indalecio Prieto Tuero" ruling_only = yes } }
+			NOT = { has_country_leader = { character = SPR_indalecio_prieto ruling_only = yes } }
 		}
 		bypass = {
 		}
 		prerequisite = { focus = SPR_strengthen_the_anti_fascist_coalition }
 		mutually_exclusive = { focus = SPR_oppose_the_communists }
 
-		icon = GFX_focus_generic_anti_fascist_diplomacy
+		icon = GFX_z_goal_fascist_coup_lost
 		x = -3
 		y = 1
 		relative_position_id = SPR_strengthen_the_anti_fascist_coalition
@@ -6819,7 +6972,7 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 30
-				has_country_leader = { name = "Largo Caballero" ruling_only = yes }
+				has_country_leader = { character = SPR_francisco_largo_caballero ruling_only = yes }
 			}
 		}
 
@@ -6829,16 +6982,17 @@ focus_tree = {
 		completion_reward = {
 			if = {
 				limit = { has_completed_focus = SPR_victory_socialists }
-				create_country_leader = {
-					name = "Largo Caballero"
-					desc = "POLITICS_LARGO_CABALLERO_DESC"
-					picture = "gfx/leaders/SPR/portrait_spr_largo_caballero.dds"
-					expire = "1965.1.1"
-					ideology = right_wing_communism
-					traits = {
-						short_sighted_politician
-						trade_union_leader
+				add_country_leader_role = {
+					character = SPR_juan_negrin
+					country_leader = {
+						desc = "POLITICS_JUAN_NEGRIN_DESC"
+						ideology = right_wing_communism
+						traits = {
+							gran_carabinero
+						}
+						expire = "1965.1.1"
 					}
+					promote_leader = yes
 				}
 			}
 			set_temp_variable = {
@@ -6917,6 +7071,55 @@ focus_tree = {
 						id = TUR
 						value = -200
 					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = SPR_repression_against_trotskyists_2
+		text = SPR_repression_against_trotskyists
+		icon = GFX_z_goal_orange_menace
+		prerequisite = {
+			focus = SPR_communists_in_the_government
+			focus = SPR_fortify_the_central_government
+		}
+		x = -3
+		y = 1
+		relative_position_id = SPR_communists_in_the_government
+		
+		cost = 5
+		
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = yes
+
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 10
+				is_historical_focus_on = yes
+			}
+		}
+		available = {
+		}
+		bypass = {
+		}
+
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_repression_against_trotskyists_2"
+			add_popularity = {
+				ideology = trozkism
+				popularity = -0.15
+			}
+			kill_ideology_leader = trozkism
+			create_country_leader = {
+				name = "Julián Gorkin"
+				desc = "POLITICS_JULIAN_GORKIN_DESC"
+				picture = "GFX_portrait_SPR_julian_gorkin"
+				expire = "1965.1.1"
+				ideology = marxism1
+				traits = {
 				}
 			}
 		}
@@ -7678,8 +7881,8 @@ focus_tree = {
 		icon = GFX_z_focus_revolutionary_government
 		prerequisite = { focus = SPR_repression_against_trotskyists }
 		prerequisite = { focus = SPR_demand_ministerial_positions }
-		mutually_exclusive = { focus = SPR_stand_junta }
-		x = 2
+		#mutually_exclusive = { focus = SPR_stand_junta }
+		x = 1
 		y = 1
 		relative_position_id = SPR_repression_against_trotskyists
 		
@@ -7722,7 +7925,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_transformation_people_republic }
 		
 		icon = GFX_goal_generic_construct_civilian
-		x = 2
+		x = -1
 		y = 1
 		relative_position_id = SPR_transformation_people_republic
 		cost = 10
@@ -7747,7 +7950,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_transformation_people_republic }
 		
 		icon = GFX_focus_YUG_pan_slavic_congress
-		x = 0
+		x = 1
 		y = 1
 		relative_position_id = SPR_transformation_people_republic
 		cost = 10
@@ -7773,7 +7976,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_an_army_of_all_classes }
 		
 		icon = GFX_z_goal_brain
-		x = 2
+		x = 1
 		y = 1
 		relative_position_id = SPR_an_army_of_all_classes
 		cost = 10
@@ -7794,7 +7997,7 @@ focus_tree = {
 		id = SPR_transfer_power_KPI
 		icon = GFX_focus_generic_soviet_politics
 		prerequisite = { focus = SPR_an_army_of_all_classes }
-		x = 0
+		x = -1
 		y = 1
 		relative_position_id = SPR_an_army_of_all_classes
 		
@@ -8276,7 +8479,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_soviet_industrial_aid }
 
 		icon = GFX_goal_generic_construct_military
-		x = 1
+		x = 0
 		y = 1
 		relative_position_id = SPR_the_spanish_red_army
 		cost = 10
@@ -9060,7 +9263,7 @@ focus_tree = {
 
 		icon = GFX_z_goal_new_industry_standard
 		x = 0
-		y = 1
+		y = 2
 		relative_position_id = SPR_transplant_soviet_industry
 		cost = 10
 		
@@ -9249,7 +9452,7 @@ focus_tree = {
 		prerequisite = { focus = SPR_slipway_enlargement }
 
 		icon = GFX_goal_generic_navy_doctrines_tactics
-		x = 0
+		x = -1
 		y = 1
 		relative_position_id = SPR_slipway_enlargement
 		cost = 10
@@ -10272,6 +10475,7 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus SPR_give_way_renewal_spain"
 			add_political_power = 50
+		    retire_character = SPR_manuel_fal_conde
 			create_country_leader = {
 				name = "José Calvo Sotelo"
 				desc = "POLITICS_JOSE_CALVO_SOTELO_DESC"
@@ -11750,7 +11954,7 @@ focus_tree = {
 		}
 		available = {
 			165 = {
-				owner = {
+				controller = {
 					OR = {
 						tag = ROOT
 						is_subject_of = ROOT
@@ -11792,6 +11996,9 @@ focus_tree = {
 			factor = 5
 		}
 		available = {
+			capital_scope = {
+				ROOT = { has_full_control_of_state = PREV }
+			}
 		}
 		bypass = {
 		}
@@ -11828,7 +12035,7 @@ focus_tree = {
 		}
 		available = {
 			982 = {
-				owner = {
+				controller = {
 					OR = {
 						tag = ROOT
 						is_subject_of = ROOT
@@ -11836,7 +12043,7 @@ focus_tree = {
 				}
 			}
 			790 = {
-				owner = {
+				controller = {
 					OR = {
 						tag = ROOT
 						is_subject_of = ROOT

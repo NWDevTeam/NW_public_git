@@ -421,6 +421,55 @@ on_actions = {
 			}
 		}
 	}
+	
+	#ROOT = attacking side
+	#FROM = defending side
+	#fired when two countries end up at war with each other (on_war is fired when a country goes to war against anyone and is not fired again when it enters war against another country unless it went to peace first)
+	on_war_relation_added = { # ---> Fires in 2nd place (1st is on_declare_war) -> This one is triggered ALWAYS 
+		effect = {
+			# SPA Iberian Pact - either POR or SPA join a war - the other must join too.
+			if = {
+				limit = {
+					has_country_flag = SPA_iberian_pact
+					FROM = { NOT = { has_country_flag = SPA_iberian_pact } }
+				}
+				hidden_effect = {
+					FROM = { set_country_flag = SPA_iberian_pact_enemy_flag }
+				}
+				save_event_target_as = iberian_pact_war_target
+				random_other_country = {
+					limit = {
+						has_country_flag = SPA_iberian_pact
+						NOT = {
+							has_war_together_with = ROOT
+						}
+					}
+					country_event = lar_spain.29
+				}
+			}
+			else_if = {
+				limit = {
+					NOT = { has_country_flag = SPA_iberian_pact }
+			 		FROM = { has_country_flag = SPA_iberian_pact }
+				}
+				hidden_effect = {
+					set_country_flag = SPA_iberian_pact_enemy_flag
+				}
+				FROM = {
+					save_event_target_as = iberian_pact_war_target
+					random_other_country = {
+						limit = {
+							has_country_flag = SPA_iberian_pact
+							NOT = {
+								has_war_together_with = FROM
+							}
+						}
+						country_event = lar_spain.29
+					}
+				}
+			}
+		}
+	}
 
 	#FROM is war target
 	on_declare_war = {
@@ -440,46 +489,6 @@ on_actions = {
 						trait = reassigned
 						days = 60
 					}
-				}
-			}
-			# SPA Iberian Pact - either POR or SPA join a war - the other must join too.
-			if = {
-				limit = {
-					has_country_flag = SPA_iberian_pact
-					FROM = { NOT = { has_country_flag = SPA_iberian_pact } }
-				}
-				hidden_effect = {
-					FROM = { set_country_flag = SPA_iberian_pact_enemy_flag }
-				}
-				every_other_country = {
-					limit = {
-						OR = {
-							original_tag = POR
-							original_tag = SPA
-						}
-						has_country_flag = SPA_iberian_pact
-					}
-					country_event = lar_spain.29
-				}
-			}
-			else_if = {
-				limit = {
-					NOT = { has_country_flag = SPA_iberian_pact }
-			 		FROM = { has_country_flag = SPA_iberian_pact }
-				}
-				hidden_effect = {
-					set_country_flag = SPA_iberian_pact_enemy_flag
-				}
-				every_country = {
-					limit = {
-						OR = {
-							original_tag = POR
-							original_tag = SPA
-						}
-						has_country_flag = SPA_iberian_pact
-						NOT = { tag = FROM }
-					}
-					country_event = lar_spain.29
 				}
 			}
 			#Clean up Franco in case of double Franco
@@ -519,11 +528,11 @@ on_actions = {
 				if = {
 					limit = {
 						has_country_leader = {
-							name = "José Antonio Primo de Rivera"
+							character = SPA_jose_antonio_primo_de_rivera
 							ruling_only = yes
 						}
 						FROM = {
-							has_completed_focus = SPA_edilas_presidency
+							has_completed_focus = SPA_martyrdom_for_primo_de_rivera
 						}
 					}
 					retire_country_leader = yes
@@ -615,7 +624,7 @@ on_actions = {
 					has_global_flag = SPR_anarchist_uprising_flag
 					NOT = {
 						any_country_with_original_tag = {
-							original_tag_to_check = SPR
+							original_tag_to_check = SPA
 							NOT = {
 								tag = ROOT
 								tag = FROM
@@ -842,21 +851,6 @@ on_actions = {
 					can_join_factions = yes
 					can_create_factions = yes
 					can_not_declare_war = no #I hate this thing so much
-				}
-			}
-			if = {
-				limit = {
-					has_country_flag = SPA_iberian_pact
-				}
-				save_event_target_as = iberian_pact_war_target
-				random_other_country = {
-					limit = {
-						has_country_flag = SPA_iberian_pact
-						NOT = {
-							has_war_together_with = ROOT
-						}
-					}
-					country_event = lar_spain.29
 				}
 			}
 		}

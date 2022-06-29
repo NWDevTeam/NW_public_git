@@ -1,1 +1,275 @@
 ﻿#перезапись
+
+add_namespace = lar_portugal_purchase_ships
+
+######## PURCHASE SHIPS FROM BRITAIN / ITALY ########
+#Event for ENG/ITA to accept or reject Portuguese proposal to purchase ships
+country_event = {
+	id = lar_portugal_purchase_ships.1
+	title = lar_portugal_purchase_ships.1.t
+	desc = lar_portugal_purchase_ships.1.desc
+	picture = GFX_report_event_sailors_in_working_rig
+
+	is_triggered_only = yes
+
+	option = { #Accept
+		name = lar_portugal_purchase_ships.1.a
+
+		ai_chance = {
+			base = 99
+			modifier = {
+				factor = 0
+				OR = {
+					has_opinion = { target = POR value < 0 }
+					has_civil_war = yes
+					has_capitulated = yes
+					has_war = yes
+					AND = {
+						tag = ENG
+						NOT = { owns_state = 126 } #Owns London
+					}
+					AND = {
+						tag = ITA
+						NOT = { owns_state = 2 } #Owns Rome
+					}
+				}
+			}
+		}
+
+		custom_effect_tooltip = lar_portugal_purchase_ships.1.a_tt
+		POR = {
+			country_event = { id = lar_portugal_purchase_ships.2 hours = 8 random_hours = 4 }
+		}
+	}
+	option = { #Reject
+		name = lar_portugal_purchase_ships.1.b
+
+		ai_chance = {
+			base = 1
+		}
+
+		POR = {
+			country_event = { id = lar_portugal_purchase_ships.3 hours = 8 random_hours = 4 }
+			if = {
+				limit = { 
+					ROOT = { tag = ENG }
+				}
+				set_country_flag = {
+					flag = POR_british_ships_purchase_rejected_flag
+					value = 1
+					days = 180
+				}
+			}
+			else_if = {
+				limit = { 
+					ROOT = { tag = ITA }
+				}
+				set_country_flag = {
+					flag = POR_italian_ships_purchase_rejected_flag
+					value = 1
+					days = 180
+				}
+			}
+		}
+	}
+}
+
+# Event for POR to choose the type of ships to be purchased
+country_event = {
+	id = lar_portugal_purchase_ships.2
+	title = lar_portugal_purchase_ships.2.t
+	desc = lar_portugal_purchase_ships.2.desc
+	picture = GFX_report_event_sailors_in_working_rig
+
+	is_triggered_only = yes
+
+	option = { # 3 Submarines - 1 Year
+		name = lar_portugal_purchase_ships.2.a
+		ai_chance = {
+			base = 34
+		}
+
+		FROM = {
+			add_offsite_building = {
+				type = industrial_complex
+				level = 1
+			}
+			add_opinion_modifier = {
+				target = POR
+				modifier = POR_bought_ships
+			}
+		}
+		if = {
+			limit = { FROM = { tag = ENG } }
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_british_submarines_construction_progress
+			set_country_flag = POR_purchase_british_submarines_flag
+		}
+		else_if = {
+			limit = { FROM = { tag = ITA } }
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_italian_submarines_construction_progress
+			set_country_flag = POR_purchase_italian_submarines_flag
+		}
+	}
+	option = { # 2 Destroyers - 2 Years
+		name = lar_portugal_purchase_ships.2.b
+		ai_chance = {
+			base = 33
+		}
+		
+		FROM = {
+			add_offsite_building = {
+				type = industrial_complex
+				level = 1
+			}
+			add_opinion_modifier = {
+				target = POR
+				modifier = POR_bought_ships
+			}
+		}
+		if = {
+			limit = { FROM = { tag = ENG } }
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_british_destroyers_construction_progress
+			set_country_flag = POR_purchase_british_destroyers_flag
+		}
+		else_if = {
+			limit = { FROM = { tag = ITA } }
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_italian_destroyers_construction_progress
+			set_country_flag = POR_purchase_italian_destroyers_flag
+		}
+	}
+	option = { # 1 Light Cruiser - 3 Years
+		name = lar_portugal_purchase_ships.2.c
+		ai_chance = {
+			base = 33
+		}
+
+		FROM = {
+			add_offsite_building = {
+				type = industrial_complex
+				level = 1
+			}
+			add_opinion_modifier = {
+				target = POR
+				modifier = POR_bought_ships
+			}
+		}
+		if = {
+			limit = { FROM = { tag = ENG } }
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ENG
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_british_light_cruiser_construction_progress
+			set_country_flag = POR_purchase_british_light_cruiser_flag
+		}
+		else_if = {
+			limit = { FROM = { tag = ITA } }
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_sold_ships
+			}
+			add_opinion_modifier = {
+				target = ITA
+				modifier = POR_ships_trade
+			}
+			activate_decision = POR_italian_light_cruiser_construction_progress
+			set_country_flag = POR_purchase_italian_light_cruiser_flag
+		}
+	}
+}
+
+# Event for POR when ships purchase has been rejected
+country_event = {
+	id = lar_portugal_purchase_ships.3
+	title = lar_portugal_purchase_ships.3.t
+	desc = lar_portugal_purchase_ships.3.desc
+	picture = GFX_report_event_generic_sign_treaty2
+
+	is_triggered_only = yes
+
+	option = {
+		name = lar_portugal_purchase_ships.3.a
+		clr_country_flag = POR_ships_purchase_in_progress_flag
+	}
+}
+
+# Event for POR when submarines purchased are ready
+country_event = {
+	id = lar_portugal_purchase_ships.4
+	title = lar_portugal_purchase_ships.4.t
+	desc = lar_portugal_purchase_ships.4.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = {
+		name = lar_portugal_purchase_ships.4.a
+		custom_effect_tooltip = lar_portugal_purchase_ships.4.a_tt
+	}
+}
+
+# Event for POR when destroyers purchased are ready
+country_event = {
+	id = lar_portugal_purchase_ships.5
+	title = lar_portugal_purchase_ships.5.t
+	desc = lar_portugal_purchase_ships.5.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = {
+		name = lar_portugal_purchase_ships.5.a
+		custom_effect_tooltip = lar_portugal_purchase_ships.5.a_tt
+	}
+}
+
+# Event for POR when light cruiser purchased is ready
+country_event = {
+	id = lar_portugal_purchase_ships.6
+	title = lar_portugal_purchase_ships.6.t
+	desc = lar_portugal_purchase_ships.6.desc
+	picture = GFX_report_event_ast_navy
+
+	is_triggered_only = yes
+
+	option = {
+		name = lar_portugal_purchase_ships.6.a
+		custom_effect_tooltip = lar_portugal_purchase_ships.6.a_tt
+	}
+}
