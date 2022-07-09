@@ -235,7 +235,7 @@ GER_unit_production = {
 	ai_strategy = {
 		type = equipment_variant_production_factor
 		id = support_equipment
-		value = 30
+		value = 40
 	}
 	ai_strategy = { #added to railway gun define (set to 0 by default, increased in default strategies)
 		type = railway_gun_divisions_ratio
@@ -275,7 +275,7 @@ GER_armored_production = {
 		original_tag = GER
 	}
 	enable = {
-		date > 1939.1.1
+		date > 1938.6.1
 		ai_wants_divisions > 24 #Decreasing the amount of tanks the AI wants
 	}
 	abort = {
@@ -404,14 +404,14 @@ GER_super_boost_light_for_med_armor = {
 	ai_strategy = {
 		type = template_prio
 		id = medium_armor
-		value = 150
+		value = 200
 	}
 	
 	# Germany is set up to change their SS division into medium armor.
 	ai_strategy = {
 		type = template_prio
 		id = motorized
-		value = 200
+		value = 150
 	}
 }
 
@@ -442,7 +442,7 @@ GER_super_boost_light_for_modern_armor = {
 	ai_strategy = {
 		type = template_prio
 		id = medium_armor
-		value = 100
+		value = -100
 	}
 
 	ai_strategy = {
@@ -2117,27 +2117,6 @@ spain_scw_support_GER_resistance = {
 	}	
 }
 
-GER_we_are_bad_at_espionage_because_it_is_expensive_and_not_tanks = {
-	allowed = {
-		original_tag = GER
-		has_dlc = "La Resistance"
-	}
-	enable = {
-		has_government = fascism
-		num_of_civilian_factories < 90
-		num_of_civilian_factories > 30
-	}
-	abort = {
-		OR = {
-			num_of_civilian_factories > 90
-		}
-	}
-	ai_strategy = {
-		type = intelligence_agency_usable_factories
-		value = -20
-	}
-}
-
 GER_my_precisioussss = {
 	allowed = {
 		original_tag = GER
@@ -3279,6 +3258,34 @@ NW_GER_wardec_YUG = {
 	ai_strategy = { type = prepare_for_war id = "YUG" value = 100 }
 }
 
+NW_GER_ignore_SPA = {
+	allowed = {
+		original_tag = GER
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_government = fascism
+		has_war_with = SOV
+	}
+	abort = {
+		OR = {
+			NOT = { has_war_with = SOV }
+			has_war_with = SPR
+			has_war_with = SPA
+		}
+	}
+	ai_strategy = {
+		type = ignore
+		id = "SPR"
+		value = 500
+	}
+	ai_strategy = {
+		type = ignore
+		id = "SPA"
+		value = 500
+	}
+}
+
 NW_ignore_SWE = {
 	allowed = {
 		OR = { original_tag = GER original_tag = SWE }
@@ -3573,14 +3580,52 @@ NW_GER_caucasia_nym_nym = {
 NW_GER_build_950k_army = {
 	allowed = { original_tag = GER }
 	enable = {
-		date < 1940.1.1
+		date < 1938.1.1
 		has_war = no
 		has_army_manpower = { size < 950000 }
 	}
 	abort_when_not_enabled = yes
 
 	ai_strategy = { type = build_army id = infantry value = 500 }
+	ai_strategy = { type = build_army id = armor value = 24 }
 	ai_strategy = { type = force_build_armies value = 500 }
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = infantry
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = support
+		value = 8
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = artillery
+		value = 5
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 5
+	}
+}
+
+GER_stop_infantry_army = {
+	allowed = { original_tag = GER }
+	enable = {
+		has_army_size = {
+			size > 125
+			type = infantry
+		}
+		has_army_size = {
+			size < 31
+			type = armor
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = build_army id = infantry value = -500 }
 }
 
 NW_GER_you_need_to_actually_produce_light_tanks = {
@@ -3618,12 +3663,12 @@ NW_GER_you_need_to_actually_produce_light_tanks = {
 	ai_strategy = {
 		type = unit_ratio
 		id = armor
-		value = 20
+		value = 50
 	}
 	ai_strategy = {
 		type = equipment_production_factor
 		id = motorized
-		value = 50
+		value = 30
 	}
 	ai_strategy = {
 		type = equipment_production_min_factories
@@ -3659,8 +3704,13 @@ NW_GER_you_need_to_actually_produce_tanks_noob = {
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
+		id = light_tank_chassis
+		value = -100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
 		id = medium_tank_chassis
-		value = 100
+		value = 125
 	}
 	ai_strategy = {
 		type = equipment_production_factor
@@ -3695,12 +3745,12 @@ NW_GER_you_need_to_actually_produce_tanks_noob = {
 	ai_strategy = {
 		type = template_prio
 		id = motorized
-		value = 50
+		value = 20
 	}
 	ai_strategy = {
 		type = unit_ratio
 		id = motorized
-		value = 25
+		value = 15
 	}
 }
 
@@ -3751,5 +3801,118 @@ NW_GER_resume_light_production_1939 = {
 		type = template_prio
 		id = medium_armor
 		value = 100
+	}
+}
+
+
+### TANK PRODUCTION
+
+NW_GER_you_need_to_actually_produce_tanks_1 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 30
+	}
+	abort = {
+		num_of_military_factories > 44
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 3
+	}
+}
+NW_GER_you_need_to_actually_produce_tanks_2 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 44
+	}
+	abort = {
+		num_of_military_factories > 59
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 10
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 5
+	}
+}
+NW_GER_you_need_to_actually_produce_tanks_3 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 59
+	}
+	abort = {
+		num_of_military_factories > 74
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 10
+	}
+}
+NW_GER_you_need_to_actually_produce_tanks_4 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 74
+	}
+	abort = {
+		num_of_military_factories > 89
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 20
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 12
+	}
+}
+NW_GER_you_need_to_actually_produce_tanks_5 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 89
+	}
+	abort = {
+		num_of_military_factories > 99
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 25
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 15
+	}
+}
+NW_GER_you_need_to_actually_produce_tanks_6 = {
+	allowed = { original_tag = GER }
+	enable = {
+		num_of_military_factories > 99
+	}
+	abort = {
+		num_of_military_factories > 109
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = armor
+		value = 30
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 20
 	}
 }
