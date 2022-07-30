@@ -39,6 +39,55 @@ SPR_pp_spend_amount = {
 	}
 }
 
+spanish_civil_war_support_SPA = {
+	allowed = {
+		OR = {
+			original_tag = GER
+			original_tag = ITA
+			original_tag = POR
+			original_tag = FRF
+		}
+	}
+	enable = {
+		SPR_scw_in_progress = yes
+		is_left_ideology = no
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = support
+		id = "SPA"			
+		value = 100
+	}
+}
+
+spanish_civil_war_support_SPR = {
+	allowed = {
+		OR = {
+			original_tag = SOV
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = MEX
+			original_tag = USA
+		}
+	}
+	enable = {
+		SPR_scw_in_progress = yes
+		NOT = {
+			has_government = fascism
+			has_government = monarchy
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = support
+		id = "SPR"			
+		value = 100
+	}
+}
+
+
 spanish_civil_war_GER_expatriate = {
 	allowed = {
 		original_tag = GER
@@ -53,19 +102,16 @@ spanish_civil_war_GER_expatriate = {
 	
 	ai_strategy = {
 		type = befriend
-		id = "SPA"			
+		id = "SPA"
 		value = 75
 	}	
 }
 
-# make italy and germany want to send stuff to the fascist side of SCW
-ITA_and_GER_help_SPA_win_civil_war = {
+# make germany want to send stuff to the fascist side of SCW
+GER_help_SPA_win_civil_war = {
 	reversed = yes
 	allowed = {
-		OR = {
-			original_tag = GER
-			original_tag = ITA
-		}
+		original_tag = GER
 	}
 	enable = {
 		date < 1939.1.1
@@ -73,15 +119,43 @@ ITA_and_GER_help_SPA_win_civil_war = {
 		exists = yes
 		has_war_with = SPR
 		NOT = { has_global_flag = scw_over }
+		GER = {
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
 	}
 	abort_when_not_enabled = yes
-	
 	ai_strategy = {
 		type = send_volunteers_desire
 		id = "GER"
 		value = 75
 	}
-
+}
+# make italy want to send stuff to the fascist side of SCW
+ITA_help_SPA_win_civil_war = {
+	reversed = yes
+	allowed = {
+		original_tag = ITA
+	}
+	enable = {
+		date < 1939.1.1
+		original_tag = SPA
+		exists = yes
+		has_war_with = SPR
+		NOT = { has_global_flag = scw_over }
+		ITA = {
+			has_completed_focus = ITA_spazio_vitale
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
+	}
+	abort_when_not_enabled = yes
 	ai_strategy = {
 		type = send_volunteers_desire
 		id = "ITA"
@@ -104,6 +178,14 @@ SOV_help_SPR_win_civil_war = {
 			#has_completed_focus = SPR_stand_junta
 		}
 		NOT = { has_global_flag = scw_over }
+		SOV = {
+			has_completed_focus = ITA_spazio_vitale
+			NOT = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
 	}
 	abort_when_not_enabled = yes
 	
@@ -207,7 +289,10 @@ FRA_help_SPR_win_civil_war = {
 		has_war_with = SPA
 		NOT = { has_global_flag = scw_over }
 		FRA = {
-			has_completed_focus = FRA_intervention_in_spanish_war
+			OR = {
+				has_completed_focus = FRA_intervention_in_spanish_war
+				has_idea = expeditionary_spirit
+			}
 			NOT = {
 				has_government = fascism
 				has_government = monarchy
@@ -236,7 +321,10 @@ FRA_help_SPA_win_civil_war = {
 		has_war_with = SPA
 		NOT = { has_global_flag = scw_over }
 		FRA = {
-			has_completed_focus = FRA_intervention_in_spanish_war_2
+			OR = {
+				has_completed_focus = FRA_intervention_in_spanish_war_2
+				has_idea = expeditionary_spirit
+			}
 			OR = {
 				has_government = fascism
 				has_government = monarchy
@@ -293,7 +381,10 @@ FRF_help_SPA_win_civil_war = {
 		has_war_with = SPR
 		NOT = { has_global_flag = scw_over }
 		FRF = {
-			has_completed_focus = FRF_intervention_in_spanish_war
+			OR = {
+				has_completed_focus = FRF_intervention_in_spanish_war
+				has_idea = expeditionary_spirit
+			}
 			NOT = {
 				has_government = democratic
 				has_government = communism
@@ -336,6 +427,134 @@ FRF_help_SPR_win_civil_war = {
 	ai_strategy = {
 		type = send_volunteers_desire
 		id = "FRF"
+		value = 75
+	}
+}
+
+MEX_help_SPR_win_civil_war = {
+	reversed = yes
+	allowed = {
+		original_tag = MEX
+	}
+	enable = {
+		date < 1939.1.1
+		original_tag = SPR
+		exists = yes
+		has_war_with = SPA
+		NOT = { has_global_flag = scw_over }
+		MEX = {
+			OR = {
+				has_completed_focus = MEX_focus_support_spains_loyalists
+				has_idea = expeditionary_spirit
+			}
+			NOT = {
+				has_government = fascism
+				has_government = monarchy
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "MEX"
+		value = 75
+	}
+}
+
+MEX_help_SPA_win_civil_war = {
+	reversed = yes
+	allowed = {
+		original_tag = MEX
+	}
+	enable = {
+		date < 1939.1.1
+		original_tag = SPA
+		exists = yes
+		has_war_with = SPA
+		NOT = { has_global_flag = scw_over }
+		MEX = {
+			OR = {
+				has_completed_focus = MEX_focus_falangist_veterans
+				has_idea = expeditionary_spirit
+			}
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "MEX"
+		value = 75
+	}
+}
+
+USA_help_SPR_win_civil_war = {
+	reversed = yes
+	allowed = {
+		original_tag = USA
+	}
+	enable = {
+		date < 1939.1.1
+		original_tag = SPR
+		exists = yes
+		has_war_with = SPA
+		NOT = { has_global_flag = scw_over }
+		USA = {
+			OR = {
+				has_completed_focus = USA_limited_intervention
+				has_completed_focus = USA_democratic_socialism
+				has_idea = expeditionary_spirit
+			}
+			NOT = {
+				has_government = fascism
+				has_government = monarchy
+				has_government = neutrality
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "USA"
+		value = 75
+	}
+}
+
+USA_help_SPA_win_civil_war = {
+	reversed = yes
+	allowed = {
+		original_tag = USA
+	}
+	enable = {
+		date < 1939.1.1
+		original_tag = SPA
+		exists = yes
+		has_war_with = SPA
+		NOT = { has_global_flag = scw_over }
+		USA = {
+			OR = {
+				has_completed_focus = USA_limited_intervention
+				has_completed_focus = USA_ally_with_the_silver_shirts
+				has_idea = expeditionary_spirit
+			}
+			OR = {
+				has_government = fascism
+				has_government = monarchy
+				has_government = neutrality
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "USA"
 		value = 75
 	}
 }
@@ -894,6 +1113,10 @@ subject_support_SPR_in_SCW = {
 		}
 	}
 	ai_strategy = {
+		type = garrison
+		value = -100
+	}
+	ai_strategy = {
 		type = protect
 		id = "SPR" 
 		value = 500
@@ -1196,5 +1419,35 @@ SPA_close_up_madrid_after_CAT_ARA_falls = {
 		
 		execution_type = balanced
 		execute_order = yes
+	}
+}
+
+
+SPA_la_division_azul = {
+	reversed = yes
+	allowed = {
+		original_tag = SPA
+	}
+	enable = {
+		date < 1939.1.1
+		OR = {
+			original_tag = GER
+			original_tag = ITA
+		}
+		exists = yes
+		SPA = {
+			has_idea = SPA_la_division_azul
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "SPA"
+		value = 75
 	}
 }

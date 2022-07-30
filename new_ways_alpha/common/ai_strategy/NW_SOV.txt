@@ -16,6 +16,326 @@
 # declare_war
 
 
+SOV_start_tanks_production = {
+	allowed = { original_tag = SOV }
+	enable = {
+		date < 1941.1.1
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_chassis
+		value = 70
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_flame_chassis
+		value = 30
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_chassis
+		value = 40
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_tank_chassis
+		value = 20
+	}
+	
+	ai_strategy = {
+		type = template_prio
+		id = light_armor
+		value = 50
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 20
+	}
+	ai_strategy = {
+		type = template_prio
+		id = heavy_armor
+		value = 10
+	}
+}
+
+SOV_we_need_more_motorized = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		date < 1940.01.01
+	}
+	ai_strategy = { type = build_army id = motorized value = 20 }
+	ai_strategy = { type = build_army id = armored_car value = 24 }
+	
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = armored_car_equipment
+		value = 20
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = armored_car
+		value = 20
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = mobile
+		value = 10
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = motorized
+		value = 10
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = infantry
+		value = -20
+	}
+	
+	ai_strategy = { type = equipment_production_min_factories id = infantry					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = support					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = armor					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = motorized				value = 8 }
+}
+
+SOV_prepared_for_greate_war = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		date > 1940.01.01
+		OR = {
+			has_army_manpower = { size < 1950000 }
+			num_divisions < 200
+		}
+	}
+	ai_strategy = { type = build_army id = infantry value = 150 }
+	
+	ai_strategy = { type = build_army id = light_armor value = 27 }
+	ai_strategy = { type = build_army id = heavy_armor value = 20 }
+	ai_strategy = { type = build_army id = medium_armor value = 14 }
+	
+	ai_strategy = { type = build_army id = motorized value = 24 }
+	ai_strategy = { type = build_army id = armored_car value = 24 }
+	ai_strategy = { type = force_build_armies value = 300 }
+	
+	ai_strategy = { type = equipment_production_min_factories id = infantry		value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = support		value = 8 }
+	ai_strategy = { type = equipment_production_min_factories id = armor		value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = motorized	value = 5 }
+}
+
+SOV_stop_infantry_army = {
+	allowed = { original_tag = SOV }
+	enable = {
+		has_army_size = {
+			size > 150
+			type = infantry
+		}
+		has_army_size = {
+			size < 50
+			type = armor
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = { type = build_army id = infantry		value = -500 }
+	ai_strategy = { type = build_army id = motorized	value = 100 }
+	ai_strategy = { type = build_army id = armored_car	value = 100 }
+	ai_strategy = { type = build_army id = armor		value = 500 }
+}
+
+SOV_boost_light_armor_template = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		date > 1937.01.01
+	}
+
+	abort = {
+		OR = {
+			date > 1939.01.01
+			has_war = yes
+			has_tech = basic_medium_tank
+		}
+	}
+
+	# lets do changes more often during this period too
+	ai_strategy = {
+		type = template_prio
+		id = light_armor
+		value = 100
+	}
+	ai_strategy = {
+		type = template_prio
+		id = paratrooper
+		value = -100
+	}
+}
+
+SOV_boost_med_armor_template = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		has_tech = basic_medium_tank
+		NOT = { has_template_ai_majority_unit = medium_armor }
+	}
+
+	abort = {
+		has_template_ai_majority_unit = medium_armor
+	}
+	
+	# lets do changes more often during this period too
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 150
+	}
+}
+
+SOV_time_to_leave_light_tanks_and_armored_car = {
+	allowed = { original_tag = SOV }
+	enable = {
+		has_tech = improved_medium_tank
+		has_template_ai_majority_unit = medium_armor
+		OR = {
+			date > 1940.6.1
+			AND = {
+				date > 1941.1.1
+				has_equipment = { light_tank_chassis > 1500 } 
+			}
+		}
+	}
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_chassis
+		value = -100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = armored_car_equipment
+		value = -70
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_chassis
+		value = 50
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_tank_chassis
+		value = 40
+	}
+}
+
+SOV_higher_armor_tank_production = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		date > 1940.1.1
+		has_tech = improved_medium_tank
+		has_template_ai_majority_unit = medium_armor
+		num_of_military_factories > 100
+	}
+	abort = {
+		OR = {
+			has_tech = main_battle_tank
+			AND = {
+				has_war = yes
+				surrender_progress > 0.5
+			}
+			num_of_military_factories < 101
+		}
+	}
+	
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 50
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 10
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = armor
+		value = 20
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_armor
+		value = 100
+	}
+}
+
+
+#После начала войны с кем-то он должен начать интересоваться ПТ-САУ (преимущественно) и немного САУ, но прекратить делать ЛТ
+SOV_start_produce_light_tank_destroyer_armor = {
+	allowed = { original_tag = SOV }
+	enable = {
+		OR = {
+			date > 1939.10.01
+			has_war = yes
+		}
+	}
+	abort = {
+		num_of_military_factories < 20
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_destroyer_chassis	value = 100 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_artillery_chassis	value = 25 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -200 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 100 }
+	
+	ai_strategy = { type = unit_ratio							id = armor							value = 20 }
+	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 10 }
+	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 5 }
+	ai_strategy = { type = build_army							id = light_tank_destroyer_role		value = 24 }
+	ai_strategy = { type = build_army							id = light_artillery_armor_role		value = 10 }
+	ai_strategy = { type = role_ratio							id = infantry						value = -10 }
+}
+SOV_super_boost_light_tank_destroyer_armor = {
+	allowed = { original_tag = SOV }
+	enable = {
+		OR = {
+			has_tech = basic_light_tank
+			has_tech = basic_light_tank_chassis
+		}
+		OR = {
+			date > 1939.10.01
+			has_war = yes
+		}
+	}
+	abort = {
+		has_template_ai_majority_unit = light_tank_destroyer_brigade
+	}
+
+	ai_strategy = { type = land_xp_spend_priority	id = division_template					value = 100 }
+	ai_strategy = { type = template_prio			id = light_tank_destroyer_brigade		value = 250	}
+}
+
+
+
+
+
+
+
+
+
 NW_SOV_wardec_GER = {
 	allowed = {
 		original_tag = SOV
@@ -76,22 +396,6 @@ NW_SOV_ignore_JAP = {
 	ai_strategy = { type = ignore_claim 	id = "JAP"		value = 1 }
 	ai_strategy = { type = declare_war 		id = "JAP"		value = -500 }
 	ai_strategy = { type = ignore			id = "JAP"		value = 500 }
-}
-
-SOV_prepared_for_greate_war = {
-	allowed = {
-		original_tag = SOV
-	}
-	enable = {
-		has_war = no
-		OR = {
-			has_army_manpower = { size < 1950000 }
-			num_divisions < 200
-		}
-	}
-	ai_strategy = { type = build_army id = infantry value = 500 }
-	ai_strategy = { type = build_army id = armor value = 24 }
-	ai_strategy = { type = force_build_armies value = 300 }
 }
 
 SOV_historical_ignore_germany = {
@@ -1130,131 +1434,6 @@ SOV_dockyards_useless_now = {
 	}
 }
 
-SOV_boost_light_armor_template = {
-	allowed = {
-		original_tag = SOV
-	}
-	enable = {
-		date > 1937.01.01
-	}
-
-	abort = {
-		OR = {
-			date > 1939.01.01
-			has_war = yes
-			has_tech = basic_medium_tank
-		}
-	}
-
-	# lets do changes more often during this period too
-	ai_strategy = {
-		type = template_prio
-		id = light_armor
-		value = 100
-	}
-	ai_strategy = {
-		type = template_prio
-		id = paratrooper
-		value = -100
-	}
-}
-
-SOV_boost_med_armor_template = {
-	allowed = {
-		original_tag = SOV
-	}
-	enable = {
-		has_tech = basic_medium_tank
-		NOT = { has_template_ai_majority_unit = medium_armor }
-	}
-
-	abort = {
-		has_template_ai_majority_unit = medium_armor
-	}
-	
-	# lets do changes more often during this period too
-	ai_strategy = {
-		type = template_prio
-		id = medium_armor
-		value = 150
-	}
-}
-
-SOV_time_to_leave_light_tanks = {
-	allowed = {
-		original_tag = SOV
-	}
-	enable = {
-		has_tech = improved_medium_tank
-		has_template_ai_majority_unit = medium_armor
-		OR = {
-			date > 1942.1.1
-			AND = {
-				date > 1941.1.1
-				has_equipment = { light_tank_chassis > 1500 } 
-			}
-		}
-	}
-	abort = {	#with this amount we can have few factories resupply light tank divisions (damned AI won't switch them!)
-		num_of_military_factories > 180
-		has_tech = advanced_light_tank
-	}
-
-	ai_strategy = {
-		type = equipment_variant_production_factor
-		id = light_tank_chassis
-		value = -90		#-100
-	}
-	ai_strategy = {
-		type = equipment_variant_production_factor
-		id = medium_tank_chassis
-		value = 40
-	}
-}
-
-SOV_higher_armor_tank_production = {
-	allowed = {
-		original_tag = SOV
-	}
-	enable = {
-		date > 1940.1.1
-		has_tech = improved_medium_tank
-		has_template_ai_majority_unit = medium_armor
-		num_of_military_factories > 100
-	}
-	abort = {
-		OR = {
-			has_tech = main_battle_tank
-			AND = {
-				has_war = yes
-				surrender_progress > 0.5
-			}
-			num_of_military_factories < 101
-		}
-	}
-	
-	ai_strategy = {
-		type = equipment_production_factor
-		id = motorized
-		value = 50
-	}
-
-	ai_strategy = {
-		type = equipment_production_factor
-		id = armor
-		value = 10
-	}
-	ai_strategy = {
-		type = role_ratio
-		id = armor
-		value = 20
-	}
-	ai_strategy = {
-		type = template_prio
-		id = medium_armor
-		value = 100
-	}
-}
 
 SOV_expand_navy = {	#note: while historical, it also prevents stupid soviet AI wartime behaviour, when it suddenly decides it needs 9999+ convoys and starts building dozens of useless dockyards in (to be conquered) dangerous states.
 	allowed = {

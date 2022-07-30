@@ -1,0 +1,350 @@
+# befriend
+# conquer
+# antagonize
+# build_ship
+# build_army
+# unit_ratio
+# build_building
+# research_tech
+# garrison
+# protect
+# influence
+
+
+default_air_production = {
+	enable = {
+		always = yes
+	}
+
+	#Air unit factors
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = 90
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = cas
+		value = 10
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = tactical_bomber
+		value = 0
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = 0
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = naval_bomber
+		value = 0
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = fighter
+		value = 10
+	}
+}
+
+strategic_bombers_strategy_is_major_1 = {
+	allowed = {
+		OR = {
+			original_tag = GER
+			original_tag = FRA
+			original_tag = ITA
+			original_tag = ENG
+			original_tag = JAP
+			original_tag = USA
+			original_tag = SOV
+		}
+	}
+	enable = {
+		date > 1939.1.1
+		is_major = yes
+		has_war = yes
+		any_enemy_country = { is_major = yes }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -5
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = 5
+	}
+}
+
+strategic_bombers_strategy_is_major_2 = {
+	allowed = {
+		OR = {
+			original_tag = GER
+			original_tag = FRA
+			original_tag = ENG
+			original_tag = ITA
+			original_tag = JAP
+			original_tag = USA
+			original_tag = SOV
+		}
+	}
+	enable = {
+		has_tech = nukes
+		is_major = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -2
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = 2
+	}
+}
+
+
+ITA_strategic_bombers_strategy = {
+	allowed = {
+		original_tag = ITA
+	}
+	enable = {
+		has_war_with = ETH
+		date < 1938.1.1
+	}
+	abort = {
+		NOT = {
+			original_tag = ITA
+			has_war_with = ETH
+		}
+		date > 1938.1.1
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = 8
+	}
+}
+
+no_air_for_small_countries = {
+	allowed = {
+		NOT = {
+			original_tag = GER
+			original_tag = FRA
+			original_tag = ENG
+			original_tag = SOV
+			original_tag = JAP
+			original_tag = ITA
+		}
+	}
+	enable = {
+		num_of_military_factories < 12
+		stockpile_ratio = { archetype = infantry_equipment ratio < 4 }
+		stockpile_ratio = { archetype = artillery_equipment ratio < 3 }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = equipment_production_factor id = fighter value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = cas value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = interceptor value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = strategic_bomber value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = tactical_bomber value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = naval_bomber value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = air_transport value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = suicide value = -1000 }
+}
+
+diversify_air_production_1 = {
+	enable = {
+		num_of_military_factories > 20
+		OR = {
+			has_tech = air_superiority
+			has_tech = force_rotation
+			has_tech = formation_flying
+			has_tech = training_schools
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = unit_ratio
+		id = tactical_bomber
+		value = 10
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -10
+	}
+}
+
+diversify_air_production_2 = {
+	enable = {
+		num_of_military_factories > 24
+		OR = {
+			has_tech = air_superiority
+			has_tech = force_rotation
+			has_tech = formation_flying
+			has_tech = training_schools
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = unit_ratio
+		id = cas
+		value = 10
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -10
+	}
+}
+
+diversify_air_production_3 = {
+	enable = {
+		num_of_naval_factories > 5
+		OR = {
+			num_of_military_factories > 24
+			check_variable = { num_ships_with_type@carrier > 0 }
+		}
+		OR = {
+			has_tech = air_superiority
+			has_tech = force_rotation
+			has_tech = formation_flying
+			has_tech = training_schools
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = unit_ratio
+		id = naval_bomber
+		value = 5
+	}
+	ai_strategy = {
+		type = unit_ratio
+		id = fighter
+		value = -5
+	}
+}
+
+no_more_carrier_fighters = {
+	enable = {
+		OR = {
+			has_navy_size = { size < 1 unit = carrier }
+			stockpile_ratio = { archetype = cv_fighter_equipment ratio > 1 }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = cv_fighter_equipment
+		value = -1000
+	}
+}
+
+no_more_carrier_bombers = {
+	enable = {
+		OR = {
+			has_navy_size = { size < 1 unit = carrier }
+			stockpile_ratio = { archetype = cv_nav_bomber_equipment ratio > 1 }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = cv_nav_bomber_equipment
+		value = -1000
+	}
+}
+
+no_more_carrier_cas = {
+	enable = {
+		OR = {
+			has_navy_size = { size < 1 unit = carrier }
+			stockpile_ratio = { archetype = cv_CAS_equipment ratio > 1 }
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = cv_CAS_equipment
+		value = -1000
+	}
+}
+
+no_strat_bombers = {
+	allowed = {
+		NOT = { original_tag = ITA }
+	}
+	enable = {
+		date < 1938.1.1
+	}
+	abort = {
+		is_major = yes
+		date > 1938.1.1
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = strategic_bomber
+		value = -100
+	}
+}
+
+naval_bombers_strategy = {
+	enable = {
+		NOT = {
+			any_owned_state = {
+				is_coastal = yes
+			}
+		}
+	}
+	abort = {
+		any_owned_state = {
+			is_coastal = yes
+		}
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = tactical_bomber
+		value = 5
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = naval_bomber
+		value = -5
+	}
+}
+
+
+######################################
+##	МИНИМАЛЬНЫЕ ФАБРИКИ
+######################################
+
+transport_factory_assignment = {
+	enable = {
+		OR = {
+			is_major = yes
+			num_of_military_factories > 49
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = { type = equipment_production_min_factories id = air_transport value = 2 }
+}

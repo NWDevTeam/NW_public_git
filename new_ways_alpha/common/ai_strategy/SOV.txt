@@ -54,7 +54,7 @@ SOV_unit_production = {
 
 	ai_strategy = {
 		type = role_ratio
-		id = cavalry
+		id = cavalry_role
 		value = 5
 	}
 
@@ -346,10 +346,12 @@ claims_on_romania = {
 	enable = {
 		has_completed_focus = SOV_claim_on_bessarabia
 		country_exists = ROM
+		NOT = { owns_state = 78 }
 	}
 	abort = {
-		NOT = {
-			country_exists = ROM
+		OR = {
+			NOT = { country_exists = ROM }
+			owns_state = 78
 		}
 	}
 	
@@ -511,13 +513,13 @@ SOV_template_design_1 = {
 	ai_strategy = {
 		type = template_prio
 		id = medium_armor
-		value = -10
+		value = 30
 	}
 
 	ai_strategy = {
 		type = template_prio
 		id = heavy_armor
-		value = 10 #-50
+		value = 20
 	}
 
 	ai_strategy = {
@@ -567,14 +569,14 @@ SOV_template_design_2 = {
 	
 	ai_strategy = {
 		type = template_prio
-		id = modern_armor
-		value = 60
+		id = heavy_armor
+		value = 30
 	}
-
+	
 	ai_strategy = {
 		type = template_prio
-		id = heavy_armor
-		value = 20
+		id = modern_armor
+		value = 60
 	}
 
 	ai_strategy = {
@@ -900,7 +902,6 @@ SOV_have_some_train_production = {
 	allowed = {
 		original_tag = SOV
 	}
-
 	enable = {
 		date > 1936.7.1
 		num_of_military_factories > 50
@@ -911,6 +912,22 @@ SOV_have_some_train_production = {
 		type = equipment_production_min_factories
 		id = train
 		value = 3
+	}
+}
+
+SOV_stock_up_on_trains_before_war = {
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		date > 1939.9.1
+		date < 1941.1.1
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = min_wanted_supply_trains
+		value = 250
 	}
 }
 
@@ -1940,9 +1957,9 @@ SOV_ultimatum_EST = {
 SOV_ultimatum_ROM = {
 	allowed = {
 		original_tag = SOV
+		is_historical_focus_on = yes
 	}
 	enable = {
-		is_historical_focus_on = yes
 		ROM = {
 			NOT = { has_country_flag = SOV_added_claimed_bessarabia } #Added via focus Claim Bessarabia
 		}
@@ -1959,8 +1976,14 @@ SOV_ultimatum_ROM = {
 			}
 		}
 		OR = {
-			NOT = { owns_state = 766 } #Southern Bessarabia
-			766 = {
+			NOT = { owns_state = 818 } #Восточная Bucovina
+			818 = {
+				owner = { NOT = { is_in_faction_with = ROOT } }
+			}
+		}
+		OR = {
+			NOT = { owns_state = 780 } #Буджак
+			780 = {
 				owner = { NOT = { is_in_faction_with = ROOT } }
 			}
 		}
@@ -1985,8 +2008,14 @@ SOV_ultimatum_ROM = {
 					}
 				}
 				OR = {
-					owns_state = 766 #Southern Bessarabia
-					766 = {
+					owns_state = 818 #Восточная Bucovina
+					818 = {
+						owner = { is_in_faction_with = ROOT }
+					}
+				}
+				OR = {
+					owns_state = 780 #Буджак
+					780 = {
 						owner = { is_in_faction_with = ROOT }
 					}
 				}
