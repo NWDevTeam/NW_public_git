@@ -168,11 +168,6 @@ FRA_armored_production = {
 		}
 	}
 	enable = {
-		OR = {
-			original_tag = FRA
-			original_tag = FRC
-			original_tag = FRF
-		}
 		ai_wants_divisions > 12 #Decreasing the amount of tanks the AI wants
 	}
 	abort = {
@@ -195,11 +190,6 @@ FRA_highered_armored_production = {
 		}
 	}
 	enable = {
-		OR = {
-			original_tag = FRA
-			original_tag = FRC
-			original_tag = FRF
-		}
 		num_of_military_factories > 109
 	}
 	abort = {
@@ -212,6 +202,95 @@ FRA_highered_armored_production = {
 		value = 20 #Removed from original production so increased from a bit to a f*** ton (in this case 10 to 20)
 	}
 }
+
+
+# Франция: на старте должны быть лёгкие, средние и тяжёлые танки. Должна пытаться делать все параллельно
+FRA_start_produce_armor = {
+	allowed = {
+		OR = {
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = FRF
+		}
+	}
+	enable = {
+		num_of_military_factories > 19
+	}
+	abort = {
+		OR = {
+			date > 1939.08.01
+			num_of_military_factories > 75
+			num_of_military_factories < 20
+		}
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis		value = 70 }
+	ai_strategy = { type = equipment_variant_production_factor	id = medium_tank_chassis	value = 40 }
+	ai_strategy = { type = equipment_variant_production_factor	id = heavy_tank_chassis		value = 20 }
+	ai_strategy = { type = equipment_production_factor			id = armor					value = 100 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor					value = 15 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized				value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_armor			value = 50 }
+	ai_strategy = { type = template_prio						id = medium_armor			value = 20 }
+	ai_strategy = { type = template_prio						id = heavy_armor			value = 10 }
+	ai_strategy = { type = unit_ratio							id = armor					value = 15 }
+	ai_strategy = { type = role_ratio							id = armor					value = 15 }
+}
+
+# В 1940 должна перейти только на средние и тяжёлые танки, а также должна начать производить ПТ-САУ 
+FRA_actual_produce_armor = {
+	allowed = {
+		OR = {
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = FRF
+		}
+	}
+	enable = {
+		OR = {
+			date > 1939.08.01
+			num_of_military_factories > 75
+		}
+	}
+	abort = {
+		num_of_military_factories < 20
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -100 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_destroyer_chassis	value = 75 }
+	ai_strategy = { type = equipment_variant_production_factor	id = medium_tank_chassis			value = 150 }
+	ai_strategy = { type = equipment_variant_production_factor	id = heavy_tank_chassis				value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 150 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 15 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_armor					value = -100 }
+	ai_strategy = { type = template_prio						id = light_tank_destroyer_brigade	value = 50 }
+	ai_strategy = { type = template_prio						id = medium_armor					value = 75 }
+	ai_strategy = { type = template_prio						id = heavy_armor					value = 50 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 25 }
+	ai_strategy = { type = role_ratio							id = medium_armor_role				value = 15 }
+	ai_strategy = { type = role_ratio							id = heavy_armor_role				value = 10 }
+	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 10 }
+}
+
+FRA_stop_armor_army = {
+	allowed = {
+		original_tag = FRA
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_army_size = {
+			size > 9
+			type = armor
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = { type = build_army	id = armor	value = -5000 }
+	ai_strategy = { type = role_ratio	id = armor	value = -100 }
+}
+
+
+
 FRA_area_priority = {
 	allowed = {
 		OR = {
@@ -556,6 +635,12 @@ FRA_benelux_will_surely_not_fall = {
 			original_tag = FRA
 			original_tag = FRC
 			original_tag = FRF
+			
+			original_tag = FIC
+			original_tag = SYR
+			original_tag = LEB
+			original_tag = ALW
+			
 			is_subject_of = FRA		#достаточно лишь чекнуть их единожды
 		}
 	}
@@ -568,14 +653,14 @@ FRA_benelux_will_surely_not_fall = {
 	}
 
 	abort = {
+		if = {
+			limit = { is_historical_focus_on = no }
+			date > 1941.8.1
+		}
 		OR = {
-			if = {
-				limit = { is_historical_focus_on = no }
-				date > 1941.8.1
-			}
 			AND = {
-				HOL = { surrender_progress > 0.30 }
-				BEL = { surrender_progress > 0.30 }
+				HOL = { has_capitulated = yes }
+				BEL = { has_capitulated = yes }
 			}
 		}
 	}
@@ -607,5 +692,31 @@ FRA_benelux_will_surely_not_fall = {
 		area = europe
 		subtract_invasions_from_need = no
 		subtract_fronts_from_need = yes
+	}
+}
+
+FIN_we_hate_fighting_in_the_balkans = {
+	allowed = {
+		OR = {
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = FRF
+			
+			original_tag = FIC
+			original_tag = SYR
+			original_tag = LEB
+			original_tag = ALW
+			
+			is_subject_of = FRA		#достаточно лишь чекнуть их единожды
+		}
+	}
+	enable = {
+		date < 1942.1.1
+	}
+
+	ai_strategy = {
+		type = dont_defend_ally_borders #Just a bit, we wait for greece
+		id = YUG
+		value = 30
 	}
 }

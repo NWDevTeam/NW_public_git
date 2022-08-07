@@ -53,7 +53,17 @@ CHI_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = infantry
-		value = 100
+		value = 90
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = anti_armor
+		value = 5
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = mobile
+		value = 5
 	}
 	
 	#Air unit factors
@@ -193,7 +203,7 @@ CHI_highered_armored_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = armor
-		value = 0
+		value = 10
 	}
 }
 
@@ -240,13 +250,13 @@ CHI_some_safer_places_to_build = {
 
 	ai_strategy = {
         type = factory_build_score_factor
-        target =  602
+        target = 602
         value = 300
     }
 
 	ai_strategy = {
         type = factory_build_score_factor
-        target =  605
+        target = 605
         value = 300
     }
 }
@@ -313,7 +323,7 @@ CHI_ignore_warlords = {
 		}
 	}
 	enable = {
-		is_historical_focus_on = yes
+		always = yes
 	}
 	abort_when_not_enabled = yes
 
@@ -361,7 +371,6 @@ CHI_ignore_other_countries = {
 		}
 	}
 	enable = {
-		is_historical_focus_on = yes
 		has_war_with = JAP
 	}
 	abort_when_not_enabled = yes
@@ -376,7 +385,7 @@ CHI_ignore_other_countries = {
 	}
 }
 
-CHI_garrison_coast = {
+CHI_no_coastal_garrison = {
 	allowed = { 
 		OR = {
 			tag = CHI
@@ -395,40 +404,68 @@ CHI_garrison_coast = {
 		}
 	}
 	enable = {
+		JAP = { is_ai = yes }
 		has_war_with = JAP
-		OR = {
-			JAP = { is_ai = no }
-			CHI = { surrender_progress > 0.5 }
-		}
-		surrender_progress < 0.4
-		any_owned_state = { is_coastal = yes }
-		if = {
-			limit = { NOT = { tag = CHI } }
-			NOT = { surrender_progress > 0 }
-		}
 	}
+
 	abort_when_not_enabled = yes
 
-	ai_strategy = {
-		type = put_unit_buffers
-		ratio = 0.35
-		states = { 
-			597
-			743
-			598
-			613
-			596
-			595
-			593
-			1162
-			592
-			591
-			1129
-		}
-		subtract_invasions_from_need = no
-		subtract_fronts_from_need = no
-	}
+	ai_strategy = { type = garrison value = -2000 }
 }
+
+#CHI_garrison_coast = {
+#	allowed = { 
+#		OR = {
+#			tag = CHI
+#			tag = XSM
+#			tag = PRC
+#			tag = YUN
+#			tag = GXC
+#			tag = SHX
+#			tag = NGX
+#			tag = SIH
+#			tag = XIK
+#			tag = NEA
+#			tag = SHA
+#			tag = HCP
+#			tag = YUL
+#		}
+#	}
+#	enable = {
+#		has_war_with = JAP
+#		OR = {
+#			JAP = { is_ai = no }
+#			CHI = { surrender_progress > 0.5 }
+#		}
+#		surrender_progress < 0.4
+#		any_owned_state = { is_coastal = yes }
+#		if = {
+#			limit = { NOT = { tag = CHI } }
+#			NOT = { surrender_progress > 0 }
+#		}
+#	}
+#	abort_when_not_enabled = yes
+
+#	ai_strategy = {
+#		type = put_unit_buffers
+#		ratio = 0.35
+#		states = { 
+#			597
+#			743
+#			598
+#			613
+#			596
+#			595
+#			593
+#			1162
+#			592
+#			591
+#			1129
+#		}
+#		subtract_invasions_from_need = no
+#		subtract_fronts_from_need = no
+#	}
+#}
 
 CHI_defensive_vs_JAP_careful_north = {
 	allowed = {
@@ -549,7 +586,7 @@ NW_CHI_not_ally_axis = {
 	}
 	enable = {
 		NOT = {
-			has_completed_focus = GER_china_friend
+			GER = { has_completed_focus = GER_china_friend }
 			has_global_flag = germany_supports_china
 			is_in_faction_with = GER
 		}
@@ -573,4 +610,237 @@ NW_CHI_not_ally_ITA = {
 	
 	ai_strategy = { type = diplo_action_desire id = ITA target = join_faction value = -1000 }
 	ai_strategy = { type = diplo_action_acceptance id = ITA target = offer_join_faction value = -1000 }
+}
+
+
+
+GER_volunteers_to_CHI = {
+	reversed = yes
+	allowed = {
+		original_tag = GER
+	}
+	enable = {
+		date < 1938.1.1
+		original_tag = CHI
+		exists = yes
+		has_war_with = JAP
+		GER = {
+			OR = {
+				has_government = fascism
+				has_government = neutrality
+				has_government = monarchy
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "GER"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "GER"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "GER"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = GER target = send_attache value = 40000 }
+}
+
+USA_volunteers_to_CHI = {
+	reversed = yes
+	allowed = {
+		original_tag = USA
+	}
+	enable = {
+		date > 1938.1.1
+		original_tag = CHI
+		exists = yes
+		has_war_with = JAP
+		USA = {
+			NOT = {
+				has_government = fascism
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "USA"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "USA"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "USA"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = USA target = send_attache value = 40000 }
+}
+
+ENG_volunteers_to_CHI = {
+	reversed = yes
+	allowed = {
+		original_tag = ENG
+	}
+	enable = {
+		date > 1938.1.1
+		original_tag = CHI
+		exists = yes
+		has_war_with = JAP
+		ENG = {
+			NOT = {
+				has_government = fascism
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "ENG"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "ENG"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "ENG"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = ENG target = send_attache value = 40000 }
+}
+
+comintern_volunteers_to_CHI = {
+	allowed = {
+		OR = {
+			original_tag = SOV
+			original_tag = MON
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = SPR
+		}
+	}
+	enable = {
+		OR = {
+			has_government = communism
+			has_government = trozkism
+		}
+		CHI = {
+			exists = yes
+			has_war_with = JAP
+			NOT = { has_war_with = ROOT }
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "CHI"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "CHI"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "CHI"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = CHI target = send_attache value = 40000 }
+}
+
+comintern_volunteers_to_PRC = {
+	allowed = {
+		OR = {
+			original_tag = SOV
+			original_tag = MON
+			original_tag = FRA
+			original_tag = FRC
+			original_tag = SPR
+		}
+	}
+	enable = {
+		OR = {
+			has_government = communism
+			has_government = trozkism
+		}
+		PRC = {
+			exists = yes
+			has_war_with = JAP
+			NOT = { has_war_with = ROOT }
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "PRC"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "PRC"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "PRC"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = PRC target = send_attache value = 40000 }
+}
+
+SOV_volunteers_to_red_clique = {
+	reversed = yes
+	allowed = {
+		original_tag = SOV
+	}
+	enable = {
+		SOV = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+		}
+		is_chinese_warlord = yes
+		exists = yes
+		has_war_with = JAP
+		NOT = { has_war_with = SOV }
+		NOT = { has_war_with = PRC }
+		if = {
+			limit = {
+				CHI = { has_volunteers_amount_from = { tag = SOV count > 0 } }
+				NOT = { has_war_with = CHI }
+			}
+		}
+		has_government = SOV
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = send_volunteers_desire
+		id = "SOV"
+		value = 75
+	}
+	ai_strategy = {
+		type = support
+		id = "SOV"
+		value = 100
+	}
+	ai_strategy = {
+		type = send_lend_lease_desire
+		id = "SOV"
+		value = 100
+	}
+	ai_strategy = { type = diplo_action_desire id = SOV target = send_attache value = 40000 }
 }

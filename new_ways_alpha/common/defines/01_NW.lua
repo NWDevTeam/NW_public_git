@@ -2,6 +2,9 @@
 NDefines.NGame.LAG_DAYS_FOR_LOWER_SPEED = 100								-- Days of client lag for decrease of gamespeed
 NDefines.NGame.LAG_DAYS_FOR_PAUSE = 60										-- Days of client lag for pause of gamespeed.
 
+-- Focuses
+NDefines.NFocus.MAX_SAVED_FOCUS_PROGRESS = 5								-- This much progress can be saved while not having a focus selected
+
 -- Country
 NDefines.NCountry.EVENT_PROCESS_OFFSET = 30									-- Events are checked every X day per country or state (1 is ideal, but CPU heavy)
 NDefines.NCountry.SPECIAL_FORCES_CAP_BASE = 0.05							-- Max ammount of special forces battalions is total number of non-special forces battalions multiplied by this and modified by a country modifier
@@ -20,6 +23,8 @@ NDefines.NDiplomacy.VERY_BAD_OPINION = -100									-- Threshold for a country t
 NDefines.NDiplomacy.IDEOLOGY_JOIN_FACTION_MIN_LEVEL = 0.4					-- ideology limit required to join faction
 NDefines.NDiplomacy.DIPLOMACY_HOURS_BETWEEN_REQUESTS = 0					-- How long a country must wait before sending a new diplomatic request.
 NDefines.NDiplomacy.MIN_TRUST_VALUE = -500									-- max value for embargo, vanilla -100
+NDefines.NDiplomacy.BASE_SEND_ATTACHE_COST = 50								-- Political power cost to send attache
+NDefines.NDiplomacy.BASE_SEND_ATTACHE_CP_COST = 25							-- Command Power sent attache usage cost
 
 -- Technology
 NDefines.NTechnology.MAX_SUBTECHS = 4										-- Max number of sub technologies a technology can have.

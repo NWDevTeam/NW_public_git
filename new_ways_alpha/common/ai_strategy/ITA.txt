@@ -424,9 +424,14 @@ NW_ITA_wants_arms_factory = {
 	ai_strategy = { type = building_target	id = arms_factory	value = 100	}
 }
 
+###################################
 ######## END CONSRTUCTIONS ########
+###################################
 
 
+############################
+######## PRODUCTION ########
+############################
 
 ITA_stockpile_less_early_game = {
 	allowed = { original_tag = ITA }
@@ -517,7 +522,7 @@ ITA_prepare_barbarossa_armor = {
 	allowed = { original_tag = ITA }
 	enable = {
 		OR = {
-			date > 1940.01.01
+			date > 1939.01.01
 			num_of_military_factories > 100
 		}
 		OR = {
@@ -531,74 +536,104 @@ ITA_prepare_barbarossa_armor = {
 	ai_strategy = { type = build_army id = motorized	value = 50 }
 	ai_strategy = { type = force_build_armies			value = 250 }
 	
-	ai_strategy = { type = equipment_production_min_factories id = armor		value = 20 }
-	ai_strategy = { type = equipment_production_min_factories id = motorized	value = 10 }
+	ai_strategy = { type = equipment_production_min_factories id = armor		value = 25 }
+	ai_strategy = { type = equipment_production_min_factories id = motorized	value = 15 }
 }
 
 
-ITA_you_need_produce_light_tanks = {
+# Италия: на старте должны быть лёгкие танки
+ITA_start_produce_armor = {
 	allowed = { original_tag = ITA }
 	enable = {
-		always = yes
+		num_of_military_factories > 19
 	}
+	abort = {
+		OR = {
+			date > 1943.01.01
+			num_of_military_factories > 100
+			num_of_military_factories < 20
+		}
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis		value = 250 }
+	ai_strategy = { type = equipment_production_factor			id = armor					value = 125 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized				value = 5 }
 	
-	ai_strategy = {
-		type = equipment_variant_production_factor
-		id = light_tank_chassis
-		value = 40
-	}
-	ai_strategy = {
-		type = equipment_production_factor
-		id = armor
-		value = 125
-	}
-	ai_strategy = {
-		type = equipment_production_min_factories
-		id = armor
-		value = 5
-	}
-	ai_strategy = {
-		type = template_prio
-		id = armor
-		value = 50
-	}
-	ai_strategy = {
-		type = unit_ratio
-		id = armor
-		value = 50
-	}
-	ai_strategy = {
-		type = role_ratio
-		id = armor
-		value = 35
-	}
-	ai_strategy = {
-		type = equipment_production_factor
-		id = motorized
-		value = 30
-	}
-	ai_strategy = {
-		type = equipment_production_min_factories
-		id = motorized
-		value = 3
-	}
-	ai_strategy = {
-		type = template_prio
-		id = motorized
-		value = 25
-	}
-	ai_strategy = {
-		type = unit_ratio
-		id = motorized
-		value = 20
-	}
-	ai_strategy = {
-		type = role_ratio
-		id = motorized
-		value = 20
-	}
-	ai_strategy = { type = build_army id = light_armor	value = 20 }
+	ai_strategy = { type = template_prio						id = light_armor			value = 75 }
+	ai_strategy = { type = template_prio						id = medium_armor			value = 75 }
+	ai_strategy = { type = unit_ratio							id = armor					value = 25 }
+	ai_strategy = { type = role_ratio							id = armor					value = 20 }
 }
+
+# С 1940 года должна начать строить САУ
+ITA_actually_produce_armor_2 = {
+	allowed = { original_tag = ITA }
+	enable = {
+		OR = {
+			date > 1939.08.01
+			num_of_military_factories > 50
+		}
+	}
+	abort = {
+		num_of_military_factories < 30
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_artillery_chassis	value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_sp_artillery_brigade		value = 125 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 35 }
+	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 10 }
+}
+
+# С 1941 года - ПТ-САУ
+ITA_actually_produce_armor_3 = {
+	allowed = { original_tag = ITA }
+	enable = {
+		OR = {
+			date > 1940.08.01
+			num_of_military_factories > 60
+		}
+	}
+	abort = {
+		num_of_military_factories < 35
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_destroyer_chassis	value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_tank_destroyer_brigade	value = 125 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 40 }
+	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 10 }
+}
+
+# С 1943 года - средние танки, замещая постепенно лёгкие танки
+ITA_time_to_leave_light_tanks = {
+	allowed = { original_tag = ITA }
+	enable = {
+		OR = {
+			date > 1942.08.01
+			num_of_military_factories > 150
+		}
+	}
+	abort = {
+		num_of_military_factories < 20
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = medium_tank_chassis			value = 300 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -150 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 125 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 25 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 10 }
+	
+	ai_strategy = { type = template_prio						id = light_armor					value = -100 }
+	ai_strategy = { type = template_prio						id = medium_armor					value = 150 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 50 }
+	ai_strategy = { type = role_ratio							id = medium_armor_role				value = 20 }
+	ai_strategy = { type = build_army							id = medium_armor					value = 24 }
+}
+
 
 ITA_anti_armor = {
 	allowed = { original_tag = ITA }

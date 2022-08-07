@@ -52,6 +52,11 @@ less_trucks_4_u_JAP = {
 		id = garrison
 		value = 12
 	}
+	ai_strategy = {
+		type = role_ratio
+		id = artillery
+		value = 10
+	}
 	
 	ai_strategy = {
 		type = template_prio
@@ -130,6 +135,11 @@ JAP_build_some_factories_jeez = {
 		type = role_ratio
 		id = infantry
 		value = 80
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = artillery
+		value = 15
 	}
 	
 	ai_strategy = { 
@@ -608,28 +618,118 @@ JAP_naval_role_ratios_historical_late = {
 }
 
 
-#Фокус на танки-амфибии
+# Япония: на старте должны быть легкие танки и средние танки
+JAP_start_produce_armor = {
+	allowed = { original_tag = JAP }
+	enable = {
+		num_of_military_factories > 19
+	}
+	abort = {
+		OR = {
+			date > 1940.08.01
+			num_of_military_factories > 75
+			num_of_military_factories < 20
+		}
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis		value = 250 }
+	ai_strategy = { type = equipment_production_factor			id = armor					value = 125 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized				value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_armor			value = 75 }
+	ai_strategy = { type = unit_ratio							id = armor					value = 25 }
+	ai_strategy = { type = role_ratio							id = armor					value = 15 }
+}
+
+# Япония: на старте должны быть легкие танки и средние танки
+JAP_produce_medium_armor = {
+	allowed = { original_tag = JAP }
+	enable = {
+		num_of_military_factories > 19
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = { type = equipment_variant_production_factor	id = medium_tank_chassis	value = 200 }
+	ai_strategy = { type = equipment_production_factor			id = armor					value = 125 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor					value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = support				value = 5 }
+	ai_strategy = { type = equipment_production_min_factories	id = artillery				value = 3 }
+	
+	ai_strategy = { type = template_prio						id = medium_armor			value = 125 }
+	ai_strategy = { type = unit_ratio							id = armor					value = 25 }
+	ai_strategy = { type = role_ratio							id = medium_armor_role		value = 25 }
+}
+
+# Постепенно лёгкие танки замещаются плавающими танками
 JAP_you_need_to_actually_produce_amphibious_armor = {
 	allowed = { original_tag = JAP }
 	enable = {
-		original_tag = JAP
 		has_tech = amphibious_tank_chassis
-		num_of_military_factories > 50
+		OR = {
+			date > 1938.08.01
+			num_of_military_factories > 50
+		}
 	}
 	abort = {
-		num_of_military_factories < 50
+		num_of_military_factories < 20
 	}
 	ai_strategy = { type = equipment_variant_production_factor	id = amphibious_tank_chassis	value = 250 }
-	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis			value = -100 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis			value = -350 }
 	ai_strategy = { type = equipment_production_factor			id = armor						value = 125 }
 	ai_strategy = { type = equipment_production_min_factories	id = armor						value = 5 }
 	
+	ai_strategy = { type = template_prio						id = light_armor				value = -75 }
 	ai_strategy = { type = template_prio						id = amphibious_armor			value = 75 }
 	ai_strategy = { type = unit_ratio							id = armor						value = 50 }
 	ai_strategy = { type = role_ratio							id = amphibious_armor			value = 15 }
 	ai_strategy = { type = build_army							id = amphibious_armor			value = 24 }
 	ai_strategy = { type = equipment_production_factor			id = motorized					value = 30 }
 	ai_strategy = { type = equipment_production_min_factories	id = motorized					value = 5 }
+}
+
+# В 1940 году начинается производство САУ
+JAP_actually_produce_armor = {
+	allowed = { original_tag = JAP }
+	enable = {
+		OR = {
+			date > 1939.08.01
+			num_of_military_factories > 100
+		}
+	}
+	abort = {
+		num_of_military_factories < 30
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_artillery_chassis	value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 10 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_sp_artillery_brigade		value = 75 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 5 }
+	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 5 }
+	ai_strategy = { type = build_army							id = light_artillery_armor_role		value = 10 }
+}
+
+# В 1941 году начинается производство ПТ-САУ
+JAP_actually_produce_armor = {
+	allowed = { original_tag = JAP }
+	enable = {
+		OR = {
+			date > 1940.08.01
+			num_of_military_factories > 125
+		}
+	}
+	abort = {
+		num_of_military_factories < 40
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_destroyer_chassis	value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 10 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_tank_destroyer_brigade	value = 75 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 5 }
+	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 5 }
+	ai_strategy = { type = build_army							id = light_tank_destroyer_role		value = 10 }
 }
 
 

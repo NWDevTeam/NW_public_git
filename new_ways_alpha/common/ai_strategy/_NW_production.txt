@@ -343,7 +343,8 @@ stop_infantry_production = {
 	abort = {
 		has_equipment = { infantry_equipment < 100000 }
 	}
-	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment value = -1000 }
+	ai_strategy = { type = equipment_production_factor id = infantry					value = -100 }
+	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment	value = -1000 }
 }
 
 reduce_infantry_production = {
@@ -389,6 +390,7 @@ stop_artillery_production = {
 	abort = {
 		has_equipment = { artillery_equipment < 25000 }
 	}
+	ai_strategy = { type = equipment_production_factor id = artillery					value = -100 }
 	ai_strategy = { type = equipment_variant_production_factor id = artillery_equipment value = -1000 }
 }
 
@@ -467,6 +469,15 @@ reduce_motorized_production = {
 	ai_strategy = { type = equipment_variant_production_factor id = motorized_equipment	value = -75 }
 	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment	value = 5 }
 }
+reduce_motorized_production_2 = {
+	enable = {
+		has_equipment = { motorized_equipment > 10000 }
+	}
+	abort = {
+		has_equipment = { motorized_equipment < 1000 }
+	}
+	ai_strategy = { type = equipment_production_factor id = motorized	value = -25 }
+}
 
 
 reduce_support_production = {
@@ -478,6 +489,15 @@ reduce_support_production = {
 	}
 	ai_strategy = { type = equipment_variant_production_factor id = support_equipment	value = -75 }
 	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment	value = 5 }
+}
+reduce_support_production_2 = {
+	enable = {
+		has_equipment = { support_equipment > 5000 }
+	}
+	abort = {
+		has_equipment = { support_equipment < 1000 }
+	}
+	ai_strategy = { type = equipment_production_factor id = support		value = -25 }
 }
 support_equipment_assignment = {
 	enable = {	
@@ -503,6 +523,15 @@ reduce_anti_air_production = {
 	}
 	ai_strategy = { type = equipment_variant_production_factor id = anti_air_equipment	value = -200 }
 }
+reduce_anti_air_production_2 = {
+	enable = {
+		has_equipment = { anti_air_equipment > 5000 }
+	}
+	abort = {
+		has_equipment = { anti_air_equipment < 1000 }
+	}
+	ai_strategy = { type = equipment_production_factor id = anti_air	value = -25 }
+}
 
 reduce_anti_tank_production = {
 	enable = {
@@ -513,7 +542,6 @@ reduce_anti_tank_production = {
 	}
 	ai_strategy = { type = equipment_variant_production_factor id = anti_tank_equipment	value = -400 }
 }
-
 reduce_anti_tank_production_2 = {
 	enable = {
 		num_of_military_factories < 50
@@ -521,6 +549,15 @@ reduce_anti_tank_production_2 = {
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = { type = equipment_variant_production_factor id = anti_tank_equipment	value = -99 }
+}
+reduce_anti_tank_production_3 = {
+	enable = {
+		has_equipment = { anti_tank_equipment > 5000 }
+	}
+	abort = {
+		has_equipment = { anti_tank_equipment < 1000 }
+	}
+	ai_strategy = { type = equipment_production_factor id = anti_tank	value = -25 }
 }
 
 
@@ -777,15 +814,20 @@ fire_tank_nsb = {
 
 
 
-
 ### MILITARY AI ###
 
 default_unit_production = {
 	allowed = {
-		NOT = { original_tag = GER original_tag = ENG original_tag = SOV original_tag = ITA original_tag = JAP original_tag = USA original_tag = POL }
+		NOT = {
+			original_tag = GER original_tag = ENG original_tag = SOV original_tag = ITA original_tag = JAP original_tag = USA
+			original_tag = POL original_tag = CHI
+		}
 	}
 	enable = {
 		always = yes
+	}
+	abort = {
+		always = no
 	}
 	ai_strategy = {
 		type = role_ratio
@@ -1712,6 +1754,29 @@ major_armored_car_production = {
 	}
 }
 
+NW_more_motorized_focused_nation = {
+	enable = {
+		motorized_role_prioritet = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = role_ratio
+		id = motorized
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = motorized_equipment
+		value = 15
+	}
+}
+
 NW_more_armored_car_focused_nation = {
 	enable = {
 		has_tech = armored_car1
@@ -1745,17 +1810,9 @@ NW_more_armored_car_focused_nation = {
 
 NW_more_armored_car_focused_nation_2 = {
 	enable = {
-		has_tech = armored_car1
-		OR = {
-			capital_scope = { is_on_continent = south_america }
-			capital_scope = { is_on_continent = africa }
-			capital_scope = { is_on_continent = middle_east }
-			capital_scope = { is_on_continent = asia }
-		}
+		armored_car_role_prioritet = yes
 	}
-	abort = {
-		always = no
-	}
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = role_ratio
@@ -1851,13 +1908,15 @@ NW_more_light_armor_production = {
 		has_army_manpower = { type = infantry size > 1000000 }
 	}
 	abort = {
-		num_of_military_factories < 50
-		has_army_manpower = { type = infantry size < 900000 }
+		OR = {
+			num_of_military_factories < 50
+			has_army_manpower = { type = infantry size < 900000 }
+		}
 	}
 
 	ai_strategy = {
 		type = equipment_production_factor
-		id = armor
+		id = flame
 		value = 40
 	}
 	ai_strategy = {
@@ -1877,7 +1936,7 @@ NW_more_light_armor_production = {
 	}
 	ai_strategy = {
 		type = role_ratio
-		id = armor
+		id = fire_tank
 		value = 14
 	}
 }
@@ -1898,8 +1957,10 @@ NW_more_medium_armor_production = {
 		has_army_manpower = { type = infantry size > 1000000 }
 	}
 	abort = {
-		num_of_military_factories < 74
-		has_army_manpower = { type = infantry size < 900000 }
+		OR = {
+			num_of_military_factories < 74
+			has_army_manpower = { type = infantry size < 900000 }
+		}
 	}
 
 	ai_strategy = {
@@ -1924,40 +1985,6 @@ NW_more_medium_armor_production = {
 	}
 }
 
-NW_more_heavy_armor_production = {
-	allowed = {
-		original_tag = ENG
-	}
-	enable = {
-		num_of_military_factories > 115
-		has_army_manpower = { type = infantry size > 1000000 }
-	}
-	abort = {
-		num_of_military_factories < 115
-		has_army_manpower = { type = infantry size < 900000 }
-	}
-
-	ai_strategy = {
-		type = equipment_production_factor
-		id = armor
-		value = 50
-	}
-	ai_strategy = {
-		type = equipment_variant_production_factor
-		id = heavy_tank_chassis
-		value = 50
-	}
-	ai_strategy = {
-		type = role_ratio
-		id = infantry
-		value = -14
-	}
-	ai_strategy = {
-		type = role_ratio
-		id = heavy_armor_role
-		value = 24
-	}
-}
 
 
 ###################################
@@ -1979,7 +2006,7 @@ NW_fire_light_armor_production = {
 
 	ai_strategy = {
 		type = equipment_production_factor
-		id = armor
+		id = flame
 		value = 50
 	}
 	ai_strategy = {
@@ -1991,6 +2018,16 @@ NW_fire_light_armor_production = {
 		type = role_ratio
 		id = fire_tank
 		value = 10
+	}
+	ai_strategy = {
+		type = template_prio
+		id = light_flame_tank
+		value = 75
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_flame_tank
+		value = 25
 	}
 }
 
@@ -2014,7 +2051,7 @@ NW_fire_medium_armor_production = {
 
 	ai_strategy = {
 		type = equipment_production_factor
-		id = armor
+		id = flame
 		value = 75
 	}
 	ai_strategy = {
@@ -2031,6 +2068,16 @@ NW_fire_medium_armor_production = {
 		type = role_ratio
 		id = fire_tank
 		value = 15
+	}
+	ai_strategy = {
+		type = template_prio
+		id = light_flame_tank
+		value = 40
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_flame_tank
+		value = 75
 	}
 }
 
@@ -2052,8 +2099,8 @@ NW_fire_heavy_armor_production = {
 	}
 	ai_strategy = {
 		type = equipment_production_factor
-		id = armor
-		value = 10
+		id = flame
+		value = 100
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
@@ -2064,5 +2111,20 @@ NW_fire_heavy_armor_production = {
 		type = role_ratio
 		id = fire_tank
 		value = 10
+	}
+	ai_strategy = {
+		type = template_prio
+		id = light_flame_tank
+		value = -50
+	}
+	ai_strategy = {
+		type = template_prio
+		id = medium_flame_tank
+		value = -50
+	}
+	ai_strategy = {
+		type = template_prio
+		id = heavy_flame_tank
+		value = 75
 	}
 }

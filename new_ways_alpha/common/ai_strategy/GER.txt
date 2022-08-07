@@ -56,7 +56,7 @@ GER_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = motorized
-		value = 10
+		value = 15
 	}
 	ai_strategy = {
 		type = unit_ratio
@@ -827,7 +827,7 @@ GER_convoys_low = {
 	ai_strategy = {
 		type = equipment_production_factor
 		id = infantry
-		value = -30
+		value = -15
 	}
 	ai_strategy = {
 		type = equipment_production_factor
@@ -864,7 +864,7 @@ GER_convoys_critical = {
 	ai_strategy = {	
 		type = equipment_production_factor
 		id = infantry
-		value = -120
+		value = -50
 	}
 	ai_strategy = {
 		type = equipment_production_factor
@@ -899,7 +899,7 @@ GER_build_950k_army = {		#Необходимо для различных фок�
 	ai_strategy = { type = build_army id = motorized	value = 24 }
 	ai_strategy = { type = force_build_armies			value = 500 }
 	
-	ai_strategy = { type = equipment_production_min_factories id = infantry		value = 5 }
+	ai_strategy = { type = equipment_production_min_factories id = infantry		value = 10 }
 	ai_strategy = { type = equipment_production_min_factories id = artillery	value = 4 }
 	ai_strategy = { type = equipment_production_min_factories id = support		value = 8 }
 	ai_strategy = { type = equipment_production_min_factories id = armor		value = 5 }
@@ -971,9 +971,9 @@ GER_prepare_barbarossa_armor = {
 GER_dont_upgrade_to_weapons_3_too_early = {
 	allowed = {
 		original_tag = GER
+		is_historical_focus_on = yes
 	}
 	enable = {
-		is_historical_focus_on = yes
 		has_equipment = { infantry_equipment < 60000 }
 	}
 
@@ -1231,7 +1231,7 @@ GER_halt_light_armor_production_in_transitioning = {
 	ai_strategy = {
 		type = equipment_variant_production_factor
 		id = light_tank_chassis
-		value = -50
+		value = -25
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
@@ -1274,7 +1274,7 @@ GER_start_produce_light_artillery_armor = {
 		num_of_military_factories < 20
 	}
 	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_artillery_chassis	value = 100 }
-	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -100 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -25 }
 	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
 	
 	ai_strategy = { type = unit_ratio							id = armor							value = 10 }
@@ -1315,7 +1315,6 @@ GER_start_produce_light_tank_destroyer_armor = {
 		num_of_military_factories < 25
 	}
 	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_destroyer_chassis	value = 100 }
-	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_chassis				value = -100 }
 	ai_strategy = { type = equipment_production_factor			id = armor							value = 50 }
 	
 	ai_strategy = { type = unit_ratio							id = armor							value = 10 }
@@ -1343,6 +1342,94 @@ GER_super_boost_light_tank_destroyer_armor = {
 	ai_strategy = { type = template_prio			id = light_tank_destroyer_brigade		value = 250	}
 }
 
+
+
+#1942 должны к ним добавятся тяжелые танки и ср. ЗСУ
+GER_actually_produce_armor_1 = {
+	allowed = { original_tag = GER }
+	enable = {
+		OR = {
+			date > 1941.08.01
+			num_of_military_factories > 125
+		}
+	}
+	abort = {
+		num_of_military_factories < 20
+	}
+	ai_strategy = { type = equipment_variant_production_factor	id = heavy_tank_chassis				value = 250 }
+	ai_strategy = { type = equipment_variant_production_factor	id = medium_tank_aa_chassis			value = 150 }
+	ai_strategy = { type = equipment_variant_production_factor	id = light_tank_aa_chassis			value = 100 }
+	ai_strategy = { type = equipment_production_factor			id = armor							value = 125 }
+	ai_strategy = { type = equipment_production_min_factories	id = armor							value = 10 }
+	ai_strategy = { type = equipment_production_min_factories	id = motorized						value = 5 }
+	
+	ai_strategy = { type = template_prio						id = light_armor					value = -100 }
+	ai_strategy = { type = template_prio						id = heavy_armor					value = 150 }
+	ai_strategy = { type = template_prio						id = medium_sp_anti_air_brigade		value = 100 }
+	ai_strategy = { type = template_prio						id = light_sp_anti_air_brigade		value = 75 }
+	ai_strategy = { type = unit_ratio							id = armor							value = 40 }
+	ai_strategy = { type = role_ratio							id = heavy_armor_role				value = 20 }
+	ai_strategy = { type = role_ratio							id = medium_anti_air_role			value = 5 }
+	ai_strategy = { type = role_ratio							id = light_anti_air_role			value = 5 }
+	ai_strategy = { type = build_army							id = heavy_armor					value = 20 }
+	ai_strategy = { type = build_army							id = medium_anti_air_role			value = 10 }
+	ai_strategy = { type = build_army							id = light_anti_air_role			value = 10 }
+}
+GER_super_boost_heavy_armor = {
+	allowed = { original_tag = GER }
+	enable = {
+		OR = {
+			has_tech = improved_heavy_tank
+			has_tech = improved_heavy_tank_chassis
+		}
+		OR = {
+			date > 1941.08.01
+			num_of_military_factories > 125
+		}
+		NOT = { has_template_ai_majority_unit = heavy_armor }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = land_xp_spend_priority	id = division_template		value = 100 }
+	ai_strategy = { type = template_prio			id = heavy_armor			value = 250	}
+}
+GER_super_boost_medium_anti_air_armor = {
+	allowed = { original_tag = GER }
+	enable = {
+		OR = {
+			has_tech = improved_medium_tank
+			has_tech = improved_medium_tank_chassis
+		}
+		OR = {
+			date > 1941.08.01
+			num_of_military_factories > 125
+		}
+		NOT = { has_template_ai_majority_unit = medium_sp_anti_air_brigade }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = land_xp_spend_priority	id = division_template			value = 100 }
+	ai_strategy = { type = template_prio			id = medium_sp_anti_air_brigade	value = 250	}
+}
+GER_super_boost_light_anti_air_armor = {
+	allowed = { original_tag = GER }
+	enable = {
+		OR = {
+			has_tech = improved_light_tank
+			has_tech = improved_light_tank_chassis
+		}
+		OR = {
+			date > 1941.08.01
+			num_of_military_factories > 125
+		}
+		has_template_ai_majority_unit = medium_sp_anti_air_brigade
+		NOT = { has_template_ai_majority_unit = light_sp_anti_air_brigade }
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = { type = land_xp_spend_priority	id = division_template			value = 100 }
+	ai_strategy = { type = template_prio			id = light_sp_anti_air_brigade	value = 250	}
+}
 
 
 
