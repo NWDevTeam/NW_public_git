@@ -622,28 +622,12 @@ focus_tree = {
 				}
 			}
 			build_railway = {
-				#level = 3
-				path = { 438 3483 6557 11543 }
-			}
-			#build_railway = {
-			#	#level = 2
-			#	path = { 11543 6520 11503 560 6280 11341 9304 }
-			#}
-			#build_railway = {
-			#	#level = 2
-			#	path = { 9236 277 }
-			#}
-			#build_railway = {
-			#	#level = 2
-			#	path = { 277 406 11391 11342 }
-			#}
-			build_railway = {
 				#level = 2
-				path = { 11550 3562 438 }
+				path = { 11479 9558 572 6435 }
 			}
 			build_railway = {
 				#level = 2
-				path = { 11357 11329 9316 9290 }
+				path = { 3559 11399 14580 11507 6522 13391 }
 			}
 		}
 	}
@@ -3590,8 +3574,24 @@ focus_tree = {
 		available = {
 			NOT = { has_completed_focus = POL_complete_plan_west }
 			OR = {
-				ROOT = { controls_state = 770 }
-				ROOT = { controls_state = 85 }
+				770 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+						has_full_control_of_state = PREV
+					}
+				}
+				85 = {
+					owner = {
+						OR = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+						has_full_control_of_state = PREV
+					}
+				}
 			}
 		}
 
@@ -3603,9 +3603,17 @@ focus_tree = {
 		
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
-			IF = {
+			if = {
 				limit = {
-					ROOT = { controls_state = 85 }
+					85 = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+							has_full_control_of_state = PREV
+						}
+					}
 				}
 				85 = {
 					add_building_construction = {
@@ -3646,8 +3654,18 @@ focus_tree = {
 					}
 				}
 			}
-			IF = {
-				limit = { ROOT = { controls_state = 770 } }
+			if = {
+				limit = {
+					770 = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+							has_full_control_of_state = PREV
+						}
+					}
+				}
 				770 = {
 					add_building_construction = {
 						type = bunker
@@ -4329,10 +4347,22 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			build_railway = {
-				#level = 2
-				start_province = 560
-				target_province = 6557
+				#level = 1
+				start_province = 3392
+				target_province = 9304
 			}
+			build_railway = {
+				#level = 1
+				path = { 6435 6520 535 6579 3556 11285 11285 11341 9304 }
+			}
+			build_railway = {
+				#level = 1
+				path = { 9304 13593 13601 3320 }
+			}
+			build_railway = {
+				#level = 1
+				path = { 11301 347 3281 6359 13593 9304 }
+			}	
 		}
 	}
 
@@ -14692,7 +14722,10 @@ focus_tree = {
 		}
 		
 		available = {
-			owns_state = 770
+			#owns_state = 770
+			770 = {
+				owns_or_subject_of = yes
+			}
 		}
 		
 		bypass = {
@@ -14700,7 +14733,10 @@ focus_tree = {
 				NOT = {
 					has_idea = uncontrolled_exports
 				}
-				770 = { is_demilitarized_zone = no }
+				#770 = { is_demilitarized_zone = no }
+				770 = {
+					owns_or_subject_of = no
+				}
 			}
 			has_civil_war = no
 		}
@@ -14745,7 +14781,14 @@ focus_tree = {
 		completion_reward = {
 			if = {
 				limit = {
-					owns_state = 770
+					770 = {
+						owner = {
+							OR = {
+								tag = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
 				}
 				770 = { add_manpower = -15000 }
 				random_owned_controlled_state = {
@@ -14819,15 +14862,27 @@ focus_tree = {
 		}
 		
 		available = {
-			owns_state = 770
-			controls_state = 770
+			#owns_state = 770
+			#controls_state = 770
 			770 = {
-				OR = {
-					AND = {
-						compliance > 80
-						resistance < 50
+				owner = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
 					}
-					NOT = { is_core_of = DNZ }
+					has_full_control_of_state = PREV
+				}
+			}
+			if = {
+				limit = { owns_state = 770 controls_state = 770 }
+				770 = {
+					OR = {
+						AND = {
+							compliance > 80
+							resistance < 50
+						}
+						NOT = { is_core_of = DNZ }
+					}
 				}
 			}
 		}
@@ -14840,7 +14895,15 @@ focus_tree = {
 				NOT = {
 					controls_state = 770
 				}
-				770 = { is_demilitarized_zone = no }
+				#770 = { is_demilitarized_zone = no }
+				770 = {
+					owner = {
+						NOT = {
+							tag = ROOT
+							is_subject_of = ROOT
+						}
+					}
+				}
 			}
 			has_civil_war = no
 		}
