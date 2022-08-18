@@ -224,6 +224,7 @@ NDefines.NAI.LAND_COMBAT_FIGHTERS_PER_PLANE = 2								-- Amount of air superior
 NDefines.NAI.STR_BOMB_MIN_ENEMY_FIGHTERS_IN_AREA = 400						-- If amount of enemy fighters is higher than this mission won't perform
 --попытка починить раш альянсов
 NDefines.NAI.POTENTIAL_ALLY_JOIN_WAR_FACTOR = 25							-- If amount of enemy fighters is higher than this mission won't perform
+NDefines.NAI.AI_UPDATE_ROLES_FREQUENCY_HOURS = 96							-- Update the roles for a country AI this often (affects performance)
 
 
 NDefines.NAir.MISSION_COMMAND_POWER_COSTS = {
