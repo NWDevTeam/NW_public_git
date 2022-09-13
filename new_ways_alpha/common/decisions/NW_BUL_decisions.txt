@@ -1263,3 +1263,222 @@ political_actions = {
 		}
 	}
 }
+
+
+
+BUL_the_fatherland_front_dec_cat = { 
+	BUL_ff_impending_coup_mission = {
+
+		priority = 10
+
+		icon = generic_prepare_civil_war
+
+		available = {
+			has_country_flag = BUL_ff_destroyed_flag
+		}
+
+		days_mission_timeout = 500
+
+		fire_only_once = yes
+
+		activation = {
+			has_country_flag = BUL_fatherland_front_formed_flag
+			NOT = { has_completed_focus = BUL_the_fatherland_front }
+		}
+
+		visible = {
+			hidden_trigger = {
+				has_country_flag = BUL_fatherland_front_formed_flag
+				NOT = { has_country_flag = BUL_ff_civil_war_flag }
+			}
+			NOT = { has_country_flag = BUL_ff_destroyed_flag }
+		}
+
+		cancel_if_not_visible = yes
+
+		days_remove = 7
+
+		is_good = no
+
+		complete_effect = {
+		}
+
+		timeout_effect = {
+			set_country_flag = BUL_ff_coup_planned_flag
+		}
+	}
+
+	BUL_ff_root_out_sympathizers = {
+
+		priority = 1
+
+		icon = generic_military
+
+		ai_will_do = {
+			base = 2
+			modifier = {
+				factor = 200
+				BUL_is_historical_ai = yes
+				date < 1942.12.12
+				has_political_power > 100
+			}
+			modifier = {
+				factor = 0.5
+				BUL_is_historical_ai = yes
+			}
+		}
+
+		available = {
+			
+		}
+
+		visible = {
+			has_country_flag = BUL_fatherland_front_formed_flag
+			NOT = { has_country_flag = BUL_ff_destroyed_flag }
+			NOT = { has_country_flag = BUL_ff_civil_war_flag }
+		}
+
+		cost = 35
+		days_remove = 30
+		days_re_enable = 15
+
+		modifier = {
+			communism_drift = -0.1
+			political_power_gain = -0.5
+		}
+		
+		complete_effect = {
+			add_stability = -0.05			
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					has_idea = BUL_fatherland_front_negative
+				}
+				swap_ideas = {
+					remove_idea = BUL_fatherland_front_negative
+					add_idea = BUL_fatherland_front_negative_02
+				}
+			}
+
+			set_country_flag = BUL_ff_sympathizers_rooted_out_flag
+
+			if = {
+				limit = { 
+					NOT = { has_country_flag = BUL_ff_coup_planned_flag }
+				}
+				#Add the resulting amount of days
+				add_days_mission_timeout = {
+					mission = BUL_ff_impending_coup_mission
+					days = BUL_ff_missions_base_days_to_add
+				}
+			}
+			else = {
+				BUL_ff_preventive_action_taken = yes
+			}
+			custom_effect_tooltip = BUL_ff_root_out_sympathizers_cooldown_tt
+		}
+	}
+
+	BUL_ff_massive_arrests = {
+
+		priority = 2
+
+		icon = generic_arrest
+
+		ai_will_do = {
+			base = 4
+			modifier = {
+				factor = 0.25
+				BUL_is_historical_ai = yes
+			}
+		}
+
+		available = {
+		}
+
+		visible = {
+			has_country_flag = BUL_fatherland_front_formed_flag
+			has_country_flag = BUL_ff_sympathizers_rooted_out_flag
+			NOT = { has_country_flag = BUL_ff_destroyed_flag }
+			NOT = { has_country_flag = BUL_ff_civil_war_flag }
+		}
+
+		cost = 75
+		days_remove = 30
+		days_re_enable = 30
+
+		modifier = {
+			communism_drift = -0.15
+			political_power_gain = -1
+		}
+		
+		complete_effect = {
+			add_stability = -0.1
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					has_idea = BUL_fatherland_front_negative_02
+				}
+				swap_ideas = {
+					remove_idea = BUL_fatherland_front_negative_02
+					add_idea = BUL_fatherland_front_negative_03
+				}
+			}
+
+			if = {
+				limit = { 
+					NOT = { has_country_flag = BUL_ff_coup_planned_flag }
+				}
+				#Add the resulting amount of days
+				add_days_mission_timeout = {
+					mission = BUL_ff_impending_coup_mission
+					days = BUL_ff_missions_base_days_to_add
+				}
+			}
+			else = {
+				BUL_ff_preventive_action_taken = yes
+			}
+			custom_effect_tooltip = BUL_ff_massive_arrests_cooldown_tt			
+		}
+	}
+
+	BUL_ff_deal_the_final_blow = {
+
+		icon = oppression
+
+		ai_will_do = {
+			base = 10
+			modifier = {
+				factor = 0.1
+				BUL_is_historical_ai = yes
+			}
+		}
+
+		available = {
+			communism < 0.01
+		}
+
+		visible = {
+			has_active_mission = BUL_ff_impending_coup_mission
+			has_country_flag = BUL_ff_sympathizers_rooted_out_flag
+			has_country_flag = BUL_fatherland_front_formed_flag
+			NOT = { has_country_flag = BUL_ff_destroyed_flag }
+			NOT = { has_country_flag = BUL_ff_civil_war_flag }
+		}
+
+		cost = 75
+		days_remove = 15
+
+		fire_only_once = yes
+	
+		complete_effect = {
+			
+		}
+		remove_effect = {
+			set_country_flag = BUL_ff_destroyed_flag
+			custom_effect_tooltip = BUL_ff_deal_the_final_blow_tt
+		}
+	}
+}

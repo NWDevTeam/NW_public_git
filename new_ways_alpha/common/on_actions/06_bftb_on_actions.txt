@@ -132,6 +132,25 @@ on_actions = {
 	#FROM = defending side
 	#fired when two countries end up at war with each other (on_war is fired when a country goes to war against anyone and is not fired again when it enters war against another country unless it went to peace first)
 	on_war_relation_added = {
+		effect = { #Bulgaria vs SOV -> Cooldown before high chance of FF forming up
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							ROOT = { original_tag = BUL }
+							FROM = { original_tag = SOV }
+						}
+						AND = {
+							ROOT = { original_tag = SOV }
+							FROM = { original_tag = BUL }
+						}
+					}
+					
+					BUL = { NOT = { has_country_flag = BUL_at_war_with_the_soviets_flag } }
+				}
+				BUL = { set_country_flag = BUL_at_war_with_the_soviets_flag }
+			}
+		}
 		effect = {
 			if = {
 				limit = { 
@@ -267,19 +286,210 @@ on_actions = {
 	#used when puppeting in a peace conference
 	#ROOT = nation being puppeted, FROM = overlord
 	on_puppet = {
-		effect = {
+		effect = { #Add Ferdinand's puppet NS
 			if = {
 				limit = {
 					FROM = {
 						original_tag = BUL
 						has_country_leader = {
-							name = "Ferdinand I" 
+							character = BUL_ferdinand_i 
 							ruling_only = yes
 						}
 					}
 					NOT = { has_idea = BUL_ferdinands_puppet }
 				}
 				add_ideas = BUL_ferdinands_puppet
+			}
+		}
+		effect = { #Remove bad opinion modifiers when puppetting
+			if = { #If puppeted by Bulgaria, remove bad opinion modifiers
+				limit = {
+					BUL_is_balkan_nation_no_bulgaria = yes
+					FROM = { original_tag = BUL }
+				}
+				BUL_remove_balkan_opinion_modifiers = yes
+			}
+			else_if = { #Bulgaria puppeted by a Balkan nation
+				limit = {
+					original_tag = BUL
+					FROM = { BUL_is_balkan_nation_no_bulgaria = yes }
+				}
+				FROM = { BUL_remove_balkan_opinion_modifiers = yes }
+			}
+		}
+	}
+	
+	on_leave_faction = {
+		effect = {
+			if = {
+				limit = { 
+					FROM = {
+						original_tag = BUL
+						has_completed_focus = BUL_the_fate_of_the_balkans
+					}
+				}
+				FROM = {
+					create_wargoal = {
+						type = puppet_wargoal_focus
+						target = ROOT
+					}
+				}
+			}
+		}
+	}
+	
+	on_weekly_BUL = {
+		effect = {
+			# FATHERLAND FRONT
+			if = {
+				limit = {
+					NOT = { has_country_flag = BUL_fatherland_front_formed_flag }
+					NOT = { has_completed_focus = BUL_the_fatherland_front }
+					date > 1941.6.1 #Previously date > 1940.1.1 but it felt too punishing
+				}
+				BUL_communists_try_to_form_ff_effect = yes
+			}
+			else_if = {
+				limit = {
+					NOT = { has_country_flag = BUL_ff_civil_war_flag }
+					NOT = { has_country_flag = BUL_ff_destroyed_flag }
+					has_country_flag = { flag = BUL_fatherland_front_formed_flag days > 60 } #Give the player some time after FF formation
+					OR = {
+						NOT = { has_country_flag = BUL_ff_approaching_faction_flag }
+						has_country_flag = { flag = BUL_ff_approaching_faction_flag days > 30 }
+					}
+				}
+				log = "checking if FF approaches someone"
+				# CHECK IF FF APPROACHES ANY BULARIAN INTERNAL FACTION
+				BUL_ff_approaches_a_faction_effect = yes #Random chance
+
+				if = {
+					limit = {
+						has_country_flag = BUL_ff_coup_planned_flag
+						date > 1943.1.1
+					}
+					BUL_ff_tries_to_stage_a_coup_effect = yes #Check if the FF starts the CW
+				}					
+			}
+
+			# BULGARIAN CLAIMS IN THE BALKANS
+			if = {
+				limit = {
+					has_global_flag = BUL_germany_recognizes_bulgarian_claims_flag
+					is_in_faction_with = GER
+					any_state = {
+						has_state_flag = BUL_bulgarian_claim_warranted_flag
+						OR = {
+							is_controlled_by = GER
+							controller = {
+								is_in_faction_with = GER
+								NOT = { tag = BUL }
+								NOT = { owns_state = PREV } #Not owner (it should be actually occupating the state -> Also prevents the issue in YUG with IMRO removing the core)
+								NOT = { PREV = { is_core_of = PREV } }
+							}
+						}
+					}
+				}
+				country_event = bftb_bulgarian_claims.4
+			}
+		}
+		#Check for any subject not having the appropriate NS while Ferdinand I is ruling (ie. released nations)
+		effect = {
+			if = {
+				limit = {
+					has_country_leader = {
+						character = BUL_ferdinand_i 
+						ruling_only = yes
+					}
+					any_subject_country = {
+						NOT = { has_idea = BUL_ferdinands_puppet }
+					}
+				}
+				every_subject_country = {
+					limit = {
+						NOT = { has_idea = BUL_ferdinands_puppet }
+					}
+					add_ideas = BUL_ferdinands_puppet
+				}		
+			}
+		}
+
+		#Retire Generals that do not agree with pro-German policies
+		effect = {
+			if = {
+				limit = {
+					is_in_faction_with = GER
+					GER = { has_government = fascism }
+				}
+				random_unit_leader = {
+					limit = {
+						has_id = 1203 #Hadzipetkov
+					}
+					retire = yes
+				}
+				random_unit_leader = {
+					limit = {
+						has_id = 1204 #Boydev
+					}
+					retire = yes
+				}
+			}
+		}
+	}
+	
+	on_monthly_BUL = {
+		effect = { #Tsar Boris Dies
+			if = { #Force Boris's death in historical
+				limit = {
+					is_historical_focus_on = yes
+					#NOT = { has_completed_focus = BUL_strengthen_the_royal_dictatorship }
+					BUL_has_abolished_monarchy = no
+					date > 1943.7.30 #Historical date of death is 1943.8.28
+					NOT = { has_country_flag = BUL_tsar_boris_is_dead_flag }
+					NOT = { has_country_flag = BUL_tsar_boris_assassinated_flag }
+				}
+				BUL = { country_event = { id = bftb_bulgaria_tsar_boris.2 days = 28 } }
+			}
+			else_if = { #Attempt to make Boris die if not historical
+				limit = {
+					is_historical_focus_on = no
+					#NOT = { has_completed_focus = BUL_strengthen_the_royal_dictatorship }
+					BUL_has_abolished_monarchy = no
+					date > 1943.1.1 #Historical date of death is 1943.8.28
+					NOT = { has_country_flag = BUL_tsar_boris_is_dead_flag }
+					NOT = { has_country_flag = BUL_tsar_boris_assassinated_flag }
+				}
+				BUL_tsar_boris_may_die_effect = yes
+			}
+		}
+
+		effect = { #Support the Spanish Coup - Check for a general assigned to volunteers in the SCW fighting for SPA (it cannot be any other side)
+			if = {
+				limit = {
+					has_country_flag = BUL_sent_volunteers_to_SPA_flag
+				}
+				if = {
+					limit = {
+						any_unit_leader = {
+							is_field_marshal = no
+							OR = {
+								is_leading_volunteer_group_with_original_country = SPR
+								is_leading_volunteer_group = SPR
+							}
+							NOT = { has_unit_leader_flag = BUL_scw_promotion_flag }
+						}
+					}
+					random_unit_leader = {
+						limit = {
+							is_field_marshal = no
+							OR = {
+								is_leading_volunteer_group_with_original_country = SPR
+								is_leading_volunteer_group = SPR
+							}
+						}
+						set_unit_leader_flag = BUL_scw_promotion_flag 
+					}
+				}
 			}
 		}
 	}
