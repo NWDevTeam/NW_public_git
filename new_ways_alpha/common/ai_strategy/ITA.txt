@@ -217,7 +217,7 @@ ITA_unit_production = {
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor
-		id = strat_bomber_equipment
+		id = large_plane_airframe
 		value = -100
 	}
 	ai_strategy = {
@@ -273,6 +273,18 @@ ITA_template_design_1 = {
 		id = paratroopers
 		value = -50
 	}
+	
+	ai_strategy = {
+		type = role_ratio
+		id = garrison
+		value = 5
+	}
+	
+	ai_strategy = {
+		type = role_ratio
+		id  = militias
+		value = 5
+	}
 }
 
 
@@ -324,6 +336,18 @@ ITA_template_design_2 = {
 		type = template_prio
 		id = mechanized
 		value = -20
+	}
+	
+	ai_strategy = {
+		type = role_ratio
+		id = garrison
+		value = 10
+	}
+
+	ai_strategy = {
+		type = role_ratio
+		id = militias
+		value = 5
 	}
 }
 
@@ -433,6 +457,31 @@ NW_ITA_wants_arms_factory = {
 ######## PRODUCTION ########
 ############################
 
+ITA_we_must_crash_ethiopia = {
+	allowed = { tag = ITA }
+	enable = {
+		always = yes
+	}
+	abort = {
+		OR = {
+			date > 1937.1.1
+			NOT = { has_war_with = ETH }
+		}
+	}
+
+	ai_strategy = { type = equipment_production_factor id = infantry					value = 1700 }
+	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment	value = 1500 }
+	ai_strategy = { type = equipment_production_min_factories id = infantry				value = 8 }
+	
+	ai_strategy = { type = equipment_production_factor id = support						value = 750 }
+	ai_strategy = { type = equipment_variant_production_factor id = support_equipment	value = 700 }
+	ai_strategy = { type = equipment_production_min_factories id = support				value = 6 }
+	
+	ai_strategy = { type = equipment_production_factor id = artillery					value = 650 }
+	ai_strategy = { type = equipment_variant_production_factor id = artillery_equipment	value = 500 }
+	ai_strategy = { type = equipment_production_min_factories id = artillery			value = 3 }
+}
+
 ITA_stockpile_less_early_game = {
 	allowed = { original_tag = ITA }
 	enable = {
@@ -482,14 +531,8 @@ ITA_build_950k_army = {		#Необходимо для адекватного в�
 ITA_stop_infantry_army = {
 	allowed = { original_tag = ITA }
 	enable = {
-		has_army_size = {
-			size > 70
-			type = infantry
-		}
-		has_army_size = {
-			size < 31
-			type = armor
-		}
+		has_army_size = { size > 70		type = infantry }
+		has_army_size = { size < 31		type = armor }
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = { type = build_army id = infantry		value = -500 }
@@ -872,7 +915,14 @@ crush_ethiopia = {
 		date < 1941.1.1
 	}
 	abort = {
-		NOT = { has_war_with = ETH }
+		OR = {
+			has_civil_war = yes
+			any_enemy_country = {
+				capital_scope = { is_on_continent = europe }
+			}
+			NOT = { has_war_with = ETH }
+			any_owned_state = { is_core_of = ITA NOT = { is_controlled_by = ITA } }
+		}
 	}
 	
 	ai_strategy = { type = area_priority	id = africa		value = 5000 }
@@ -881,11 +931,11 @@ crush_ethiopia = {
 	
 	ai_strategy = { type = antagonize	id = "ETH"	value = 5000 }
 	ai_strategy = { type = conquer		id = "ETH"	value = 5000 }
-	ai_strategy = { type = front_armor_score id = "ETH" value = 100	}
+	ai_strategy = { type = front_armor_score id = "ETH" value = 5	}
 	ai_strategy = {
 		type = front_unit_request
 		tag = ETH
-		value = 50
+		value = 29
 	}
 }
 
@@ -924,13 +974,45 @@ ITA_hold_africa = {
     ai_strategy = {
 		type = front_unit_request
 		area = africa
-		value = 60
+		value = 29
 	}
 
 	ai_strategy = {
 		type = front_unit_request
 		area = suez
-		value = 60
+		value = 29
+	}
+}
+
+ITA_we_need_go_home = {
+	allowed = {
+		tag = ITA
+	}
+	enable = {
+		has_civil_war = yes
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = area_priority
+		id = africa
+		value = -200
+	}
+	ai_strategy = {
+        type = area_priority
+        id = suez
+        value = -200
+    }
+    ai_strategy = {
+        type = area_priority 
+        id = europe
+        value = 500
+    }
+
+    ai_strategy = {
+		type = front_unit_request
+		area = europe
+		value = 100
 	}
 }
 
@@ -1246,6 +1328,55 @@ ITA_let_germany_handle_polish_front_alone = {
 	}
 }
 
+ITA_attack_north = {
+	allowed = {
+		original_tag = ITA
+	}
+	enable = {
+		has_war_with = ETH
+		has_active_mission = ITA_conquer_the_north_mission
+		ITA_is_communist_ai = no
+		ITA_is_socialist_ai = no
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = front_control
+
+		state = 841 # assault Begemder
+
+		ratio = 0.15
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+}
+
+ITA_attack_south = {
+	allowed = {
+		original_tag = ITA
+	}
+	enable = {
+		has_war_with = ETH
+		has_active_mission = ITA_conquer_the_south_mission
+		ITA_is_communist_ai = no
+		ITA_is_socialist_ai = no
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = front_control
+
+		state = 837 # assault Sidamo
+
+		ratio = 0.2
+
+		priority = 100
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
+	}
+}
 
 
 ###########
@@ -1582,12 +1713,13 @@ NW_ITA_offensive_vs_ETH_rush = {
 		OR = {
 			check_variable = { NW_fielded_eq_ratio > 0.75 }
 			ETH = { surrender_progress > 0.5 }
+			AND = {
+				is_historical_focus_on = yes
+				has_active_mission = ITA_missiolini_conquer_ethiopia
+			}
 		}
 	}
-	abort = {
-		check_variable = { NW_fielded_eq_ratio < 0.75 }
-		ETH = { surrender_progress < 0.5 }
-	}
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = front_control
@@ -1629,6 +1761,11 @@ NW_ITA_offensive_vs_ETH_careful = {
 		OR = {
 			check_variable = { NW_fielded_eq_ratio > 0.75 }
 			check_variable = { NW_fielded_eq_ratio < 0.5 }
+			ETH = { surrender_progress > 0.5 }
+			AND = {
+				is_historical_focus_on = yes
+				has_active_mission = ITA_missiolini_conquer_ethiopia
+			}
 		}
 	}
 
@@ -1803,5 +1940,39 @@ NW_ITA_ignore_SMA = {
 		type = ignore
 		id = "SMA"
 		value = 500
+	}
+}
+
+ITA_start_pp_spend_amount = {
+	allowed = { original_tag = ITA }
+	enable = {
+		date < 1937.1.1
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = {
+		type = pp_spend_amount
+		id = idea
+		value = -100
+	}
+	ai_strategy = {
+		type = pp_spend_amount
+		id = decision
+		value = 50
+	}
+	ai_strategy = {
+		type = pp_spend_priority
+		id = relation
+		value = -9999
+	}
+	ai_strategy = {
+		type = pp_spend_priority
+		id = relation
+		value = -9999
+	}
+	ai_strategy = {
+		type = pp_spend_priority
+		id = guarantee
+		value = -9999
 	}
 }

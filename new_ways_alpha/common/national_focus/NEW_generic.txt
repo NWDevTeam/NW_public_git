@@ -31,6 +31,8 @@ focus_tree = {
 	default = yes
 	reset_on_civilwar = yes
 	
+	shared_focus = SOV_found_the_pcdi
+	shared_focus = SOV_strengthen_the_mobilization_plan
 	shared_focus = army_reform
 	shared_focus = aviation_development
 	shared_focus = naval_development
@@ -80,6 +82,10 @@ focus_tree = {
 					has_global_flag = generic_all_set_monarchy_flag
 				}
 			}
+			modifier = {
+				add = -15000
+				has_country_flag = HUN_AI_RANDOM_AUSTRIA_HUNGARY
+			}
 		}
 		
 		allow_branch = {
@@ -113,7 +119,7 @@ focus_tree = {
 		}
 	}
 	
-	### AUS BLOCK ###
+	### AUS/HUN/CZE BLOCK ###
 	
 	focus = {
 		id = generic_AUS_discuss_establishment_monarchy
@@ -137,7 +143,11 @@ focus_tree = {
 				}
 			}
 			else = { is_subject = no }
-			has_government = neutrality
+			OR = {
+				has_government = neutrality
+				has_government = monarchy
+				has_government = fascism
+			}
 			is_in_faction = no
 			NOT = {
 				any_of_scopes = {
@@ -153,7 +163,11 @@ focus_tree = {
 			}
 		}
 		allow_branch = {
-			original_tag = AUS
+			OR = {
+				original_tag = AUS
+				original_tag = HUN
+				original_tag = CZE
+			}
 			NOT = { has_global_flag = WORLD_OF_SPLIT_FLAG }
 			NOT = { check_variable = { current_nw_national_focus_polical_icon_frame = 2 } }
 		}
@@ -176,6 +190,10 @@ focus_tree = {
 						option = DEFAULT
 					}
 				}
+			}
+			modifier = {
+				add = 5000
+				has_country_flag = HUN_AI_RANDOM_AUSTRIA_HUNGARY
 			}
 		}
 
@@ -237,29 +255,43 @@ focus_tree = {
 				}
 			}	
 			promote_character = HBBRG_otto_von_habsburg
-			set_country_flag = kingAUS_flag
-			hidden_effect = { load_all_traits = yes }
 			if = {
-				limit = {
-					OR = {
-						NOT = { event_target:NW_france_scope = { has_completed_focus = FRA_little_entente_new } } 
-						event_target:NW_france_scope = { exists = no }
-						event_target:NW_france_scope = { is_subject = yes }
-					}
-					OR = {
-						has_idea = HUN_treaty_of_triannon
-						has_idea = HUN_treaty_of_triannon_2
-						has_idea = HUN_treaty_of_triannon_3
-					}
-				} #Romania gets the event if France not engaged in Balkans
-				ROM = { country_event = { id = DOD_hungary.40 } }
+				limit = { original_tag = AUS }
+				set_country_flag = kingAUS_flag
 			}
+			else_if = {
+				limit = { original_tag = HUN }
+				set_country_flag = kingHUN_flag
+			}
+			else_if = {
+				limit = { original_tag = CZE }
+				set_country_flag = kingCZE_flag
+			}
+			hidden_effect = { load_all_traits = yes }
+#			if = {
+#				limit = {
+#					OR = {
+#						NOT = { event_target:NW_france_scope = { has_completed_focus = FRA_little_entente_new } } 
+#						event_target:NW_france_scope = { exists = no }
+#						event_target:NW_france_scope = { is_subject = yes }
+#					}
+#					OR = {
+#						has_idea = HUN_treaty_of_triannon
+#						has_idea = HUN_treaty_of_triannon_2
+#						has_idea = HUN_treaty_of_triannon_3
+#					}
+#				} #Romania gets the event if France not engaged in Balkans
+#				ROM = { country_event = { id = DOD_hungary.40 } }
+#			}
 			hidden_effect = {
 				load_focus_tree = hbbrg_focus
 				set_country_flag = hbbrg_flag
-				set_politics = {
-					ruling_party = monarchy
-					elections_allowed = no
+				if = {
+					limit = { NOT = { has_government = monarchy } }
+					set_politics = {
+						ruling_party = monarchy
+						elections_allowed = no
+					}
 				}
 				set_political_party = {
 					ideology = monarchy
@@ -1684,7 +1716,6 @@ focus_tree = {
 					has_country_leader = { character = SOV_lev_trotsky ruling_only = yes }
 					original_tag = ENG
 					original_tag = MEX
-					original_tag = KMX
 					original_tag = USA
 				}
 			}

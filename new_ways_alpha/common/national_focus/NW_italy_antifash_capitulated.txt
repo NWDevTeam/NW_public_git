@@ -1,0 +1,1108 @@
+focus_tree = {
+	id = nw_italian_antifash_capitulated_focus
+
+	country = {
+		factor = 0
+		
+		modifier = {
+			add = 10
+			tag = RSI
+			ITA = { has_completed_focus = ITA_victoryinETH }
+		}
+	}
+	
+	default = no
+
+	############################
+	##### POLITICS SECTION #####
+	############################
+	
+	focus = {
+		id = RSI_speech_badaglio
+		icon = GFX_goal_generic_propaganda
+
+		available_if_capitulated = yes
+
+		x = 9
+		y = 0
+		cost = 5
+		ai_will_do = {
+			factor = 50
+		}	
+		completion_reward = {
+			add_political_power = 100
+			add_stability = 0.2
+			add_war_support = 0.2
+		}
+	}
+	
+	focus = {
+		id = RSI_national_comitet
+		icon = GFX_goal_generic_military_deal
+		prerequisite = { focus = RSI_speech_badaglio }
+		mutually_exclusive = { focus = RSI_new_king }
+
+		available_if_capitulated = yes
+
+		x = -4
+		y = 1
+		relative_position_id = RSI_speech_badaglio
+		cost = 5
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				add = 500
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0.3
+				any_allied_country = {
+					has_government = monarchy
+				}
+			}
+			modifier = {
+				factor = 3
+				event_target:italy_capitulator = {
+					OR = {
+						has_government = anarchism
+						has_government = democratic
+						has_government = neutrality
+						has_government = technocracy
+						has_government = communism
+					}
+				}
+			}
+		}	
+		completion_reward = {
+			add_political_power = 50
+			add_stability = 0.1
+			add_war_support = 0.15
+		}
+	}
+	
+	focus = {
+		id = RSI_new_king
+		icon = GFX_focus_generic_home_defense
+		prerequisite = { focus = RSI_speech_badaglio }
+		mutually_exclusive = { focus = RSI_national_comitet }
+
+		available_if_capitulated = yes
+
+		x = 3
+		y = 1
+		relative_position_id = RSI_speech_badaglio
+		cost = 5
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 10
+				FACTION_LEADER = {
+					has_government = monarchy
+				}
+			}
+			modifier = {
+				factor = 3
+				event_target:italy_capitulator = {
+					has_government = monarchy
+				}
+			}
+		}	
+		completion_reward = {
+			add_political_power = 50
+			add_stability = 0.15
+			add_war_support = 0.1
+			add_popularity = { ideology = monarchy popularity = 0.25 }
+			set_politics = {
+				ruling_party = monarchy
+				elections_allowed = no
+			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					FACTION_LEADER = {
+						NOT = {
+							has_government = fascism
+							has_government = monarchy
+							has_government = neutrality
+						}
+					}
+				}
+				leave_faction = yes
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_support_religion
+		icon = GFX_focus_generic_self_management
+		prerequisite = { focus = RSI_new_king }
+		available = {
+			NOT = {
+				has_war_with = ITA
+			}
+		}
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_new_king
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_ideas = RSI_support_religion_idea
+		}
+	}
+	
+	focus = {
+		id = RSI_repressions_goats
+		icon = GFX_goal_demand_sudetenland
+		prerequisite = { focus = RSI_support_religion }
+
+		available_if_capitulated = yes
+
+		x = -1
+		y = 1
+		relative_position_id = RSI_support_religion
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_popularity = { ideology = democratic popularity = -0.10 }
+			add_popularity = { ideology = communism popularity = -0.10 }
+			add_popularity = { ideology = neutrality popularity = -0.10 }
+		}
+	}
+	
+	focus = {
+		id = RSI_honors_house
+		icon = GFX_goal_anschluss
+		prerequisite = { focus = RSI_support_religion }
+
+		available_if_capitulated = yes
+
+		x = 1
+		y = 1
+		relative_position_id = RSI_support_religion
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_popularity = { ideology = fascism popularity = 0.15 }
+		}
+	}
+	
+	focus = {
+		id = RSI_past_strenth
+		icon = GFX_goal_generic_propaganda
+		prerequisite = { focus = RSI_repressions_goats }
+		prerequisite = { focus = RSI_honors_house }
+
+		available_if_capitulated = yes
+
+		x = 1
+		y = 1
+		relative_position_id = RSI_repressions_goats
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_stability = 0.1
+			army_experience = 25
+		}
+	}
+	
+	focus = {
+		id = RSI_victory_of_syndicalism
+		icon = GFX_z_goal_anarcho_syndicalism
+		prerequisite = { focus = RSI_national_comitet }
+		mutually_exclusive = {
+			focus = RSI_national_comitet_democratic
+			focus = RSI_national_comitet_communist
+		}
+		available = {
+			#has_government = anarchism
+			OR = {
+				NOT = {
+					has_war_with = ITA
+				}
+				ITA = { has_capitulated = yes }
+			}
+		}
+
+		available_if_capitulated = yes
+
+		x = -2
+		y = 1
+		relative_position_id = RSI_national_comitet
+		cost = 10
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 5
+				event_target:NW_france_scope = { has_government = anarchism }
+			}
+			modifier = {
+				factor = 2.5
+				ARA = { has_government = anarchism }
+			}
+			modifier = {
+				factor = 0
+				event_target:italy_capitulator = {
+					OR = {
+						has_government = democratic
+						has_government = neutrality
+						has_government = technocracy
+						has_government = communism
+					}
+				}
+			}
+		}	
+		completion_reward = {
+			add_popularity = { ideology = anarchism popularity = 0.55 }
+			set_politics = {
+				ruling_party = anarchism
+				elections_allowed = no
+			}
+			set_country_leader_ideology = anarcho_sindicalism
+			if = {
+				limit = {
+					OR = {
+						FRC = {
+							has_government = anarchism
+							is_faction_leader = yes
+						}
+						SPR = {
+							has_government = anarchism
+							is_faction_leader = yes
+						}
+						ARA = {
+							has_government = anarchism
+							is_faction_leader = yes
+						}
+						HUN = {
+							has_government = anarchism
+							is_faction_leader = yes
+						}
+						AUS = {
+							has_government = anarchism
+							is_faction_leader = yes
+						}
+					}
+				}
+				country_event = { id = new_italy.14 days = 2 }
+			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					FACTION_LEADER = {
+						NOT = { has_government = anarchism }
+					}
+				}
+				leave_faction = yes
+			}
+			every_enemy_country = {
+				limit = {
+					is_subject = no
+					OR = { is_faction_leader = yes is_in_faction = no }
+					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
+				}
+				ROOT = { white_peace = PREV }
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_labour_confederation
+		icon = GFX_z_goal_syndicalism_1
+		prerequisite = { focus = RSI_victory_of_syndicalism }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_victory_of_syndicalism
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_ideas = RSI_labour_confederation
+		}
+	}
+	
+	focus = {
+		id = RSI_gradual_elimination_of_state_institutions
+		icon = GFX_z_goal_syndicalism_3
+		prerequisite = { focus = RSI_labour_confederation }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_labour_confederation
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.1
+			}
+			add_popularity = {
+				ideology = anarchism
+				popularity = 0.25
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_national_comitet_democratic
+		icon = GFX_goal_support_democracy
+		prerequisite = { focus = RSI_national_comitet }
+		mutually_exclusive = {
+			focus = RSI_victory_of_syndicalism
+			focus = RSI_national_comitet_communist
+		}
+		available = {
+			#has_government = democratic
+			OR = {
+				NOT = {
+					has_war_with = ITA
+				}
+				ITA = { has_capitulated = yes }
+			}
+		}
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_national_comitet
+		cost = 10
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 0
+				event_target:italy_capitulator = {
+					OR = {
+						has_government = anarchism
+						has_government = communism
+					}
+				}
+			}
+		}	
+		completion_reward = {
+			add_popularity = { ideology = democratic popularity = 0.55 }
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = yes
+			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					FACTION_LEADER = {
+						NOT = {
+							has_government = democratic
+							has_government = neutrality
+							has_government = technocracy
+						}
+					}
+				}
+				leave_faction = yes
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_national_comitet_communist
+		icon = GFX_goal_support_communism
+		prerequisite = { focus = RSI_national_comitet }
+		mutually_exclusive = {
+			focus = RSI_victory_of_syndicalism
+			focus = RSI_national_comitet_democratic
+		}
+		available = {
+			#has_government = communism
+			OR = {
+				NOT = {
+					has_war_with = ITA
+				}
+				ITA = { has_capitulated = yes }
+			}
+		}
+
+		available_if_capitulated = yes
+
+		x = 4
+		y = 1
+		relative_position_id = RSI_national_comitet
+		cost = 10
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				event_target:italy_capitulator = {
+					OR = {
+						has_government = anarchism
+						has_government = democratic
+						has_government = neutrality
+						has_government = technocracy
+					}
+				}
+			}
+		}	
+		completion_reward = {
+			add_popularity = { ideology = communism popularity = 0.55 }
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = no
+			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					FACTION_LEADER = {
+						NOT = {
+							has_government = communism
+							has_government = neutrality
+						}
+					}
+				}
+				leave_faction = yes
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_referendum_monarchy
+		icon = GFX_focus_rom_abdicate
+		prerequisite = {
+			focus = RSI_victory_of_syndicalism
+			focus = RSI_national_comitet_democratic
+			focus = RSI_national_comitet_communist
+		}
+
+		available_if_capitulated = yes
+
+		x = -2
+		y = 1
+		relative_position_id = RSI_national_comitet_communist
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_popularity = { ideology = monarchy popularity = -0.25 }
+		}
+	}
+	
+	focus = {
+		id = RSI_destroy_opposition
+		icon = GFX_goal_generic_political_pressure
+		prerequisite = { focus = RSI_national_comitet_communist }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_national_comitet_communist
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_popularity = { ideology = communism popularity = 0.25 }
+		}
+	}
+	
+	focus = {
+		id = RSI_recover_italy
+		icon = GFX_goal_generic_production2
+		prerequisite = { focus = RSI_destroy_opposition }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_destroy_opposition
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = construction_effort_tt
+				NOT = {
+					any_owned_state = {
+						is_controlled_by = ROOT
+						free_building_slots = {
+							building = industrial_complex
+							size > 2
+							include_locked = yes
+						}
+					}
+				}
+			}
+		}
+
+		completion_reward = {
+			add_political_power = -50
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					is_on_continent = europe
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					is_on_continent = europe
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_owned_state = {
+							free_building_slots = {
+								building = industrial_complex
+								size > 1
+								include_locked = yes
+							}
+							is_on_continent = europe
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}				
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_social_help
+		icon = GFX_goal_generic_consumer_goods
+		prerequisite = { focus = RSI_national_comitet_democratic }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_national_comitet_democratic
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_ideas = RSI_social_help_idea
+		}
+	}
+	
+	focus = {
+		id = RSI_usa_help
+		icon = GFX_focus_chi_mission_to_the_us
+		prerequisite = { focus = RSI_social_help }
+		available = {
+			USA = { has_opinion = { target = ROOT value > 49 } }
+		}
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_social_help
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}
+		
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = construction_effort_tt
+				NOT = {
+					any_owned_state = {
+						is_controlled_by = ROOT
+						free_building_slots = {
+							building = industrial_complex
+							size > 2
+							include_locked = yes
+						}
+					}
+				}
+			}
+		}
+
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					is_on_continent = europe
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					is_on_continent = europe
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_owned_state = {
+							free_building_slots = {
+								building = industrial_complex
+								size > 1
+								include_locked = yes
+							}
+							is_on_continent = europe
+						}
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+						instant_build = yes
+					}
+				}				
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_destroy_mafia
+		icon = GFX_goal_generic_secret_weapon
+		prerequisite = { focus = RSI_speech_badaglio }
+		prerequisite = { focus = RSI_reorgonise_army }
+
+		available_if_capitulated = yes
+
+		x = 6
+		y = 1
+		relative_position_id = RSI_speech_badaglio
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			unlock_decision_category_tooltip = RSI_mafiozi_desicions_category
+		}
+	}
+	
+	focus = {
+		id = RSI_italian_nationalism
+		icon = GFX_focus_generic_italy_first
+		prerequisite = { focus = RSI_destroy_mafia }
+		mutually_exclusive = { focus = RSI_autonomies }
+
+		available_if_capitulated = yes
+		
+		available = {
+			NOT = {
+				has_government = communism
+				has_government = anarchism
+			}
+		}
+
+		x = -1
+		y = 1
+		relative_position_id = RSI_destroy_mafia
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_stability = 0.1
+			add_war_support = 0.1
+		}
+	}
+	
+	focus = {
+		id = RSI_autonomies
+		icon = GFX_focus_generic_support_the_left_right
+		prerequisite = { focus = RSI_destroy_mafia }
+		mutually_exclusive = { focus = RSI_italian_nationalism }
+
+		available_if_capitulated = yes
+
+		x = 1
+		y = 1
+		relative_position_id = RSI_destroy_mafia
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}
+		
+		available = {
+			OR = {
+				has_full_control_of_state = 114
+				has_full_control_of_state = 115
+			}
+		}
+		
+		completion_reward = {
+			if = {
+				limit = { has_full_control_of_state = 114 }
+				SRD = { transfer_state = 114 }
+				puppet = SRD
+			}
+			if = {
+				limit = { has_full_control_of_state = 115 }
+				SIC = { transfer_state = 115 }
+				puppet = SIC
+			}
+			if = {
+				limit = { controls_state = 1 }
+				KRS = { transfer_state = 1 }
+				puppet = KRS
+			}
+			
+			hidden_effect = {
+				if = {
+					limit = { has_government = anarchism }
+					if = {
+						limit = {
+							country_exists = SRD
+							is_subject_of = ROOT
+							SRD = { has_government = anarchism }
+						}
+						SRD = { set_country_leader_ideology = anarcho_sindicalism }
+					}
+					if = {
+						limit = {
+							country_exists = SIC
+							is_subject_of = ROOT
+							SIC = { has_government = anarchism }
+						}
+						SIC = { set_country_leader_ideology = anarcho_sindicalism }
+					}
+					if = {
+						limit = {
+							country_exists = KRS
+							is_subject_of = ROOT
+							KRS = { has_government = anarchism }
+						}
+						KRS = { set_country_leader_ideology = anarcho_sindicalism }
+					}
+				}
+			}
+		}
+	}
+
+############################################
+###################INDUSTRY#################
+############################################
+
+############################################
+###################ARMY#####################
+############################################
+
+focus = {
+		id = RSI_reorgonise_army
+		icon = GFX_focus_chi_army_reform
+
+		available_if_capitulated = yes
+
+		x = 20
+		y = 0
+		cost = 5
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_ideas = extensive_conscription
+		}
+	}
+	
+	focus = {
+		id = RSI_reorgonise_aircraft
+		icon = GFX_goal_generic_build_airforce
+		prerequisite = { focus = RSI_reorgonise_army }
+
+		available_if_capitulated = yes
+
+		x = -2
+		y = 1
+		relative_position_id = RSI_reorgonise_army
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_equipment_to_stockpile = { type = fighter_equipment_0 amount = 100 producer = RSI }
+		}
+	}
+	
+	focus = {
+		id = RSI_plan_save_italy
+		icon = GFX_goal_generic_army_doctrines
+		prerequisite = { focus = RSI_reorgonise_army }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_reorgonise_army
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_reorgonise_navy
+		icon = GFX_goal_generic_build_navy
+		prerequisite = { focus = RSI_reorgonise_army }
+
+		available_if_capitulated = yes
+
+		x = 2
+		y = 1
+		relative_position_id = RSI_reorgonise_army
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_ideas = RSI_reorgonise_navy_idea
+		}
+	}
+	
+	focus = {
+		id = RSI_new_air_doctrine
+		icon = GFX_goal_generic_air_doctrine
+		prerequisite = { focus = RSI_reorgonise_aircraft }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_reorgonise_aircraft
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_doctrine_cost_reduction = {
+				name = air_doc_bonus
+				cost_reduction = 0.5
+				uses = 1
+				category = air_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_standart_weaphones
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = RSI_plan_save_italy }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_plan_save_italy
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			IF = {
+				limit = { has_idea = ITA_logistics_idea }
+				remove_ideas = ITA_logistics_idea
+			}
+			IF = {
+				limit = { has_idea = ITA_logistics_idea2 }
+				remove_ideas = ITA_logistics_idea2
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_new_navy_doctrine
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		prerequisite = { focus = RSI_reorgonise_navy }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_reorgonise_navy
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			add_doctrine_cost_reduction = {
+				name = RSI_new_navy_doctrine
+				cost_reduction = 0.5
+				uses = 1
+				category = naval_doctrine
+			}
+		}
+	}
+	
+	focus = {
+		id = RSI_reorgonise_generals
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = RSI_new_air_doctrine }
+		prerequisite = { focus = RSI_standart_weaphones }
+		prerequisite = { focus = RSI_new_navy_doctrine }
+
+		available_if_capitulated = yes
+
+		x = 0
+		y = 1
+		relative_position_id = RSI_standart_weaphones
+		cost = 10
+		ai_will_do = {
+			factor = 5
+		}	
+		completion_reward = {
+			IF = {
+				limit = { has_idea = ITA_generals_idea }
+				swap_ideas = {
+				remove_idea = ITA_generals_idea
+				add_idea = RSI_generals_idea
+				}
+			}
+			IF = {
+				limit = { has_idea = ITA_generals_idea1 }
+				swap_ideas = {
+				remove_idea = ITA_generals_idea1
+				add_idea = RSI_generals_idea
+				}
+			}
+			IF = {
+				limit = { has_idea = ITA_generals_idea2 }
+				swap_ideas = {
+				remove_idea = ITA_generals_idea2
+				add_idea = RSI_generals_idea
+				}
+			}
+		}
+	}
+
+############################################
+###################Air######################
+############################################
+
+############################################
+###################Navy#####################
+############################################
+
+}

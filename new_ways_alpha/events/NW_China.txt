@@ -1,4 +1,83 @@
-﻿###########################
+﻿add_namespace = NW_chinese_reunification
+
+country_event = { 
+	id = NW_chinese_reunification.0
+	title = NW_chinese_reunification.0.t
+	desc = NW_chinese_reunification.0.d
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = NW_chinese_reunification.0.a
+	}
+}
+
+add_namespace = NW_JAP_surrender
+
+country_event = { #from KR
+	id = NW_JAP_surrender.0
+	immediate = { log = "[GetDateText]: [Root.GetName]: event NW_JAP_surrender.0 FROM = [From.GetName]" }
+
+	hidden = yes
+
+	trigger = {
+		original_tag = JAP
+		has_war = yes
+		has_capitulated = no
+		NOT = { 
+			has_active_mission = JAP_capitulation_timer
+			has_global_flag = JAP_will_surrender
+		}
+
+		# пока достаточно лишь кореи, но потом дополнить !
+		525 = {
+			owns_or_subject_of = yes
+			is_controlled_by_ROOT_or_ally = no
+		}
+		527 = {
+			owns_or_subject_of = yes
+			is_controlled_by_ROOT_or_ally = no
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 10
+	}
+
+	option = {
+		activate_mission = JAP_capitulation_timer
+		every_enemy_country = {
+			limit = {
+				is_ai = no
+				OR = {
+					is_literally_china = yes
+					original_tag = MAN
+				}
+			}
+			activate_mission = JAP_capitulation_timer_enemy
+		}
+	}
+}
+
+country_event = { #Capitulation JAP
+	id = NW_JAP_surrender.1
+	title = NW_JAP_surrender.1.t
+	desc = NW_JAP_surrender.1.d
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_JAP_surrender.1 FROM = [From.GetName]" } 
+	
+	option = {
+		name = NW_JAP_surrender.1.a
+		
+		# пока достаточно белого мира, но потом дополнить !
+		white_peace = JAP
+	}
+	option = {
+		name = NW_JAP_surrender.1.b
+	}
+}
+
+###########################
 # Xian Incident
 ###########################
 
@@ -15,8 +94,11 @@ country_event = {
 		country_exists = PRC
 		country_exists = NEA
 		date > 1936.12.1
-		NEA = { has_completed_focus = CHI_cooperation_with_the_communists }
+		#NEA = { has_completed_focus = CHI_cooperation_with_the_communists }
 	}
+	
+	mean_time_to_happen = { days = 7 }
+	
 	fire_only_once = yes
 	immediate = {
 	    log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_xian_incident.1" 
@@ -66,12 +148,12 @@ country_event = {
 				factor = 4
 				has_war_with = JAP
 			}
-			modifier = {
-				PRC = {
-					has_completed_focus = PRC_social_democracy
-				}
-				factor = 2 #Commies being nice to us
-			}
+#			modifier = {
+#				PRC = {
+#					has_completed_focus = PRC_social_democracy
+#				}
+#				factor = 2 #Commies being nice to us
+#			}
 			modifier = {
 				CHI_is_on_historical_plan_trigger = yes
 				factor = 0
@@ -84,12 +166,12 @@ country_event = {
 		name = NW_xian_incident.3.b #disgree
 		ai_chance = {
 			base = 75
-			modifier = {
-				PRC = {
-					has_completed_focus = PRC_focus_on_china #commies being mean to us!
-				}
-				factor = 2
-			}
+#			modifier = {
+#				PRC = {
+#					has_completed_focus = PRC_focus_on_china #commies being mean to us!
+#				}
+#				factor = 2
+#			}
 			modifier = {
 				JAP = {
 					NOT = {
@@ -310,12 +392,12 @@ country_event = {
 				CHI_is_on_historical_plan_trigger = yes
 				factor = 0
 			}
-			modifier = {
-				CHI = { 
-				    has_completed_focus = CHI_prioritize_the_interior
-				}	
-				factor = 2
-			}
+#			modifier = {
+#				CHI = { 
+#				    has_completed_focus = CHI_prioritize_the_interior
+#				}	
+#				factor = 2
+#			}
 		}
 		NEA = {
 			set_country_flag = PRC_xian_execute
@@ -389,12 +471,12 @@ country_event = {
 				CHI_is_on_historical_plan_trigger = yes
 				factor = 0
 			}
-			modifier = {
-				CHI = { 
-				    has_completed_focus = CHI_prioritize_the_interior
-				}	
-				factor = 2
-			}
+#			modifier = {
+#				CHI = { 
+#				    has_completed_focus = CHI_prioritize_the_interior
+#				}	
+#				factor = 2
+#			}
 		}
 		NEA = {
 			set_country_flag = PRC_xian_execute
@@ -1497,23 +1579,6 @@ country_event = {
 		ai_chance = {
 			factor = 25
 			modifier = {
-				factor = 0
-				OR = {
-					is_historical_focus_on = yes
-					has_country_flag = CHI_AI_RANDOM_HISTORICAL
-					has_game_rule = {
-						rule = CHI_ai_behavior
-						option = HISTORICAL
-					}
-				}
-				NOT = {
-					has_game_rule = { #used here instead of checking for default because people might not have WTT
-						rule = CHI_ai_behavior
-						option = ALTERNATE
-					}
-				}
-			}
-			modifier = {
 				factor = 0.5
 				JAP = {
 					has_war = yes
@@ -1610,23 +1675,6 @@ country_event = {
 		name = NW_marco_polo_bridge.5.b
 		ai_chance = {
 			factor = 25
-			modifier = {
-				factor = 0
-				OR = {
-					is_historical_focus_on = yes
-					has_country_flag = CHI_AI_RANDOM_HISTORICAL
-					has_game_rule = {
-						rule = CHI_ai_behavior
-						option = HISTORICAL
-					}
-				}
-				NOT = {
-					has_game_rule = { #used here instead of checking for default because people might not have WTT
-						rule = CHI_ai_behavior
-						option = ALTERNATE
-					}
-				}
-			}
 			modifier = {
 				factor = 0.5
 				JAP = {

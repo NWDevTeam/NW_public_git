@@ -1,0 +1,854 @@
+IOM_generic_irregular_army_category = {
+	
+	OMA_summon_peoples_militia = {
+		name = IOM_summon_peoples_militia
+	
+		highlight_states = {
+			highlight_states_trigger = {
+				is_controlled_by = ROOT
+				is_capital = yes
+			}
+		}
+		
+		icon = generic_military
+		
+		allowed = {
+            original_tag = OMA
+        }
+		available = {
+			has_war = yes
+			num_of_controlled_states > 0
+			NOT = { has_country_flag = summon_peoples_militia_flag }
+		}
+		visible = {
+		}
+		
+		cost = 20
+		days_remove = 2
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_summon_peoples_militia"
+			set_variable = { num_of_militia_var = 0 }
+			set_country_flag = summon_peoples_militia_flag
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Almilishiat Alqabalia" } }
+					if = {
+						limit = { has_completed_focus = OMA_tribal_unions }
+						division_template = {
+							name = "Almilishiat Alqabalia"
+							division_names_group = OMA_CAV_01
+							is_locked = yes
+							regiments = {
+								cavalry = { x = 0 y = 0 }
+								camelry = { x = 0 y = 1 }
+								camelry = { x = 1 y = 0 }
+								camelry = { x = 1 y = 1 }
+								infantry = { x = 2 y = 0 }
+								infantry = { x = 2 y = 1 }
+							}
+						}
+					}
+					else_if = {
+						limit = { has_completed_focus = OMA_bet_on_tribal_militia }
+						division_template = {
+							name = "Almilishiat Alqabalia"
+							division_names_group = OMA_CAV_01
+							is_locked = yes
+							regiments = {
+								cavalry = { x = 0 y = 0 }
+								camelry = { x = 0 y = 1 }
+								infantry = { x = 1 y = 0 }
+								infantry = { x = 1 y = 1 }
+							}
+						}
+					}
+					else = {
+						division_template = {
+							name = "Almilishiat Alqabalia"
+							division_names_group = OMA_CAV_01
+							is_locked = yes
+							regiments = {
+								cavalry = { x = 0 y = 0 }
+								camelry = { x = 0 y = 1 }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { has_completed_focus = OMA_conscription_experienced_warriors }
+					set_temp_variable = { start_experience_factor_temp = 0.3 }
+					else = {
+						set_temp_variable = { start_experience_factor_temp = 0.1 }
+					}
+				}
+				set_temp_variable = { num_of_cycle = peoples_militia_var }
+				while_loop_effect = {
+					limit = { check_variable = { num_of_cycle > 0 } }
+					add_to_temp_variable = { num_of_cycle = -1 }
+					if = {
+						limit = { has_completed_focus = OMA_reconciliation_with_disloyal_sheikhs }
+						every_owned_state = {
+							limit = { is_core_of = ROOT }
+							create_unit = {
+								division = "name = \"Alfurqat Alfursan\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = var:start_experience_factor_temp force_equipment_variants = { infantry_equipment_0 = { owner = \"OMA\" } }" 
+								owner = ROOT
+								count = 1
+								allow_spawning_on_enemy_provs = yes
+							}
+							add_to_variable = { ROOT.num_of_militia_var = 1 }
+						}
+						else = {
+							random_controlled_state = {
+								prioritize = { 294 }
+								create_unit = {
+									division = "name = \"Alfurqat Alfursan\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = var:start_experience_factor_temp force_equipment_variants = { infantry_equipment_0 = { owner = \"OMA\" } }" 
+									owner = ROOT
+									count = 1
+									allow_spawning_on_enemy_provs = yes
+								}
+								add_to_variable = { ROOT.num_of_militia_var = 1 }
+							}
+						}
+					}
+					if = {
+						limit = { has_completed_focus = OMA_arming_loyal_tribes }
+						if = {
+							limit = { owns_state = 943 }
+							943 = {
+								create_unit = {
+									division = "name = \"Alfurqat Alfursan\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = var:start_experience_factor_temp" 
+									owner = ROOT
+									count = 1
+									allow_spawning_on_enemy_provs = yes
+								}
+								add_to_variable = { ROOT.num_of_militia_var = 1 }
+							}
+						}
+						if = {
+							limit = { owns_state = 805 }
+							805 = {
+								create_unit = {
+									division = "name = \"Alfurqat Alfursan\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = var:start_experience_factor_temp" 
+									owner = ROOT
+									count = 1
+									allow_spawning_on_enemy_provs = yes
+								}
+								add_to_variable = { ROOT.num_of_militia_var = 1 }
+							}
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = summon_peoples_militia_tt
+			if = {
+				limit = { has_completed_focus = OMA_arming_loyal_tribes }
+				custom_effect_tooltip = OMA_summon_peoples_militia_tt
+			}
+			if = {
+				limit = {
+					has_completed_focus = OMA_reconciliation_with_disloyal_sheikhs
+				}
+				custom_effect_tooltip = IOM_summon_peoples_militia_tt4
+			}
+			custom_effect_tooltip = BHU_summon_peoples_militia_tt3
+		}
+		
+		ai_will_do = {
+			factor = 250
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+		}
+	}
+	
+	OMA_irregular_army_recovery = {
+		name = irregular_army_recovery
+		allowed = {
+            original_tag = OMA
+        }
+		available = {
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = generic_irregular_army_recovery_tt
+				has_idea = irregular_army
+				check_variable = { var = num_divisions value = num_of_militia_var compare = greater_than_or_equals }
+			}
+		}
+		visible = {
+			has_war = yes
+			has_idea = irregular_army
+			check_variable = { num_divisions < num_of_militia_var }
+		}
+		cancel_if_not_visible = yes
+		icon = generic_nationalism
+		days_mission_timeout = 40
+		activation = {
+			has_war = yes
+			has_country_flag = summon_peoples_militia_flag
+			check_variable = { num_divisions < num_of_militia_var }
+			has_manpower > 0 
+		}
+		is_good = yes
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision OMA_irregular_army_recovery"
+			add_manpower = -2000
+			if = {
+				limit = { has_country_flag = put_pressure_on_chiefs_flag }
+				clr_country_flag = put_pressure_on_chiefs_flag
+			}
+			set_temp_variable = { num_of_spawn = num_of_militia_var }	
+			multiply_temp_variable = { num_of_spawn = 0.1 }
+			round_temp_variable = num_of_spawn
+			add_to_temp_variable = { num_of_spawn = 1 }
+			### ПРОВЕРКА
+			set_temp_variable = { check_num_of_spawn = num_divisions }
+			add_to_temp_variable = { check_num_of_spawn = num_of_spawn }
+			if = {
+				limit = {
+					check_variable = { check_num_of_spawn > num_of_militia_var }
+				}
+				subtract_from_temp_variable = { check_num_of_spawn = num_of_militia_var }
+				subtract_from_temp_variable = { num_of_spawn = check_num_of_spawn }
+			}
+			set_temp_variable = { num_of_cycle = num_of_spawn }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_cycle > 0 } }
+				add_to_temp_variable = { num_of_cycle = -1 }
+				random_controlled_state = {
+					prioritize = { 942 }
+					create_unit = {
+						division = "name = \"Almilishiat Alqabalia\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = 0.1" 
+						owner = ROOT
+						count = 1
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn = 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt2
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn > 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt3
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_irregular_army_recovery"
+		}
+	}
+	
+	OMA_put_pressure_on_chiefs = {
+		name = put_pressure_on_chiefs
+    	icon = hol_attract_foreign_investors
+		allowed = {
+            original_tag = OMA
+        }
+        available = {
+			has_active_mission = OMA_irregular_army_recovery
+			NOT = { has_country_flag = put_pressure_on_chiefs_flag }
+        }
+		visible = {
+            has_active_mission = OMA_irregular_army_recovery
+        }
+		cost = 30
+
+        ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				check_variable = { days_mission_timeout@OMA_irregular_army_recovery < 20 }
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_put_pressure_on_chiefs"
+			add_days_mission_timeout = { mission = OMA_irregular_army_recovery days = -30 }
+			set_country_flag = put_pressure_on_chiefs_flag
+		}
+    }
+}
+
+OMA_suppression_of_sheikh_harami_rebellion_category = {
+
+	OMA_rebel_march_on_muscat = {
+		priority = 200
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		visible = {
+			hidden_trigger = {
+				has_country_flag = OMA_suppression_of_sheikh_harami_rebellion_flag
+			}
+		}
+		cancel_if_not_visible = yes
+		icon = generic_ignite_civil_war
+		days_mission_timeout = 60
+		activation = {
+			has_country_flag = OMA_suppression_of_sheikh_harami_rebellion_flag
+		}
+		is_good = no
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision OMA_rebel_march_on_muscat"
+			if = {
+				limit = { check_variable = { OMA_power_of_harami_var > OMA_power_of_said_var } }
+				country_event = NWmuscat.33	#lose
+			}
+			else = {
+				country_event = NWmuscat.34	#win
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_rebel_march_on_muscat"
+		}
+	}
+	
+	OMA_preemptive_attack = {
+	
+		icon = generic_civil_support
+		fire_only_once = yes
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = OMA_preemptive_attack_tt1
+				check_variable = { OMA_power_of_said_var_preemptive_attack > 3 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = OMA_preemptive_attack_tt2
+				check_variable = { days_mission_timeout@OMA_rebel_march_on_muscat > 20 }
+			}
+		}
+		visible = {
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_preemptive_attack"
+			custom_effect_tooltip = OMA_preemptive_attack_tt
+			hidden_effect = {
+				add_to_variable = { OMA_power_of_said_var_preemptive_attack = 3 }
+				if = {
+					limit = { check_variable = { OMA_power_of_harami_var > OMA_power_of_said_var_preemptive_attack } }
+					country_event = NWmuscat.35	#lose
+				}
+				else = {
+					country_event = NWmuscat.36	#win
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 500
+				is_historical_focus_on = yes
+				set_temp_variable = { temp1 = OMA_power_of_said_var_preemptive_attack }
+				add_to_temp_variable = { temp1 = -2 }
+				check_variable = { OMA_power_of_harami_var < temp1 }
+			}
+		}
+	}
+	
+	OMA_prepare_ships_for_landing = {
+	
+		icon = generic_naval
+		fire_only_once = yes
+		
+		cost = 10
+		days_remove = 10
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_prepare_ships_for_landing"
+			custom_effect_tooltip = OMA_prepare_ships_for_landing_tt
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 2 }
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_mobilise_muscat_corps = {
+	
+		icon = generic_army_support
+		fire_only_once = yes
+		
+		visible = {
+			NOT = { has_country_flag = OMA_muscat_levy_corps_off_flag }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 5 }
+			set_temp_variable = { command_power_temp_cost = 20 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		
+		days_remove = 7
+		
+		complete_effect = {
+			hidden_effect = {
+				add_political_power = -5
+				add_command_power = -20
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_mobilise_muscat_corps"
+			custom_effect_tooltip = OMA_mobilise_muscat_corps_tt
+			if = {
+				limit = { has_country_flag = OMA_expand_muscat_corps }
+				add_to_variable = { OMA_power_of_said_var = 5 }
+				add_to_variable = { OMA_power_of_said_var_preemptive_attack = 5 }
+			}
+			else = {
+				add_to_variable = { OMA_power_of_said_var = 3 }
+				add_to_variable = { OMA_power_of_said_var_preemptive_attack = 3 }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_mobilise_nizam_army = {
+	
+		icon = eng_support_imperialist_coup
+		fire_only_once = yes
+		
+		visible = {
+			has_country_flag = OMA_jaysh_nizam_is_create_flag
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 5 }
+			set_temp_variable = { command_power_temp_cost = 20 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		
+		days_remove = 7
+		
+		complete_effect = {
+			hidden_effect = {
+				add_political_power = -5
+				add_command_power = -20
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_mobilise_nizam_army"
+			custom_effect_tooltip = OMA_mobilise_muscat_corps_tt
+			if = {
+				limit = { has_country_flag = NWmuscat_12_a_flag }
+				add_to_variable = { OMA_power_of_said_var = 3 }
+				add_to_variable = { OMA_power_of_said_var_preemptive_attack = 3 }
+			}
+			else = {
+				add_to_variable = { OMA_power_of_said_var = 4 }
+				add_to_variable = { OMA_power_of_said_var_preemptive_attack = 4 }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_summon_warriors_from_loyal_tribes = {
+	
+		icon = eng_propaganda_campaigns
+		fire_only_once = yes
+		
+		cost = 10
+		days_remove = 25
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_summon_warriors_from_loyal_tribes"
+			custom_effect_tooltip = OMA_summon_warriors_from_loyal_tribes_tt
+			add_to_variable = { OMA_power_of_said_var = 1 }
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_mobilization_of_reservists = {
+	
+		icon = eng_blackshirt_march
+		fire_only_once = yes
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 15 }
+			set_temp_variable = { rifles_temp_cost = 200 }
+			has_political_power > custom_cost_pp
+			has_equipment = { infantry_equipment > rifles_temp_cost }
+		}
+		custom_cost_text = pol_and_rifles_cost
+		
+		days_remove = 7
+		
+		complete_effect = {
+			hidden_effect = {
+				add_political_power = -15
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -200
+				}
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_mobilization_of_reservists"
+			custom_effect_tooltip = OMA_mobilization_of_reservists_tt
+			add_to_variable = { OMA_power_of_said_var = 2 }
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 2 }
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_request_assistance_from_british_destroyer = {
+	
+		icon = generic_naval
+		fire_only_once = yes
+		
+		cost = 10
+		days_remove = 5
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_request_assistance_from_british_destroyer"
+			custom_effect_tooltip = OMA_request_assistance_from_british_destroyer_tt
+			add_to_variable = { OMA_power_of_said_var = 2 }
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 2 }
+		}
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_decree_on_the_execution_of_anyone_who_calls_in_another_city = {
+	
+		icon = eng_trade_unions_support
+		fire_only_once = yes
+		
+		cost = 5
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_decree_on_the_execution_of_anyone_who_calls_in_another_city"
+			custom_effect_tooltip = OMA_decree_on_the_execution_of_anyone_who_calls_in_another_city_tt
+			set_country_flag = OMA_antispy_flag
+		}
+		
+		ai_will_do = {
+			factor = 500
+		}
+	}
+	
+	OMA_evacuation_of_sultan_in_dofar = {
+	
+		icon = infiltrate_state
+		fire_only_once = yes
+		
+		available = {
+			NOT = { has_country_flag = OMA_escort_of_troops_by_sultan_flag }
+		}
+		
+		visible = {
+			NOT = { has_country_flag = OMA_escort_of_troops_by_sultan_flag }
+		}
+		
+		cost = 6
+		days_remove = 7
+		
+		modifier = {
+			political_power_cost = 0.5
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_evacuation_of_sultan_in_dofar"
+			set_country_flag = OMA_evacuation_of_sultan_in_dofar_flag
+			custom_effect_tooltip = OMA_evacuation_of_sultan_in_dofar_tt1
+			custom_effect_tooltip = OMA_evacuation_of_sultan_in_dofar_tt2
+			add_to_variable = { OMA_power_of_said_var = -4 }
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = -4 }
+		}
+		
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_escort_of_troops_by_sultan = {
+	
+		icon = generic_speech
+		fire_only_once = yes
+		
+		available = {
+			NOT = { has_country_flag = OMA_evacuation_of_sultan_in_dofar_flag }
+		}
+		
+		visible = {
+			NOT = { has_country_flag = OMA_evacuation_of_sultan_in_dofar_flag }
+		}
+		
+		cost = 5
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision OMA_escort_of_troops_by_sultan"
+			set_country_flag = OMA_escort_of_troops_by_sultan_flag
+			custom_effect_tooltip = OMA_mobilization_of_reservists_tt
+			custom_effect_tooltip = OMA_escort_of_troops_by_sultan_tt
+			add_to_variable = { OMA_power_of_said_var = 2 }
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 2 }
+		}
+		
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 500
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_buy_british_rifles = {
+	
+		icon = generic_prepare_civil_war
+		fire_only_once = yes
+		
+		cost = 10
+		days_remove = 35
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_buy_british_rifles"
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 100
+			}
+		}
+		
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+	
+	OMA_erect_barricades_in_muscat = {
+	
+		icon = generic_operation
+		fire_only_once = yes
+		
+		cost = 15
+		days_remove = 17
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_erect_barricades_in_muscat"
+			custom_effect_tooltip = OMA_erect_barricades_in_muscat_tt
+			add_to_variable = { OMA_power_of_said_var = 2 }
+		}
+		
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_erect_barricades_in_matrakh = {
+	
+		icon = generic_operation
+		fire_only_once = yes
+		
+		cost = 10
+		days_remove = 10
+		
+		modifier = {
+			civilian_factory_use = 1
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_erect_barricades_in_matrakh"
+			custom_effect_tooltip = OMA_erect_barricades_in_matrakh_tt
+			add_to_variable = { OMA_power_of_said_var = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_mobilise_muscat_police = {
+	
+		icon = generic_arrest
+		fire_only_once = yes
+		
+		cost = 5
+		days_remove = 4
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_mobilise_muscat_police"
+			custom_effect_tooltip = OMA_erect_barricades_in_matrakh_tt
+			add_to_variable = { OMA_power_of_said_var = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = no
+				check_variable = { OMA_power_of_said_var > 9 }
+			}
+		}
+	}
+	
+	OMA_reorganize_coast_guard = {
+	
+		icon = generic_intelligence_operation
+		fire_only_once = yes
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 10 }
+			set_temp_variable = { rifles_temp_cost = 50 }
+			has_political_power > custom_cost_pp
+			has_equipment = { infantry_equipment > rifles_temp_cost }
+		}
+		custom_cost_text = pol_and_rifles_cost
+		
+		days_remove = 10
+		
+		complete_effect = {
+			hidden_effect = {
+				add_political_power = -10
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -50
+				}
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision OMA_reorganize_coast_guard"
+			custom_effect_tooltip = OMA_erect_barricades_in_matrakh_tt
+			add_to_variable = { OMA_power_of_said_var_preemptive_attack = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

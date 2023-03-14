@@ -373,6 +373,17 @@ country_event = {
 						add_country_leader_trait = kingCZE
 					}
 				}
+				if = {
+					limit = {
+						has_idea = CZE_tank_school_spirit
+						FROM = { has_any_tank_school = no }
+					}
+					FROM = {
+						add_ideas = CZE_tank_school_spirit
+						set_temp_variable = { CZE_tank_school_spirit_cost_var = mtth:CZE_tank_school_spirit_cost }
+						army_experience = CZE_tank_school_spirit_cost_var
+					}
+				}
 			}
 			else_if = {
 				limit = { original_tag = AUS }
@@ -454,18 +465,18 @@ country_event = {
 		}
 	}
 	
-	option = {
-		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.1.b"
-		name = NWmonarchy.2.b
-		ai_chance = {
-			factor = 99
-		}
-		trigger = {
-			tag = HUN
-			has_completed_focus = HUN_proclaim_greater_hungary
-		}
-		FROM = { country_event = { id = NWmonarchy.3 days = 1 } }
-	}
+#	option = {
+#		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.1.b"
+#		name = NWmonarchy.2.b
+#		ai_chance = {
+#			factor = 99
+#		}
+#		trigger = {
+#			tag = HUN
+#			has_completed_focus = HUN_proclaim_greater_hungary
+#		}
+#		FROM = { country_event = { id = NWmonarchy.3 days = 1 } }
+#	}
 }
 
 #Референдум провалился
@@ -529,13 +540,13 @@ country_event = {
 				factor = 50
 				has_war = yes
 			}
-			modifier = {
-				factor = 0
-				FROM = {
-					tag = HUN
-					has_completed_focus = HUN_proclaim_greater_hungary
-				}
-			}
+#			modifier = {
+#				factor = 0
+#				FROM = {
+#					tag = HUN
+#					has_completed_focus = HUN_proclaim_greater_hungary
+#				}
+#			}
 		}
 	}
 }
@@ -961,8 +972,22 @@ country_event = {
 			type = puppet_wargoal_focus
 			target = YUG
 		}
-		hidden_effect = {
-			FROM = { BUL = { country_event = { id = NWmonarchy.95 days = 1 } } }
+		if = {
+			limit = {
+				country_exists = BUL
+				BUL = {
+					is_subject = no
+					has_civil_war = no
+					NOT = {
+						is_in_faction_with = YUG
+						has_war_with = YUG
+					}
+				}
+			}
+			custom_effect_tooltip = HBBRG_yug_tt_2
+			hidden_effect = {
+				FROM = { BUL = { country_event = { id = NWmonarchy.95 days = 1 } } }
+			}
 		}
 	}
 
@@ -978,7 +1003,20 @@ country_event = {
 			}
 		}
 		YUG = { country_event = { id = NWmonarchy.9 days = 1 } }
-		custom_effect_tooltip = HBBRG_yug_tt
+		if = {
+			limit = {
+				country_exists = BUL
+				BUL = {
+					is_subject = no
+					has_civil_war = no
+					NOT = {
+						is_in_faction_with = YUG
+						has_war_with = YUG
+					}
+				}
+			}
+			custom_effect_tooltip = HBBRG_yug_tt
+		}
 	}
 }
 
@@ -1012,7 +1050,20 @@ country_event = {
 			}
 		}
 		hidden_effect = {
-			FROM = { BUL = { country_event = { id = NWmonarchy.95 days = 1 } } }
+			if = {
+				limit = {
+					country_exists = BUL
+					BUL = {
+						is_subject = no
+						has_civil_war = no
+						NOT = {
+							is_in_faction_with = YUG
+							has_war_with = YUG
+						}
+					}
+				}
+				FROM = { BUL = { country_event = { id = NWmonarchy.95 days = 1 } } }
+			}
 		}
 	}
 	option = {
@@ -1448,11 +1499,9 @@ country_event = {
 		name = NWmonarchy.12.b
 		trigger = {
 			is_subject = no
-			all_state = {
-				OR = {
-					NOT = { is_core_of = SDT }
-					is_fully_controlled_by = ROOT
-				}
+			all_of_scopes = {
+				array = SDT.core_states
+				is_fully_controlled_by = ROOT
 			}
 		}
 		ai_chance = {
@@ -1473,14 +1522,13 @@ country_event = {
 		name = NWmonarchy.12.c
 		trigger = {
 			is_subject = no
-			all_state = {
-				OR = {
-					NOT = {
-						is_core_of = SLO
-						is_core_of = KRP
-					}
-					is_fully_controlled_by = ROOT
-				}
+			all_of_scopes = {
+				array = SLO.core_states
+				is_fully_controlled_by = ROOT
+			}
+			all_of_scopes = {
+				array = KRP.core_states
+				is_fully_controlled_by = ROOT
 			}
 		}
 		ai_chance = {
@@ -1749,11 +1797,9 @@ country_event = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.15.e"
 		name = NWmonarchy.15.e
 		trigger = {
-			all_state = {
-				OR = {
-					NOT = { is_core_of = TRA }
-					is_fully_controlled_by = ROOT
-				}
+			all_of_scopes = {
+				array = TRA.core_states
+				is_fully_controlled_by = ROOT
 			}
 		}
 		ai_chance = {
@@ -2132,13 +2178,13 @@ country_event = {
 		every_state = {
 			limit = {
 				is_core_of = GER
-				NOT = { is_core_of = PRS }
+				NOT = { is_core_of = PRE }
 			}
 			add_claim_by = ROOT
 		}
 		every_state = {
 			limit = {
-				is_core_of = PRS
+				is_core_of = PRE
 			}
 			add_claim_by = VAT
 		}
@@ -5790,22 +5836,22 @@ country_event = {
 					has_full_control_of_state = PREV
 				}
 			}
-			add_core_of = PRS
-			PRS = { transfer_state = PREV }
+			add_core_of = PRE
+			PRE = { transfer_state = PREV }
 		}
-		PRS = { set_cosmetic_tag = TEV_orden }
+		PRE = { set_cosmetic_tag = TEV_orden }
 		VAT = {
 			if = {
 				limit = { has_government = fascism }
 				set_autonomy = {
-					target = PRS
+					target = PRE
 					autonomy_state = autonomy_reichsprotectorate
 				}
 			}
 			if = {
 				limit = { has_government = trozkism }
 				set_autonomy = {
-					target = PRS
+					target = PRE
 					autonomy_state = autonomy_marionet
 
 				}
@@ -5813,7 +5859,7 @@ country_event = {
 			if = {
 				limit = { NOT = { has_government = fascism has_government = trozkism } }
 				set_autonomy = {
-					target = PRS
+					target = PRE
 					autonomy_state = autonomy_puppet
 				}
 			}
@@ -7318,16 +7364,13 @@ country_event = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.95.a"
 		name = NWmonarchy.95.a
 		ai_chance = {
-			factor = 90
+			factor = 80
 			modifier = {
 				factor = 0
-				BUL = { is_in_faction_with = YUG }
-			}
-			modifier = {
-				factor = 0
-				focus_progress = {
-					focus = BUL_YUG_alliance_alliance
-					progress > 0
+				OR = {
+					is_in_faction_with = YUG
+					focus_progress = { focus = BUL_YUG_alliance_alliance progress > 0 }
+					has_completed_focus = BUL_appoint_communist_ministers
 				}
 			}
 		}
@@ -7336,7 +7379,7 @@ country_event = {
 			limit = { YUG = { NOT = { has_country_flag = no_barter_flag } } }
 			YUG = { set_country_flag = no_barter_flag }
 		}
-		ROOT = { set_country_flag = anti_YUG_flag }
+		set_country_flag = anti_YUG_flag
 		FROM = {
 			set_country_flag = anti_YUG_flag
 			country_event = { id = NWmonarchy.96 days = 1 }
@@ -7362,17 +7405,14 @@ country_event = {
 			factor = 10
 			modifier = {
 				factor = 100
-				BUL = { is_in_faction_with = YUG }
-			}
-			modifier = {
-				factor = 100
-				focus_progress = {
-					focus = BUL_YUG_alliance_alliance
-					progress > 0.0
+				OR = {
+					is_in_faction_with = YUG
+					focus_progress = { focus = BUL_YUG_alliance_alliance progress > 0 }
+					has_completed_focus = BUL_appoint_communist_ministers
 				}
 			}
 		}
-		YUG = { country_event = { id = NWmonarchy.98 days = 1 } }
+		YUG = { country_event = { id = NWmonarchy.98 hours = 3 } }
 	}
 }
 
@@ -7503,23 +7543,17 @@ country_event = {
 			factor = 50
 			modifier = {
 				factor = 2
-				alliance_strength_ratio > 2
-			}
-			modifier = {
-				factor = 3
-				alliance_strength_ratio > 3
-			}
-			modifier = {
-				factor = 4
-				alliance_strength_ratio > 4
-			}
-			modifier = {
-				factor = 2
-				enemies_strength_ratio < 1
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 1
+				}
 			}
 			modifier = {
 				factor = 5
-				enemies_strength_ratio < 0.5
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 0.5
+				}
 			}
 		}
 		
@@ -7538,7 +7572,47 @@ country_event = {
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.98.b"
 		name = NWmonarchy.98.b
 		ai_chance = {
-			factor = 50
+			factor = 5
+		}
+	}
+	
+	option = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.98.c"
+		name = NWmonarchy.98.c
+		trigger = {
+			NOT = { is_guaranteed_by = FROM }
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 2
+				}
+			}
+			modifier = {
+				factor = 3
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 1.5
+				}
+			}
+			modifier = {
+				factor = 5
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 1
+				}
+			}
+		}
+		FROM = {
+			country_event = { id = NWmonarchy.105 hours = 3 }
+			effect_tooltip = {
+				give_guarantee = ROOT
+				ROOT = { give_guarantee = PREV }
+			}
+			custom_effect_tooltip = needs_approval
 		}
 	}
 }
@@ -7963,16 +8037,16 @@ country_event = {
 	is_triggered_only = yes
 	hidden = yes
 	
-	trigger = {
-		OR = {
-			original_tag = AUS
-			original_tag = HUN
-			original_tag = CZE
-		}
-		has_focus_tree = hbbrg_focus
-		has_completed_focus = HBBRG_european_family
-		NOT = { has_cosmetic_tag = HBBRG_use_tag }
-	}
+#	trigger = {
+#		OR = {
+#			original_tag = AUS
+#			original_tag = HUN
+#			original_tag = CZE
+#		}
+#		has_focus_tree = hbbrg_focus
+#		has_completed_focus = HBBRG_european_family
+#		NOT = { has_cosmetic_tag = HBBRG_use_tag }
+#	}
 	
 	#mean_time_to_happen = { days = 1 }
 	
@@ -7995,3 +8069,54 @@ country_event = {
 	}
 }
 
+
+
+# Гарантии Югослав-Болгар
+country_event = {
+	id = NWmonarchy.105
+	title = NWmonarchy.105.t
+	desc = NWmonarchy.105.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWmonarchy.105" }
+
+	option = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.105.a"
+		name = NWmonarchy.105.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 2
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 2
+				}
+			}
+			modifier = {
+				factor = 3
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 1.5
+				}
+			}
+			modifier = {
+				factor = 5
+				strength_ratio = {
+					tag = event_target:NW_hbbrg_scope
+					ratio < 1
+				}
+			}
+		}
+		give_guarantee = FROM
+		FROM = { give_guarantee = ROOT }
+	}
+	
+	option = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): choose option NWmonarchy.98.a"
+		name = NWmonarchy.105.b
+		ai_chance = {
+			factor = 10
+		}
+	}
+}

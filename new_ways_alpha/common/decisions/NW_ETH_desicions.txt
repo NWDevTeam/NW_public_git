@@ -9,6 +9,7 @@ ITA_liberate_ethiopia_desicions_category = {
 
 		available = {
 			controls_state = 271
+			controls_state = 901
 			controls_state = 1051
 			controls_state = 1080
 			controls_state = 1079
@@ -17,6 +18,7 @@ ITA_liberate_ethiopia_desicions_category = {
 			controls_state = 1083
 			controls_state = 1084
 			controls_state = 1085
+			controls_state = 1138
         }
 		
 		ai_will_do = {
@@ -35,6 +37,7 @@ ITA_liberate_ethiopia_desicions_category = {
 		complete_effect = {
 			ETH = {
 				transfer_state = 271
+				transfer_state = 901
 				transfer_state = 1051
 				transfer_state = 1080
 				transfer_state = 1079
@@ -43,6 +46,7 @@ ITA_liberate_ethiopia_desicions_category = {
 				transfer_state = 1083
 				transfer_state = 1084
 				transfer_state = 1085
+				transfer_state = 1138
 				hidden_effect = {
 					country_event = { id = NWethiopia.201 hours = 3 }
 				}
@@ -295,23 +299,25 @@ ETH_italo_ethiopian_war = {
 		
 		available = {
 			has_war_with = ITA
-			ITA = {
-				NOT = {
-					controls_state = 550
-					controls_state = 559
+			OR = {
+				controls_state = 550
+				controls_state = 559
+				AND = {
+					ITA = { casualties_k > 100 }
+					custom_trigger_tooltip = {
+						tooltip = trigger_our_losses_are_less_than_enemy_tt
+						ITA = { casualties_k > ROOT.casualties }
+						ROOT = { casualties_k < ITA.casualties }
+					}
 				}
 			}
 		}
 
 		visible = {
-			original_tag = ETH
 			has_war_with = ITA
 		}
 		
-		fire_only_once = no
-		
 		days_re_enable = 30
-
 		cost = 10
 		
 		ai_will_do = {
@@ -353,13 +359,11 @@ ETH_italo_ethiopian_war = {
 
 		remove_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision ETH_seizure_of_ammunition_in_somaliland"
-			ITA = {
-				add_equipment_to_stockpile = {
-					type = infantry_equipment
-					amount = 3500
+			hidden_effect = {
+				ITA = {
+					country_event = { id = NWethiopia.1 }
+					goto_state = 559
 				}
-				hidden_effect = { country_event = { id = NWethiopia.1 } }
-				goto_state = 559
 			}
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
@@ -396,13 +400,11 @@ ETH_italo_ethiopian_war = {
 
 		remove_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision ETH_seizure_of_ammunition_in_eritrea"
-			ITA = {
-				add_equipment_to_stockpile = {
-					type = infantry_equipment
-					amount = 3500
+			hidden_effect = {
+				ITA = {
+					country_event = { id = NWethiopia.1 }
+					goto_state = 550
 				}
-				hidden_effect = { country_event = { id = NWethiopia.1 } }
-				goto_state = 550
 			}
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
@@ -413,6 +415,65 @@ ETH_italo_ethiopian_war = {
 
 		ai_will_do = {
 			factor = 10
+		}
+	}
+	
+	ETH_seizure_of_ammunition_in_state = {
+		icon = infiltrate_state
+		highlight_states = { highlight_state_targets = { state = FROM } }
+		state_target = yes
+		
+		available = {
+			controls_state = FROM
+		}
+		visible = {
+		}
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { controls_state = FROM }
+			}
+		}
+		target_trigger = {
+		}
+		target_array = global.seizure_of_ammunition_states
+		target_root_trigger = {
+			tag = ETH
+		}
+		
+		cost = 10
+		fire_only_once = yes
+		days_remove = 15
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision ETH_seizure_of_ammunition_in_state [From.GetName]"
+			hidden_effect = {
+				FROM = { remove_from_array = { global.seizure_of_ammunition_states = This.id } }
+			}
+			set_temp_variable = { a1 = random }
+			set_temp_variable = { b1 = random }
+			set_temp_variable = { c1 = random }
+			set_temp_variable = { d1 = random }
+			multiply_temp_variable = { a1 = 2000 }
+			multiply_temp_variable = { b1 = 1500 }
+			multiply_temp_variable = { c1 = 500 }
+			multiply_temp_variable = { d1 = 50 }
+			
+			set_temp_variable = { f1 = a1 }
+			add_to_temp_variable = { f1 = b1 }
+			add_to_temp_variable = { f1 = c1 }
+			add_to_temp_variable = { f1 = d1 }
+			clamp_temp_variable = { var = f1 min = 100 max = 3500 }
+			round_temp_variable = f1
+
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_0
+				amount = f1
+				producer = ITA
+			}
+		}
+
+		ai_will_do = {
+			factor = 20
 		}
 	}
 
@@ -523,6 +584,8 @@ ETH_support_for_regions = {
 			1081
 			1082
 			1084
+			901
+			1138
 			559
 			550
 		}

@@ -25,10 +25,6 @@ nw_drop_focus_tree = {
 			hidden_effect = {
 				remove_all_start_ideas = yes
 				set_country_flag = drop_focus_flag
-				if = {
-					limit = { original_tag = SOV }
-					SOV_remove_paranoia_effect = yes
-				}
 			}
 		}
 	}
@@ -70,10 +66,6 @@ nw_drop_focus_tree = {
 				hidden_effect = {
 					remove_all_start_ideas = yes
 					set_country_flag = drop_focus_flag
-					if = {
-						limit = { original_tag = SOV }
-						SOV_remove_paranoia_effect = yes
-					}
 				}
 			}
 		}
@@ -135,6 +127,7 @@ generic_protectorate_policy_category = {
 		
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_provide_independence_to_subject (From [From.GetName] [From.GetTag])"
+			hidden_effect = { FROM = { save_party_popularity = yes } }
 			if = {
 				limit = { has_government = fascism }
 				custom_effect_tooltip = generic_provide_independence_to_satellite_tt
@@ -164,7 +157,7 @@ generic_protectorate_policy_category = {
 					}
 				}
 			}
-
+			hidden_effect = { FROM = { load_party_popularity = yes } }
 		}
 		
 		ai_will_do = {
@@ -240,6 +233,7 @@ generic_protectorate_policy_category = {
 		
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_increase_autonomy_of_subject (From [From.GetName] [From.GetTag])"
+			hidden_effect = { FROM = { save_party_popularity = yes } }
 			if = {
 				limit = { has_government = fascism }
 				custom_effect_tooltip = generic_provide_independence_to_reichsprotectorate_tt
@@ -269,7 +263,7 @@ generic_protectorate_policy_category = {
 					}
 				}
 			}
-
+			hidden_effect = { FROM = { load_party_popularity = yes } }
 		}
 		
 		ai_will_do = {
@@ -533,6 +527,7 @@ generic_gem_among_colonies_category = {
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_gem_among_colonies (From [From.GetName] [From.GetTag])"
 			hidden_effect = {
+				FROM = { save_party_popularity = yes }
 				if = {
 					limit = {
 						FROM = { has_autonomy_state = autonomy_reichskommissariat }
@@ -571,6 +566,7 @@ generic_gem_among_colonies_category = {
 					}
 				}
 				FROM = { set_country_flag = is_gem_among_colonies_flag_@ROOT }
+				FROM = { load_party_popularity = yes }
 			}
 			custom_effect_tooltip = generic_gem_among_colonies_effect_tt
 		}
@@ -8824,6 +8820,419 @@ operations = {
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_JAP_start_prepare_mission"
 			declare_war_on = { target = JAP type = puppet_wargoal_focus }
+		}
+	}
+}
+
+
+nw_universal_factory_category = {
+	conversion_universal_factory_mission_1 = {
+		icon = generic_wreckers
+		available = {
+			OR = {
+				universal_factory < 1
+				all_controlled_state = {
+					arms_factory < 1
+					industrial_complex < 1
+				}
+				var:conversion_universal_factory_mission_1_target = {
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						AND = {
+							arms_factory < 1
+							industrial_complex < 1
+						}
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		activation = {
+			universal_factory > 0		# тут должно быть на 1 меньше, чем цифра в названии
+			any_controlled_state = {
+				has_state_flag = conversion_universal_factory_mission_1_flag
+				OR = {
+					arms_factory > 0
+					industrial_complex > 0
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		
+		visible = {
+			has_tech = universal_factory_tech
+		}
+		cancel_trigger = {
+			universal_factory < 1
+		}
+		is_good = yes
+
+		cancel_effect = {
+			hidden_effect = {
+				var:conversion_universal_factory_mission_1_target = {
+					clr_state_flag = conversion_universal_factory_mission
+					clr_state_flag = conversion_universal_factory_mission_1_flag
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): cancel decision conversion_universal_factory_mission_1"
+				}
+				clear_variable = conversion_universal_factory_mission_1_target
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision conversion_universal_factory_mission_1"
+			var:conversion_universal_factory_mission_1_target = {
+				if = {
+					limit = {
+						industrial_complex > 0
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				else = {
+					remove_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+				add_building_construction = {
+					type = universal_factory
+					level = 1
+					instant_build = yes
+				}
+				clr_state_flag = conversion_universal_factory_mission
+				clr_state_flag = conversion_universal_factory_mission_1_flag
+			}
+			clear_variable = conversion_universal_factory_mission_1_target
+			start_conversion_universal_factory_mission = yes
+		}
+	}
+	
+	conversion_universal_factory_mission_2 = {
+		icon = generic_wreckers
+		available = {
+			OR = {
+				universal_factory < 2
+				all_controlled_state = {
+					arms_factory < 1
+					industrial_complex < 1
+				}
+				var:conversion_universal_factory_mission_2_target = {
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						AND = {
+							arms_factory < 1
+							industrial_complex < 1
+						}
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		activation = {
+			universal_factory > 1		# тут должно быть на 1 меньше, чем цифра в названии
+			any_controlled_state = {
+				has_state_flag = conversion_universal_factory_mission_2_flag
+				OR = {
+					arms_factory > 0
+					industrial_complex > 0
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		
+		visible = {
+			has_tech = universal_factory_tech
+		}
+		cancel_trigger = {
+			universal_factory < 2
+		}
+		is_good = yes
+
+		cancel_effect = {
+			hidden_effect = {
+				var:var:conversion_universal_factory_mission_2_target = {
+					clr_state_flag = conversion_universal_factory_mission
+					clr_state_flag = conversion_universal_factory_mission_2_flag
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): cancel decision conversion_universal_factory_mission_2"
+				}
+				clear_variable = var:conversion_universal_factory_mission_2_target
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision conversion_universal_factory_mission_2"
+			var:var:conversion_universal_factory_mission_2_target = {
+				if = {
+					limit = {
+						industrial_complex > 0
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				else = {
+					remove_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+				add_building_construction = {
+					type = universal_factory
+					level = 1
+					instant_build = yes
+				}
+				clr_state_flag = conversion_universal_factory_mission
+				clr_state_flag = conversion_universal_factory_mission_2_flag
+			}
+			clear_variable = var:conversion_universal_factory_mission_2_target
+			start_conversion_universal_factory_mission = yes
+		}
+	}
+	
+	conversion_universal_factory_mission_3 = {
+		icon = generic_wreckers
+		available = {
+			OR = {
+				universal_factory < 3
+				all_controlled_state = {
+					arms_factory < 1
+					industrial_complex < 1
+				}
+				var:conversion_universal_factory_mission_3_target = {
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						AND = {
+							arms_factory < 1
+							industrial_complex < 1
+						}
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		activation = {
+			universal_factory > 2		# тут должно быть на 1 меньше, чем цифра в названии
+			any_controlled_state = {
+				has_state_flag = conversion_universal_factory_mission_3_flag
+				OR = {
+					arms_factory > 0
+					industrial_complex > 0
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		
+		visible = {
+			has_tech = universal_factory_tech
+		}
+		cancel_trigger = {
+			universal_factory < 3
+		}
+		is_good = yes
+	
+		cancel_effect = {
+			hidden_effect = {
+				var:var:conversion_universal_factory_mission_3_target = {
+					clr_state_flag = conversion_universal_factory_mission
+					clr_state_flag = conversion_universal_factory_mission_3_flag
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): cancel decision conversion_universal_factory_mission_3"
+				}
+				clear_variable = var:conversion_universal_factory_mission_3_target
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision conversion_universal_factory_mission_3"
+			var:var:conversion_universal_factory_mission_3_target = {
+				if = {
+					limit = {
+						industrial_complex > 0
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				else = {
+					remove_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+				add_building_construction = {
+					type = universal_factory
+					level = 1
+					instant_build = yes
+				}
+				clr_state_flag = conversion_universal_factory_mission
+				clr_state_flag = conversion_universal_factory_mission_3_flag
+			}
+			clear_variable = var:conversion_universal_factory_mission_3_target
+			start_conversion_universal_factory_mission = yes
+		}
+	}
+	
+	conversion_universal_factory_mission_4 = {
+		icon = generic_wreckers
+		available = {
+			OR = {
+				universal_factory < 4
+				all_controlled_state = {
+					arms_factory < 1
+					industrial_complex < 1
+				}
+				var:conversion_universal_factory_mission_4_target = {
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						AND = {
+							arms_factory < 1
+							industrial_complex < 1
+						}
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		activation = {
+			universal_factory > 3		# тут должно быть на 1 меньше, чем цифра в названии
+			any_controlled_state = {
+				has_state_flag = conversion_universal_factory_mission_4_flag
+				OR = {
+					arms_factory > 0
+					industrial_complex > 0
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		
+		visible = {
+			has_tech = universal_factory_tech
+		}
+		cancel_trigger = {
+			universal_factory < 4
+		}
+		is_good = yes
+	
+		cancel_effect = {
+			hidden_effect = {
+				var:var:conversion_universal_factory_mission_4_target = {
+					clr_state_flag = conversion_universal_factory_mission
+					clr_state_flag = conversion_universal_factory_mission_4_flag
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): cancel decision conversion_universal_factory_mission_4"
+				}
+				clear_variable = var:conversion_universal_factory_mission_4_target
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision conversion_universal_factory_mission_4"
+			var:var:conversion_universal_factory_mission_4_target = {
+				if = {
+					limit = {
+						industrial_complex > 0
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				else = {
+					remove_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+				add_building_construction = {
+					type = universal_factory
+					level = 1
+					instant_build = yes
+				}
+				clr_state_flag = conversion_universal_factory_mission
+				clr_state_flag = conversion_universal_factory_mission_4_flag
+			}
+			clear_variable = var:conversion_universal_factory_mission_4_target
+			start_conversion_universal_factory_mission = yes
+		}
+	}
+	
+	conversion_universal_factory_mission_5 = {
+		icon = generic_wreckers
+		available = {
+			OR = {
+				universal_factory < 5
+				all_controlled_state = {
+					arms_factory < 1
+					industrial_complex < 1
+				}
+				var:conversion_universal_factory_mission_5_target = {
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						AND = {
+							arms_factory < 1
+							industrial_complex < 1
+						}
+					}
+				}
+			}
+		}
+		days_mission_timeout = 30
+		activation = {
+			universal_factory > 4		# тут должно быть на 1 меньше, чем цифра в названии
+			any_controlled_state = {
+				has_state_flag = conversion_universal_factory_mission_5_flag
+				OR = {
+					arms_factory > 0
+					industrial_complex > 0
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		
+		visible = {
+			has_tech = universal_factory_tech
+		}
+		cancel_trigger = {
+			universal_factory < 5
+		}
+		is_good = yes
+	
+		cancel_effect = {
+			hidden_effect = {
+				var:var:conversion_universal_factory_mission_5_target = {
+					clr_state_flag = conversion_universal_factory_mission
+					clr_state_flag = conversion_universal_factory_mission_5_flag
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): cancel decision conversion_universal_factory_mission_5"
+				}
+				clear_variable = var:conversion_universal_factory_mission_5_target
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision conversion_universal_factory_mission_5"
+			var:var:conversion_universal_factory_mission_5_target = {
+				if = {
+					limit = {
+						industrial_complex > 0
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				else = {
+					remove_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+				add_building_construction = {
+					type = universal_factory
+					level = 1
+					instant_build = yes
+				}
+				clr_state_flag = conversion_universal_factory_mission
+				clr_state_flag = conversion_universal_factory_mission_5_flag
+			}
+			clear_variable = var:conversion_universal_factory_mission_5_target
+			start_conversion_universal_factory_mission = yes
 		}
 	}
 }

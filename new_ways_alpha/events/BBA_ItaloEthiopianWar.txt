@@ -1,0 +1,496 @@
+###########################
+# BBA Events for the 2nd Italo-Ethiopian War
+###########################
+
+add_namespace = BBA_italy_second_italo_ethiopian_war
+add_namespace = BBA_italo_ethiopian_war_events
+
+
+
+
+# Italy offer for peace - Event for ETH
+country_event = {
+	id = BBA_italy_second_italo_ethiopian_war.1
+	title = BBA_italy_second_italo_ethiopian_war.1.t
+	desc = BBA_italy_second_italo_ethiopian_war.1.desc
+	picture = GFX_report_event_african_soldiers
+	
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event BBA_italy_second_italo_ethiopian_war.1"}
+	
+	#ACCEPT
+	option = {
+		name = BBA_italy_second_italo_ethiopian_war.1.a
+		ai_chance = {
+			base = 10
+			modifier = { #If they're stronger than ITA then never accept
+				factor = 0
+				strength_ratio = {
+					tag = FROM
+					ratio > 1
+				}
+			}
+		}
+		effect_tooltip = {
+			#ERITREA
+			transfer_state = 550
+			550 = { add_compliance = 50 }
+			
+			#SOMALILAND
+			transfer_state = 559
+			559 = { add_compliance = 50 }
+			
+			#TIGRAY
+			transfer_state = 1080
+			
+			#AFAR always goes to ETH if owned by ITA
+			if = {
+				limit = {
+					1079 = {
+						is_owned_by = FROM
+					}
+				}
+				transfer_state = 1079 
+			}
+			white_peace = FROM
+		}
+
+		hidden_effect = {
+			FROM = {
+				country_event = { id = BBA_italy_second_italo_ethiopian_war.2 days = 1 }
+			}
+		}
+	}
+	
+	option = {
+		name = BBA_italy_second_italo_ethiopian_war.1.b
+		ai_chance = {
+			base = 1
+			modifier = { #Usually they should accept
+				factor = 0
+				strength_ratio = {
+					tag = FROM
+					ratio < 1
+				}
+			}
+		}
+		FROM = {
+			country_event = { id = BBA_italy_second_italo_ethiopian_war.3 days = 1 }
+		}
+	}
+}
+
+# ETH accepts ITA peace offer - Event for ITA
+country_event = {
+	id = BBA_italy_second_italo_ethiopian_war.2
+	title = BBA_italy_second_italo_ethiopian_war.2.t
+	desc = BBA_italy_second_italo_ethiopian_war.2.desc
+	picture = GFX_report_event_african_soldiers
+	
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event BBA_italy_second_italo_ethiopian_war.2"}
+	immediate = { set_global_flag = { flag = ITA_peace_offer_ETH_flag days = 1 } }
+
+	#Ok - Already completed initial missiolini focus
+	option = {
+		name = BBA_italy_second_italo_ethiopian_war.2.a
+		hidden_effect = {
+			every_controlled_state = {
+				limit = {
+					is_core_of = FROM
+				}
+				set_state_controller_to = FROM
+				FROM = { transfer_state = PREV }
+			}
+		}
+		FROM = {
+			#ERITREA
+			transfer_state = 550
+			550 = { add_compliance = 50 }
+			
+			#SOMALILAND
+			transfer_state = 559
+			559 = { add_compliance = 50 }
+			
+			#TIGRAY
+			transfer_state = 1080
+			
+			#AFAR always goes to ETH if owned by ITA
+			if = {
+				limit = {
+					ROOT = { owns_state = 1079 }
+				}
+				transfer_state = 1079 
+			}
+			white_peace = ROOT
+		}
+		hidden_effect = {
+			FROM = {
+				every_enemy_country = {
+					limit = {
+						is_in_faction_with = ROOT
+						is_faction_leader = yes
+					}
+					FROM = { white_peace = PREV }
+				}
+			}
+			if = {
+				limit = { NOT = { country_exists = ETH } }
+				every_controlled_state = {
+					limit = {
+						is_core_of = FROM
+					}
+					FROM = { transfer_state = PREV }
+				}
+				FROM = {
+					#ERITREA
+					transfer_state = 550
+					550 = { add_compliance = 50 }
+					
+					#SOMALILAND
+					transfer_state = 559
+					559 = { add_compliance = 50 }
+					
+					#TIGRAY
+					transfer_state = 1080
+					
+					#AFAR always goes to ETH if owned by ITA
+					if = {
+						limit = {
+							ROOT = { owns_state = 1079 }
+						}
+						transfer_state = 1079 
+					}
+				}
+			}
+		}
+
+		ITA_bop_low_decrease_effect = yes
+	}
+}
+
+# ETH refects ITA peace offer - Event for ITA
+country_event = {
+	id = BBA_italy_second_italo_ethiopian_war.3
+	title = BBA_italy_second_italo_ethiopian_war.3.t
+	desc = BBA_italy_second_italo_ethiopian_war.3.desc
+	picture = GFX_report_event_african_soldiers
+	
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event BBA_italy_second_italo_ethiopian_war.3"}
+	
+	#Ok
+	option = {
+		name = BBA_italy_second_italo_ethiopian_war.3.a
+	}
+}
+
+
+
+
+
+
+# Close the Suez event 
+country_event = {
+	id = BBA_italo_ethiopian_war_events.11
+	title = BBA_italo_ethiopian_war_events.11.t
+	desc = BBA_italo_ethiopian_war_events.11.desc
+	picture = GFX_report_event_merchant_ship_01
+	
+	is_triggered_only = yes
+	fire_only_once = yes 
+
+	immediate = {
+		
+	}
+
+	trigger = {
+		is_league_of_nations_member = yes
+	}
+
+	# great idea - lets block them
+	option = { 
+		name = BBA_italo_ethiopian_war_events.11.a
+		trigger = {
+			
+		}
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 0.1
+				has_government = ITA 
+			}
+		}
+		add_popularity = {
+			ideology = ROOT
+			popularity = 0.05
+		}
+		custom_effect_tooltip = suez_blocked_sanctions_tt
+		ITA = { set_country_flag = SUEZ_SANCTIONS_FLAG }
+		ETH = {
+			country_event = {
+				id = BBA_italo_ethiopian_war_events.13
+				hours = 4
+			}
+		}
+	}
+
+	# no we won't
+	option = { 
+		name = BBA_italo_ethiopian_war_events.11.b
+		trigger = {
+			
+		}
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 5
+				has_opinion = {
+					target = ITA
+					value > 0
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = ITA
+					value > 49
+				}
+			}
+			modifier = {
+				factor = 5
+				is_in_faction_with = ITA
+			}
+		}
+		
+		add_political_power	= -100
+		add_popularity = {
+			ideology = ITA
+			popularity = 0.05
+		}
+		leave_the_league_of_nations = yes 
+		ETH = {
+			country_event = {
+				id = BBA_italo_ethiopian_war_events.12
+				hours = 4
+			}
+		}
+	}
+	
+}
+
+# UK refuses to close the Suez
+country_event = {
+	id = BBA_italo_ethiopian_war_events.12
+	title = BBA_italo_ethiopian_war_events.12.t
+	desc = BBA_italo_ethiopian_war_events.12.desc
+	picture = GFX_report_event_merchant_ship_01
+	
+	is_triggered_only = yes
+	fire_only_once = yes 
+
+	immediate = {
+		
+	}
+	# great idea
+	option = { 
+		name = BBA_italo_ethiopian_war_events.12.a
+		trigger = {
+			
+		}
+		ai_chance = {
+			base = 10
+
+		}
+	}
+	
+}
+
+# UK agrees to close the Suez
+country_event = {
+	id = BBA_italo_ethiopian_war_events.13
+	title = BBA_italo_ethiopian_war_events.13.t
+	desc = BBA_italo_ethiopian_war_events.13.desc
+	picture = GFX_report_event_merchant_ship_01
+	
+	is_triggered_only = yes
+	fire_only_once = yes 
+
+	immediate = {
+		
+	}
+	# great idea
+	option = { 
+		name = BBA_italo_ethiopian_war_events.13.a
+	}
+	
+}
+
+
+
+# Pressure on the Aussa Sultan
+country_event = {
+	id = BBA_italo_ethiopian_war_events.400
+	title = BBA_italo_ethiopian_war_events.400.t
+	desc = BBA_italo_ethiopian_war_events.400.desc
+	picture = GFX_report_event_generic_parliament
+	is_triggered_only = yes 
+
+	immediate = {
+		hidden_effect = {
+			random_controlled_state = {
+				limit = {
+					is_core_of = ETH
+					is_fully_controlled_by = ROOT
+					any_neighbor_state = { state = 1079 }
+				}
+				set_variable = {ITA.ITA_capture_state = THIS }
+			}
+			news_event = {
+				id = bba_news.7
+				hours = 1
+			}
+		}
+	}
+	option = { 
+		name = BBA_italo_ethiopian_war_events.400.a
+		ai_chance = {
+			base = 10
+		}
+		AFA = {
+			country_event = {
+				id = BBA_italo_ethiopian_war_events.401
+				days = 2
+			}
+		}
+	}
+	option = { 
+		name = BBA_italo_ethiopian_war_events.400.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0 
+				is_historical_focus_on = yes 
+			}
+		}
+		add_political_power = -50
+		add_popularity = {
+			ideology = ROOT
+			popularity = -0.05
+		}
+	}
+}
+
+# Italy demands subjugation
+country_event = {
+	id = BBA_italo_ethiopian_war_events.401
+	title = BBA_italo_ethiopian_war_events.401.t
+	desc = BBA_italo_ethiopian_war_events.401.desc
+	picture = GFX_report_event_mussolini_hotel
+	fire_only_once = yes 
+	
+	is_triggered_only = yes
+	option = { 
+		name = BBA_italo_ethiopian_war_events.401.a
+		ai_chance = {
+			base = 10
+		}
+		FROM = {
+			country_event = {
+				id = BBA_italo_ethiopian_war_events.402
+				hours = 4 
+				random_hours = 8 
+			}
+		}
+		news_event = {
+			id = bba_news.8
+			hours = 1
+		}
+		effect_tooltip = {
+			ITA = {
+				annex_country = {
+					target = ROOT
+					transfer_troops = no
+				}
+			}
+		}
+
+	}
+
+	option = { 
+		name = BBA_italo_ethiopian_war_events.401.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0 
+				OR = {
+					is_historical_focus_on = yes 
+					is_tutorial = yes
+				}
+			}
+		}
+		FROM = {
+			country_event = {
+				id = BBA_italo_ethiopian_war_events.403
+				hours = 4 
+				random_hours = 8 
+			}
+		}
+	}
+}
+
+# Aussa folds
+country_event = {
+	id = BBA_italo_ethiopian_war_events.402
+	title = BBA_italo_ethiopian_war_events.402.t
+	desc = BBA_italo_ethiopian_war_events.402.desc
+	picture = GFX_report_event_generic_sign_treaty2
+	fire_only_once = yes 
+	
+	is_triggered_only = yes
+	option = { 
+		name = BBA_italo_ethiopian_war_events.402.a
+		annex_country = {
+			target = FROM
+			transfer_troops = no
+		}
+	}
+}
+
+# Aussa remains defiant
+country_event = {
+	id = BBA_italo_ethiopian_war_events.403
+	title = BBA_italo_ethiopian_war_events.403.t
+	desc = BBA_italo_ethiopian_war_events.403.desc
+	picture = GFX_report_event_ger_civil_war
+	fire_only_once = yes 
+	
+	is_triggered_only = yes
+	option = { 
+		name = BBA_italo_ethiopian_war_events.403.a
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+	}
+}
+
+#Event for Ethiopia after Italy finishes Topple Amhara Rule
+country_event = {  
+	id = BBA_italo_ethiopian_war_events.510
+	title = BBA_italo_ethiopian_war_events.510.t 
+	desc = BBA_italo_ethiopian_war_events.510.desc
+	picture = GFX_report_event_fascist_speech 
+	
+	is_triggered_only = yes
+
+	fire_only_once = yes
+ 
+	option = { #Lying, thieving villians!
+		name = BBA_italo_ethiopian_war_events.510.a 
+		add_legitimacy = -10
+	}
+}

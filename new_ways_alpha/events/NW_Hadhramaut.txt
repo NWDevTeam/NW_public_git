@@ -1,0 +1,414 @@
+﻿# KTH - Касири
+# QUA - Куайти // Наступательная война на Касири
+
+add_namespace = NWhadhramaut
+
+#Война в Хадрамауте // ENG
+country_event = {
+	id = NWhadhramaut.1
+	title = NWhadhramaut.1.t
+	desc = NWhadhramaut.1.desc
+	picture = GFX_report_event_aden_protectorate
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.1" }
+	
+	option = {
+		name = NWhadhramaut.1.a
+		ai_chance = {
+			factor = 50
+		}
+		set_country_flag = NWhadhramaut_1_a_flag
+		custom_effect_tooltip = NWhadhramaut_1_a_tt
+	}
+	
+	option = {
+		name = NWhadhramaut.1.b
+		ai_chance = {
+			factor = 0
+		}
+		add_political_power = -35
+		add_to_war = { targeted_alliance = QUA enemy = KTH hostility_reason = ally }
+		add_ideas = QUA_asymmetric_warfare_in_hadhramaut
+	}
+}
+
+#Передача Сайуна // ENG
+#country_event = {
+#	id = NWhadhramaut.2
+#	title = NWhadhramaut.2.t
+#	desc = NWhadhramaut.2.desc
+#	picture = GFX_report_event_generic_rally_3
+#	is_triggered_only = yes
+#	
+#	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.2" }
+#	
+#	option = {
+#		name = NWhadhramaut.2.a
+#		QUA = {
+#			add_stability = -0.1
+#			transfer_state = 803
+#		}
+#	}
+#}
+
+#Заключение мира с Касири пульсар // QUA
+country_event = {
+	id = NWhadhramaut.300
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.300" }
+	immediate = {
+		if = {
+			limit = {
+				is_subject_of = ENG
+				has_war_with = KTH
+				NOT = {
+					any_enemy_country = {
+						NOT = { original_tag = KTH }
+					}
+				}
+			}
+			country_event = NWhadhramaut.3
+		}
+	}
+}
+
+#Подписание консультативного договора пульсар // QUA
+#country_event = {
+#	id = NWhadhramaut.301
+#	hidden = yes
+#	fire_only_once = yes
+#	
+#	trigger = {
+#		tag = QUA
+#		is_subject_of = ENG
+#		has_completed_focus = QUA_conquest_of_kathiri
+#		NOT = { has_country_flag = QUA_conquest_of_kathiri_NOT_BYPASS_flag }
+#	}
+#	
+#	mean_time_to_happen = { days = 14 }
+#	
+#	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.301" }
+#	immediate = {
+#		country_event = NWhadhramaut.5
+#	}
+#}
+
+#Заключение мира с Касири // QUA
+country_event = {
+	id = NWhadhramaut.3
+	title = NWhadhramaut.3.t
+	desc = NWhadhramaut.3.desc
+	picture = GFX_report_event_aden_protectorate
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.3" }
+	
+	option = {
+		name = NWhadhramaut.3.a
+		ai_chance = {
+			factor = 10
+		}
+		KTH = {
+			effect_tooltip = {
+				white_peace = ROOT
+				complete_national_focus = KTH_engrams_peace
+				custom_effect_tooltip = needs_approval
+			}
+			country_event = { id = NWhadhramaut.4 days = 1 }
+		}
+		effect_tooltip = {
+			complete_national_focus = QUA_engrams_peace
+			if = {
+				limit = { is_subject = yes }
+				OVERLORD = {
+					puppet = KTH
+					set_autonomy = {
+						target = KTH
+						autonomous_state = autonomy_puppet
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = NWhadhramaut.3.b
+		ai_chance = {
+			factor = 0
+			modifier = {
+				add = 3
+				is_historical_focus_on = no
+				surrender_progress > 0
+			}
+		}
+	}
+}
+
+#Заключение мира с Куайти // KTH
+country_event = {
+	id = NWhadhramaut.4
+	title = NWhadhramaut.4.t
+	desc = NWhadhramaut.3.desc
+	picture = GFX_report_event_aden_protectorate
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.4" }
+	
+	option = {
+		name = NWhadhramaut.3.a
+		ai_chance = {
+			factor = 10
+		}
+		save_party_popularity = yes
+		QUA = { white_peace = ROOT }
+		hidden_effect = {
+			QUA = {
+				transfer_state = 944
+			}
+			news_event = { id = trworldnews.165 hours = 3 }
+			country_event = { id = NWhadhramaut.5 days = 40 }
+			FROM = { country_event = { id = NWhadhramaut.5 days = 40 } }
+			MHR = { country_event = { id = NWhadhramaut.5 days = 40 } }
+		}
+		if = {
+			limit = { FROM = { is_subject = yes } }
+			FROM = { OVERLORD = { puppet = ROOT } }
+		}
+		complete_national_focus = KTH_engrams_peace
+		FROM = {
+			complete_national_focus = QUA_engrams_peace
+		}
+		load_party_popularity = yes
+	}
+	option = {
+		name = NWhadhramaut.3.b
+		ai_chance = {
+			factor = 0
+			modifier = {
+				add = 3
+				is_historical_focus_on = no
+				surrender_progress > 0
+			}
+		}
+	}
+}
+
+#Подписание консультативного договора //  QUA / KTH / MHR
+country_event = {
+	id = NWhadhramaut.5
+	title = NWhadhramaut.5.t
+	desc = NWhadhramaut.5.desc
+	picture = GFX_report_event_yem_9
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.5" }
+	
+	option = {
+		name = NWhadhramaut.5.a
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				MHR = { is_ai = no }
+			}
+		}
+		effect_tooltip = {
+			OVERLORD = { annex_country = { target = ROOT transfer_troops = no } }
+		}
+		custom_effect_tooltip = GAME_OVER_TT
+		hidden_effect = {
+			OVERLORD = { country_event = { id = NWhadhramaut.6 hours = 6 } }
+			if = {
+				limit = { tag = QUA }
+				drop_cosmetic_tag = yes
+				set_cosmetic_tag = HADHRAMAUT
+				add_state_core = 803
+				add_state_core = 944
+			}
+		}
+	}
+	option = {
+		name = NWhadhramaut.5.b
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 8
+				controls_state = 803
+				controls_state = 944
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { controls_state = 803 }
+					NOT = { controls_state = 944 }
+				}
+				OR = {
+					OVERLORD = { is_ai = yes }
+					is_historical_focus_on = yes
+				}
+			}
+			modifier = {
+				add = 1
+				MHR = { is_ai = no }
+			}
+		}
+		OVERLORD = { country_event = { id = NWhadhramaut.7 hours = 6 } }
+		if = {
+			limit = { tag = MHR }
+			complete_national_focus = MHR_no_consul
+		}
+		hidden_effect = {
+			if = {
+				limit = { tag = QUA }
+				drop_cosmetic_tag = yes
+				set_cosmetic_tag = HADHRAMAUT
+				add_state_core = 803
+				add_state_core = 944
+			}
+		}
+	}
+}
+
+#[название султаната] подписывает консультативный договор //  OVERLORD
+country_event = {
+	id = NWhadhramaut.6
+	title = NWhadhramaut.6.t
+	desc = NWhadhramaut.6.desc
+	picture = GFX_report_event_aden_protectorate
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.6" }
+	
+	option = {
+		name = NWhadhramaut.6.a
+		annex_country = { target = FROM transfer_troops = no }
+		if = {
+			limit = { FROM = { NOT = { original_tag = QUA } } }
+			every_state = {
+				limit = { is_core_of = FROM }
+				remove_core_of = FROM
+			}
+		}
+		else_if = {
+			limit = {
+				FROM = {
+					original_tag = QUA
+					has_completed_focus = QUA_conquest_of_kathiri
+				}
+			}
+			MHR = { country_event = { id = NWhadhramaut.5 hours = 6 } }
+		}
+	}
+}
+
+
+#[прилагательное султаната] сопротивление //  OVERLORD
+country_event = {
+	id = NWhadhramaut.7
+	title = NWhadhramaut.7.t
+	desc = NWhadhramaut.7.desc
+	picture = GFX_report_event_sau_11
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.7" }
+	
+	option = {
+		name = NWhadhramaut.7.a
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				OR = {
+					MHR = { is_ai = no }
+					QUA = { has_completed_focus = QUA_conquest_of_kathiri }
+				}
+			}
+		}
+		set_autonomy = {
+			target = FROM
+			autonomy_state = autonomy_free
+		}
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+	option = {
+		name = NWhadhramaut.7.b
+		ai_chance = {
+			factor = 1
+		}
+		add_political_power = -15
+	}
+}
+
+#Передача Адена пульсар // RAJ
+country_event = {
+	id = NWhadhramaut.800
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.800" }
+	immediate = {
+		if = {
+			limit = {
+				is_subject_of = ENG
+				controls_state = 1052
+			}
+			country_event = NWhadhramaut.8
+		}
+	}
+}
+
+#Передача Адена //  RAJ
+country_event = {
+	id = NWhadhramaut.8
+	title = NWhadhramaut.8.t
+	desc = NWhadhramaut.8.desc
+	picture = GFX_report_event_yem_aden
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.8" }
+	
+	option = {
+		name = NWhadhramaut.8.a
+		ai_chance = {
+			factor = 10
+		}
+		ENG = {
+			effect_tooltip = {
+				transfer_state = 1052
+			}
+			country_event = { id = NWhadhramaut.9 hours = 6 }
+		}
+	}
+	option = {
+		name = NWhadhramaut.8.b
+		ai_chance = {
+			factor = 90
+		}
+		trigger = {
+			has_autonomy_state = autonomy_dominion
+		}
+		add_political_power = -40
+	}
+}
+
+#Передача Адена //  ENG
+country_event = {
+	id = NWhadhramaut.9
+	title = NWhadhramaut.8.t
+	desc = NWhadhramaut.9.desc
+	picture = GFX_report_event_yem_aden
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhadhramaut.9" }
+	
+	option = {
+		name = NWhadhramaut.6.a
+		transfer_state = 1052
+	}
+}

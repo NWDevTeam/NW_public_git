@@ -3,6 +3,7 @@
 ###########################
 
 add_namespace = italy
+add_namespace = NWitaly
 
 # Albania Yields
 country_event = {
@@ -629,3 +630,515 @@ country_event = {
 	}
 }
 
+
+
+
+
+# Активизация партизанского движения на бывших территориях страны [From.GetName] // Враг IFA
+state_event = {
+	id = NWitaly.1
+	title = NWitaly.1.t
+	desc = NWitaly.1.desc
+	picture = GFX_report_event_albanian_partisans
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.1"}
+	immediate = { ROOT = { set_country_flag = ITA_fighting_guerrilla_movement_flag } }
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.1.a
+		ROOT = { unlock_decision_category_tooltip = ITA_fighting_guerrilla_movement_category }
+	}
+}
+
+# Программа Федерации Анархистов Италии // IFA
+country_event = {
+	id = NWitaly.2
+	title = NWitaly.2.t
+	desc = NWitaly.2.desc
+	picture = GFX_report_event_generic_rally2
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.2"}
+	
+	is_triggered_only = yes
+
+	option = {	# Принять идеи Эррико Маллатесты 
+		name = NWitaly.2.a
+		ai_chance = { factor = 50 }
+		set_country_flag = ITA_errico_malatesta_program_flag
+	}
+	
+	option = {	# Принять идеи Карло Россели 
+		name = NWitaly.2.b
+		ai_chance = { factor = 50 }
+		set_country_flag = ITA_carlo_rosselli_program_flag
+	}
+}
+
+# Радикальные анархисты обвиняют нас в реставрации государства // IFA
+country_event = {
+	id = NWitaly.3
+	title = NWitaly.3.t
+	desc = NWitaly.3.desc
+	picture = GFX_report_event_generic_rally2
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.3"}
+	
+	is_triggered_only = yes
+
+	option = {	# Принять идеи Эррико Маллатесты 
+		name = NWitaly.3.a
+		ai_chance = { factor = 50 }
+		
+	}
+	
+	option = {	# Принять идеи Карло Россели 
+		name = NWitaly.3.b
+		ai_chance = { factor = 50 }
+		set_temp_variable = { anarchism_unity_add_var = -20 }
+		add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+		custom_effect_tooltip = anarchism_unity_add_effect
+		clamp_variable = { var = anarchism_unity_var min = 0 max = 100 }
+		
+		add_ideas = ITA_opportunists_from_bourgeois_environment
+		set_country_flag = NWitaly_3_b_flag
+		custom_effect_tooltip = remove_political_advisor
+		show_ideas_tooltip = IFA_armando_borghi
+		effect_tooltip = {
+			unlock_national_focus = ITA_attract_anti_fascist_democrats
+		}
+	}
+}
+
+# Грабежи в регионе // IFA
+state_event = {
+	id = NWitaly.4
+	title = NWitaly.4.t
+	desc = NWitaly.4.desc
+	picture = GFX_report_event_albanian_partisans
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.4"}
+	immediate = { hidden_effect = { save_event_target_as = ita_banditry_state } }
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.4.a
+		if = {
+			limit = { universal_factory > 0 }
+			damage_building = { type = universal_factory damage = 1.0 }
+		}
+		else_if = {
+			limit = { industrial_complex > 0 }
+			damage_building = { type = industrial_complex damage = 1.0 }
+		}
+		else = {
+			damage_building = { type = arms_factory damage = 1.0 }
+		}
+	}
+}
+
+# Бандитская группировка в регионе // IFA
+state_event = {
+	id = NWitaly.5
+	title = NWitaly.5.t
+	desc = NWitaly.5.desc
+	picture = GFX_report_event_albanian_partisans
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.5"}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { global.ita_banditry < 5 }
+				}
+				add_to_variable = { global.ita_banditry = 1 }
+			}
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]) global.ita_banditry: [?global.ita_banditry]"
+			
+			save_event_target_as = ita_banditry_state
+		}
+	}
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.5.a
+		effect_tooltip = {
+			FROM = {
+				start_civil_war = {
+					ideology = anarchism
+				}
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					check_variable = { global.ita_banditry < 6 }
+				}
+				create_dynamic_country = {
+					original_tag = ROOT
+					copy_tag = ROOT
+					
+					add_popularity = {
+						ideology = anarchism
+						popularity = 1
+					}
+					set_politics = {
+						ruling_party = anarchism
+						elections_allowed = no
+					}
+					ROOT = {
+						every_core_state = {
+							add_core_of = PREV
+						}
+					}
+					transfer_state = PREV
+					set_rule = { can_create_factions = no }
+					set_rule = { can_join_factions = no }
+					meta_effect = {
+						NUM_ITA_BANDITRY = "[?global.ita_banditry]"
+						text = {
+							random_country = {
+								limit = {
+									has_character = IFA_banditry_leader_[NUM_ITA_BANDITRY]
+								}
+								IFA_banditry_leader_[NUM_ITA_BANDITRY] = {
+									set_nationality = PREV.PREV
+								}
+							}
+							add_country_leader_role = {
+								character = IFA_banditry_leader_[NUM_ITA_BANDITRY]
+								country_leader = {
+									desc="POLITICS_BANDITRY_LEADER_DESC"
+									ideology = anarcho_banditry
+									traits = {
+									}
+									expire = "1965.1.1"
+								}
+								promote_leader = yes
+							}
+							set_country_flag = ITA_banditry_flag_[NUM_ITA_BANDITRY]
+							set_cosmetic_tag = ITA_banditry_cosmetic_[NUM_ITA_BANDITRY]
+						}
+					}
+					every_other_country = {
+						limit = { original_tag = ROOT }
+						PREV = {
+							declare_war_on = {
+								target = PREV
+								type = civil_war
+							}
+							add_civil_war_target = PREV
+						}
+						add_civil_war_target = PREV
+					}
+				}
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						exists = no
+						OR = {
+							tag = IB1
+							tag = IB2
+							tag = IB3
+							tag = IB4
+							tag = IB5
+						}
+					}
+					transfer_state = PREV
+					every_other_country = {
+						limit = { original_tag = ROOT }
+						PREV = {
+							declare_war_on = {
+								target = PREV
+								type = civil_war
+							}
+							add_civil_war_target = PREV
+						}
+						add_civil_war_target = PREV
+					}
+				}
+			}
+			controller = {
+				if = {
+					limit = { NOT = { has_template = "Rebel Division" } }
+					division_template = {
+						name = "Rebel Division"
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+					}
+				}
+				random_controlled_state = {
+					create_unit = {
+						division = "division_template = \"Rebel Division\" start_experience_factor = 0.3 start_equipment_factor = 1.0"
+						owner = PREV
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+# Сбой работы социальной инфраструктуры в регионе // IFA
+state_event = {
+	id = NWitaly.6
+	title = NWitaly.6.t
+	desc = NWitaly.6.desc
+	picture = GFX_report_event_albanian_partisans
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.6"}
+	immediate = { hidden_effect = { save_event_target_as = ita_banditry_state } }
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.6.a
+		trigger = {
+			FROM = { has_country_flag = NWitaly_6_a_flag }
+		}
+		hidden_effect = { FROM = { clr_country_flag = NWitaly_6_a_flag } }
+		damage_building = { type = hospital damage = 1.0 }
+	}
+	
+	option = {
+		name = NWitaly.6.b
+		trigger = {
+			FROM = { has_country_flag = NWitaly_6_b_flag }
+		}
+		FROM = {
+			clr_country_flag = NWitaly_6_b_flag
+			set_temp_variable = { anarchism_unity_add_var = -5 }
+			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+			custom_effect_tooltip = anarchism_unity_add_effect
+			clamp_variable = { var = anarchism_unity_var min = 0 max = 100 }
+		}
+	}
+}
+
+# Провинция демонстрирует достижения в трудовой деятельности // IFA
+state_event = {
+	id = NWitaly.7
+	title = NWitaly.7.t
+	desc = NWitaly.7.desc
+	picture = GFX_report_event_generic_factory
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.7"}
+	immediate = { hidden_effect = { save_event_target_as = ita_event_state } }
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.7.a
+		FROM = { add_timed_idea = { idea = ITA_italian_anarchism days = 40 } }
+	}
+}
+
+# Жители провинции дышат свободно // IFA
+state_event = {
+	id = NWitaly.8
+	title = NWitaly.8.t
+	desc = NWitaly.8.desc
+	picture = GFX_report_event_crowd_in_prague
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.8"}
+	immediate = { hidden_effect = { save_event_target_as = ita_event_state } }
+	immediate = {
+		hidden_effect = {
+			FROM = {
+				random_list = {
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 2 } }
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 3.5 } }
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 5 } }
+					15 = { set_temp_variable = { anarchism_unity_add_temp_var = 7.5 } }
+				}
+				random_list = {
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.1 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.2 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.4 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.7 } }
+				}
+				set_variable = { anarchism_unity_add_var = anarchism_unity_add_temp_var }
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.8.a
+		FROM = {
+			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+			custom_effect_tooltip = anarchism_unity_add_effect
+			clamp_variable = { var = anarchism_unity_var min = 0 max = 100 }
+			clear_variable = anarchism_unity_add_var
+		}
+	}
+}
+
+# Организованная преступность провинции входит с нами в долю // IFA
+state_event = {
+	id = NWitaly.9
+	title = NWitaly.9.t
+	desc = NWitaly.9.desc
+	picture = GFX_report_event_generic_strike
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.9"}
+	immediate = { hidden_effect = { save_event_target_as = ita_event_state } }
+	immediate = {
+		hidden_effect = {
+			FROM = {
+				random_list = {
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 2 } }
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 3.5 } }
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 5 } }
+					25 = { set_temp_variable = { anarchism_unity_add_temp_var = 7.5 } }
+				}
+				random_list = {
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.1 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.2 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.4 } }
+					25 = { add_to_temp_variable = { anarchism_unity_add_temp_var = 0.7 } }
+				}
+				multiply_temp_variable = { anarchism_unity_add_temp_var = -1.5 }
+				set_variable = { anarchism_unity_add_var = anarchism_unity_add_temp_var }
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.9.a
+		FROM = {
+			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
+			custom_effect_tooltip = anarchism_unity_add_effect
+			clamp_variable = { var = anarchism_unity_var min = 0 max = 100 }
+			clear_variable = anarchism_unity_add_var
+		}
+		add_extra_state_shared_building_slots = 1
+		if = {
+			limit = { FROM = { has_tech = universal_factory_tech } }
+			add_building_construction = {
+				type = universal_factory
+				level = 1
+				instant_build = yes
+			}
+		}
+		else = {
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}
+
+# В провинции достигнуты успехи в местном самоуправлении // IFA
+state_event = {
+	id = NWitaly.10
+	title = NWitaly.10.t
+	desc = NWitaly.10.desc
+	picture = GFX_report_event_generic_sign_treaty2
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.10"}
+	immediate = { hidden_effect = { save_event_target_as = ita_event_state } }
+	immediate = {
+		hidden_effect = {
+			FROM = {
+				random_list = {
+					25 = { set_temp_variable = { pp_add_temp_var = 15 } }
+					25 = { set_temp_variable = { pp_add_temp_var = 22 } }
+					25 = { set_temp_variable = { pp_add_temp_var = 28 } }
+					25 = { set_temp_variable = { pp_add_temp_var = 35 } }
+				}
+				random_list = {
+					25 = { multiply_temp_variable = { pp_add_temp_var = 1.1 } }
+					25 = { multiply_temp_variable = { pp_add_temp_var = 1.2 } }
+					25 = { multiply_temp_variable = { pp_add_temp_var = 1.3 } }
+					25 = { multiply_temp_variable = { pp_add_temp_var = 1.4 } }
+				}
+				set_variable = { pp_add_var = pp_add_temp_var }
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.10.a
+		FROM = {
+			add_political_power = pp_add_var
+			clear_variable = pp_add_var
+		}
+	}
+}
+
+# Справедливость и свобода // IFA
+country_event = {
+	id = NWitaly.11
+	title = NWitaly.11.t
+	desc = NWitaly.11.desc
+	picture = GFX_report_event_sanation_left_victory
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWitaly.11"}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWitaly.11.a
+		swap_ideas = {
+			remove_idea = ITA_socialism_through_liberalism
+			add_idea = ITA_socialism_through_liberalism_2
+		}
+	}
+
+	option = {
+		name = NWitaly.11.b
+		swap_ideas = {
+			remove_idea = ITA_socialism_through_liberalism
+			add_idea = ITA_socialism_through_liberalism_3
+		}
+	}
+}
+
+
+
+
+
+country_event = {
+	id = NWitaly.999
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = 1
+		random_core_state = {
+			limit = {
+				is_controlled_by = ROOT
+				OR = {
+					state = 157	# ЮГ
+					state = 117
+					state = 156
+					state = 115
+					state = 116	# Мальта
+					state = 114 # Сардиния
+				}
+			}
+			state_event = { id = NWitaly.5 trigger_for = ROOT }
+		}
+	}
+
+	option = {
+		name = 2
+		random_core_state = {
+			limit = {
+				is_controlled_by = ROOT
+			}
+			state_event = { id = NWitaly.8 trigger_for = ROOT }
+		}
+	}
+	option = {
+		name = 3
+		country_event = NWduce.6
+	}
+}

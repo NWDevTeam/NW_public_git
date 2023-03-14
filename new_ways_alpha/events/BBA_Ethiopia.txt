@@ -1,0 +1,218 @@
+###########################
+# BBA Events for Ethiopia
+###########################
+
+add_namespace = BBA_ethiopia_imperial_events
+
+###################################################################
+
+### #   # ###  ### ###  ###  ##  #       ### #   # ### #  # ###  ## 
+ #  ## ## #  # #   #  #  #  #  # #       #   #   # #   ## #  #  #   
+ #  # # # ###  ##  ###   #  #### #       ##   # #  ##  # ##  #   #  
+ #  #   # #    #   #  #  #  #  # #       #    # #  #   #  #  #    # 
+### #   # #    ### #  # ### #  # ###     ###   #   ### #  #  #  ##  
+
+###################################################################
+
+# Event to owner of Djibouti, asking for Purchase
+country_event = {
+	id = BBA_ethiopia_imperial_events.1
+	title = BBA_ethiopia_imperial_events.1.t
+	desc = BBA_ethiopia_imperial_events.1.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# We need the money
+	option = {
+		name = BBA_ethiopia_imperial_events.1.a
+		ai_chance = {
+			base = 10
+			# We like them!
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			# France needs the money to arm 
+			modifier = {
+				factor = 2
+				tag = FRA
+				NOT = { has_government = fascism }
+				GER = { has_government = fascism }
+			}
+		}
+		effect_tooltip = {
+			ETH = { transfer_state = 268 }
+		}
+		add_timed_idea = {
+			idea = ETH_djibouti_sale_idea
+			days = 730
+		}
+		FROM = {
+			country_event = {
+				id = BBA_ethiopia_imperial_events.2
+				hours = 4 
+				random_hours = 12
+			}
+		}
+	}
+	# Nope
+	option = {
+		name = BBA_ethiopia_imperial_events.1.b
+		ai_chance = {
+			base = 10
+			# We won't say no if we need to buy weapons
+			modifier = {
+				factor = 0.5
+				has_war = yes
+			}
+			# Non-authoritarian governments less likely to say no
+			modifier = {
+				factor = 0.5
+				has_government = democratic
+			}
+		}
+		FROM = {
+			country_event = {
+				id = BBA_ethiopia_imperial_events.3
+				hours = 4 
+				random_hours = 12
+			}
+		}
+	}
+}
+
+# To Ethiopia, we get Djibouti
+country_event = {
+	id = BBA_ethiopia_imperial_events.2
+	title = BBA_ethiopia_imperial_events.2.t
+	desc = BBA_ethiopia_imperial_events.2.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# Great
+	option = {
+		name = BBA_ethiopia_imperial_events.2.a
+		ai_chance = {
+			base = 10
+		}
+		add_timed_idea = {
+			idea = ETH_djibouti_purchase_idea
+			days = 730
+		}
+		if = {
+			limit = {
+				268 = { is_fully_controlled_by = FROM } # Don't change control if someone else controls it, in case they are at war with Ethiopia too 
+			}
+			ROOT = { transfer_state = 268 }
+		}
+		else = {
+			268 = { set_state_owner_to = ROOT }
+		}
+	}
+}
+
+# To Ethiopia, they refuse 
+country_event = {
+	id = BBA_ethiopia_imperial_events.3
+	title = BBA_ethiopia_imperial_events.3.t
+	desc = BBA_ethiopia_imperial_events.3.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# Sad
+	option = {
+		name = BBA_ethiopia_imperial_events.3.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
+# To Aussa, demanding annexation
+country_event = {
+	id = BBA_ethiopia_imperial_events.10
+	title = BBA_ethiopia_imperial_events.10.t
+	desc = BBA_ethiopia_imperial_events.10.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# Accept
+	option = {
+		name = BBA_ethiopia_imperial_events.10.a
+		ai_chance = {
+			base = 10
+		}
+		FROM = {
+			country_event = {
+				id = BBA_ethiopia_imperial_events.12
+				hours = 12
+			}
+		}
+	}
+	# Refuse
+	option = {
+		name = BBA_ethiopia_imperial_events.10.b
+		ai_chance = {
+			base = 0
+		}
+		FROM = {
+			country_event = {
+				id = BBA_ethiopia_imperial_events.11
+				hours = 12
+			}
+		}
+	}
+}
+
+# To Ethiopia, Aussa refuse to be annexed
+country_event = {
+	id = BBA_ethiopia_imperial_events.11
+	title = BBA_ethiopia_imperial_events.11.t
+	desc = BBA_ethiopia_imperial_events.11.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# Get war goal
+	option = {
+		name = BBA_ethiopia_imperial_events.11.a
+		ai_chance = {
+			base = 10
+		}
+		create_wargoal = {
+			type = take_core_state  
+			target = FROM
+			generator = { 1079 }
+		}
+	}
+	option = {
+		name = BBA_ethiopia_imperial_events.11.b
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# To Ethiopia, Aussa agree to be annexed
+country_event = {
+	id = BBA_ethiopia_imperial_events.12
+	title = BBA_ethiopia_imperial_events.12.t
+	desc = BBA_ethiopia_imperial_events.12.desc
+	is_triggered_only = yes
+	picture = GFX_report_event_generic_sign_treaty1
+
+	# Great
+	option = {
+		name = BBA_ethiopia_imperial_events.12.a
+		ai_chance = {
+			base = 10
+		}
+		annex_country = {
+			target = FROM
+			transfer_troops = no
+		}
+	}
+}

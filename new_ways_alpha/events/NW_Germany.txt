@@ -2969,7 +2969,7 @@ country_event = {
 			ruling_party = communism
 			elections_allowed = no
 		}
-		set_party_name = { ideology = fascism long_name = GER_nazbol_party_long name = GER_nazbol_party }
+		set_party_name = { ideology = communism long_name = GER_nazbol_party_long name = GER_nazbol_party }
 	}
 }
 
@@ -4747,11 +4747,11 @@ country_event = {
 		name = NWgermany.87.b
 		ai_chance = {
 			base = 10			
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-				NOT = { HUN = { has_completed_focus = HUN_protect_austria } }
-			}
+#			modifier = {
+#				factor = 0
+#				is_historical_focus_on = yes
+#				NOT = { HUN = { has_completed_focus = HUN_protect_austria } }
+#			}
 			modifier = {
 				FROM = { has_army_size = { size > 39 } }
 				factor = 0.5
@@ -4760,15 +4760,15 @@ country_event = {
 				add = 20
 				FROM = { has_army_size = { size < 30 } }
 			}
-			modifier = {
-				add = 100
-				HUN = { 
-					OR = { 
-						has_completed_focus = HUN_protect_austria 
-						is_in_faction_with = ROOT
-					}
-				}
-			}
+#			modifier = {
+#				add = 100
+#				HUN = { 
+#					OR = { 
+#						has_completed_focus = HUN_protect_austria 
+#						is_in_faction_with = ROOT
+#					}
+#				}
+#			}
 			modifier = {
 				factor = 2
 				is_in_faction = yes
@@ -5373,7 +5373,7 @@ country_event = {
 	}
 }
 
-### старт братании Герм ГВ пульсар // ITA
+### старт братании Герм ГВ пульсар // ENG
 country_event = {
 	id = NWgermany.991
 	hidden = yes
@@ -5386,34 +5386,37 @@ country_event = {
 				NOT = { has_global_flag = GER_civil_war_end }
 			}
 			country_event = { id = NWgermany.991 days = 29 random_days = 5 }
+			random_state = {
+				limit = {
+					has_state_flag = current_target_fraternization
+				}
+				clr_state_flag = current_target_fraternization
+			}
 			random_list = {
 				80 = {
-					random_other_country = {
-						limit = { original_tag = GER }
-						random_state = {
-							limit = {
-								NOT = { has_state_flag = { flag = current_target_fraternization_timed value > 0 } }
-								is_in_home_area = yes
+					random_state = {
+						limit = {
+							controller = {
+								original_tag = GER
+								divisions_in_state = { size > 0 state = PREV }
+								set_temp_variable = { global.current_target_fraternization = THIS }
+							}
+							any_neighbor_state = {
 								controller = {
 									original_tag = GER
-									divisions_in_state = { size > 0 state = PREV }
-									set_temp_variable = { global.current_target_fraternization = THIS }
-								}
-								any_neighbor_state = {
-									is_in_home_area = yes
-									controller = {
-										original_tag = GER
-										divisions_in_state = { size > 0 state = PREV.PREV }
-										has_war_with = var:global.current_target_fraternization
-									}
+									divisions_in_state = { size > 0 state = PREV.PREV }
+									has_war_with = var:global.current_target_fraternization
 								}
 							}
-							set_state_flag = current_target_fraternization
-							set_state_flag = { flag = current_target_fraternization_timed days = 35 }
-							add_dynamic_modifier = { modifier = GER_fraternization_state_dyn days = 30 }
+							is_in_home_area = yes
+							NOT = { has_state_flag = { flag = current_target_fraternization_timed value > 0 } }
 						}
+						set_state_flag = current_target_fraternization
+						set_state_flag = { flag = current_target_fraternization_timed days = 35 }
+						add_dynamic_modifier = { modifier = GER_fraternization_state_dyn days = 30 }
+						log = "[GetDateText]: [This.GetName] ([This.GetID]): is current_target_fraternization"
 					}
-					every_other_country = {
+					every_country = {
 						limit = { original_tag = GER }
 						country_event = NWgermany_CW.4
 					}
@@ -6076,8 +6079,7 @@ country_event = {
 				limit = {
 					has_state_flag = current_target_fraternization
 				}
-				clr_state_flag = current_target_fraternization
-				save_event_target_as = current_target_fraternization
+				save_event_target_as = current_target_fraternization_state
 			}
 		}
 	}
@@ -6088,7 +6090,7 @@ country_event = {
 			NOT = { has_government = communism }
 		}
 		effect_tooltip = {
-			event_target:current_target_fraternization = {
+			event_target:current_target_fraternization_state = {
 				add_dynamic_modifier = { modifier = GER_fraternization_state_dyn days = 30 }
 			}
 		}
@@ -6099,7 +6101,7 @@ country_event = {
 			has_government = communism
 		}
 		effect_tooltip = {
-			event_target:current_target_fraternization = {
+			event_target:current_target_fraternization_state = {
 				add_dynamic_modifier = { modifier = GER_fraternization_state_dyn days = 30 }
 			}
 		}

@@ -1,0 +1,1697 @@
+IOM_generic_irregular_army_category = {
+	
+	IOM_summon_peoples_militia = {
+	
+		highlight_states = {
+			highlight_states_trigger = {
+				is_controlled_by = FROM
+				is_capital = yes
+			}
+		}
+		
+		icon = generic_military
+		
+		allowed = {
+            original_tag = IOM
+        }
+		available = {
+			has_war = yes
+			num_of_controlled_states > 0
+			NOT = { has_country_flag = summon_peoples_militia_flag }
+		}
+		visible = {
+		}
+		
+		cost = 20
+		days_remove = 2
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision IOM_summon_peoples_militia"
+			set_variable = { num_of_militia_var = 0 }
+			set_country_flag = summon_peoples_militia_flag
+			hidden_effect = {
+				if = {
+					limit = { has_completed_focus = IOM_tribal_unions }
+					if = {
+						limit = { NOT = { has_template = "Alfurqat Alfursan war" } }
+						division_template = {
+							name = "Alfurqat Alfursan war"
+							is_locked = yes
+							division_names_group = OMA_CAV_01
+							regiments = {
+								cavalry = { x = 0 y = 0 }
+								cavalry = { x = 0 y = 1 }
+								cavalry = { x = 0 y = 2 }
+								cavalry = { x = 0 y = 3 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { NOT = { has_template = "Alfurqat Alfursan war" } }
+						division_template = {
+							name = "Alfurqat Alfursan war"
+							is_locked = yes
+							division_names_group = OMA_CAV_01
+							regiments = {
+								cavalry = { x = 0 y = 0 }
+								cavalry = { x = 0 y = 1 }
+								cavalry = { x = 0 y = 2 }
+							}
+						}
+					}
+				}
+				set_temp_variable = { num_of_cycle = peoples_militia_var }
+				while_loop_effect = {
+					limit = { check_variable = { num_of_cycle > 0 } }
+					add_to_temp_variable = { num_of_cycle = -1 }
+					random_controlled_state = {
+						prioritize = { 942 }
+						create_unit = {
+							division = "name = \"Alfurqat Alfursan\" division_template = \"Alfurqat Alfursan war\" start_experience_factor = 0.1 force_equipment_variants = { infantry_equipment_0 = { owner = \"IOM\" } }" 
+							owner = ROOT
+							count = 1
+							allow_spawning_on_enemy_provs = yes
+						}
+						add_to_variable = { ROOT.num_of_militia_var = 1 }
+					}
+				}
+				if = {
+					limit = {
+						has_completed_focus = IOM_submission_of_tribes_of_coast
+						NOT = { has_completed_focus = IOM_resolve_sunnites_to_serve_in_militia }
+					}
+					every_state = {
+						limit = {
+							OR = {
+								state = 942
+								state = 943
+								state = 294
+								state = 805
+							}
+							NOT = {
+								state = 941
+								state = 935
+							}
+						}
+						create_unit = {
+							division = "name = \"Alfurqat Alfursan\" division_template = \"Alfurqat Alfursan war\" start_experience_factor = 0.1" 
+							owner = ROOT
+							count = 1
+							allow_spawning_on_enemy_provs = yes
+						}
+						add_to_variable = { ROOT.num_of_militia_var = 1 }
+					}
+				}
+				else_if = {
+					limit = {
+						has_completed_focus = IOM_submission_of_tribes_of_coast
+						has_completed_focus = IOM_resolve_sunnites_to_serve_in_militia
+					}
+					every_state = {
+						limit = {
+							is_core_of = ROOT
+						}
+						create_unit = {
+							division = "name = \"Alfurqat Alfursan\" division_template = \"Alfurqat Alfursan war\" start_experience_factor = 0.1" 
+							owner = ROOT
+							count = 1
+							allow_spawning_on_enemy_provs = yes
+						}
+						add_to_variable = { ROOT.num_of_militia_var = 1 }
+					}
+				}
+			}
+			if = {
+				limit = { has_completed_focus = IOM_tribal_unions }
+				custom_effect_tooltip = IOM_summon_peoples_militia_tt2
+				else = {
+					custom_effect_tooltip = IOM_summon_peoples_militia_tt1
+				}
+			}
+			if = {
+				limit = {
+					has_completed_focus = IOM_submission_of_tribes_of_coast
+					NOT = { has_completed_focus = IOM_resolve_sunnites_to_serve_in_militia }
+				}
+				custom_effect_tooltip = IOM_summon_peoples_militia_tt3
+			}
+			else_if = {
+				limit = {
+					has_completed_focus = IOM_submission_of_tribes_of_coast
+					has_completed_focus = IOM_resolve_sunnites_to_serve_in_militia
+				}
+				custom_effect_tooltip = IOM_summon_peoples_militia_tt4
+			}
+			custom_effect_tooltip = BHU_summon_peoples_militia_tt3
+		}
+		
+		ai_will_do = {
+			factor = 250
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+		}
+	}
+	
+	IOM_irregular_army_recovery = {
+		name = irregular_army_recovery
+		allowed = {
+            original_tag = IOM
+        }
+		available = {
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = generic_irregular_army_recovery_tt
+				has_idea = irregular_army
+				check_variable = { var = num_divisions value = num_of_militia_var compare = greater_than_or_equals }
+			}
+		}
+		visible = {
+			has_war = yes
+			has_idea = irregular_army
+			check_variable = { num_divisions < num_of_militia_var }
+		}
+		cancel_if_not_visible = yes
+		icon = generic_nationalism
+		days_mission_timeout = 40
+		activation = {
+			has_war = yes
+			has_country_flag = summon_peoples_militia_flag
+			check_variable = { num_divisions < num_of_militia_var }
+			has_manpower > 0 
+		}
+		is_good = yes
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision IOM_irregular_army_recovery"
+			add_manpower = -2000
+			if = {
+				limit = { has_country_flag = put_pressure_on_chiefs_flag }
+				clr_country_flag = put_pressure_on_chiefs_flag
+			}
+			set_temp_variable = { num_of_spawn = num_of_militia_var }	
+			multiply_temp_variable = { num_of_spawn = 0.1 }
+			round_temp_variable = num_of_spawn
+			add_to_temp_variable = { num_of_spawn = 1 }
+			### ПРОВЕРКА
+			set_temp_variable = { check_num_of_spawn = num_divisions }
+			add_to_temp_variable = { check_num_of_spawn = num_of_spawn }
+			if = {
+				limit = {
+					check_variable = { check_num_of_spawn > num_of_militia_var }
+				}
+				subtract_from_temp_variable = { check_num_of_spawn = num_of_militia_var }
+				subtract_from_temp_variable = { num_of_spawn = check_num_of_spawn }
+			}
+			set_temp_variable = { num_of_cycle = num_of_spawn }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_cycle > 0 } }
+				add_to_temp_variable = { num_of_cycle = -1 }
+				random_controlled_state = {
+					prioritize = { 942 }
+					create_unit = {
+						division = "name = \"Alfurqat Alfursan\" division_template = \"Alfurqat Alfursan war\" start_experience_factor = 0.1" 
+						owner = ROOT
+						count = 1
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn = 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt2
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn > 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt3
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_irregular_army_recovery"
+		}
+	}
+	
+	IOM_put_pressure_on_chiefs = {
+		name = put_pressure_on_chiefs
+    	icon = hol_attract_foreign_investors
+		allowed = {
+            original_tag = IOM
+        }
+        available = {
+			has_active_mission = IOM_irregular_army_recovery
+			NOT = { has_country_flag = put_pressure_on_chiefs_flag }
+        }
+		visible = {
+            has_active_mission = IOM_irregular_army_recovery
+        }
+		cost = 30
+
+        ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				check_variable = { days_mission_timeout@IOM_irregular_army_recovery < 20 }
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_put_pressure_on_chiefs"
+			add_days_mission_timeout = { mission = IOM_irregular_army_recovery days = -30 }
+			set_country_flag = put_pressure_on_chiefs_flag
+		}
+    }
+}
+
+political_actions = {
+
+    IOM_offer_peace_eng = {
+    	icon = hol_exchange_intelligence_data
+        allowed = {
+			OR = {
+				original_tag = IOM
+				original_tag = OMA
+			}
+        }
+        available = {
+			if = {
+				limit = { original_tag = IOM }
+				any_country_with_original_tag = { original_tag_to_check = OMA OR = { is_subject_of = ENG has_capitulated = yes exists = no } }
+			}
+			if = {
+				limit = { original_tag = OMA }
+				any_country_with_original_tag = { original_tag_to_check = OMA NOT = { tag = ROOT } OR = { is_subject_of = ENG has_capitulated = yes exists = no } }
+			}
+			surrender_progress < 0.05
+			NOT = { has_country_flag = { flag = IOM_offer_peace_eng_flag value > 0 } }
+        }
+		visible = {
+            has_war_with = ENG
+			if = {
+				limit = { original_tag = IOM }
+				any_country_with_original_tag = { original_tag_to_check = OMA OR = { is_subject_of = ENG has_capitulated = yes exists = no } }
+				has_completed_focus = IOM_war_against_despot
+			}
+			if = {
+				limit = { original_tag = OMA }
+				any_country_with_original_tag = { original_tag_to_check = OMA NOT = { tag = ROOT } OR = { is_subject_of = ENG has_capitulated = yes exists = no } }
+			}
+			NOT = { has_country_flag = IOM_offer_peace_eng_enable_flag }
+        }
+		cost = 10
+
+        ai_will_do = {
+			factor = 5
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_offer_peace_eng"
+			set_country_flag = { flag = IOM_offer_peace_eng_flag days = 50 value = 1 }
+			if = {
+				limit = { original_tag = IOM }
+				ENG = { country_event = { id = NWoman.17 hours = 6 } }
+			}
+			if = {
+				limit = { original_tag = OMA }
+				ENG = { country_event = { id = NWmuscat.43 hours = 6 } }
+			}
+		}
+    }
+}
+
+IOM_search_of_allies_in_middle_east = {
+	
+	IOM_search_of_allies_in_middle_east_fake = {
+		icon = generic_form_nation
+		fire_only_once = yes
+		
+		available = {
+			any_of_scopes = {
+				array = global.is_middle_east_nation
+				tooltip = is_middle_east_nation_tt
+				OR = {
+					original_tag = SAU
+					original_tag = TUR
+					original_tag = TRK
+					original_tag = KRD
+					original_tag = PER
+					original_tag = AFG
+					original_tag = IRQ
+					original_tag = SYR
+					original_tag = EGY
+					original_tag = YEM
+					original_tag = BPL
+					original_tag = PAL
+					original_tag = JOR
+				}
+				is_faction_leader = yes
+				exists = yes
+				NOT = { has_war_with = ROOT }
+				has_capitulated = no
+			}
+			has_capitulated = no
+			is_in_faction = no
+			hidden_trigger = { always = no }
+		}
+		
+		visible = {
+			NOT = {
+				any_of_scopes = {
+					array = global.is_middle_east_nation
+					OR = {
+						original_tag = SAU
+						original_tag = TUR
+						original_tag = TRK
+						original_tag = KRD
+						original_tag = PER
+						original_tag = AFG
+						original_tag = IRQ
+						original_tag = SYR
+						original_tag = EGY
+						original_tag = YEM
+						original_tag = BPL
+						original_tag = PAL
+						original_tag = JOR
+					}
+					is_faction_leader = yes
+					exists = yes
+					NOT = { has_war_with = ROOT }
+					has_capitulated = no
+				}
+			}
+			has_capitulated = no
+			is_in_faction = no
+		}
+		
+		cost = 10
+		
+		complete_effect = {
+			effect_tooltip = {
+				FROM = { country_event = { id = generic.2 hours = 3 } }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	IOM_search_of_allies_in_middle_east_dec = {
+
+		icon = generic_form_nation
+		
+		highlight_states = {
+			highlight_states_trigger = {
+				is_controlled_by = FROM
+				is_capital = yes
+			}
+		}
+		fire_only_once = yes
+		
+		available = {
+			FROM = {
+				is_faction_leader = yes
+				exists = yes
+				NOT = { has_war_with = ROOT }
+				has_capitulated = no
+			}
+			has_capitulated = no
+			is_in_faction = no
+		}
+		
+		visible = {
+			FROM = {
+				is_faction_leader = yes
+				exists = yes
+				NOT = { has_war_with = ROOT }
+			}
+			has_capitulated = no
+			is_in_faction = no
+		}
+		
+		targets = { SAU TUR TRK PER AFG IRQ SYR EGY YEM BPL PAL JOR }
+		targets_dynamic = yes
+		
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = IOM_search_of_allies_in_middle_east
+				has_completed_focus = OMA_finding_allies_in_middle_east
+			}
+			has_capitulated = no
+			is_in_faction = no
+		}
+		
+		target_trigger = {
+			FROM = {
+				is_faction_leader = yes
+				exists = yes
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		
+		cost = 10
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_search_of_allies_in_middle_east_dec (From [From.GetName] [From.GetTag])"
+			FROM = { country_event = { id = generic.2 hours = 3 } }
+		}
+		
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 10
+				FROM = {
+					OR = {
+						original_tag = SAU
+						is_in_faction_with = SAU
+					}
+				}
+			}
+		}
+	}
+}
+
+IOM_restoration_of_omani_empire_category = {
+
+	IOM_proclaim_restoration_of_omani_empire = {
+    	icon = generic_form_nation
+        available = {
+			count_triggers = {
+				amount = 3
+				controls_state = 773
+				controls_state = 1119
+				controls_state = 658
+				controls_state = 1170
+				controls_state = 831
+				controls_state = 546
+				controls_state = 559
+				controls_state = 1171
+				controls_state = 1172
+			}
+        }
+		fire_only_once = yes
+		visible = {
+        }
+		cost = 20
+
+        ai_will_do = {
+			factor = 100
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_proclaim_restoration_of_omani_empire"
+			set_cosmetic_tag = EMPIRE_OMAN
+			set_country_flag = EMPIRE_OMAN_flag
+			hidden_effect = {
+				news_event = { id = trworldnews.142 hours = 6 }
+			}
+		}
+    }
+	
+	IOM_return_qatar = {
+    	icon = hol_exchange_intelligence_data
+		highlight_states = { highlight_state_targets = { state = 773 } }
+        available = {
+			if = {
+				limit = { NOT = { owns_state = 773 } }
+				773 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = { controls_state = 773 }
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_arab_al
+				has_completed_focus = OMA_barre_arab_al
+			}
+			773 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 20
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_qatar"
+			add_state_core = 773
+			if = {
+				limit = { 773 = { owner = { tag = QAT } } }
+				create_wargoal = {
+					target = QAT
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "QAT"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "QAT" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = { NOT = { owns_state = 773 } }
+				if = {
+					limit = { 773 = { owner = { controls_state = 773 } } }
+					773 = {
+						owner = {
+							country_event = { id = NWoman.23 hours = 6 }
+							if = {
+								limit = { is_ai = yes }
+								effect_tooltip = {
+									custom_effect_tooltip = chance_tt
+									random_list_chance = yes
+								}
+							}
+						}
+					}
+				}
+				else = {
+					773 = {
+						owner = {
+							ROOT = {
+								create_wargoal = {
+									type = take_state_focus
+									target = PREV
+									generator = { 773 }
+									expire = 0
+								}
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 200
+								}
+								add_ai_strategy = {
+									type = conquer
+									id = PREV 
+									value = 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_return_pirate_coast = {
+    	icon = generic_nationalism
+		highlight_states = {
+			highlight_state_targets = {
+				state = 1119
+				state = 658
+			}
+		}
+        available = {
+			if = {
+				limit = {
+					NOT = {
+						owns_state = 1119
+						owns_state = 658
+					}
+				}
+				1119 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+				658 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				controls_state = 1119
+				controls_state = 658
+			}
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_arab_al
+				has_completed_focus = OMA_barre_arab_al
+			}
+			1119 = { NOT = { is_core_of = ROOT } }
+			658 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 30
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_pirate_coast"
+			add_state_core = 1119
+			add_state_core = 658
+			if = {
+				limit = { UAE = { OR = { owns_state = 1119 owns_state = 658 } } }
+				create_wargoal = {
+					target = UAE
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "UAE"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "UAE" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { owns_state = 1119 }
+						NOT = { owns_state = 658 }
+					}
+				}
+				every_state = {
+					limit = {
+						NOT = { is_owned_by = ROOT }
+						owner = { controls_state = PREV }
+						OR = {
+							state = 1119
+							state = 658
+						}
+					}
+					owner = { country_event = { id = NWoman.25 hours = 6 } }
+				}
+				if = {
+					limit = {
+						1119 = {
+							owner = {
+								NOT = { tag = ROOT }
+								controls_state = PREV
+								owns_state = 658
+								controls_state = 658
+								is_ai = yes
+							}
+						}
+					}
+					every_state = {
+						limit = {
+							NOT = { is_owned_by = ROOT }
+							owner = { controls_state = PREV }
+							OR = {
+								state = 1119
+								state = 658
+							}
+						}
+						owner = {
+							effect_tooltip = {
+								custom_effect_tooltip = chance_tt
+								random_list_chance = yes
+							}
+						}
+					}
+					else = {
+						effect_tooltip = {
+							custom_effect_tooltip = chance_tt
+							custom_effect_tooltip = n4_tt
+						}
+						1119 = {
+							owner = {
+								if = {
+									limit = {
+										is_ai = yes
+										controls_state = 1119
+									}
+									effect_tooltip = {
+										custom_effect_tooltip = chance_tt1
+										random_list_chance = yes
+									}
+								}
+							}
+						}
+						custom_effect_tooltip = n4_tt
+						658 = {
+							owner = {
+								if = {
+									limit = {
+										is_ai = yes
+										controls_state = 658
+									}
+									effect_tooltip = {
+										custom_effect_tooltip = chance_tt1
+										random_list_chance2 = yes
+									}
+								}
+							}
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						NOT = { is_owned_by = ROOT }
+						owner = { NOT = { controls_state = PREV } }
+						OR = {
+							state = 1119
+							state = 658
+						}
+					}
+					owner = {
+						ROOT = {
+							create_wargoal = {
+								type = take_state_focus
+								target = PREV
+								generator = { 1119 658 }
+								expire = 0
+							}
+							add_ai_strategy = {
+								type = antagonize
+								id = PREV
+								value = 200
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = PREV 
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_return_mahru = {
+    	icon = generic_civil_support
+		highlight_states = { highlight_state_targets = { state = 1170 } }
+        available = {
+			if = {
+				limit = { NOT = { owns_state = 1170 } }
+				1170 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = { controls_state = 1170 }
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_arab_al
+				has_completed_focus = OMA_barre_arab_al
+			}
+			1170 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 40
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_mahru"
+			add_state_core = 1170
+			if = {
+				limit = { NOT = { owns_state = 1170 } }
+				if = {
+					limit = { 1170 = { owner = { controls_state = 1170 } } }
+					1170 = {
+						owner = {
+							country_event = { id = NWoman.26 hours = 6 }
+							if = {
+								limit = { is_ai = yes }
+								effect_tooltip = {
+									custom_effect_tooltip = chance_tt
+									random_list_chance = yes
+								}
+							}
+						}
+					}
+				}
+				else = {
+					1170 = {
+						owner = {
+							ROOT = {
+								create_wargoal = {
+									type = take_state_focus
+									target = PREV
+									generator = { 1170 }
+									expire = 0
+								}
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 200
+								}
+								add_ai_strategy = {
+									type = conquer
+									id = PREV 
+									value = 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_integrate_sultanate_of_zanzibar = {
+    	icon = generic_operation
+		highlight_states = { highlight_state_targets = { state = 831 } }
+        available = {
+			if = {
+				limit = { NOT = { owns_state = 831 } }
+				831 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = { controls_state = 831 }
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_az_zindzh
+				has_completed_focus = OMA_barre_az_zindzh
+			}
+			831 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 20
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_integrate_sultanate_of_zanzibar"
+			add_state_core = 831
+			if = {
+				limit = { 831 = { owner = { tag = TZN } } }
+				create_wargoal = {
+					target = TZN
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "TZN"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "TZN" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = { NOT = { owns_state = 831 } }
+				if = {
+					limit = { 831 = { owner = { controls_state = 831 } } }
+					831 = {
+						owner = {
+							country_event = { id = NWoman.27 hours = 6 }
+							if = {
+								limit = { is_ai = yes }
+								effect_tooltip = {
+									custom_effect_tooltip = chance_tt
+									random_list_chance = yes
+								}
+							}
+						}
+					}
+				}
+				else = {
+					831 = {
+						owner = {
+							ROOT = {
+								create_wargoal = {
+									type = take_state_focus
+									target = PREV
+									generator = { 831 }
+									expire = 0
+								}
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 200
+								}
+								add_ai_strategy = {
+									type = conquer
+									id = PREV 
+									value = 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_return_swahili_coast = {
+    	icon = hol_draw_up_staff_plans
+		highlight_states = { highlight_state_targets = { state = 546 } }
+        available = {
+			if = {
+				limit = { NOT = { owns_state = 546 } }
+				546 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = { controls_state = 546 }
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_az_zindzh
+				has_completed_focus = OMA_barre_az_zindzh
+			}
+			546 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 30
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_swahili_coast"
+			add_state_core = 546
+			if = {
+				limit = { NOT = { owns_state = 546 } }
+				if = {
+					limit = { 546 = { owner = { controls_state = 546 } } }
+					546 = {
+						owner = {
+							country_event = { id = NWoman.28 hours = 6 }
+							if = {
+								limit = { is_ai = yes }
+								effect_tooltip = {
+									custom_effect_tooltip = chance_tt
+									random_list_chance = yes
+								}
+							}
+						}
+					}
+				}
+				else = {
+					546 = {
+						owner = {
+							ROOT = {
+								create_wargoal = {
+									type = take_state_focus
+									target = PREV
+									generator = { 546 }
+									expire = 0
+								}
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 200
+								}
+								add_ai_strategy = {
+									type = conquer
+									id = PREV 
+									value = 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_return_banadir = {
+    	icon = generic_nationalism
+		highlight_states = { highlight_state_targets = { state = 559 } }
+        available = {
+			if = {
+				limit = { NOT = { owns_state = 559 } }
+				559 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = { controls_state = 559 }
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_az_zindzh
+				has_completed_focus = OMA_barre_az_zindzh
+			}
+			559 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 30
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_banadir"
+			add_state_core = 559
+			if = {
+				limit = { 559 = { owner = { tag = SOM } } }
+				create_wargoal = {
+					target = SOM
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "SOM"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "SOM" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = { NOT = { owns_state = 559 } }
+				if = {
+					limit = { 559 = { owner = { controls_state = 559 } } }
+					559 = {
+						owner = {
+							country_event = { id = NWoman.29 hours = 6 }
+							if = {
+								limit = { is_ai = yes }
+								effect_tooltip = {
+									custom_effect_tooltip = chance_tt
+									random_list_chance = yes
+								}
+							}
+						}
+					}
+				}
+				else = {
+					559 = {
+						owner = {
+							ROOT = {
+								create_wargoal = {
+									type = take_state_focus
+									target = PREV
+									generator = { 559 }
+									expire = 0
+								}
+								add_ai_strategy = {
+									type = antagonize
+									id = PREV
+									value = 200
+								}
+								add_ai_strategy = {
+									type = conquer
+									id = PREV 
+									value = 100
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+	
+	IOM_return_mombasa = {
+    	icon = generic_civil_support
+		highlight_states = {
+			highlight_state_targets = {
+				state = 1171
+				state = 1172
+			}
+		}
+        available = {
+			if = {
+				limit = {
+					NOT = {
+						owns_state = 1171
+						owns_state = 1172
+					}
+				}
+				1171 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+				1172 = {
+					owner = {
+						NOT = {
+							is_in_faction_with = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				controls_state = 1171
+				controls_state = 1172
+			}
+        }
+		visible = {
+			OR = {
+				has_completed_focus = IOM_barre_az_zindzh
+				has_completed_focus = OMA_barre_az_zindzh
+			}
+			1171 = { NOT = { is_core_of = ROOT } }
+			1172 = { NOT = { is_core_of = ROOT } }
+        }
+		cost = 20
+		days_re_enable = 150
+
+        ai_will_do = {
+			factor = 15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_return_mombasa"
+			add_state_core = 1171
+			add_state_core = 1172
+			if = {
+				limit = { KEN = { OR = { owns_state = 1171 owns_state = 1172 } } }
+				create_wargoal = {
+					target = KEN
+					type = annex_everything
+					expire = 0
+				}
+				add_ai_strategy = {
+					type = antagonize
+					id = "KEN"
+					value = 200
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = "KEN" 
+					value = 100
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { owns_state = 1171 }
+						NOT = { owns_state = 1172 }
+					}
+				}
+				every_state = {
+					limit = {
+						NOT = { is_owned_by = ROOT }
+						owner = { controls_state = PREV }
+						OR = {
+							state = 1171
+							state = 1172
+						}
+					}
+					owner = { country_event = { id = NWoman.30 hours = 6 } }
+				}
+				if = {
+					limit = {
+						1171 = {
+							owner = {
+								NOT = { tag = ROOT }
+								controls_state = PREV
+								owns_state = 1172
+								controls_state = 1172
+								is_ai = yes
+							}
+						}
+					}
+					every_state = {
+						limit = {
+							NOT = { is_owned_by = ROOT }
+							owner = { controls_state = PREV }
+							OR = {
+								state = 1171
+								state = 1172
+							}
+						}
+						owner = {
+							effect_tooltip = {
+								custom_effect_tooltip = chance_tt
+								random_list_chance = yes
+							}
+						}
+					}
+					else = {
+						effect_tooltip = {
+							custom_effect_tooltip = chance_tt
+						}
+						1171 = {
+							owner = {
+								if = {
+									limit = {
+										is_ai = yes
+										controls_state = 1171
+									}
+									effect_tooltip = {
+										PREV = { custom_effect_tooltip = chance_tt1 }
+										random_list_chance = yes
+									}
+								}
+							}
+						}
+						1172 = {
+							owner = {
+								if = {
+									limit = {
+										is_ai = yes
+										controls_state = 1172
+									}
+									effect_tooltip = {
+										custom_effect_tooltip = chance_tt1
+										random_list_chance2 = yes
+									}
+								}
+							}
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						NOT = { is_owned_by = ROOT }
+						owner = { NOT = { controls_state = PREV } }
+						OR = {
+							state = 1171
+							state = 1172
+						}
+					}
+					owner = {
+						ROOT = {
+							create_wargoal = {
+								type = take_state_focus
+								target = PREV
+								generator = { 1171 1172 }
+								expire = 0
+							}
+							add_ai_strategy = {
+								type = antagonize
+								id = PREV
+								value = 200
+							}
+							add_ai_strategy = {
+								type = conquer
+								id = PREV 
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+}
+
+IOM_small_jihad_category = {
+
+	IOM_call_for_jihad = {
+    	icon = generic_intelligence_operation
+        available = {
+			has_war = yes
+			OR = {
+				AND = {
+					surrender_progress > 0.2
+					NOT = { has_country_flag = { flag = IOM_call_for_jihad_flag value > 0 } }
+				}
+				NOT = { has_country_flag = { flag = IOM_call_for_jihad_flag2 value > 0 } }
+			}
+			hidden_trigger = {
+				always = no
+			}
+        }
+		visible = {
+			has_war = no
+        }
+		cost = 100
+		days_remove = 70
+
+        ai_will_do = {
+			factor = 20
+		}
+		
+		modifier = {
+			conscription_factor = 0.05
+			custom_modifier_tooltip = IOM_call_for_jihad_tt1
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_call_for_jihad"
+			if = {
+				limit = { has_country_flag = IOM_call_for_jihad_flag }
+				clr_country_flag = IOM_call_for_jihad_flag
+			}
+			if = {
+				limit = { has_country_flag = IOM_call_for_jihad_flag2 }
+				clr_country_flag = IOM_call_for_jihad_flag2
+			}
+			set_country_flag = { flag = IOM_call_for_jihad_flag days = 182 value = 1 }
+			set_country_flag = { flag = IOM_call_for_jihad_flag2 days = 365 value = 1 }
+			custom_effect_tooltip = IOM_call_for_jihad_tt
+		}
+    }
+	
+	IOM_call_for_jihad_from_all = {
+		name = IOM_call_for_jihad_from
+
+		icon = generic_nationalism
+		
+		highlight_states = {
+			highlight_states_trigger = {
+				is_controlled_by = FROM
+				is_capital = yes
+			}
+		}
+		
+		available = {
+			FROM = {
+				has_war_with = ROOT
+			}
+			OR = {
+				surrender_progress > 0.2
+				custom_trigger_tooltip = {
+					tooltip = IOM_call_for_jihad_flag_against_tt		
+					NOT = { has_country_flag = { flag = IOM_call_for_jihad_flag_against_@FROM value > 0 } }
+				}
+			}
+		}
+		
+		visible = {
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				has_capitulated = no
+				NOT = {
+					original_tag = EGY
+					original_tag = SAU
+					original_tag = YEM
+					original_tag = JOR
+					original_tag = IRQ
+					original_tag = PER
+					original_tag = TUR
+					original_tag = TRK
+					original_tag = SYR
+					original_tag = AFG
+					original_tag = PAK
+					original_tag = UAE
+					original_tag = INS
+					original_tag = MOR
+					original_tag = WES
+					original_tag = MRT
+					original_tag = SEN
+					original_tag = MLI
+					original_tag = NGR
+					original_tag = CHA
+					original_tag = ALG
+					original_tag = TUN
+					original_tag = ALB
+					original_tag = QUA
+					original_tag = KTH
+					original_tag = MHR
+				}
+			}
+			has_capitulated = no
+		}
+		
+		cancel_trigger = {
+			FROM = {
+				NOT = { has_war_with = ROOT }
+			}
+			has_capitulated = yes
+		}
+		
+		target_array = enemies
+		
+		target_root_trigger = {
+			has_completed_focus = IOM_small_jihad
+			has_capitulated = no
+		}
+		
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				has_capitulated = no
+				NOT = {
+					original_tag = EGY
+					original_tag = SAU
+					original_tag = YEM
+					original_tag = JOR
+					original_tag = IRQ
+					original_tag = PER
+					original_tag = TUR
+					original_tag = TRK
+					original_tag = SYR
+					original_tag = AFG
+					original_tag = PAK
+					original_tag = UAE
+					original_tag = INS
+					original_tag = MOR
+					original_tag = WES
+					original_tag = MRT
+					original_tag = SEN
+					original_tag = MLI
+					original_tag = NGR
+					original_tag = CHA
+					original_tag = ALG
+					original_tag = TUN
+					original_tag = ALB
+					original_tag = QUA
+					original_tag = KTH
+					original_tag = MHR
+				}
+			}
+		}
+		
+		cost = 100
+		days_remove = 70
+		
+		targeted_modifier = {
+			tag = FROM
+			attack_bonus_against = 0.3
+			defense_bonus_against = 0.3
+		}
+		
+		modifier = {
+			conscription_factor = 0.05
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_call_for_jihad_from_all (From [From.GetName] [From.GetTag])"
+			if = {
+				limit = { has_country_flag = IOM_call_for_jihad_flag_against_@FROM }
+				clr_country_flag = IOM_call_for_jihad_flag_against_@FROM
+			}
+			set_country_flag = { flag = IOM_call_for_jihad_flag_against_@FROM days = 365 value = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 100
+			modifier = {
+				factor = 0
+				FROM = { has_capitulated = yes }
+			}
+			modifier = {
+				factor = 0
+				FROM = { num_divisions < 10 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { is_neighbor_of = FROM }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0.15
+			}
+		}
+	}
+	
+	IOM_call_for_jihad_from_special = {
+		name = IOM_call_for_jihad_from
+
+		icon = generic_nationalism
+		
+		highlight_states = {
+			highlight_states_trigger = {
+				is_controlled_by = FROM
+				is_capital = yes
+			}
+		}
+		
+		available = {
+			FROM = {
+				has_war_with = ROOT
+			}
+			OR = {
+				surrender_progress > 0.2
+				custom_trigger_tooltip = {
+					tooltip = IOM_call_for_jihad_flag_against_tt		
+					NOT = { has_country_flag = { flag = IOM_call_for_jihad_flag_against_@FROM value > 0 } }
+				}
+			}
+		}
+		
+		visible = {
+			FROM = {
+				exists = yes
+				has_war_with = ROOT
+				has_capitulated = no
+				NOT = {
+					original_tag = EGY
+					original_tag = SAU
+					original_tag = YEM
+					original_tag = JOR
+					original_tag = IRQ
+					original_tag = PER
+					original_tag = TUR
+					original_tag = TRK
+					original_tag = SYR
+					original_tag = AFG
+					original_tag = PAK
+					original_tag = UAE
+					original_tag = INS
+					original_tag = MOR
+					original_tag = WES
+					original_tag = MRT
+					original_tag = SEN
+					original_tag = MLI
+					original_tag = NGR
+					original_tag = CHA
+					original_tag = ALG
+					original_tag = TUN
+					original_tag = ALB
+					original_tag = QUA
+					original_tag = KTH
+					original_tag = MHR
+				}
+			}
+			has_capitulated = no
+		}
+		
+		cancel_trigger = {
+			FROM = {
+				NOT = { has_war_with = ROOT }
+			}
+			has_capitulated = yes
+		}
+		
+		target_array = enemies
+		
+		targets = { EGY SAU YEM JOR IRQ PER TUR TRK SYR AFG PAK UAE INS MOR WES MRT SEN MLI NGR CHA ALG TUN KTH QUA MHR ALB }
+		targets_dynamic = yes
+		
+		target_root_trigger = {
+			has_completed_focus = IOM_small_jihad
+			has_capitulated = no
+		}
+		
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				has_capitulated = no
+				OR = {
+					original_tag = EGY
+					original_tag = SAU
+					original_tag = YEM
+					original_tag = JOR
+					original_tag = IRQ
+					original_tag = PER
+					original_tag = TUR
+					original_tag = TRK
+					original_tag = SYR
+					original_tag = AFG
+					original_tag = PAK
+					original_tag = UAE
+					original_tag = INS
+					original_tag = MOR
+					original_tag = WES
+					original_tag = MRT
+					original_tag = SEN
+					original_tag = MLI
+					original_tag = NGR
+					original_tag = CHA
+					original_tag = ALG
+					original_tag = TUN
+					original_tag = ALB
+					original_tag = QUA
+					original_tag = KTH
+					original_tag = MHR
+				}
+			}
+		}
+		
+		cost = 100
+		days_remove = 70
+		
+		targeted_modifier = {
+			tag = FROM
+			attack_bonus_against = 0.18
+			defense_bonus_against = 0.18
+		}
+		
+		modifier = {
+			conscription_factor = 0.05
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision IOM_call_for_jihad_from_special (From [From.GetName] [From.GetTag])"
+			if = {
+				limit = { has_country_flag = IOM_call_for_jihad_flag_against_@FROM }
+				clr_country_flag = IOM_call_for_jihad_flag_against_@FROM
+			}
+			set_country_flag = { flag = IOM_call_for_jihad_flag_against_@FROM days = 365 value = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 100
+			modifier = {
+				factor = 0
+				FROM = { has_capitulated = yes }
+			}
+			modifier = {
+				factor = 0
+				FROM = { num_divisions < 10 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { is_neighbor_of = FROM }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0.15
+			}
+		}
+	}
+}

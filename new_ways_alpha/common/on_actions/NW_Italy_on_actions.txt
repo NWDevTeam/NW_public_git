@@ -1,0 +1,196 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			if = {
+				limit = {
+					has_start_date < 1936.01.02
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+				}
+				ITA = {
+					set_variable = { total_mission_days = global.num_days }
+					activate_mission = ITA_conquer_the_north_mission
+					activate_mission = ITA_conquer_the_south_mission
+					ITA_benito_mussolini = { unit_leader_event = { id = BBA_italy_missiolinis.11 days = 185 random_days = 4 } } # JUN 36 - Conquer Ethiopia  - DEC 36 - (170 days)
+				}
+			}
+		}
+	}
+	
+	
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					tag = ITA
+					has_war_with = ENG
+					NOT = { 
+						OR = {
+							LBA = { has_country_flag = italo_balbo_rule } }
+							has_country_flag = balbo_dead_flag
+							has_country_flag = italo_balbo_run_flag
+						}
+				}
+				if = {
+					limit = { is_historical_focus_on = no }
+					random_list = {
+						50 = { ITA = { country_event = { days = 30 id = duce.24 } } }
+						50 = { ITA = { country_event = { days = 30 id = duce.25 } } }
+					}
+				}
+				if = {
+					limit = { is_historical_focus_on = yes }
+					random_list = {
+						100 = { ITA = { country_event = { days = 30 id = duce.24 } } }
+						0 = { ITA = { country_event = { days = 30 id = duce.25 } } }
+					}
+				}
+			}
+		}
+	}
+	
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			#End of Italian Civil War NW
+			if = {
+				limit = {
+					original_tag = ITA
+					NOT = {
+						any_enemy_country = {
+							original_tag = ITA
+							exists = yes
+						}
+					}
+					NOT = { has_global_flag = ITA_civil_war_end }
+				}
+				set_global_flag = ITA_civil_war_end
+				if = {
+					limit = { has_country_leader = { ruling_only = yes character = ITA_benito_mussolini } }
+					news_event = { id = trworldnews.177 hours = 3 random_hours = 4 }
+				}
+				if = {
+					limit = { tag = RDS }
+					news_event = { id = trworldnews.178 hours = 3 random_hours = 4 }
+				}
+				if = {
+					limit = { tag = CLN }
+					news_event = { id = trworldnews.179 hours = 3 random_hours = 4 }
+				}
+				if = {
+					limit = { tag = GFC }
+					news_event = { id = trworldnews.180 hours = 3 random_hours = 4 }
+				}
+				if = {
+					limit = { tag = IFA }
+					news_event = { id = trworldnews.181 hours = 3 random_hours = 4 }
+				}
+			}
+		}
+	}
+	
+	
+	#ROOT is winner #FROM gets annexed - This fires just before FROM gets annexed, meaning the country and everything it owns still exists. It will also fire on_annex and on_civil_war_end
+	on_civil_war_end_before_annexation = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						tag = CLN
+					}
+					country_exists = IFA
+				}
+				CLN = {
+					every_character = {
+						limit = {
+							is_character_slot = political_advisor
+							NOT = { is_character = ITA_luigi_longo }
+							OR = {
+								has_character_flag = ITA_cw_character_antifascist_side_flag
+								has_unit_leader_flag = ITA_cw_unit_leader_antifascist_side_flag
+							}
+						}
+						set_nationality = IFA
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						tag = CLN
+					}
+					OR = {
+						country_exists = RDS
+						country_exists = GFC
+					}
+				}
+				if = {
+					limit = {
+						country_exists = GFC
+						NOT = { has_global_flag = RDS_global_flag }
+					}
+					CLN = {
+						every_character = {
+							limit = {
+								is_character_slot = political_advisor
+								OR = {
+									is_character = ITA_alcide_de_gasperi
+									is_character = ITA_luigi_einaudi
+									has_character_flag = ITA_cw_unit_leader_monarchist_side_flag
+									has_unit_leader_flag = ITA_cw_character_monarchist_side_flag
+								}
+							}
+							set_nationality = GFC
+						}
+					}
+				}
+				else = {
+					CLN = {
+						every_character = {
+							limit = {
+								is_character_slot = political_advisor
+								OR = {
+									is_character = ITA_alcide_de_gasperi
+									is_character = ITA_luigi_einaudi
+									has_character_flag = ITA_cw_unit_leader_monarchist_side_flag
+									has_unit_leader_flag = ITA_cw_character_monarchist_side_flag
+								}
+							}
+							set_nationality = RDS
+						}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = verone_trial_flag }
+					ITA = { has_war_with = RSI } 
+					FROM.FROM = {
+						OR = { 
+							state = 2
+							state = 117
+						}
+					}
+					ROOT = { original_tag = ITA } 
+					FROM = { original_tag = RSI } 
+				}
+				set_country_flag = verone_trial_flag
+				ITA = { country_event = { hours = 6 id = duce.35 } }
+			}
+		}
+	}
+	
+	
+}

@@ -116,7 +116,7 @@ NDefines.NAI.WANTED_MAX_FUEL_BUFFER_IN_DAYS_FOR_AIR_MAX_CONSUMPTION  = 365  -- A
 NDefines.NAI.WANTED_MAX_FUEL_BUFFER_IN_DAYS_FOR_NAVY_MAX_CONSUMPTION = 365  -- AI will try to buffer at least this amount of days on max consumption, will trade if necesarry and will go into fuel saving mode/aggresive mode using this buffer
 NDefines.NAI.FUEL_RATIO_TO_EXIST_FUEL_SAVING_MODE = 0.40					-- countries will exit fuel saving mode if they have more fuel ratio than this
 
-NDefines.NAI.GENERATE_WARGOAL_THREAT_BASELINE = 0.6							-- The baseline for what the AI considers the world is getting dangerous and we want to generate wargoals with no antagonize value	
+--NDefines.NAI.GENERATE_WARGOAL_THREAT_BASELINE = 0.6							-- The baseline for what the AI considers the world is getting dangerous and we want to generate wargoals with no antagonize value	
 
 NDefines.NAI.TRADEABLE_FACTORIES_FRACTION = 1								-- Will at most trade away this fraction of factories.
 --NDefines.NAI.WAIT_YEARS_BEFORE_FREER_BUILDING = 1							-- The AI will skip considering certain buildings during the buildup phase, after htese many years it starts building them regardless of threat.
@@ -230,7 +230,8 @@ NDefines.NAI.STR_BOMB_MIN_ENEMY_FIGHTERS_IN_AREA = 400						-- If amount of enem
 --попытка починить раш альянсов
 NDefines.NAI.POTENTIAL_ALLY_JOIN_WAR_FACTOR = 25							-- If amount of enemy fighters is higher than this mission won't perform
 NDefines.NAI.AI_UPDATE_ROLES_FREQUENCY_HOURS = 96							-- Update the roles for a country AI this often (affects performance)
-
+--для гибридов
+NDefines.NAI.BUILDING_TARGETS_BUILDING_PRIORITIES = { 'universal_factory', 'industrial_complex', } -- buildings in order of pirority when considering building targets strategies. First has the greatest priority, omitted has the lowest. NOTE: not all buildings are supported by building targets strategies.
 
 NDefines.NAir.MISSION_COMMAND_POWER_COSTS = {
 	0.0, -- AIR_SUPERIORITY
@@ -260,5 +261,5 @@ NDefines_Graphics.NGraphics.COMMANDGROUP_PRESET_COLORS_HSV = {
 	180.0/360.0, 1.0, 0.75,		--turq
 	220.0/360.0, 1.0, 1.0,		--blue
 	260.0/360.0, 0.5, 0.85,		--purple
-	330.0/360.0, 0, 0.75		--white
+	330.0/360.0, 0, 0.75,		--white
 }

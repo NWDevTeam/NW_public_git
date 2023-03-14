@@ -20,7 +20,7 @@ NW_CW_defend_FRA_hard_for_player = {
 			original_tag = SAF
 			original_tag = NZL
 			original_tag = RAJ
-			original_tag = LKA
+			original_tag = SRL
 			original_tag = MAL
 			original_tag = NFL
 			original_tag = ZIM
@@ -73,7 +73,7 @@ NW_CW_ignore_DEN = {
 			original_tag = SAF
 			original_tag = NZL
 			original_tag = RAJ
-			original_tag = LKA
+			original_tag = SRL
 			original_tag = MAL
 			original_tag = NFL
 			original_tag = ZIM
@@ -86,7 +86,7 @@ NW_CW_ignore_DEN = {
 		}
 	}
 	enable = {
-		OR = { original_tag = ENG is_subject_of = ROOT }
+		OR = { original_tag = ENG is_subject_of = ENG }
 		date < 1941.1.1
 		has_war_with = GER
 		is_in_faction_with = FRA
@@ -435,6 +435,50 @@ NW_ENG_ITA_strange_war = {
 	}
 }
 
+NW_CW_ignore_muskat = {
+	allowed = {
+		OR = {
+			original_tag = ENG
+			original_tag = CAN
+			original_tag = AST
+			original_tag = SAF
+			original_tag = NZL
+			original_tag = RAJ
+			original_tag = SRL
+			original_tag = MAL
+			original_tag = NFL
+			original_tag = ZIM
+			original_tag = USA
+			
+			original_tag = NEP
+			original_tag = NOR
+			is_subject_of = ENG		#достаточно чекнуть единожды
+		}
+	}
+	enable = {
+		OR = { original_tag = ENG is_subject_of = ENG }
+		OMA = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+			}
+			OR = {
+				has_civil_war = yes
+				has_war_with = IOM
+			}
+		}
+		NOT = { has_war_with = IOM }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = dont_defend_ally_borders id = "OMA" value = 2000 }
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = OMA
+		value = 2000
+	}
+}
+
 NW_ENG_no_division_in_muskat = {
 	allowed = { original_tag = ENG }
 	enable = {
@@ -453,9 +497,19 @@ NW_ENG_no_division_in_muskat = {
 		value = -2000
 	}
 	ai_strategy = {
+		type = contain
+		id = "IOM"			
+		value = -2000
+	}
+	ai_strategy = {
 		type = ignore
 		id = "IOM"			
 		value = 400
+	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = IOM
+		value = -2000
 	}
 	ai_strategy = {
 		type = ignore
@@ -463,8 +517,106 @@ NW_ENG_no_division_in_muskat = {
 		value = 400
 	}
 	ai_strategy = {
-		type = dont_defend_ally_borders
-		id = "OMA"
-		value = 200
+		type = dont_join_wars_with
+		id = OMA
+		target_country = IOM
+		value = 2000
+	}
+	ai_strategy = {
+		type = protect
+		id = OMA
+		value = -2000
+	}
+}
+
+NW_CW_ignore_KTH = {
+	allowed = {
+		OR = {
+			original_tag = ENG
+			original_tag = CAN
+			original_tag = AST
+			original_tag = SAF
+			original_tag = NZL
+			original_tag = RAJ
+			original_tag = SRL
+			original_tag = MAL
+			original_tag = NFL
+			original_tag = ZIM
+			original_tag = USA
+			
+			original_tag = NEP
+			original_tag = NOR
+			is_subject_of = ENG		#достаточно чекнуть единожды
+		}
+		NOT = { original_tag = QUA }
+	}
+	enable = {
+		date < 1938.6.1
+		country_exists = QUA
+		OR = { original_tag = ENG is_subject_of = ENG }
+		QUA = { has_war_with = KTH }
+		NOT = { has_war_with = KTH }
+	}
+	abort_when_not_enabled = yes
+	
+	ai_strategy = { type = dont_defend_ally_borders id = "QUA" value = 2000 }
+	ai_strategy = { type = dont_defend_ally_borders id = "KTH" value = 2000 }
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = QUA
+		value = 2000
+	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = KTH
+		value = -2000
+	}
+}
+
+ENG_please_defence_himself = {
+	allowed = {
+		original_tag = ENG
+	}
+	enable = {
+		OR = {
+			AND = {
+				FRA = { has_capitulated = yes }
+				is_in_faction_with = FRA
+			}
+			OR = {
+				any_enemy_country = {
+					is_ai = no
+					capital_scope = { is_on_continent = europe }
+					has_capitulated = no
+				}
+				NOT = {
+					any_allied_country = {
+						is_major = yes
+						capital_scope = { is_on_continent = europe }
+						has_capitulated = no
+					}
+				}
+			}
+		}
+		OR = {
+			AND = {
+				OR = {
+					has_war_with = GER
+					has_war_with = ITA
+				}
+				GER = { is_in_faction_with = ITA }
+			}
+			AND = {
+				FRA = { is_in_faction_with = GER }
+				FRA = { is_in_faction_with = ITA }
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = area_priority
+		id = UK
+		value = 100
 	}
 }

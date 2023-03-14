@@ -1,0 +1,50 @@
+scripted_gui = {
+
+    nw_Legitimacy_and_Migration_alert = {
+		context_type = player_context
+		parent_window_token = top_bar
+		window_name = "legitimacy_and_migration_alert"
+		
+		ai_enabled = { always = no }
+		visible = { OR = { has_country_flag = change_legitimacy_flag has_country_flag = change_migration_level_flag } }
+		triggers = {
+			background_red_visible = { #Понижение
+				check_variable = { GUI_up_or_down_status_var = 1 }
+			}
+			background_green_visible = { #Повышение
+				check_variable = { GUI_up_or_down_status_var = 2 }
+			}
+		}
+		effects = {
+			close_button_click = { clr_country_flag = change_legitimacy_flag clr_country_flag = change_migration_level_flag }
+			desc_alert_effect_click = {
+				if = {
+					limit = { has_country_flag = change_legitimacy_flag }
+					meta_effect = {
+						text = {
+							swap_ideas = {
+								remove_idea = [CURRENT_IDEA]_legitimacy
+								add_idea = [NEW_IDEA]_legitimacy
+							}
+						}
+						CURRENT_IDEA = "[?GUI_current_legitimacy_idea_var.GetTokenKey]"
+						NEW_IDEA = "[?GUI_new_legitimacy_idea_var.GetTokenKey]"
+					}
+				}
+				else_if = {
+					limit = { has_country_flag = change_migration_level_flag }
+					meta_effect = {
+						text = {
+							swap_ideas = {
+								remove_idea = [CURRENT_IDEA]
+								add_idea = [NEW_IDEA]
+							}
+						}
+						CURRENT_IDEA = "[?GUI_current_level_migration_var.GetTokenKey]"
+						NEW_IDEA = "[?GUI_new_level_migration_var.GetTokenKey]"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,89 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			every_possible_country = {
+				set_technology = {
+					base_factory_tech = 1
+					popup = no
+				}
+			}
+		}
+	}
+	on_weekly_ITA = {
+		effect = {
+			if = {
+				limit = {
+					has_tech = base_factory_tech
+					NOT = { has_country_flag = base_factory_tech_flag }
+				}
+				set_technology = {
+					base_factory_tech = 0
+					popup = no
+				}
+			}
+			if = {
+				limit = {
+					has_tech = universal_factory_tech
+					NOT = { has_country_flag = universal_factory_tech_flag }
+				}
+				set_technology = {
+					universal_factory_tech = 0
+					popup = no
+				}
+			}
+			if = {
+				limit = {
+					has_tech = universal_factory_tech
+				}
+				start_conversion_universal_factory_mission = yes
+			}
+			
+			#universal_factory_dyn // synchronization
+			if = {
+				limit = { has_dynamic_modifier = { modifier = universal_factory_dyn } }
+#				if = {
+#					limit = {
+#						any_owned_state = {
+#							OR = {
+#								arms_factory > 0
+#								industrial_complex > 0
+#							}
+#						}
+#					}
+#					every_owned_state = {
+#						set_temp_variable = { state_num_factory = building_level@arms_factory }
+#						add_to_temp_variable = { state_num_factory = building_level@industrial_complex }
+#						remove_building = {
+#							type = arms_factory
+#							level = var:building_level@arms_factory
+#						}
+#						remove_building = {
+#							type = industrial_complex
+#							level = var:building_level@industrial_complex
+#						}
+#						add_building_construction = {
+#							type = universal_factory
+#							level = var:state_num_factory
+#							instant_build = yes
+#						}
+#					}
+#				}
+
+				# синхронизация в случае если число военных заводов не соответствует числу гибридов. Поскольку фабрики уходят на ТНП, а число заводов всегда должно быть равно гибридам (без учета модификаторов и т.д.), то в проверке юзаются они
+				if = {
+					limit = {
+						check_variable = { var = num_of_military_factories value = modifier@universal_factory_modifier compare = not_equals }
+					}
+					add_offsite_building = { type = industrial_complex level = 1 }
+					add_offsite_building = { type = industrial_complex level = -1 }
+				}
+				
+				# это необходимо для сложения значений бонуса к скорости строительства от фабрик и военных фабрик
+#				set_variable = { production_speed_universal_factory_factor_var = modifier@production_speed_industrial_complex_factor }
+#				add_to_variable = { production_speed_universal_factory_factor_var = modifier@production_speed_arms_factory_factor }
+			}
+		}
+	}
+	
+}
+

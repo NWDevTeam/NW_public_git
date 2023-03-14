@@ -3,6 +3,7 @@
 ###########################
 
 add_namespace = duce
+add_namespace = NWduce
 
 ###########Белы мір з Эфіопіяй#############
 
@@ -1919,8 +1920,14 @@ country_event = {
 	desc = duce.11.d
 	picture = GFX_report_event_italian_rise2
 	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.11"}
+	immediate = { set_global_flag = CLN_global_flag }
 	
 	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { has_global_flag = CLN_global_flag }
+	}
 
 	option = {
 		name = duce.11.a
@@ -1932,46 +1939,232 @@ country_event = {
 		set_country_flag = pietro_badoglio_run_flag
 		set_country_flag = ugo_cavallero_run_flag
 		set_country_flag = emilio_de_bono_run_flag
-		hidden_effect = {
-			RSI = {
-				transfer_state = 156
-				transfer_state = 117
-				transfer_state = 157
-				load_oob = "Italian_rise"
-				declare_war_on = {
-					target = ITA
-					type = civil_war
-				}
-				add_civil_war_target = ITA
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = neutrality #SPLITTING TAG
 			}
-			every_state = {
-				limit = { is_core_of = ITA}
-				add_core_of = RSI
-			}
-			every_state = {
-				limit = { is_owned_by = ITA}
-				add_claim_by = RSI
-			}
-			RSI = { inherit_technology = ITA }
-			news_event = { hours = 6 id = duce_news.7 }
 		}
-		ITA_pietro_badoglio = { set_nationality = RSI }
-		ITA_emilio_de_bono = { set_nationality = RSI }
-		ITA_ugo_cavallero = { set_nationality = RSI }
-		ITA_italo_gariboldi = { set_nationality = RSI }
-		if = {
-			limit = { has_completed_focus = ITA_loseinETH }
-			ITA_giovanni_messe = { set_nationality = RSI }
-			ITA_sebastiano_visconti_prasca = { set_nationality = RSI }
-			ITA_ubaldo_soddu = { set_nationality = RSI }
-			ITA_vittorio_ambrosio = { set_nationality = RSI }
-			ITA_mario_berti = { set_nationality = RSI }
-			ITA_angelo_cerica = { set_nationality = RSI }
-			ITA_giuseppa_falugi = { set_nationality = RSI }
-			ITA_alessandro_piazzoni = { set_nationality = RSI }
-			ITA_giuseppe_castellano = { set_nationality = RSI }
-			ITA_prince_amedeo = { set_nationality = RSI }
-			ITA_prince_umberto = { set_nationality = RSI }
+		hidden_effect = {
+			start_civil_war = {
+				ideology = neutrality #SPLITTING TAG
+				capital = 159
+				states = all
+				states_filter = {
+					OR = {
+						state = 159
+						state = 158
+						state = 987
+						state = 985
+					}
+				}
+				keep_all_characters = yes
+				size = 0.35
+				
+				### EFFECT FOR CLN
+				set_cosmetic_tag = ITA_cln
+				set_country_flag = ITA_cln
+
+				load_focus_tree = nw_italian_antifash_focus
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+			}
+			
+			set_province_controller = 3976		#Модена-Парма
+			set_province_controller = 9752		#Модена-Парма
+			set_province_controller = 11734		#Модена-Парма
+			
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = CLN }
+				}
+				add_core_of = CLN
+			}
+			news_event = { hours = 6 id = duce_news.7 }
+			
+			ITA_antonio_gramsci = { set_nationality = CLN }
+			ITA_comitato_di_liberazione_nazionale = { set_nationality = CLN }
+			ITA_norma_barbolini = { set_nationality = CLN }
+			ITA_guido_de_ruggiero = { set_nationality = CLN }
+			ITA_alberto_tarchiani = { set_nationality = CLN }
+			ITA_luigi_einaudi = { set_nationality = CLN }
+			ITA_giovanni_duca = { set_nationality = CLN }
+			ITA_alcide_de_gasperi = { set_nationality = CLN }
+			ITA_mario_scelba = { set_nationality = CLN }
+			ITA_antonio_pesenti = { set_nationality = CLN }
+			ITA_fausto_gullo = { set_nationality = CLN }
+			ITA_luigi_longo = { set_nationality = CLN }
+			ITA_randolfo_pacciardi = { set_nationality = CLN }
+			ITA_giuseppe_de_stefanis = { set_nationality = CLN }
+			ITA_sandro_pertini = { set_nationality = CLN }
+			ITA_enrico_fermi = { set_nationality = CLN }
+			ITA_ivanoe_bonomi = { set_nationality = CLN }
+			ITA_revolutionary_council = { set_nationality = CLN }
+			ITA_mario_berti = { set_nationality = CLN }
+			ITA_angelo_cerica = { set_nationality = CLN }
+			ITA_giuseppa_falugi = { set_nationality = CLN }
+			ITA_alessandro_piazzoni = { set_nationality = CLN }
+			ITA_giuseppe_castellano = { set_nationality = CLN }
+			IFA_leda_rafanelli = { set_nationality = CLN }
+			IFA_carlo_rosselli = { set_nationality = CLN }
+			IFA_armando_borghi = { set_nationality = CLN }
+			IFA_camillo_berneri = { set_nationality = CLN }
+			IFA_banditry_leader_1 = { set_nationality = CLN }
+			IFA_banditry_leader_2 = { set_nationality = CLN }
+			IFA_banditry_leader_3 = { set_nationality = CLN }
+			IFA_banditry_leader_4 = { set_nationality = CLN }
+			IFA_banditry_leader_5 = { set_nationality = CLN }
+			if = {
+				limit = { has_completed_focus = ITA_loseinETH }
+				ITA_giovanni_messe = { set_nationality = CLN }
+				ITA_sebastiano_visconti_prasca = { set_nationality = CLN }
+				ITA_ubaldo_soddu = { set_nationality = CLN }
+			}
+			CLN = {	set_capital = { state =  158 }}
+			every_character = {
+				limit = {
+					OR = {
+						has_character_flag = ITA_cw_character_antifascist_side_flag
+						has_unit_leader_flag = ITA_cw_unit_leader_antifascist_side_flag
+					}
+				}
+				set_nationality = CLN
+			}
+			
+			CLN = {
+				#COMMITTEE IS THE LAST ONE SO THAT IT OVERRIDES EVERYONE ELSE
+				ITA_comitato_di_liberazione_nazionale = {
+					ITA_promote_cln_to_country_leader_communism = yes
+					ITA_promote_cln_to_country_leader_democratic = yes
+					ITA_promote_cln_to_country_leader_neutrality = yes
+				}
+				CLN_civil_war_deal_with_militias = yes
+			}
+			news_event = { id = trworldnews.173 hours = 3 }
 		}
 	}
 	
@@ -1998,374 +2191,520 @@ country_event = {
 				}
 				add_civil_war_target = ITA
 				change_tag_from = ROOT
+				load_focus_tree = nw_italian_antifash_focus
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
 			}
 			every_state = {
-				limit = { is_core_of = ITA}
+				limit = { is_core_of = ITA }
 				add_core_of = RSI
 			}
 			every_state = {
-				limit = { is_owned_by = ITA}
+				limit = { is_owned_by = ITA }
 				add_claim_by = RSI
 			}
 			RSI = { inherit_technology = ITA }
 			news_event = { hours = 6 id = duce_news.7 }
-		}
-		ITA_pietro_badoglio = { set_nationality = RSI }
-		ITA_emilio_de_bono = { set_nationality = RSI }
-		ITA_ugo_cavallero = { set_nationality = RSI }
-		ITA_italo_gariboldi = { set_nationality = RSI }
-		if = {
-			limit = { has_completed_focus = ITA_loseinETH }
-			ITA_giovanni_messe = { set_nationality = RSI }
-			ITA_sebastiano_visconti_prasca = { set_nationality = RSI }
-			ITA_ubaldo_soddu = { set_nationality = RSI }
-			ITA_vittorio_ambrosio = { set_nationality = RSI }
-			ITA_mario_berti = { set_nationality = RSI }
-			ITA_angelo_cerica = { set_nationality = RSI }
-			ITA_giuseppa_falugi = { set_nationality = RSI }
-			ITA_alessandro_piazzoni = { set_nationality = RSI }
-			ITA_giuseppe_castellano = { set_nationality = RSI }
-			ITA_prince_amedeo = { set_nationality = RSI }
-			ITA_prince_umberto = { set_nationality = RSI }
+	
+			ITA_pietro_badoglio = { set_nationality = RSI }
+			ITA_emilio_de_bono = { set_nationality = RSI }
+			ITA_ugo_cavallero = { set_nationality = RSI }
+			ITA_italo_gariboldi = { set_nationality = RSI }
+			ITA_antonio_gramsci = { set_nationality = RSI }
+			ITA_comitato_di_liberazione_nazionale = { set_nationality = RSI }
+			ITA_norma_barbolini = { set_nationality = RSI }
+			ITA_guido_de_ruggiero = { set_nationality = RSI }
+			ITA_alberto_tarchiani = { set_nationality = RSI }
+			ITA_luigi_einaudi = { set_nationality = RSI }
+			ITA_giovanni_duca = { set_nationality = RSI }
+			ITA_alcide_de_gasperi = { set_nationality = RSI }
+			ITA_mario_scelba = { set_nationality = RSI }
+			ITA_vittorio_emanuele_orlando = { set_nationality = RSI }
+			ITA_antonio_pesenti = { set_nationality = RSI }
+			ITA_fausto_gullo = { set_nationality = RSI }
+			ITA_luigi_longo = { set_nationality = RSI }
+			ITA_randolfo_pacciardi = { set_nationality = RSI }
+			ITA_giuseppe_de_stefanis = { set_nationality = RSI }
+			ITA_sandro_pertini = { set_nationality = RSI }
+			ITA_enrico_fermi = { set_nationality = RSI }
+			ITA_ivanoe_bonomi = { set_nationality = RSI }
+			if = {
+				limit = { has_completed_focus = ITA_loseinETH }
+				ITA_giovanni_messe = { set_nationality = RSI }
+				ITA_sebastiano_visconti_prasca = { set_nationality = RSI }
+				ITA_ubaldo_soddu = { set_nationality = RSI }
+				ITA_vittorio_ambrosio = { set_nationality = RSI }
+				ITA_mario_berti = { set_nationality = RSI }
+				ITA_angelo_cerica = { set_nationality = RSI }
+				ITA_giuseppa_falugi = { set_nationality = RSI }
+				ITA_alessandro_piazzoni = { set_nationality = RSI }
+				ITA_giuseppe_castellano = { set_nationality = RSI }
+				ITA_prince_amedeo = { set_nationality = RSI }
+				ITA_prince_umberto = { set_nationality = RSI }
+			}
+			news_event = { id = trworldnews.173 hours = 3 }
 		}
 	}
 }
 
 ################ Вайна за незалежнасць Лівіі ##########################
 
-country_event = {
-	id = duce.12
-	title = duce.12.t
-	desc = duce.12.d
-	picture = GFX_report_event_libyan_rise2
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.12"}
-	
-	trigger = {
-		tag = ITA
-		has_war_with = RSI
-		ITA = {
-			NOT = { controls_state = 2 }
-			controls_state = 448
-			controls_state = 449
-			controls_state = 450 
-			controls_state = 451
-			controls_state = 661
-			controls_state = 662
-			controls_state = 663
-			controls_state = 273
-			controls_state = 938
-			controls_state = 1059
-			controls_state = 1057
-		}
-		has_stability < 0.3
-	}
-	
-	fire_only_once = yes
+#country_event = {
+#	id = duce.12
+#	title = duce.12.t
+#	desc = duce.12.d
+#	picture = GFX_report_event_libyan_rise2
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.12"}
+#	
+#	trigger = {
+#		tag = ITA
+#		has_war_with = RSI
+#		ITA = {
+#			NOT = { controls_state = 2 }
+#			controls_state = 448
+#			controls_state = 449
+#			controls_state = 450 
+#			controls_state = 451
+#			controls_state = 661
+#			controls_state = 662
+#			controls_state = 663
+#			controls_state = 273
+#			controls_state = 938
+#			controls_state = 1059
+#			controls_state = 1057
+#		}
+#		has_stability < 0.3
+#	}
+#	
+#	fire_only_once = yes
 
-	option = {
-		name = duce.12.a
-		ai_chance = {
-			factor = 50
-		}
-		random_unit_leader = {
-			limit = { has_id = 100902 }
-			set_nationality = LBA
-		}
-		hidden_effect = {
-			LBA = {
-				transfer_state = 448
-				transfer_state = 449
-				transfer_state = 450 
-				transfer_state = 451
-				transfer_state = 661
-				transfer_state = 662
-				transfer_state = 663
-				transfer_state = 273
-				transfer_state = 938
-				transfer_state = 1059
-				transfer_state = 1057
-				load_oob = "Libian_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-			}
-			if = {
-				limit = {
-					NOT = { has_country_flag = balbo_dead_flag }
-					has_country_flag = race_manifesto_flag
-				}
-				random_army_leader = {
-					limit = { has_id = 100901 }
-					set_nationality = LBA
-				}
-				set_country_flag = italo_balbo_run_flag
-				LBA = {
-					add_popularity = { ideology = fascism popularity = 0.25 }
-					set_country_flag = italo_balbo_rule_flag
-					set_politics = {
-						ruling_party = fascism
-						elections_allowed = no
-					}
-					create_country_leader = {
-						name = ITA_italo_balbo
-						desc = "POLITICS_ITALO_BALBO_DESC"
-						picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
-						expire = "1965.1.1"
-						ideology = fascism_corporatism
-						traits = {
-							#
-						}
-					}
-				}
-			}
-			news_event = { hours = 6 id = duce_news.8 }
-		}
-	}
-	
-	option = {
-		name = duce.12.b
-		trigger = { is_ai = no }
-		ai_chance = {
-			factor = 50
-		}
-		random_army_leader = {
-			limit = { has_id = 100902 }
-			set_nationality = LBA
-		}
-		hidden_effect = {
-			LBA = {
-				transfer_state = 448
-				transfer_state = 449
-				transfer_state = 450 
-				transfer_state = 451
-				transfer_state = 661
-				transfer_state = 662
-				transfer_state = 663
-				transfer_state = 273
-				transfer_state = 938
-				transfer_state = 1059
-				transfer_state = 1057
-				load_oob = "Libian_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-				change_tag_from = ROOT
-			}
-			if = {
-				limit = {
-					NOT = { has_country_flag = balbo_dead_flag }
-					has_country_flag = race_manifesto_flag
-				}
-				random_army_leader = {
-					limit = { has_id = 100901 }
-					set_nationality = LBA
-				}
-				set_country_flag = italo_balbo_run_flag
-				LBA = {
-					add_popularity = { ideology = fascism popularity = 0.25 }
-					set_country_flag = italo_balbo_rule_flag
-					set_politics = {
-						ruling_party = fascism
-						elections_allowed = no
-					}
-					create_country_leader = {
-						name = ITA_italo_balbo
-						desc = "POLITICS_ITALO_BALBO_DESC"
-						picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
-						expire = "1965.1.1"
-						ideology = fascism_corporatism
-						traits = {
-							#
-						}
-					}
-				}
-			}
-			news_event = { hours = 6 id = duce_news.8 }
-		}
-	}
-}
+#	option = {
+#		name = duce.12.a
+#		ai_chance = {
+#			factor = 50
+#		}
+#		random_unit_leader = {
+#			limit = { has_id = 100902 }
+#			set_nationality = LBA
+#		}
+#		hidden_effect = {
+#			LBA = {
+#				transfer_state = 448
+#				transfer_state = 449
+#				transfer_state = 450 
+#				transfer_state = 451
+#				transfer_state = 661
+#				transfer_state = 662
+#				transfer_state = 663
+#				transfer_state = 273
+#				transfer_state = 938
+#				transfer_state = 1059
+#				transfer_state = 1057
+#				load_oob = "Libian_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_country_flag = balbo_dead_flag }
+#					has_country_flag = race_manifesto_flag
+#				}
+#				random_army_leader = {
+#					limit = { has_id = 100901 }
+#					set_nationality = LBA
+#				}
+#				set_country_flag = italo_balbo_run_flag
+#				LBA = {
+#					add_popularity = { ideology = fascism popularity = 0.25 }
+#					set_country_flag = italo_balbo_rule_flag
+#					set_politics = {
+#						ruling_party = fascism
+#						elections_allowed = no
+#					}
+#					create_country_leader = {
+#						name = ITA_italo_balbo
+#						desc = "POLITICS_ITALO_BALBO_DESC"
+#						picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
+#						expire = "1965.1.1"
+#						ideology = fascism_corporatism
+#						traits = {
+#							#
+#						}
+#					}
+#				}
+#			}
+#			news_event = { hours = 6 id = duce_news.8 }
+#		}
+#	}
+#	
+#	option = {
+#		name = duce.12.b
+#		trigger = { is_ai = no }
+#		ai_chance = {
+#			factor = 50
+#		}
+#		random_army_leader = {
+#			limit = { has_id = 100902 }
+#			set_nationality = LBA
+#		}
+#		hidden_effect = {
+#			LBA = {
+#				transfer_state = 448
+#				transfer_state = 449
+#				transfer_state = 450 
+#				transfer_state = 451
+#				transfer_state = 661
+#				transfer_state = 662
+#				transfer_state = 663
+#				transfer_state = 273
+#				transfer_state = 938
+#				transfer_state = 1059
+#				transfer_state = 1057
+#				load_oob = "Libian_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#				change_tag_from = ROOT
+#			}
+#			if = {
+#				limit = {
+#					NOT = { has_country_flag = balbo_dead_flag }
+#					has_country_flag = race_manifesto_flag
+#				}
+#				random_army_leader = {
+#					limit = { has_id = 100901 }
+#					set_nationality = LBA
+#				}
+#				set_country_flag = italo_balbo_run_flag
+#				LBA = {
+#					add_popularity = { ideology = fascism popularity = 0.25 }
+#					set_country_flag = italo_balbo_rule_flag
+#					set_politics = {
+#						ruling_party = fascism
+#						elections_allowed = no
+#					}
+#					create_country_leader = {
+#						name = ITA_italo_balbo
+#						desc = "POLITICS_ITALO_BALBO_DESC"
+#						picture = "gfx/leaders/ITA/portrait_italy_italo_balbo.dds"
+#						expire = "1965.1.1"
+#						ideology = fascism_corporatism
+#						traits = {
+#							#
+#						}
+#					}
+#				}
+#			}
+#			news_event = { hours = 6 id = duce_news.8 }
+#		}
+#	}
+#}
 
-################ Вайна за незалежнасць Эрытрэі ##########################
+################# Вайна за незалежнасць Эрытрэі ##########################
 
-country_event = {
-	id = duce.13
-	title = duce.13.t
-	desc = duce.13.d
-	picture = GFX_report_event_african_rise
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.13"}
-	
-	trigger = {
-		tag = ITA
-		has_war_with = RSI
-		ITA = {
-			NOT = { 
-				controls_state = 2 
-				controls_state = 271
-				controls_state = 1051
-			}
-			controls_state = 550
-		}
-		has_stability < 0.2
-	}
-	
-	fire_only_once = yes
+#country_event = {
+#	id = duce.13
+#	title = duce.13.t
+#	desc = duce.13.d
+#	picture = GFX_report_event_african_rise
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.13"}
+#	
+#	trigger = {
+#		tag = ITA
+#		has_war_with = RSI
+#		ITA = {
+#			NOT = { 
+#				controls_state = 2 
+#				controls_state = 271
+#				controls_state = 1051
+#			}
+#			controls_state = 550
+#		}
+#		has_stability < 0.2
+#	}
+#	
+#	fire_only_once = yes
 
-	option = {
-		name = duce.13.a
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			ERI = {
-				transfer_state = 550
-				load_oob = "Eritrean_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-			}
-			news_event = { hours = 6 id = duce_news.9 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = ERI }
-				OR = {
-					has_character = ITA_luigi_frusci
-					has_character = ITA_giuseppe_daodice
-					has_character = ITA_clemente_primieri
-					has_character = ITA_umberto_utili
-				}
-			}
-			ITA_luigi_frusci = { set_nationality = ERI }
-			ITA_giuseppe_daodice = { set_nationality = ERI }
-			ITA_clemente_primieri = { set_nationality = ERI }
-			ITA_umberto_utili = { set_nationality = ERI }
-		}
-	}
-	
-	option = {
-		name = duce.13.b
-		trigger = { is_ai = no }
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			ERI = {
-				transfer_state = 550
-				load_oob = "Eritrean_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-				change_tag_from = ROOT
-			}
-			news_event = { hours = 6 id = duce_news.9 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = ERI }
-				OR = {
-					has_character = ITA_luigi_frusci
-					has_character = ITA_giuseppe_daodice
-					has_character = ITA_clemente_primieri
-					has_character = ITA_umberto_utili
-				}
-			}
-			ITA_luigi_frusci = { set_nationality = ERI }
-			ITA_giuseppe_daodice = { set_nationality = ERI }
-			ITA_clemente_primieri = { set_nationality = ERI }
-			ITA_umberto_utili = { set_nationality = ERI }
-		}
-	}
-}
+#	option = {
+#		name = duce.13.a
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			ERI = {
+#				transfer_state = 550
+#				load_oob = "Eritrean_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#			}
+#			news_event = { hours = 6 id = duce_news.9 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = ERI }
+#				OR = {
+#					has_character = ITA_luigi_frusci
+#					has_character = ITA_giuseppe_daodice
+#					has_character = ITA_clemente_primieri
+#					has_character = ITA_umberto_utili
+#				}
+#			}
+#			ITA_luigi_frusci = { set_nationality = ERI }
+#			ITA_giuseppe_daodice = { set_nationality = ERI }
+#			ITA_clemente_primieri = { set_nationality = ERI }
+#			ITA_umberto_utili = { set_nationality = ERI }
+#		}
+#	}
+#	
+#	option = {
+#		name = duce.13.b
+#		trigger = { is_ai = no }
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			ERI = {
+#				transfer_state = 550
+#				load_oob = "Eritrean_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#				change_tag_from = ROOT
+#			}
+#			news_event = { hours = 6 id = duce_news.9 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = ERI }
+#				OR = {
+#					has_character = ITA_luigi_frusci
+#					has_character = ITA_giuseppe_daodice
+#					has_character = ITA_clemente_primieri
+#					has_character = ITA_umberto_utili
+#				}
+#			}
+#			ITA_luigi_frusci = { set_nationality = ERI }
+#			ITA_giuseppe_daodice = { set_nationality = ERI }
+#			ITA_clemente_primieri = { set_nationality = ERI }
+#			ITA_umberto_utili = { set_nationality = ERI }
+#		}
+#	}
+#}
 
-################ Вайна за незалежнасць Самалі ##########################
+################# Вайна за незалежнасць Самалі ##########################
 
-country_event = {
-	id = duce.14
-	title = duce.14.t
-	desc = duce.14.d
-	picture = GFX_report_event_african_rise
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.14"}
-	
-	trigger = {
-		tag = ITA
-		has_war_with = RSI
-		ITA = {
-			NOT = { 
-				controls_state = 2 
-				controls_state = 271
-				controls_state = 1051
-			}
-			controls_state = 559
-		}
-		has_stability < 0.2
-	}
-	
-	fire_only_once = yes
+#country_event = {
+#	id = duce.14
+#	title = duce.14.t
+#	desc = duce.14.d
+#	picture = GFX_report_event_african_rise
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.14"}
+#	
+#	trigger = {
+#		tag = ITA
+#		has_war_with = RSI
+#		ITA = {
+#			NOT = { 
+#				controls_state = 2 
+#				controls_state = 271
+#				controls_state = 1051
+#			}
+#			controls_state = 559
+#		}
+#		has_stability < 0.2
+#	}
+#	
+#	fire_only_once = yes
 
-	option = {
-		name = duce.14.a
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			SOM = {
-				transfer_state = 559
-				load_oob = "Somalian_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-			}
-			news_event = { hours = 6 id = duce_news.9 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = SOM }
-				OR = {
-					has_character = ITA_guglielmo_nasi
-					has_character = ITA_pietro_gazzera
-				}
-			}
-			ITA_guglielmo_nasi = { set_nationality = SOM }
-			ITA_pietro_gazzera = { set_nationality = SOM }
-		}
-	}
-	
-	option = {
-		name = duce.14.b
-		trigger = { is_ai = no }
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			SOM = {
-				transfer_state = 559
-				load_oob = "Somalian_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-				change_tag_from = ROOT
-			}
-			news_event = { hours = 6 id = duce_news.10 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = SOM }
-				OR = {
-					has_character = ITA_guglielmo_nasi
-					has_character = ITA_pietro_gazzera
-				}
-			}
-			ITA_guglielmo_nasi = { set_nationality = SOM }
-			ITA_pietro_gazzera = { set_nationality = SOM }
-		}
-	}
-}
+#	option = {
+#		name = duce.14.a
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			SOM = {
+#				transfer_state = 559
+#				load_oob = "Somalian_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#			}
+#			news_event = { hours = 6 id = duce_news.9 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = SOM }
+#				OR = {
+#					has_character = ITA_guglielmo_nasi
+#					has_character = ITA_pietro_gazzera
+#				}
+#			}
+#			ITA_guglielmo_nasi = { set_nationality = SOM }
+#			ITA_pietro_gazzera = { set_nationality = SOM }
+#		}
+#	}
+#	
+#	option = {
+#		name = duce.14.b
+#		trigger = { is_ai = no }
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			SOM = {
+#				transfer_state = 559
+#				load_oob = "Somalian_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#				change_tag_from = ROOT
+#			}
+#			news_event = { hours = 6 id = duce_news.10 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = SOM }
+#				OR = {
+#					has_character = ITA_guglielmo_nasi
+#					has_character = ITA_pietro_gazzera
+#				}
+#			}
+#			ITA_guglielmo_nasi = { set_nationality = SOM }
+#			ITA_pietro_gazzera = { set_nationality = SOM }
+#		}
+#	}
+#}
 
 ###########Мір з калоніямі#############
 
@@ -2424,154 +2763,154 @@ country_event = {
 	}
 }
 
-################ Вайна за незалежнасць Усходняй Афрыкі ##########################
+################# Вайна за незалежнасць Усходняй Афрыкі ##########################
 
-country_event = {
-	id = duce.18
-	title = duce.18.t
-	desc = duce.18.d
-	picture = GFX_report_event_east_african_rise
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.18"}
-	
-	trigger = {
-		tag = ITA
-		has_war_with = RSI
-		ITA = {
-			NOT = { 
-				controls_state = 2
-			}
-			controls_state = 550
-			controls_state = 559
-			controls_state = 271
-			controls_state = 1051
-		}
-		has_stability < 0.25
-	}
-	
-	fire_only_once = yes
+#country_event = {
+#	id = duce.18
+#	title = duce.18.t
+#	desc = duce.18.d
+#	picture = GFX_report_event_east_african_rise
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event duce.18"}
+#	
+#	trigger = {
+#		tag = ITA
+#		has_war_with = RSI
+#		ITA = {
+#			NOT = { 
+#				controls_state = 2
+#			}
+#			controls_state = 550
+#			controls_state = 559
+#			controls_state = 271
+#			controls_state = 1051
+#		}
+#		has_stability < 0.25
+#	}
+#	
+#	fire_only_once = yes
 
-	option = {
-		name = duce.18.a
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			ERI = {
-				set_politics = {
-					ruling_party = monarchy
-					elections_allowed = yes
-				}
-				set_cosmetic_tag = East_African_Kingdom
-				create_country_leader = {
-					name = "Emperor Amedeo I"
-					desc = "POLITICS_KING_AMADEO_DESC"
-					picture = "gfx/leaders/SAU/Portrait_Arabia_Generic_navy_3.dds"
-					expire = "1965.1.1"
-					ideology = dual_monarchy
-					traits = {
-					}
-				}
-			add_popularity = { ideology = monarchy popularity = 0.75 }
-				transfer_state = 550
-				transfer_state = 559
-				transfer_state = 271
-				transfer_state = 1051
-				559 = {	add_core_of = ERI }
-				271 = {	add_core_of = ERI }
-				1051 = { add_core_of = ERI }
-				set_capital = { state =  271 }
-				load_oob = "East_African_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-			}
-			news_event = { hours = 6 id = duce_news.11 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = ERI }
-				OR = {
-					has_character = ITA_luigi_frusci
-					has_character = ITA_giuseppe_daodice
-					has_character = ITA_clemente_primieri
-					has_character = ITA_umberto_utili
-					has_character = ITA_pietro_gazzera
-					has_character = ITA_prince_amedeo
-				}
-			}
-			ITA_luigi_frusci = { set_nationality = ERI }
-			ITA_giuseppe_daodice = { set_nationality = ERI }
-			ITA_clemente_primieri = { set_nationality = ERI }
-			ITA_umberto_utili = { set_nationality = ERI }
-			ITA_guglielmo_nasi = { set_nationality = ERI }
-			ITA_pietro_gazzera = { set_nationality = ERI }
-			ITA_prince_amedeo = { set_nationality = ERI }
-		}
-	}
-	
-	option = {
-		name = duce.18.b
-		trigger = { is_ai = no }
-		ai_chance = {
-			factor = 50
-		}
-		hidden_effect = {
-			ERI = {
-				set_politics = {
-					ruling_party = monarchy
-					elections_allowed = no
-				}
-				set_cosmetic_tag = East_African_Kingdom
-				create_country_leader = {
-					name = "Emperor Amedeo I"
-					desc = "POLITICS_KING_AMADEO_DESC"
-					picture = "gfx/leaders/SAU/Portrait_Arabia_Generic_navy_3.dds"
-					expire = "1965.1.1"
-					ideology = dual_monarchy
-					traits = {
-					}
-				}
-			add_popularity = { ideology = monarchy popularity = 0.75 }
-				transfer_state = 550
-				transfer_state = 559
-				transfer_state = 271
-				transfer_state = 1051
-				559 = {	add_core_of = ERI }
-				271 = {	add_core_of = ERI }
-				1051 = { add_core_of = ERI }
-				set_capital = { state =  271 }
-				load_oob = "East_African_rise"
-				declare_war_on = {
-					target = ITA
-					type = annex_everything
-				}
-				change_tag_from = ROOT
-			}
-			news_event = { hours = 6 id = duce_news.11 }
-		}
-		every_country = {
-			limit = {
-				NOT = { tag = ERI }
-				OR = {
-					has_character = ITA_luigi_frusci
-					has_character = ITA_giuseppe_daodice
-					has_character = ITA_clemente_primieri
-					has_character = ITA_umberto_utili
-					has_character = ITA_pietro_gazzera
-					has_character = ITA_prince_amedeo
-				}
-			}
-			ITA_luigi_frusci = { set_nationality = ERI }
-			ITA_giuseppe_daodice = { set_nationality = ERI }
-			ITA_clemente_primieri = { set_nationality = ERI }
-			ITA_umberto_utili = { set_nationality = ERI }
-			ITA_guglielmo_nasi = { set_nationality = ERI }
-			ITA_pietro_gazzera = { set_nationality = ERI }
-			ITA_prince_amedeo = { set_nationality = ERI }
-		}
-	}
-}
+#	option = {
+#		name = duce.18.a
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			ERI = {
+#				set_politics = {
+#					ruling_party = monarchy
+#					elections_allowed = yes
+#				}
+#				set_cosmetic_tag = East_African_Kingdom
+#				create_country_leader = {
+#					name = "Emperor Amedeo I"
+#					desc = "POLITICS_KING_AMADEO_DESC"
+#					picture = "gfx/leaders/SAU/Portrait_Arabia_Generic_navy_3.dds"
+#					expire = "1965.1.1"
+#					ideology = dual_monarchy
+#					traits = {
+#					}
+#				}
+#			add_popularity = { ideology = monarchy popularity = 0.75 }
+#				transfer_state = 550
+#				transfer_state = 559
+#				transfer_state = 271
+#				transfer_state = 1051
+#				559 = {	add_core_of = ERI }
+#				271 = {	add_core_of = ERI }
+#				1051 = { add_core_of = ERI }
+#				set_capital = { state =  271 }
+#				load_oob = "East_African_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#			}
+#			news_event = { hours = 6 id = duce_news.11 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = ERI }
+#				OR = {
+#					has_character = ITA_luigi_frusci
+#					has_character = ITA_giuseppe_daodice
+#					has_character = ITA_clemente_primieri
+#					has_character = ITA_umberto_utili
+#					has_character = ITA_pietro_gazzera
+#					has_character = ITA_prince_amedeo
+#				}
+#			}
+#			ITA_luigi_frusci = { set_nationality = ERI }
+#			ITA_giuseppe_daodice = { set_nationality = ERI }
+#			ITA_clemente_primieri = { set_nationality = ERI }
+#			ITA_umberto_utili = { set_nationality = ERI }
+#			ITA_guglielmo_nasi = { set_nationality = ERI }
+#			ITA_pietro_gazzera = { set_nationality = ERI }
+#			ITA_prince_amedeo = { set_nationality = ERI }
+#		}
+#	}
+#	
+#	option = {
+#		name = duce.18.b
+#		trigger = { is_ai = no }
+#		ai_chance = {
+#			factor = 50
+#		}
+#		hidden_effect = {
+#			ERI = {
+#				set_politics = {
+#					ruling_party = monarchy
+#					elections_allowed = no
+#				}
+#				set_cosmetic_tag = East_African_Kingdom
+#				create_country_leader = {
+#					name = "Emperor Amedeo I"
+#					desc = "POLITICS_KING_AMADEO_DESC"
+#					picture = "gfx/leaders/SAU/Portrait_Arabia_Generic_navy_3.dds"
+#					expire = "1965.1.1"
+#					ideology = dual_monarchy
+#					traits = {
+#					}
+#				}
+#			add_popularity = { ideology = monarchy popularity = 0.75 }
+#				transfer_state = 550
+#				transfer_state = 559
+#				transfer_state = 271
+#				transfer_state = 1051
+#				559 = {	add_core_of = ERI }
+#				271 = {	add_core_of = ERI }
+#				1051 = { add_core_of = ERI }
+#				set_capital = { state =  271 }
+#				load_oob = "East_African_rise"
+#				declare_war_on = {
+#					target = ITA
+#					type = annex_everything
+#				}
+#				change_tag_from = ROOT
+#			}
+#			news_event = { hours = 6 id = duce_news.11 }
+#		}
+#		every_country = {
+#			limit = {
+#				NOT = { tag = ERI }
+#				OR = {
+#					has_character = ITA_luigi_frusci
+#					has_character = ITA_giuseppe_daodice
+#					has_character = ITA_clemente_primieri
+#					has_character = ITA_umberto_utili
+#					has_character = ITA_pietro_gazzera
+#					has_character = ITA_prince_amedeo
+#				}
+#			}
+#			ITA_luigi_frusci = { set_nationality = ERI }
+#			ITA_giuseppe_daodice = { set_nationality = ERI }
+#			ITA_clemente_primieri = { set_nationality = ERI }
+#			ITA_umberto_utili = { set_nationality = ERI }
+#			ITA_guglielmo_nasi = { set_nationality = ERI }
+#			ITA_pietro_gazzera = { set_nationality = ERI }
+#			ITA_prince_amedeo = { set_nationality = ERI }
+#		}
+#	}
+#}
 
 
 
@@ -2755,7 +3094,7 @@ country_event = {
 		set_country_flag = dino_alfieri_run_flag
 		set_country_flag = ardito_desio_run_flag
 		set_country_flag = giuseppe_bottai_run_flag
-		IF = {
+		if = {
 			limit = { 
 				NOT = {
 					OR = {
@@ -2794,6 +3133,7 @@ country_event = {
 						type = civil_war
 					}
 					add_civil_war_target = ITA
+					load_focus_tree = nw_italian_antifash_capitulated_focus
 				}
 				event_target:italy_capitulator = {
 					add_ai_strategy = {
@@ -2866,10 +3206,10 @@ country_event = {
 					RSI = { add_ideas = ITA_generals_idea2 }
 				}
 				IF = {
-					limit = { has_idea = victor_emmanuel }
-					RSI = { add_ideas = victor_emmanuel }
+					limit = { has_idea = vittorio_emanuele }
+					RSI = { add_ideas = vittorio_emanuele }
 				}
-				remove_ideas = victor_emmanuel
+				remove_ideas = vittorio_emanuele
 				IF = {
 					limit = { is_in_faction_with = GER }
 					country_event = { hours = 6 id = duce.28 }
@@ -3009,6 +3349,7 @@ country_event = {
 				}
 				add_civil_war_target = ITA
 				change_tag_from = ROOT
+				load_focus_tree = nw_italian_antifash_capitulated_focus
 			}
 			event_target:italy_capitulator = {
 				add_ai_strategy = {
@@ -3081,10 +3422,10 @@ country_event = {
 				RSI = { add_ideas = ITA_generals_idea2 }
 			}
 			IF = {
-				limit = { has_idea = victor_emmanuel }
-				RSI = { add_ideas = victor_emmanuel }
+				limit = { has_idea = vittorio_emanuele }
+				RSI = { add_ideas = vittorio_emanuele }
 			}
-			remove_ideas = victor_emmanuel
+			remove_ideas = vittorio_emanuele
 			IF = {
 				limit = { is_in_faction_with = GER }
 				country_event = { hours = 6 id = duce.28 }
@@ -3377,17 +3718,18 @@ country_event = {
 	
 	option = {
 		name = duce.30.a
-		create_country_leader = {
-			name = ITA_benito_mussolini
-			id = 66666666666
-			desc = "POLITICS_BENITO_MUSSOLINI_DESC"
-			picture = "Portrait_Italy_Benito_Mussolini.dds"
-			expire = "1965.1.1"
-			ideology = fascism_corporatism
-			traits = {
-				duce
-			}
-		}
+#		create_country_leader = {
+#			name = ITA_benito_mussolini
+#			id = 66666666666
+#			desc = "POLITICS_BENITO_MUSSOLINI_DESC"
+#			picture = "Portrait_Italy_Benito_Mussolini.dds"
+#			expire = "1965.1.1"
+#			ideology = fascism_corporatism
+#			traits = {
+#				duce
+#			}
+#		}
+		ITA_benito_mussolini = { promote_character = yes }
 	}
 	option = {
 		name = duce.30.a
@@ -4974,5 +5316,2098 @@ country_event = {
 		ITA = { 
 		    country_event = { id = duce.66 }
 	    }
+	}
+}
+
+
+country_event = {
+	id = duce.999
+	hidden = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = duce.72.a
+		RSI = {
+			transfer_state = 157	# Абруцци
+			transfer_state = 158	# Пьемонт
+			transfer_state = 987	# Генуя
+			transfer_state = 114	# Сардиния
+			set_province_controller = 3780		#Милан
+			set_province_controller = 607		#Милан
+			set_province_controller = 9584		#Милан
+			set_province_controller = 11598		#Больцано
+			set_province_controller = 9598		#Тренто
+			set_province_controller = 6626		#Триест
+			set_province_controller = 9990		#Реджо-ди-Калабрия
+			set_province_controller = 11837		#Таранто
+			set_province_controller = 883		#Фоджа
+		}
+	}
+}
+
+
+
+
+# Восстание монархистов
+country_event = {
+	id = NWduce.1
+	title = NWduce.1.t
+	desc = NWduce.1.desc
+	picture = GFX_report_event_ITA_italian_civil_war
+	
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.1"}
+	immediate = {
+		hidden_effect = {
+			set_global_flag = RDS_global_flag
+			mark_focus_tree_layout_dirty = yes
+			
+			if = {
+				limit = { check_variable = { ITA_impending_uprising_cap < 11 } }
+				set_temp_variable = { ITA_cw_size = 0.35 }
+			}
+			else_if = {
+				limit = { check_variable = { ITA_impending_uprising_cap < 25 } }
+				set_temp_variable = { ITA_cw_size = 0.5 }
+			}
+			else = {
+				set_temp_variable = { ITA_cw_size = 0.65 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWduce.1.a
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = monarchy #SPLITTING TAG
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_cosmetic_tag = ITA_duce } }
+				set_cosmetic_tag = ITA_duce
+			}
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = monarchy #SPLITTING TAG
+					capital = 117
+					states = all
+					states_filter = {
+						OR = {
+							state = 115	# Сицилия
+							state = 117	# Кампанья
+							state = 156	# Апулия
+							state = 114	# Сардиния
+						}
+					}
+					keep_all_characters = yes
+					size = var:ITA_cw_size
+					
+					set_cosmetic_tag = ITA_rds
+					set_country_flag = ITA_rds
+					
+					set_popularities = {
+						democratic = 10
+						monarchy = 47
+						fascism = 30
+						neutrality = 13
+					}
+					set_politics = {
+						ruling_party = monarchy
+						elections_allowed = no
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#RDS
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_rds
+					set_country_flag = ITA_rds
+					set_capital = { state = 117 }
+					
+					set_stability = 0.2
+					set_war_support = 0.3
+					set_popularities = {
+						democratic = 10
+						monarchy = 47
+						fascism = 30
+						neutrality = 13
+					}
+					set_politics = {
+						ruling_party = monarchy
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 115	# Сицилия
+									state = 117	# Кампанья
+									state = 156	# Апулия
+									state = 114	# Сардиния
+								}
+							}
+							RDS = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+			
+			transfer_units_fraction = {
+				target = RDS
+				stockpile_ratio = var:ITA_cw_size
+				army_ratio = var:ITA_cw_size
+				navy_ratio = var:ITA_cw_size
+				air_ratio = var:ITA_cw_size
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			
+			114 = {
+				teleport_armies = {
+					limit = { tag = RDS }
+					to_state_array = RDS.capital
+				}
+			}
+			
+			
+			RDS = {
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_royalists_focus
+				
+				set_province_controller = 3780		#Милан
+				set_province_controller = 11598		#Больцано
+				set_province_controller = 6626		#Триест
+				set_province_controller = 9990		#Реджо-ди-Калабрия
+				set_province_controller = 11837		#Таранто
+				set_province_controller = 883		#Фоджа
+				set_province_controller = 13610		#Венеция
+				set_province_controller = 6606		#Болонья
+				
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = RDS }
+				}
+				add_core_of = RDS
+			}
+			
+			
+			every_character = {
+				limit = {
+					OR = {
+						has_character_flag = ITA_cw_character_monarchist_side_flag
+						has_unit_leader_flag = ITA_cw_unit_leader_monarchist_side_flag
+					}
+				}
+				set_nationality = RDS
+			}
+			
+			ITA_vittorio_emanuele_iii = { set_nationality = RDS }
+			ITA_prince_umberto = { set_nationality = RDS }
+	
+			ITA_pietro_badoglio = { set_nationality = RDS }
+			ITA_emilio_de_bono = { set_nationality = RDS }
+			ITA_vittorio_emanuele_orlando = { set_nationality = RDS }
+			ITA_ugo_cavallero = { set_nationality = RDS }
+			ITA_italo_gariboldi = { set_nationality = RDS }
+			ITA_giuseppe_de_stefanis = { set_nationality = RDS }
+	        ITA_prince_filiberto = { set_nationality = RDS }
+			ITA_prince_adalberto = { set_nationality = RDS }
+			ITA_prince_aimone = { set_nationality = RDS }
+			ITA_prince_amedeo = { set_nationality = RDS }
+	
+			ITA_pietro_d_acquarone = { set_nationality = RDS }
+			ITA_alberto_de_stefani = { set_nationality = RDS }
+			RDS = {
+				promote_character = ITA_vittorio_emanuele_iii
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					RDS = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+				RDS_civil_war_deal_with_militias = yes
+			}
+			news_event = { id = trworldnews.174 hours = 2 }
+		}
+		ITA_remove_king_vittorio_emanuele_as_idea = yes
+	}
+	
+	option = {
+		name = NWduce.1.b
+		trigger = { is_ai = no }
+		effect_tooltip = {
+			start_civil_war = {
+				ruling_party = monarchy
+				ideology = ROOT #SPLITTING TAG
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_cosmetic_tag = ITA_duce } }
+				set_cosmetic_tag = ITA_duce
+			}
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = monarchy #SPLITTING TAG
+					capital = 117
+					states = all
+					states_filter = {
+						OR = {
+							state = 115	# Сицилия
+							state = 117	# Кампанья
+							state = 156	# Апулия
+							state = 114	# Сардиния
+						}
+					}
+					keep_all_characters = yes
+					size = var:ITA_cw_size
+					
+					set_cosmetic_tag = ITA_rds
+					set_country_flag = ITA_rds
+					
+					set_popularities = {
+						democratic = 10
+						monarchy = 47
+						fascism = 30
+						neutrality = 13
+					}
+					set_politics = {
+						ruling_party = monarchy
+						elections_allowed = no
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#RDS
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_rds
+					set_country_flag = ITA_rds
+					set_capital = { state = 117 }
+					
+					set_stability = 0.2
+					set_war_support = 0.3
+					set_popularities = {
+						democratic = 10
+						monarchy = 47
+						fascism = 30
+						neutrality = 13
+					}
+					set_politics = {
+						ruling_party = monarchy
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 115	# Сицилия
+									state = 117	# Кампанья
+									state = 156	# Апулия
+									state = 114	# Сардиния
+								}
+							}
+							RDS = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+			
+			transfer_units_fraction = {
+				target = RDS
+				stockpile_ratio = var:ITA_cw_size
+				army_ratio = var:ITA_cw_size
+				navy_ratio = var:ITA_cw_size
+				air_ratio = var:ITA_cw_size
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			
+			114 = {
+				teleport_armies = {
+					limit = { tag = RDS }
+					to_state_array = RDS.capital
+				}
+			}
+			
+			
+			RDS = {
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_royalists_focus
+				
+				set_province_controller = 3780		#Милан
+				set_province_controller = 11598		#Больцано
+				set_province_controller = 6626		#Триест
+				set_province_controller = 9990		#Реджо-ди-Калабрия
+				set_province_controller = 11837		#Таранто
+				set_province_controller = 883		#Фоджа
+				set_province_controller = 13610		#Венеция
+				set_province_controller = 6606		#Болонья
+				
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = RDS }
+				}
+				add_core_of = RDS
+			}
+			
+			
+			every_character = {
+				limit = {
+					OR = {
+						has_character_flag = ITA_cw_character_monarchist_side_flag
+						has_unit_leader_flag = ITA_cw_unit_leader_monarchist_side_flag
+					}
+				}
+				set_nationality = RDS
+			}
+			
+			ITA_vittorio_emanuele_iii = { set_nationality = RDS }
+			ITA_prince_umberto = { set_nationality = RDS }
+	
+			ITA_pietro_badoglio = { set_nationality = RDS }
+			ITA_emilio_de_bono = { set_nationality = RDS }
+			ITA_vittorio_emanuele_orlando = { set_nationality = RDS }
+			ITA_ugo_cavallero = { set_nationality = RDS }
+			ITA_italo_gariboldi = { set_nationality = RDS }
+			ITA_giuseppe_de_stefanis = { set_nationality = RDS }
+	        ITA_prince_filiberto = { set_nationality = RDS }
+			ITA_prince_adalberto = { set_nationality = RDS }
+			ITA_prince_aimone = { set_nationality = RDS }
+			ITA_prince_amedeo = { set_nationality = RDS }
+	
+			ITA_pietro_d_acquarone = { set_nationality = RDS }
+			ITA_alberto_de_stefani = { set_nationality = RDS }
+			RDS = {
+				promote_character = ITA_vittorio_emanuele_iii
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					RDS = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+				RDS_civil_war_deal_with_militias = yes
+				change_tag_from = ROOT
+			}
+			news_event = { id = trworldnews.174 hours = 2 }
+		}
+		ITA_remove_king_vittorio_emanuele_as_idea = yes
+	}
+}
+
+# БФС ВОССТАЛ
+country_event = {
+	id = NWduce.2
+	title = BBA_italy_civil_war.1.t
+	desc = BBA_italy_civil_war.1.desc
+	picture = GFX_report_event_ITA_italian_civil_war
+	
+	is_triggered_only = yes
+
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.2"}
+	immediate = {
+		hidden_effect = {
+			set_global_flag = GFC_global_flag
+			set_country_flag = ITA_fascist_side_for_character_split_flag # Used for character split
+			
+#			#Милан
+#			var:global.province_controllers^3780 = {
+#				set_variable = { global.province_controllers_3780 = this }
+#			}
+#			var:global.province_controllers^607 = {
+#				set_variable = { global.province_controllers_607 = this }
+#			}
+#			var:global.province_controllers^9584 = {
+#				set_variable = { global.province_controllers_9584 = this }
+#			}
+		}
+	}
+
+	option = {
+		name = duce.11.a
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = fascism #SPLITTING TAG
+			}
+		}
+		set_power_balance = {
+			id = ITA_power_balance
+			left_side = ITA_grand_council_side
+			right_side = ITA_mussolini_side
+			set_value = 0.6
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_cosmetic_tag = ITA_duce } }
+				set_cosmetic_tag = ITA_duce
+			}
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = neutrality #SPLITTING TAG
+					capital = 2
+					states = all
+					states_filter = {
+						OR = {
+							state = 161	# Эмилия-Романья
+							state = 162	# Тоскана
+							state = 986	# Умбрия-Марке
+							state = 2	# Лацио
+							state = 157	# Абруцци
+						}
+					}
+					keep_all_characters = yes
+					size = 0.0
+					
+					set_cosmetic_tag = ITA_gfc
+					set_country_flag = ITA_gfc
+					
+					set_popularities = {
+						democratic = 7
+						fascism = 47
+						monarchy = 14
+						neutrality = 32
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#GFC
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_gfc
+					set_country_flag = ITA_gfc
+					set_capital = { state = 2 }
+					
+					set_stability = 0.2
+					set_war_support = 0.3
+					set_popularities = {
+						democratic = 7
+						fascism = 47
+						monarchy = 14
+						neutrality = 32
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 161	# Эмилия-Романья
+									state = 162	# Тоскана
+									state = 986	# Умбрия-Марке
+									state = 2	# Лацио
+									state = 157	# Абруцци
+								}
+							}
+							GFC = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+#			#Милан
+#			var:global.province_controllers_3780 = {
+#				set_province_controller = 3780
+#			}
+#			var:global.province_controllers_607 = {
+#				set_province_controller = 607
+#			}
+#			var:global.province_controllers_9584 = {
+#				set_province_controller = 9584
+#			}
+			
+			transfer_units_fraction = {
+				target = GFC
+				stockpile_ratio = 0.35
+				army_ratio = 0.4
+				navy_ratio = 0.25
+				air_ratio = 0.25
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			
+			GFC = {
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_fash_council_focus
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = GFC }
+				}
+				add_core_of = GFC
+			}
+			
+			every_character = {
+				limit = {
+					NOT = {
+						has_character_flag = ITA_cw_character_fascist_side_flag
+						has_unit_leader_flag = ITA_cw_unit_leader_fascist_side_flag
+					}
+				}
+				set_nationality = GFC
+			}
+			
+			ITA_italo_balbo = { set_nationality = GFC }
+			ITA_dino_grandi = { set_nationality = GFC }
+			ITA_grand_council = { set_nationality = GFC }
+			GFC = {
+				promote_character = ITA_grand_council
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					GFC = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+			}
+			news_event = { id = trworldnews.175 hours = 2 }
+		}
+		ITA_remove_king_vittorio_emanuele_as_idea = yes
+	}
+	
+	option = {
+		name = BBA_italy_civil_war.1.a
+		trigger = { is_ai = no }
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = fascism #SPLITTING TAG
+			}
+		}
+		set_power_balance = {
+			id = ITA_power_balance
+			left_side = ITA_grand_council_side
+			right_side = ITA_mussolini_side
+			set_value = 0.6
+		}
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_cosmetic_tag = ITA_duce } }
+				set_cosmetic_tag = ITA_duce
+			}
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = neutrality #SPLITTING TAG
+					capital = 2
+					states = all
+					states_filter = {
+						OR = {
+							state = 161	# Эмилия-Романья
+							state = 162	# Тоскана
+							state = 986	# Умбрия-Марке
+							state = 2	# Лацио
+							state = 157	# Абруцци
+						}
+					}
+					keep_all_characters = yes
+					size = 0.0
+					
+					set_cosmetic_tag = ITA_gfc
+					set_country_flag = ITA_gfc
+					
+					set_popularities = {
+						democratic = 7
+						fascism = 47
+						monarchy = 14
+						neutrality = 32
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#GFC
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_gfc
+					set_country_flag = ITA_gfc
+					set_capital = { state = 2 }
+					
+					set_stability = 0.2
+					set_war_support = 0.3
+					set_popularities = {
+						democratic = 7
+						fascism = 47
+						monarchy = 14
+						neutrality = 32
+					}
+					set_politics = {
+						ruling_party = fascism
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 161	# Эмилия-Романья
+									state = 162	# Тоскана
+									state = 986	# Умбрия-Марке
+									state = 2	# Лацио
+									state = 157	# Абруцци
+								}
+							}
+							GFC = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+#			#Милан
+#			var:global.province_controllers_3780 = {
+#				set_province_controller = 3780
+#			}
+#			var:global.province_controllers_607 = {
+#				set_province_controller = 607
+#			}
+#			var:global.province_controllers_9584 = {
+#				set_province_controller = 9584
+#			}
+			
+			transfer_units_fraction = {
+				target = GFC
+				stockpile_ratio = 0.35
+				army_ratio = 0.4
+				navy_ratio = 0.25
+				air_ratio = 0.25
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			
+			GFC = {
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_fash_council_focus
+				
+				#RICOSTRUZIONE INDUSTRIALE
+				set_variable = { ITA_iri_production_speed_industrial_complex_factor = 0.05 }
+				set_variable = { ITA_iri_industrial_concern_cost_factor = -0.35 }
+				set_variable = { ITA_iri_tank_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_materiel_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_aircraft_manufacturer_cost_factor = -0.15 }
+				set_variable = { ITA_iri_naval_manufacturer_cost_factor = -0.15 }
+
+				set_variable = { ITA_iri_production_speed_arms_factory_factor = 0 }
+				set_variable = { ITA_iri_consumer_goods_factor = 0 }
+				set_variable = { ITA_iri_local_resources_factor = 0 }
+				set_variable = { ITA_iri_production_speed_infrastructure_factor = 0 }
+				set_variable = { ITA_re_supply_node_range = 0 }
+				set_variable = { ITA_iri_production_speed_dockyard_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_ricostruzione_industriale_dynamic_modifier }
+				
+				#MILITARY INDUSTRY
+				set_variable = { ITA_military_industry_dm_production_factory_start_efficiency_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_factory_max_efficiency_factor = -0.1 }
+				set_variable = { ITA_military_industry_dm_production_factory_efficiency_gain_factor = -0.05 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_factory = -0.1 }
+
+				set_variable = { ITA_military_industry_dm_line_change_production_efficiency_factor = 0 }
+				set_variable = { ITA_military_industry_dm_production_lack_of_resource_penalty_factor = 0 }
+				set_variable = { ITA_military_industry_dm_equipment_upgrade_xp_cost = 0 }
+				set_variable = { ITA_military_industry_dm_industrial_capacity_dockyard = 0 }
+				set_variable = { ITA_military_industry_air_equipment_upgrade_xp_cost = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_military_industry_dynamic_modifier }
+				
+				#REGIO ESERCITO
+				#set_variable = { ITA_re_army_experience_loss_factor = -0.1 }
+				set_variable = { ITA_re_army_max_dig_in_factor = 0.1 }
+				set_variable = { ITA_re_land_doctrine_cost_factor = 0.1 }
+				#set_variable = { ITA_re_land_reinforce_rate = -0.05 }
+				set_variable = { ITA_re_army_speed_factor = -0.1 }
+				set_variable = { ITA_re_army_army_org_factor = -0.1 }
+				set_variable = { ITA_re_org_loss_when_moving = 0.15 }
+
+				set_variable = { ITA_re_army_morale_factor = 0 }
+				set_variable = { ITA_re_army_leader_cost_factor = 0 }
+				set_variable = { ITA_re_experience_gain_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_infantry_defence_factor = 0 }
+				set_variable = { ITA_re_army_core_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_attack_factor = 0 }
+				set_variable = { ITA_re_unit_cavalry_design_cost_factor = 0 }
+				set_variable = { ITA_re_unit_camelry_design_cost_factor = 0 }
+				set_variable = { ITA_re_promote_cost_factor = 0 }
+				set_variable = { ITA_re_special_forces_cap = 0 }
+				set_variable = { ITA_re_special_forces_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_mountaineers_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_paratrooper_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_max_org_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_militia_speed_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_defence_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_blackshirt_assault_battalion_attack_factor = 0 }
+				set_variable = { ITA_re_special_forces_out_of_supply_factor = 0 }
+				set_variable = { ITA_re_conscription_factor = 0 }
+				set_variable = { ITA_re_command_power_gain_mult = 0 }
+				set_variable = { ITA_re_non_core_manpower = 0 }
+				set_variable = { ITA_re_army_attack_factor = 0 }
+				set_variable = { ITA_re_modifier_army_sub_unit_cavalry_defence_factor = 0 }
+				set_variable = { ITA_re_max_command_power_mult = 0 }
+				set_variable = { ITA_re_supply_consumption_factor = 0 }
+				set_variable = { ITA_re_acclimatization_hot_climate_gain_factor = 0 }
+				set_variable = { ITA_re_heat_attrition_factor = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regio_esercito_dynamic_modifier }
+				
+				#REGIA MARINA
+				set_variable = { ITA_rm_naval_has_potf_in_combat_attack = 0.1 }
+				set_variable = { ITA_rm_screening_efficiency = 0.05 }
+				set_variable = { ITA_rm_naval_doctrine_cost_factor = 0.1 }
+				set_variable = { ITA_rm_naval_coordination = -0.05 }
+				set_variable = { ITA_rm_naval_detection = -0.1 }
+				set_variable = { ITA_rm_spotting_chance = -0.1 }
+
+				set_variable = { ITA_rm_convoy_raiding_efficiency_factor = 0 }
+				set_variable = { ITA_rm_naval_strike_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_submarine_attack_factor = 0 }
+				set_variable = { ITA_rm_navy_capital_ship_attack_factor = 0 }
+				set_variable = { ITA_rm_naval_morale_factor = 0 }
+				set_variable = { ITA_rm_strike_force_movement_org_loss = 0 }
+				set_variable = { ITA_rm_special_forces_cap = 0 }
+				set_variable = { ITA_rm_amphibious_invasion = 0 }
+				set_variable = { ITA_rm_naval_invasion_capacity = 0 }
+				set_variable = { ITA_rm_invasion_preparation = 0 }
+				set_variable = { ITA_rm_naval_strike_agility_factor = 0 }
+				set_variable = { ITA_rm_naval_critical_score_chance_factor = 0 }
+				set_variable = { ITA_rm_sub_retreat_speed = 0 }
+				set_variable = { ITA_rm_decryption_factor = 0 }
+				set_variable = { ITA_rm_navy_intel_factor = 0 }
+				set_variable = { ITA_rm_naval_invasion_prep_speed = 0 }
+
+				add_dynamic_modifier = { modifier = ITA_regia_marina_dynamic_modifier }
+				
+				
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = GFC }
+				}
+				add_core_of = GFC
+			}
+			
+			every_character = {
+				limit = {
+					NOT = {
+						has_character_flag = ITA_cw_character_fascist_side_flag
+						has_unit_leader_flag = ITA_cw_unit_leader_fascist_side_flag
+					}
+				}
+				set_nationality = GFC
+			}
+			
+			ITA_italo_balbo = { set_nationality = GFC }
+			ITA_dino_grandi = { set_nationality = GFC }
+			ITA_grand_council = { set_nationality = GFC }
+			GFC = {
+				promote_character = ITA_grand_council
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					GFC = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+				change_tag_from = ROOT
+			}
+			news_event = { id = trworldnews.175 hours = 2 }
+		}
+		ITA_remove_king_vittorio_emanuele_as_idea = yes
+	}
+}
+
+
+# Столкновение республиканцев и анархистов
+country_event = {
+	id = NWduce.3
+	title = NWduce.3.t
+	desc = NWduce.3.desc
+	picture = GFX_report_event_ITA_italian_civil_war
+	
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.3"}
+	immediate = {
+		hidden_effect = {
+			set_country_flag = ITA_the_italian_republic_flag
+			set_global_flag = IFA_global_flag
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	
+	option = {
+		name = NWduce.3.a
+		effect_tooltip = {
+			start_civil_war = {
+				ideology = anarchism #SPLITTING TAG
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = anarchism #SPLITTING TAG
+					capital = 985
+					states = all
+					states_filter = {
+						OR = {
+							state = 985	# Модена-Парма
+						}
+					}
+					keep_all_characters = yes
+					size = 0.15
+					army_ratio = 0.3
+					navy_ratio = 0.0
+					air_ratio = 0.0
+					
+					set_cosmetic_tag = ITA_ifa
+					set_country_flag = ITA_ifa
+					
+					set_popularities = {
+						democratic = 13
+						anarchism = 63
+						communism = 17
+						neutrality = 7
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#IFA
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_ifa
+					set_country_flag = ITA_ifa
+					set_capital = { state = 985 }
+					
+					set_stability = 0.0
+					set_war_support = 0.4
+					set_popularities = {
+						democratic = 13
+						anarchism = 63
+						communism = 17
+						neutrality = 7
+					}
+					set_politics = {
+						ruling_party = anarchism
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 985	# Модена-Парма
+								}
+							}
+							IFA = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+			
+			transfer_units_fraction = {
+				target = IFA
+				stockpile_ratio = 0.35
+				army_ratio = 0.15
+				navy_ratio = 0.35
+				air_ratio = 0.35
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = IFA }
+				}
+				add_core_of = IFA
+			}
+			IFA = {
+				set_country_flag = anarchism_left_flag
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_antifash_focus
+				unlock_national_focus = ITA_defy_the_duce
+				
+				
+
+
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+				
+				#Мелкие города
+				set_province_controller = 14478		#Пула
+				set_province_controller = 4014		#Катания
+				
+				division_template = {
+					name = "Anarchist Militia"
+					template_counter = 14
+					is_locked = yes
+					regiments = { 
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 1 y = 0 }
+						militia = { x = 1 y = 1 }
+						militia = { x = 2 y = 0 }
+						militia = { x = 2 y = 1 }
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 6
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+				824 = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+						prioritize_location = 14478
+					}
+				}
+				115 = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+						prioritize_location = 4014
+					}
+				}
+			}
+			random_country = {
+				limit = {
+					has_character = ITA_revolutionary_council
+				}
+				ITA_revolutionary_council = {
+					set_nationality = IFA
+				}
+			}
+			IFA_leda_rafanelli = { set_nationality = IFA }
+			IFA_carlo_rosselli = { set_nationality = IFA }
+			IFA_armando_borghi = { set_nationality = IFA }
+			IFA_camillo_berneri = { set_nationality = IFA }
+			IFA_banditry_leader_1 = { set_nationality = IFA }
+			IFA_banditry_leader_2 = { set_nationality = IFA }
+			IFA_banditry_leader_3 = { set_nationality = IFA }
+			IFA_banditry_leader_4 = { set_nationality = IFA }
+			IFA_banditry_leader_5 = { set_nationality = IFA }
+			IFA = {
+				promote_character = ITA_revolutionary_council
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					IFA = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+			}
+			news_event = { id = trworldnews.176 hours = 2 }
+		}
+	}
+	
+	option = {
+		name = NWduce.3.b
+		trigger = { is_ai = no }
+		effect_tooltip = {
+			start_civil_war = {
+				ruling_party = anarchism
+				ideology = ROOT #SPLITTING TAG
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = { has_civil_war = no }
+				start_civil_war = {
+					ideology = anarchism #SPLITTING TAG
+					capital = 985
+					states = all
+					states_filter = {
+						OR = {
+							state = 985	# Модена-Парма
+						}
+					}
+					keep_all_characters = yes
+					size = 0.15
+					army_ratio = 0.3
+					navy_ratio = 0.0
+					air_ratio = 0.0
+					
+					set_cosmetic_tag = ITA_ifa
+					set_country_flag = ITA_ifa
+					
+					set_popularities = {
+						democratic = 13
+						anarchism = 63
+						communism = 17
+						neutrality = 7
+					}
+				}
+			}
+			else = {
+				create_dynamic_country = {	#IFA
+					original_tag = ITA
+					copy_tag = ITA
+					
+					set_cosmetic_tag = ITA_ifa
+					set_country_flag = ITA_ifa
+					set_capital = { state = 985 }
+					
+					set_stability = 0.0
+					set_war_support = 0.4
+					set_popularities = {
+						democratic = 13
+						anarchism = 63
+						communism = 17
+						neutrality = 7
+					}
+					set_politics = {
+						ruling_party = anarchism
+						elections_allowed = no
+					}
+					
+					ROOT = {
+						every_owned_state = {
+							limit = {
+								OR = {
+									state = 985	# Модена-Парма
+								}
+							}
+							IFA = { transfer_state = PREV }
+						}
+					}
+				}
+			}
+			
+			transfer_units_fraction = {
+				target = IFA
+				stockpile_ratio = 0.35
+				army_ratio = 0.15
+				navy_ratio = 0.35
+				air_ratio = 0.35
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			every_state = {
+				limit = {
+					is_core_of = ROOT
+					NOT = { is_core_of = IFA }
+				}
+				add_core_of = IFA
+			}
+			IFA = {
+				set_country_flag = anarchism_left_flag
+				add_ideas = generic_civil_war
+				load_focus_tree = nw_italian_antifash_focus
+				unlock_national_focus = ITA_defy_the_duce
+				
+				
+
+
+				### VARIABLES
+				set_variable = { ITA_bop_take_over_ministry_cost = 50 }
+				set_variable = { ITA_bop_resign_ministry_cost = 15 }
+				set_variable = { ITA_bop_liturgical_reforms_cd = 365 }
+
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_cost = 100 } # Changes if going democratic
+				set_variable = { ITA_bop_concesions_to_the_bourgeoisie_days = 180 } # Changes if going democratic
+
+				set_variable = { ITA_bop_generic_council_cost = 25 }
+
+				#Naval Cooperation Programs
+				set_variable = { ITA_export_midget_submarines_days = 90 }
+
+				
+				#COLONIAL MANAGEMENT
+				set_variable = { ITA_colonial_management_days = 30 }
+				set_variable = { ITA_colonial_management_cd = 335 }
+				set_variable = { ITA_reorganize_irregulars_days = 60 }
+				set_variable = { ITA_reorganize_ascari_days = 60 }
+				set_variable = { ITA_infrastructure_program_in_state_days = 120 }
+				set_variable = { ITA_infrastructure_program_in_state_cost = 50 }
+				set_variable = { ITA_abolish_the_colonies_days = 365 }
+				
+				#Мелкие города
+				set_province_controller = 14478		#Пула
+				set_province_controller = 4014		#Катания
+				
+				division_template = {
+					name = "Anarchist Militia"
+					template_counter = 14
+					is_locked = yes
+					regiments = { 
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 1 y = 0 }
+						militia = { x = 1 y = 1 }
+						militia = { x = 2 y = 0 }
+						militia = { x = 2 y = 1 }
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 6
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+				824 = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+						prioritize_location = 14478
+					}
+				}
+				115 = {
+					create_unit = {
+						division = "division_template = \"Anarchist Militia\" start_experience_factor = 0.2 start_equipment_factor = 1.0"
+						owner = IFA
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+						prioritize_location = 4014
+					}
+				}
+			}
+			random_country = {
+				limit = {
+					has_character = ITA_revolutionary_council
+				}
+				ITA_revolutionary_council = {
+					set_nationality = IFA
+				}
+			}
+			IFA_leda_rafanelli = { set_nationality = IFA }
+			IFA_carlo_rosselli = { set_nationality = IFA }
+			IFA_armando_borghi = { set_nationality = IFA }
+			IFA_camillo_berneri = { set_nationality = IFA }
+			IFA_banditry_leader_1 = { set_nationality = IFA }
+			IFA_banditry_leader_2 = { set_nationality = IFA }
+			IFA_banditry_leader_3 = { set_nationality = IFA }
+			IFA_banditry_leader_4 = { set_nationality = IFA }
+			IFA_banditry_leader_5 = { set_nationality = IFA }
+			IFA = {
+				promote_character = ITA_revolutionary_council
+				every_other_country = {
+					limit = {
+						original_tag = ROOT
+					}
+					mark_focus_tree_layout_dirty = yes
+					add_civil_war_target = PREV
+					IFA = {
+						declare_war_on = {
+							target = PREV
+							type = civil_war
+						}
+						add_civil_war_target = PREV
+					}
+				}
+				change_tag_from = ROOT
+			}
+			news_event = { id = trworldnews.176 hours = 2 }
+		}
+	}
+}
+
+
+# Лидеры анархического движения возвращаются в Италию
+country_event = {
+	id = NWduce.4
+	title = NWduce.4.t
+	desc = NWduce.4.desc
+	picture = GFX_report_event_italian_rise2
+	
+	trigger = {
+		OR = {
+			AND = {
+				tag = CLN
+				has_any_power_balance = yes
+				NOT = { has_completed_focus = ITA_the_italian_republic }
+			}
+			tag = IFA
+		}
+	}
+	
+	fire_only_once = yes
+	mean_time_to_happen = { days = 14 }
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.4"}
+	immediate = {
+		set_country_flag = NWduce_4_flag
+	}
+	option = {
+		name = NWduce.4.a
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_any_power_balance = yes }
+			add_power_balance_value = {
+				id = CLN_power_balance
+				value = -0.1
+				tooltip_side = ITA_anarchism_side
+			}
+		}
+		custom_effect_tooltip = available_political_advisor
+		show_ideas_tooltip = IFA_carlo_rosselli
+		show_ideas_tooltip = IFA_camillo_berneri
+	}
+	
+	option = {
+		name = NWduce.4.b
+		ai_chance = {
+			factor = 50
+		}
+		trigger = { tag = CLN }
+		add_political_power = -50
+		custom_effect_tooltip = available_political_advisor
+		show_ideas_tooltip = IFA_carlo_rosselli
+		show_ideas_tooltip = IFA_camillo_berneri
+	}
+}
+
+# Освобождение народа Ливии/Сомали/Эритреи
+country_event = {
+	id = NWduce.5
+	title = NWduce.5.t
+	desc = NWduce.5.desc
+	picture = GFX_report_event_african_soldiers
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.5"}
+	immediate = {
+		if = {
+			limit = {
+				all_of_scopes = {
+					array = LBA.core_states
+					is_controlled_by = ROOT
+				}
+				NOT = { has_global_flag = IFA_LBA_core_states }
+			}
+			set_global_flag = IFA_LBA_core_states
+			set_country_flag = IFA_LBA_core_states
+		}
+		if = {
+			limit = {
+				all_of_scopes = {
+					array = SOM.core_states
+					is_controlled_by = ROOT
+				}
+				NOT = { has_global_flag = IFA_SOM_core_states }
+			}
+			set_global_flag = IFA_SOM_core_states
+			set_country_flag = IFA_SOM_core_states
+		}
+		if = {
+			limit = {
+				all_of_scopes = {
+					array = ERI.core_states
+					is_controlled_by = ROOT
+				}
+				NOT = { has_global_flag = IFA_ERI_core_states }
+			}
+			set_global_flag = IFA_ERI_core_states
+			set_country_flag = IFA_ERI_core_states
+		}
+	}
+	option = {
+		name = NWduce.3.b
+		if = {
+			limit = {
+				has_country_flag = IFA_LBA_core_states
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = LBA
+					is_controlled_by = ROOT
+				}
+				LBA = { transfer_state = PREV }
+			}
+			LBA = {
+				set_politics = {
+					ruling_party = anarchism
+					elections_allowed = no
+				}
+			}
+			clr_country_flag = IFA_LBA_core_states
+		}
+		if = {
+			limit = {
+				has_country_flag = IFA_SOM_core_states
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = SOM
+					is_controlled_by = ROOT
+				}
+				SOM = { transfer_state = PREV }
+			}
+			SOM = {
+				set_politics = {
+					ruling_party = anarchism
+					elections_allowed = no
+				}
+			}
+			clr_country_flag = IFA_SOM_core_states
+		}
+		if = {
+			limit = {
+				has_country_flag = IFA_ERI_core_states
+			}
+			every_controlled_state = {
+				limit = {
+					is_core_of = ERI
+					is_controlled_by = ROOT
+				}
+				ERI = { transfer_state = PREV }
+			}
+			ERI = {
+				set_politics = {
+					ruling_party = anarchism
+					elections_allowed = no
+				}
+			}
+			clr_country_flag = IFA_ERI_core_states
+		}
+	}
+}
+
+# Новый взгляд на разделение труда
+country_event = {
+	id = NWduce.6
+	title = NWduce.6.t
+	desc = NWduce.6.desc
+	picture = GFX_report_event_generic_factory
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.6"}
+	
+	option = {
+		name = NWduce.6.a
+		ai_chance = {
+			factor = 99
+		}
+		custom_effect_tooltip = universal_factory_mechanic_enable_tt
+		capital_scope = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = universal_factory
+				level = 2
+				instant_build = yes
+			}
+		}
+		unlock_decision_category_tooltip = nw_universal_factory_category
+		hidden_effect = {
+			set_technology = {
+				base_factory_tech = 0
+				popup = no
+			}
+			set_technology = {
+				universal_factory_tech = 1
+				popup = no
+			}
+	
+			add_dynamic_modifier = { modifier = universal_factory_dyn }
+			
+			if = {
+				limit = { check_variable = { NW_show_construction_speed = 0 } }
+				set_variable = { NW_show_construction_speed = 1 }
+				country_event = NWuniversal_factory.998
+			}
+			start_conversion_universal_factory_mission = yes
+		}
+	}
+	
+	option = {
+		name = NWduce.6.b
+		ai_chance = {
+			factor = 1
+		}
+		random_core_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 1
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = industrial_complex
+				level = 2
+				instant_build = yes
+			}
+		}
+		random_core_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 1
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = industrial_complex
+				level = 2
+				instant_build = yes
+			}
+		}
+		random_core_state = {
+			limit = {
+				free_building_slots = {
+					building = arms_factory
+					size > 1
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = arms_factory
+				level = 2
+				instant_build = yes
+			}
+		}
+	}
+}
+
+
+country_event = {
+	id = NWduce.700
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.7"}
+	immediate = {
+		if = {
+			limit = { has_government = anarchism }
+			random_list = {
+				5 = { country_event = NWduce.7 }
+				5 = { country_event = NWduce.8 }
+				5 = { country_event = NWduce.9 }
+				5 = { country_event = NWduce.10 }
+			}
+		}
+		if = {
+			limit = { NOT = { has_completed_focus = ITA_anarcho_futurism } }
+			country_event = { id = NWduce.700 days = 60 }
+		}
+		else = {
+			country_event = { id = NWduce.700 days = 30 }
+		}
+	}
+}
+
+# Футуристическое воспевание большевизма
+country_event = {
+	id = NWduce.7
+	title = NWduce.7.t
+	desc = NWduce.7.desc
+	picture = GFX_report_event_stalin_propaganda
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.7"}
+	
+	option = {
+		name = NWduce.7.a
+		add_popularity = { ideology = communism popularity = 0.02 }
+		add_timed_idea = { idea = ITA_futuristic_glorification_of_bolshevism days = 60 }
+	}
+}
+
+# Футуристическое воспевание раннего фашизма
+country_event = {
+	id = NWduce.8
+	title = NWduce.8.t
+	desc = NWduce.8.desc
+	picture = GFX_report_event_spr_republican_old_volunteers
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.8"}
+	
+	option = {
+		name = NWduce.7.a
+		add_popularity = { ideology = fascism popularity = 0.02 }
+		add_timed_idea = { idea = ITA_futuristic_celebration_of_early_fascism days = 60 }
+	}
+}
+
+# Футуристическое воспевание ревизионизма
+country_event = {
+	id = NWduce.9
+	title = NWduce.9.t
+	desc = NWduce.9.desc
+	picture = GFX_report_event_bul_troops_macedonia
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.9"}
+	
+	option = {
+		name = NWduce.7.a
+		add_popularity = { ideology = trozkism popularity = 0.02 }
+		add_timed_idea = { idea = ITA_futuristic_glorification_of_revisionism days = 60 }
+	}
+}
+
+# Футуристическое воспевание синдикализма
+country_event = {
+	id = NWduce.10
+	title = NWduce.10.t
+	desc = NWduce.10.desc
+	picture = GFX_report_event_spr_anarchists
+	is_triggered_only = yes
+	
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWduce.10"}
+	
+	option = {
+		name = NWduce.7.a
+		add_popularity = { ideology = trozkism popularity = 0.02 }
+		add_timed_idea = { idea = ITA_futuristic_celebration_of_syndicalism days = 60 }
+	}
+}
+
+
+
+
+
+country_event = {
+	id = NWduce.999
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = RDS_global_flag
+		every_enemy_country = {
+			limit = {
+				is_subject = no
+				OR = { is_faction_leader = yes is_in_faction = no }
+			}
+			white_peace = ROOT
+		}
+	}
+	option = {
+		name = GFC_global_flag
+		every_enemy_country = {
+			limit = {
+				is_subject = no
+				OR = { is_faction_leader = yes is_in_faction = no }
+			}
+			ROOT = { white_peace = PREV }
+		}
+	}
+	option = {
+		name = "DELETE ALL GLOBAL FLAG"
+		clr_global_flag = RDS_global_flag
+		clr_global_flag = GFC_global_flag
+		every_country = {
+			limit = { original_tag = ITA }
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	option = {
+		name = "4"
+		YUG = {
+			start_civil_war = {
+				ideology = anarchism
+				size = 0.5
+			}
+		}
 	}
 }

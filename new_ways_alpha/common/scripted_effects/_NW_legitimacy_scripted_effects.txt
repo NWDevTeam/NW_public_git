@@ -1,0 +1,350 @@
+# 	#Создание коалиции:
+# add_to_array = { coalition_array = token:NAME }	#NAME - название идеологии (democratic, communism, fascism, neutrality etc.)
+# NW_legitimacy_check = yes
+# 	#в легитимность к правящей партии будет прибавляться указанная партия. И да, в коалицию можно запихнуть хоть все партии
+#   #поставив флаг minus_ruling_party_from_coalition_flag вы уберете правящую партию из легитимности!
+
+NW_legitimacy_check = {
+	set_variable = { legitimacy_var = party_popularity_100@ruling_party }
+	
+	### НАЧАЛО ПРОВЕРКИ КОАЛИЦИЙ
+	if = {
+		limit = { is_in_array = { coalition_array = token:democratic } NOT = { has_government = democratic } }
+		add_to_variable = { legitimacy_var = party_popularity_100@democratic }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:communism } NOT = { has_government = communism } }
+		add_to_variable = { legitimacy_var = party_popularity_100@communism }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:fascism } NOT = { has_government = fascism } }
+		add_to_variable = { legitimacy_var = party_popularity_100@fascism }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:neutrality } NOT = { has_government = neutrality } }
+		add_to_variable = { legitimacy_var = party_popularity_100@neutrality }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:technocracy } NOT = { has_government = technocracy } }
+		add_to_variable = { legitimacy_var = party_popularity_100@technocracy }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:trozkism } NOT = { has_government = trozkism } }
+		add_to_variable = { legitimacy_var = party_popularity_100@trozkism }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:monarchy } NOT = { has_government = monarchy } }
+		add_to_variable = { legitimacy_var = party_popularity_100@monarchy }
+	}
+	if = {
+		limit = { is_in_array = { coalition_array = token:anarchism } NOT = { has_government = anarchism } }
+		add_to_variable = { legitimacy_var = party_popularity_100@anarchism }
+	}
+	
+	if = {
+		limit = {
+			has_country_flag = minus_ruling_party_from_coalition_flag
+		}
+		subtract_from_variable = { legitimacy_var = party_popularity_100@ruling_party }
+	}
+	### КОНЕЦ ПРОВЕРКИ КОАЛИЦИЙ
+	
+	if = {
+		limit = {
+			NOT = {
+				has_country_flag = very_good_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+				has_government = anarchism
+				has_idea = TIB_power_without_power
+				has_idea = KHU_manual_state_management
+				has_idea = IRQ_rejection_of_hashemites
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				always = no
+			}
+			else = {
+				check_variable = { legitimacy_var > 84.9 }
+			}
+		}
+		# Very Good Legitimacy 85% #
+		set_variable = { new_legitimacy_idea_var = token:very_good }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 1 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.1
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy = yes
+		}
+	}
+	
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_flag = good_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+				has_government = anarchism
+				has_idea = TIB_power_without_power
+				has_idea = KHU_manual_state_management
+				has_idea = IRQ_rejection_of_hashemites
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				always = no
+			}
+			else = {
+				check_variable = { legitimacy_var > 64.9 }
+				check_variable = { legitimacy_var < 85.0 }
+			}
+		}
+		# Good Legitimacy 65 - 84.9% #
+		set_variable = { new_legitimacy_idea_var = token:good }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 2 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.2
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy  = yes
+		}
+	}
+	
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_flag = normal_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+				has_idea = IRQ_rejection_of_hashemites
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				check_variable = { var = MEN_legitimacy_var value = 90 compare = less_than_or_equals }
+				check_variable = { MEN_legitimacy_var > 60 }
+			}
+			else_if = {
+				limit = { has_government = anarchism }
+				check_variable = { legitimacy_var > 49.9 }
+			}
+			else = {
+				check_variable = { legitimacy_var > 49.9 }
+				check_variable = { legitimacy_var < 65.0 }
+			}
+		}
+		# Normal Legitimacy 50 - 64.9% #
+		set_variable = { new_legitimacy_idea_var = token:normal }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 3 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.3
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy = yes
+		}
+	}
+	
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_flag = low_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				check_variable = { var = MEN_legitimacy_var value = 60 compare = less_than_or_equals }
+				check_variable = { MEN_legitimacy_var > 30 }
+			}
+			else_if = {
+				limit = {
+					has_idea = IRQ_rejection_of_hashemites
+				}
+				check_variable = { party_popularity_100@ruling_party > 0.299 }
+			}
+			else = {
+				check_variable = { legitimacy_var > 29.9 }
+				check_variable = { legitimacy_var < 50.0 }
+			}
+		}
+		# Low Legitimacy 30 - 49.9% #
+		set_variable = { new_legitimacy_idea_var = token:low }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 4 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.4
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy = yes
+		}
+	}
+	
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_flag = very_low_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				check_variable = { var = MEN_legitimacy_var value = 30 compare = less_than_or_equals }
+			}
+			else = {
+				check_variable = { legitimacy_var > 9.9 }
+				check_variable = { legitimacy_var < 30.0 }
+			}
+		}
+		# Very Low Legitimacy 10 - 29.9% #
+		set_variable = { new_legitimacy_idea_var = token:very_low }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 5 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.5
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy = yes
+		}
+	}
+	
+	else_if = {
+		limit = {
+			NOT = {
+				has_country_flag = disaster_legitimacy_flag
+				has_country_flag = spain_block_legitimacy_flag
+				has_country_leader = { character = NFL_david_murray_anderson ruling_only = yes }
+				has_country_leader = { character = NFL_humphrey_t_walwyn ruling_only = yes }
+				has_country_leader = { character = NFL_gordon_macdonald ruling_only = yes }
+				has_country_leader = { character = NFL_john_hope_simpson ruling_only = yes }
+			}
+			if = {
+				limit = {
+					original_tag = MEN
+					has_variable = MEN_legitimacy_var
+				}
+				always = no
+			}
+			else = {
+				check_variable = { legitimacy_var < 9.9 }
+			}
+		}
+		# Disaster Legitimacy 9.9% #
+		set_variable = { new_legitimacy_idea_var = token:disaster }
+		set_variable = { GUI_new_legitimacy_idea_var_NUM = 6 }
+		if = {
+			limit = { has_variable = current_legitimacy_idea_var }
+			NW_set_legitimacy = yes
+			if = {
+				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+				country_event = TRlegitimacy.6
+			}
+			else = { 
+				clr_country_flag = change_migration_level_flag
+				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+			} 
+		}
+		else = {
+			NW_startup_set_legitimacy = yes
+		}
+	}
+}
+
+###
+
+NW_startup_set_legitimacy = {
+	meta_effect = {
+		text = {
+			add_ideas = [NEW_LEG_IDEA]_legitimacy
+			set_country_flag = [NEW_LEG_IDEA]_legitimacy_flag
+		}
+		NEW_LEG_IDEA = "[?new_legitimacy_idea_var.GetTokenKey]"
+	}
+	#log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): idea legitimacy_[?THIS.new_legitimacy_idea_var.GetTokenKey]" 
+	set_variable = { current_legitimacy_idea_var = new_legitimacy_idea_var }
+	set_variable = { GUI_current_legitimacy_idea_var_NUM = GUI_new_legitimacy_idea_var_NUM } #GUI
+}
+
+NW_set_legitimacy = {
+	NW_set_GUI_legitimacy = yes
+	meta_effect = {
+		text = {
+			swap_ideas = {
+				remove_idea = [CURRENT_LEG_IDEA]_legitimacy
+				add_idea = [NEW_LEG_IDEA]_legitimacy
+			}
+			clr_country_flag = [CURRENT_LEG_IDEA]_legitimacy_flag
+			set_country_flag = [NEW_LEG_IDEA]_legitimacy_flag
+		}
+		CURRENT_LEG_IDEA = "[?current_legitimacy_idea_var.GetTokenKey]"
+		NEW_LEG_IDEA = "[?new_legitimacy_idea_var.GetTokenKey]"
+	}
+	log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): idea legitimacy_[?THIS.current_legitimacy_idea_var.GetTokenKey] | idea legitimacy_[?THIS.new_legitimacy_idea_var.GetTokenKey]" 
+	set_variable = { current_legitimacy_idea_var = new_legitimacy_idea_var }
+}
+
+NW_set_GUI_legitimacy = { ### ДЛЯ ГУИ
+	set_variable = { GUI_current_legitimacy_idea_var = current_legitimacy_idea_var }
+	set_variable = { GUI_new_legitimacy_idea_var = new_legitimacy_idea_var }
+	
+	if = {
+		limit = { check_variable = { GUI_new_legitimacy_idea_var_NUM > GUI_current_legitimacy_idea_var_NUM } }
+		set_variable = { GUI_up_or_down_status_var = 1 }	# Понижение
+	}
+	else = {
+		set_variable = { GUI_up_or_down_status_var = 2 }	# Повышение
+	}
+	
+	set_variable = { GUI_current_legitimacy_idea_var_NUM = GUI_new_legitimacy_idea_var_NUM }
+}

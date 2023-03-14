@@ -7032,8 +7032,12 @@ focus_tree = {
 			add_political_power = 100
 			add_popularity = { ideology = fascism popularity = -0.05 }
 			add_popularity = { ideology = neutrality popularity = 0.05 }
-			set_country_flag = fash_plus_autoritarian_legitimacy_flag
-			custom_effect_tooltip = fash_plus_autoritarian_legitimacy_flag_tt
+			
+			add_to_array = { coalition_array = token:fascism } # в legitimacy ивентах была проверка на has_government. че с ней делать ?
+			add_to_array = { coalition_array = token:monarchy }
+			custom_effect_tooltip = fasc_mon_coalition
+			
+			#custom_effect_tooltip = fash_plus_autoritarian_legitimacy_flag_tt
 		}
 	}
 	
@@ -8127,15 +8131,14 @@ focus_tree = {
 			factor = 10
 		}	
 		search_filters = { FOCUS_FILTER_ANNEXATION }
+# ПОЧИНИТЬ ПОТОМ		
 		completion_reward = {
 			if =  {
 				limit = {
 					OR = {
 						ENG = { exists = no }
-						ENG = {
-							is_subject = yes
-						}
-						ENG = { has_completed_focus = ENG_a_change_in_course }
+						ENG = { is_subject = yes }
+#						ENG = { has_completed_focus = ENG_a_change_in_course }
 						has_war_with = ENG
 						has_war_with = event_target:NW_france_scope
 						AND = {
@@ -8185,11 +8188,12 @@ focus_tree = {
 					country_event = germany.122
 				}
 			}
+# ПОЧИНИТЬ ПОТОМ			
 			if = {
 				limit = {
 					ENG = { exists = yes }
 					ENG = { is_subject = no }
-					NOT = { ENG = { has_completed_focus = ENG_a_change_in_course } }
+#					NOT = { ENG = { has_completed_focus = ENG_a_change_in_course } }
 					NOT = { has_war_with = ENG }
 					NOT = { has_war_with = event_target:NW_france_scope }
 					CZE = { is_subject = no }
@@ -8197,7 +8201,7 @@ focus_tree = {
 						AND = {
 							CZE = { is_in_faction_with = HOL }
 							HOL = { is_faction_leader = yes }
-							HOL = { has_completed_focus = HOL_foundations_for_a_european_union }
+#							HOL = { has_completed_focus = HOL_foundations_for_a_european_union }
 						}
 					}
 					CZE = { NOT = { is_in_faction_with = ROOT } }
@@ -8223,7 +8227,7 @@ focus_tree = {
 				limit = {
 					HOL = { exists = yes }
 					HOL = { is_subject = no }
-					HOL = { has_completed_focus = HOL_foundations_for_a_european_union }
+#					HOL = { has_completed_focus = HOL_foundations_for_a_european_union }
 					HOL = { is_faction_leader = yes }
 					NOT = { has_war_with = HOL }
 					NOT = { has_war_with = event_target:NW_france_scope }
@@ -8264,7 +8268,7 @@ focus_tree = {
 					NOT = { CZE = { controls_state = 69 } }
 					NOT = {
 						69 = { is_controlled_by = HUN }
-						#HUN = { has_completed_focus = HUN_protect_czechoslovakia }
+#						HUN = { has_completed_focus = HUN_protect_czechoslovakia }
 					}
 					69 = {
 						controller = {
@@ -9427,12 +9431,13 @@ focus_tree = {
 					generator = { 6 }
 				}
 			}
+# ПОЧИНИТЬ ПОТОМ
 			if =  {
 				limit = {
 					country_exists = HOL
 					NOT = { HOL = { is_in_faction_with = ROOT } }
 					NOT = { has_war_with = HOL }
-					NOT = { HOL = { has_completed_focus = HOL_cave_to_the_germans } }
+#					NOT = { HOL = { has_completed_focus = HOL_cave_to_the_germans } }
 				}
 				create_wargoal = {
 					type = take_state_focus
@@ -9440,14 +9445,14 @@ focus_tree = {
 					expire = 0
 					generator = { 7 }
 				}
-			}
+			}		
 			if =  {
 				limit = {
 					country_exists = HOL
 					NOT = { HOL = { is_in_faction_with = ROOT } }
 					NOT = { has_war_with = HOL }
-					HOL = { has_completed_focus = HOL_cave_to_the_germans } 
-					NOT = { HOL = { has_completed_focus = HOL_the_netherlands_first } }
+#					HOL = { has_completed_focus = HOL_cave_to_the_germans } 
+#					NOT = { HOL = { has_completed_focus = HOL_the_netherlands_first } }
 				}
 				HOL = {
 					country_event = { id = mtg_germany.1 hours = 6 }
@@ -10530,6 +10535,14 @@ focus_tree = {
 				is_in_faction_with = ITA
 				has_war_with = ITA
 				NOT = { country_exists = ITA }
+				NOT = {
+					ITA = {
+						OR = {
+							has_government = fascism
+							has_government = monarchy
+						}
+					}
+				}
 			}
 		}
 
@@ -12405,8 +12418,11 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus GER_six_points_of_german_protest"
 			remove_ideas = GER_racial_laws
-			add_ideas = GER_six_points_of_german_protest
-			custom_effect_tooltip = fash_plus_comm_legitimacy_flag_tt
+			add_to_array = { coalition_array = token:fascism }
+			add_to_array = { coalition_array = token:communism }
+			NW_legitimacy_check = yes
+			custom_effect_tooltip = fasc_com_coalition
+			#custom_effect_tooltip = fash_plus_comm_legitimacy_flag_tt
 		}
 	}
 	
@@ -12543,6 +12559,11 @@ focus_tree = {
 			}
 			custom_effect_tooltip = remove_political_advisor
 			show_ideas_tooltip = GER_ernst_niekisch
+			if = {
+				limit = { communism > 0.499 }
+				custom_effect_tooltip = GER_continue_german_revolution_tt1
+			}
+			else = { custom_effect_tooltip = GER_continue_german_revolution_tt2 }
 		}
 	}
 	
@@ -14682,7 +14703,7 @@ focus_tree = {
 			add_ideas = GER_prepare_for_the_next_blockade
 		}
 	}
-
+# ПОЧИНИТЬ ПОТОМ
 	focus = {
 		id = GER_break_the_anglo_french_colonial_hegemony
 		icon = GFX_focus_ger_break_anglo_french_colonial_hegemony
@@ -14691,7 +14712,7 @@ focus_tree = {
 			is_subject = no
 			NOT = { is_in_faction_with = ENG }
 			NOT = { is_in_faction_with = event_target:NW_france_scope }
-			NOT = { ENG = { has_completed_focus = ENG_decolonization } }
+#			NOT = { ENG = { has_completed_focus = ENG_decolonization } }
 		}
 		cancel_if_invalid = yes
 		will_lead_to_war_with = ENG
@@ -21862,7 +21883,7 @@ focus_tree = {
 					}
 				}
 				NOT = {
-					tag = GFB
+					tag = GBF
 					tag = GFA
 					has_country_leader = { character = GER_ludwig_beck ruling_only = yes }
 					has_completed_focus = GER_rhineland
@@ -23920,13 +23941,13 @@ focus_tree = {
 					add_popularity = { ideology = monarchy popularity = 0.1 }
 					effect_tooltip = {
 						create_country_leader = {
-							name = ITA_victor_emmanuel_iii
+							name = ITA_vittorio_emanuele_iii
 							desc = "POLITICS_VICTOR_EMMANUEL_III_DESC"
-							picture = "GFX_portrait_italy_victor_emmanuel_iii"
+							picture = "GFX_portrait_italy_vittorio_emanuele_iii"
 							expire = "1965.1.1"
 							ideology = monarchy_ideology
 							traits = {
-						
+								the_soldier_king
 							}
 						}
 					}
@@ -23956,7 +23977,8 @@ focus_tree = {
 		bypass = {
 			HUN = {
 				is_in_faction_with = ROOT
-				has_completed_focus = HUN_invite_the_habsburg_prince
+#				has_completed_focus = HUN_invite_the_habsburg_prince
+				has_completed_focus = generic_AUS_restore_habsburg_empire
 			}
 		}
 		cancel_if_invalid = yes

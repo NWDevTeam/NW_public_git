@@ -1,0 +1,186 @@
+KTH_generic_irregular_army_category = {
+
+	KTH_summon_peoples_militia = {
+		highlight_states = {
+			is_controlled_by = ROOT
+			is_capital = yes
+		}
+			
+		icon = generic_military
+		
+		available = {
+			has_war = yes
+			num_of_controlled_states > 0
+			NOT = { has_country_flag = summon_peoples_militia_flag }
+		}
+		visible = {
+		}
+			
+		cost = 20
+		days_remove = 2
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision KTH_summon_peoples_militia"
+			set_variable = { num_of_militia_var = 0 }
+			set_country_flag = summon_peoples_militia_flag
+			hidden_effect = {
+				if = {
+					limit = { has_completed_focus = KTH_tribal_unions }
+					if = {
+						limit = { NOT = { has_template = "Almilishiat Alqabalia" } }
+						division_template = {
+							name = "Almilishiat Alqabalia"
+							is_locked = yes
+							regiments = {
+								camelry = { x = 0 y = 0 }
+								camelry = { x = 0 y = 1 }
+								camelry = { x = 0 y = 2 }
+								camelry = { x = 0 y = 3 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { NOT = { has_template = "Almilishiat Alqabalia" } }
+						division_template = {
+							name = "Almilishiat Alqabalia"
+							is_locked = yes
+							regiments = {
+								camelry = { x = 0 y = 0 }
+								camelry = { x = 0 y = 1 }
+							}
+						}
+					}
+				}
+				set_temp_variable = { num_of_cycle = peoples_militia_var }
+				while_loop_effect = {
+					limit = { check_variable = { num_of_cycle > 0 } }
+					add_to_temp_variable = { num_of_cycle = -1 }
+					random_controlled_state = {
+						prioritize = { 803 }
+						create_unit = {
+							division = "name = \"Almilishiat Alqabalia\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = 0.1 force_equipment_variants = { infantry_equipment_0 = { owner = \"KTH\" } }" 
+							owner = ROOT
+							count = 1
+							allow_spawning_on_enemy_provs = yes
+						}
+						add_to_variable = { ROOT.num_of_militia_var = 1 }
+					}
+					if = {
+						limit = { has_completed_focus = KTH_consolidation_of_tribes }
+						random_controlled_state = {
+							prioritize = { 803 }
+							create_unit = {
+								division = "name = \"Almilishiat Alqabalia\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = 0.1 force_equipment_variants = { infantry_equipment_0 = { owner = \"KTH\" } }"
+								owner = ROOT
+								count = 2
+								allow_spawning_on_enemy_provs = yes
+							}
+							add_to_variable = { ROOT.num_of_militia_var = 1 }
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_completed_focus = KTH_tribal_unions NOT = { has_completed_focus = KTH_consolidation_of_tribes } }
+				custom_effect_tooltip = KTH_summon_peoples_militia_tt2
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = KTH_consolidation_of_tribes  has_completed_focus = KTH_tribal_unions } }
+				custom_effect_tooltip = KTH_summon_peoples_militia_tt1
+			}
+			if = {
+				limit = { has_completed_focus = KTH_consolidation_of_tribes }
+				custom_effect_tooltip = KTH_summon_peoples_militia_tt3
+			}
+			custom_effect_tooltip = BHU_summon_peoples_militia_tt3
+		}
+		ai_will_do = {
+			factor = 250
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 0.9
+			}
+		}
+	}
+
+	KTH_irregular_army_recovery = {
+		name = irregular_army_recovery
+		available = {
+			has_war = no
+			custom_trigger_tooltip = {
+				tooltip = generic_irregular_army_recovery_tt
+				has_idea = irregular_army
+				check_variable = { var = num_divisions value = num_of_militia_var compare = greater_than_or_equals }
+			}
+		}
+		visible = {
+			has_war = yes
+			has_idea = irregular_army
+			check_variable = { num_divisions < num_of_militia_var }
+		}
+		cancel_if_not_visible = yes
+		icon = generic_nationalism
+		days_mission_timeout = 40
+		activation = {
+			has_war = yes
+			has_country_flag = summon_peoples_militia_flag
+			check_variable = { num_divisions < num_of_militia_var }
+			has_manpower > 0
+		}
+		is_good = yes
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision KTH_irregular_army_recovery"
+			add_manpower = -2000
+			if = {
+				limit = { has_country_flag = put_pressure_on_chiefs_flag }
+				clr_country_flag = put_pressure_on_chiefs_flag
+			}
+			set_temp_variable = { num_of_spawn = num_of_militia_var }	
+			multiply_temp_variable = { num_of_spawn = 0.1 }
+			round_temp_variable = num_of_spawn
+			add_to_temp_variable = { num_of_spawn = 1 }
+			### ПРОВЕРКА
+			set_temp_variable = { check_num_of_spawn = num_divisions }
+			add_to_temp_variable = { check_num_of_spawn = num_of_spawn }
+			if = {
+				limit = {
+					check_variable = { check_num_of_spawn > num_of_militia_var }
+				}
+				subtract_from_temp_variable = { check_num_of_spawn = num_of_militia_var }
+				subtract_from_temp_variable = { num_of_spawn = check_num_of_spawn }
+			}
+			set_temp_variable = { num_of_cycle = num_of_spawn }
+			while_loop_effect = {
+				limit = { check_variable = { num_of_cycle > 0 } }
+				add_to_temp_variable = { num_of_cycle = -1 }
+				random_controlled_state = {
+					prioritize = { 803 }
+					create_unit = {
+						division = "name = \"Almilishiat Alqabalia\" division_template = \"Almilishiat Alqabalia\" start_experience_factor = 0.1"
+						owner = ROOT
+						count = 1
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn = 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt2
+			}
+			if = {
+				limit = { check_variable = { num_of_spawn > 1 } }
+				custom_effect_tooltip = generic_irregular_army_recovery_tt3
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision KTH_irregular_army_recovery"
+		}
+	}
+}

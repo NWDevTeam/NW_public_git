@@ -91,9 +91,10 @@ focus_tree = {
 				NOT = { has_completed_focus = BPL_jewish_arab_compromise }
 			}
 		}
+# ПОЧИНИТЬ ПОТОМ		
 		available = {
 			NOT = { has_completed_focus = BPL_jewish_arab_compromise }
-			OR = {
+#			OR = {
 				custom_trigger_tooltip = {
 					tooltip = BPL_jewish_arab_tensions_trigger_tt
 					OR = {
@@ -101,8 +102,8 @@ focus_tree = {
 						check_variable = { var = BPL_jews_tensions_total value = 30 compare = greater_than_or_equals }
 					}
 				}
-				ENG = { has_completed_focus = ENG_revisit_colonial_policy }
-			}
+#				ENG = { has_completed_focus = ENG_revisit_colonial_policy }
+#			}
 		}
 		bypass = {
 			is_subject = no
@@ -150,6 +151,7 @@ focus_tree = {
 		}
 		
 		allow_branch = {
+			NOT = { tag = ISR }
 			if = {
 				limit = {
 					has_game_rule = {
@@ -220,6 +222,7 @@ focus_tree = {
 					has_completed_focus = BPL_jewish_arab_compromise
 				}
 			}
+			NOT = { tag = PAL }
 		}
 		
 		available = {
@@ -405,8 +408,9 @@ focus_tree = {
 			}
 			NOT = { has_completed_focus = BPL_jewish_arab_compromise }
 		}
+# ПОЧИНИТЬ ПОТОМ
 		available = {
-			OR = {
+#			OR = {
 				AND = {
 					compare_autonomy_progress_ratio > 0.8
 					has_autonomy_state = autonomous_mandatory_territory
@@ -419,8 +423,8 @@ focus_tree = {
 						}
 					}
 				}
-				ENG = { has_completed_focus = ENG_guide_the_colonies }
-			}
+#				ENG = { has_completed_focus = ENG_guide_the_colonies }
+#			}
 		}
 		bypass = {
 			OR = {
@@ -972,12 +976,13 @@ focus_tree = {
 				is_historical_focus_on = yes
 			}
 		}
+# ПОЧИНИТЬ ПОТОМ
 		available = {
 			OR = {
 				date > 1937.1.1
 				has_idea = BPL_arab_revolt
 				has_idea = BPL_jews_revolt
-				ENG = { has_completed_focus = ENG_guide_the_colonies }
+#				ENG = { has_completed_focus = ENG_guide_the_colonies }
 			}
 		}
 		bypass = {
@@ -1443,18 +1448,25 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BPL_begin_migration_of_arabs_to_transjordan"
 			if = {
 				limit = { owns_state = 454 }
-				454 = { add_manpower = -150000 }
-				add_to_temp_variable = { temp_manpower = 150000 }
+				454 = { add_manpower = -100000 }
+				add_to_temp_variable = { temp_manpower = 95000 }
 			}
 			if = {
 				limit = { owns_state = 978 }
 				978 = { add_manpower = -100000 }
-				add_to_temp_variable = { temp_manpower = 100000 }
+				add_to_temp_variable = { temp_manpower = 95000 }
 			}
 			if = {
-				limit = { owns_state = 455 }
-				455 = { add_manpower = var:temp_manpower }
+				limit = { owns_state = 979 }
+				979 = { add_manpower = -100000 }
+				add_to_temp_variable = { temp_manpower = 90000 }
 			}
+			if = {
+				limit = { owns_state = 980 }
+				980 = { add_manpower = -100000 }
+				add_to_temp_variable = { temp_manpower = 90000 }
+			}
+			455 = { add_manpower = var:temp_manpower }
 			every_state = {
 				limit = {
 					OR = {
@@ -1511,37 +1523,6 @@ focus_tree = {
 				if = {
 					limit = { NOT = { has_completed_focus = BPL_seventh_dominion } }
 					country_event = { id = NWpalestine.34 days = 20 }
-				}
-				if = {
-					limit = { is_subject = no }
-					every_other_country = {
-						limit = {
-							OR = {
-								AND = {
-									has_government = fascism
-									OR = {
-										tag = IRQ
-										tag = SYR
-										tag = EGY
-										tag = TUR
-									}
-								}
-								tag = JOR
-								tag = LEB
-								tag = SAU
-								tag = MOR
-								tag = TUN
-								tag = YEM
-								tag = OMA
-								tag = IOM
-								tag = UAE
-								tag = QAT
-								tag = BHR
-								tag = KUW
-							}
-						}
-						country_event = { id = NWpalestine.78 days = 50 }
-					}
 				}
 			}
 		}
@@ -1602,6 +1583,42 @@ focus_tree = {
 		}
 		
 		search_filters = { FOCUS_FILTER_TFV_AUTONOMY }
+		
+		select_effect = {
+			hidden_effect = {
+				if = {
+					limit = { is_subject = no }
+					every_other_country = {
+						limit = {
+							OR = {
+								AND = {
+									has_government = fascism
+									OR = {
+										tag = IRQ
+										tag = SYR
+										tag = EGY
+										tag = TUR
+									}
+								}
+								tag = JOR
+								tag = LEB
+								tag = SAU
+								tag = MOR
+								tag = TUN
+								tag = YEM
+								tag = OMA
+								tag = IOM
+								tag = UAE
+								tag = QAT
+								tag = BHR
+								tag = KUW
+							}
+						}
+						country_event = { id = NWpalestine.78 days = 50 }
+					}
+				}
+			}
+		}	
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BPL_proclaim_israeli_federation"
 			add_timed_idea = { idea = BPL_proclaim_israeli_federation_idea days = 180 }
@@ -1639,14 +1656,13 @@ focus_tree = {
 					}
 				}
 			}
-			every_other_country = {
+			every_enemy_country = {
 				limit = {
-					has_war_with = ROOT
 					is_subject = no
 					OR = { is_faction_leader = yes is_in_faction = no }
 					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
 				}
-				white_peace = ROOT
+				ROOT = { white_peace = PREV }
 			}
 			455 = {	force_enable_resistance = BPL }
 			1053 = { force_enable_resistance = BPL }
@@ -1655,6 +1671,9 @@ focus_tree = {
 				455 = {	start_resistance = BPL }
 				1053 = { start_resistance = BPL }
 				1054 = { start_resistance = BPL }
+			}
+			hidden_effect = {
+				country_event = { id = NWpalestine.63 days = 7 }
 			}
 		}
 	}
@@ -1688,6 +1707,7 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BPL_give_autonomy_to_arabs"
 			PAL = {
 				add_state_core = 978
+				add_state_core = 979
 			}
 			release = PAL
 			set_autonomy = {
@@ -1736,6 +1756,9 @@ focus_tree = {
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_arab_tensions_total: [?BPL_arab_tensions_total]"
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): BPL_jews_tensions_total: [?BPL_jews_tensions_total]"
 			}
+			custom_effect_tooltip = BPL_reconcile_arabs_and_jews_tt
+			clear_variable = BPL_arab_tensions_total
+			clear_variable = BPL_jews_tensions_total
 			custom_effect_tooltip = BPL_give_autonomy_to_arabs_tt
 		}
 	}
@@ -2043,9 +2066,9 @@ focus_tree = {
 			add_ideas = BPL_jewish_arab_red_army
 			hidden_effect = {
 				if = {
-					limit = { NOT = { has_template = "Jewish-arab red division" } }
+					limit = { NOT = { has_template = "Jewish-Arabian Red Army" } }
 					division_template = {
-						name = "Jewish-arab red division"
+						name = "Jewish-Arabian Red Army"
 						is_locked = no
 						regiments = {
 							infantry = { x = 0 y = 0 }
@@ -2070,12 +2093,12 @@ focus_tree = {
 			}
 			capital_scope = {
 				create_unit = {
-					division = "name = \"1. Jewish-arab red division\" division_template = \"Jewish-arab red division\" start_experience_factor = 0.4" 
+					division = "name = \"1. Jewish-Arabian Red Army\" division_template = \"Jewish-Arabian Red Army\" start_experience_factor = 0.4" 
 					owner = ROOT
 					allow_spawning_on_enemy_provs = yes
 				}
 				create_unit = {
-					division = "name = \"2. Jewish-arab red division\" division_template = \"Jewish-arab red division\" start_experience_factor = 0.4" 
+					division = "name = \"2. Jewish-Arabian Red Army\" division_template = \"Jewish-Arabian Red Army\" start_experience_factor = 0.4" 
 					owner = ROOT
 					allow_spawning_on_enemy_provs = yes
 				}
@@ -2605,7 +2628,40 @@ focus_tree = {
 		}
 		
 		select_effect = {
-		}
+			hidden_effect = {
+				if = {
+					limit = { is_subject = no }
+					every_other_country = {
+						limit = {
+							OR = {
+								AND = {
+									has_government = fascism
+									OR = {
+										tag = IRQ
+										tag = SYR
+										tag = EGY
+										tag = TUR
+									}
+								}
+								tag = JOR
+								tag = LEB
+								tag = SAU
+								tag = MOR
+								tag = TUN
+								tag = YEM
+								tag = OMA
+								tag = IOM
+								tag = UAE
+								tag = QAT
+								tag = BHR
+								tag = KUW
+							}
+						}
+						country_event = { id = NWpalestine.78 days = 50 }
+					}
+				}
+			}
+		}	
 		
 		search_filters = { FOCUS_FILTER_TFV_AUTONOMY }
 		search_filters = { FOCUS_FILTER_ANARCHISM_UNITY }
@@ -2660,14 +2716,13 @@ focus_tree = {
 					}
 				}
 			}
-			every_other_country = {
+			every_enemy_country = {
 				limit = {
-					has_war_with = ROOT
 					is_subject = no
 					OR = { is_faction_leader = yes is_in_faction = no }
 					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
 				}
-				white_peace = ROOT
+				ROOT = { white_peace = PREV }
 			}
 			set_country_leader_ideology = anarcho_collectivism
 			455 = {	force_enable_resistance = BPL }
@@ -4334,8 +4389,42 @@ focus_tree = {
 				has_government = trozkism
 			}
 		}
-		bypass = {
-		}
+		
+		select_effect = {
+			hidden_effect = {
+				if = {
+					limit = { is_subject = no }
+					every_other_country = {
+						limit = {
+							OR = {
+								AND = {
+									has_government = fascism
+									OR = {
+										tag = IRQ
+										tag = SYR
+										tag = EGY
+										tag = TUR
+									}
+								}
+								tag = JOR
+								tag = LEB
+								tag = SAU
+								tag = MOR
+								tag = TUN
+								tag = YEM
+								tag = OMA
+								tag = IOM
+								tag = UAE
+								tag = QAT
+								tag = BHR
+								tag = KUW
+							}
+						}
+						country_event = { id = NWpalestine.78 days = 50 }
+					}
+				}
+			}
+		}	
 		
 		search_filters = { FOCUS_FILTER_TFV_AUTONOMY }
 		completion_reward = {
@@ -4398,14 +4487,13 @@ focus_tree = {
 					}
 				}
 			}
-			every_other_country = {
+			every_enemy_country = {
 				limit = {
-					has_war_with = ROOT
 					is_subject = no
 					OR = { is_faction_leader = yes is_in_faction = no }
 					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
 				}
-				white_peace = ROOT
+				ROOT = { white_peace = PREV }
 			}
 			hidden_effect = {
 				country_event = { id = NWpalestine.63 days = 7 }
@@ -5462,6 +5550,7 @@ focus_tree = {
 					has_completed_focus = BPL_concessions_arab_leaders
 				}
 			}
+			NOT = { tag = PAL }
 		}
 		available = {
 			OR = {
@@ -6151,6 +6240,7 @@ focus_tree = {
 					promote_leader = yes
 				}
 			}
+			set_party_name = { ideology = democratic long_name = BPL_party_of_national_defense name = BPL_party_of_national_defense }
 			unlock_decision_category_tooltip = BPL_proclaim_great_syria_category
 			hidden_effect = {
 				news_event = { hours = 6 id = trworldnews.126 }
@@ -6220,10 +6310,12 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BPL_expel_jews_from_their_homes"
-			set_party_name = { ideology = democratic long_name = BPL_party_of_national_defense name = BPL_party_of_national_defense }
 			979 = {
-				add_manpower = -200000
+				add_manpower = -189000
 				add_core_of = ROOT
+			}
+			980 = {
+				add_manpower = -57000
 			}
 			remove_ideas = BPL_discontent_among_jews
 		}
@@ -6460,6 +6552,8 @@ focus_tree = {
 						option = HIDE
 					}
 				}
+				NOT = { has_completed_focus = BPL_concessions_jewish_leaders }
+				NOT = { has_completed_focus = BPL_jewish_arab_compromise }
 				NOT = { has_completed_focus = BPL_proclaim_kingdom_of_palestine }
 			}
 		}
@@ -6507,14 +6601,13 @@ focus_tree = {
 					}
 				}
 			}
-			every_other_country = {
+			every_enemy_country = {
 				limit = {
-					has_war_with = ROOT
 					is_subject = no
 					OR = { is_faction_leader = yes is_in_faction = no }
 					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
 				}
-				white_peace = ROOT
+				ROOT = { white_peace = PREV }
 			}
 			if = {
 				limit = { NOT = { has_government = communism } }
@@ -10324,6 +10417,8 @@ focus_tree = {
 						option = HIDE
 					}
 				}
+				NOT = { has_completed_focus = BPL_concessions_jewish_leaders }
+				NOT = { has_completed_focus = BPL_jewish_arab_compromise }
 				NOT = { has_completed_focus = BPL_proclaim_state_of_palestine }
 			}
 		}
@@ -10371,14 +10466,14 @@ focus_tree = {
 			}
 			add_ideas = BPL_proclaim_kingdom_of_palestine_idea
 			country_event = { id = NWpalestine.53 }
-			every_other_country = {
+			every_enemy_country = {
 				limit = {
 					has_war_with = ROOT
 					is_subject = no
 					OR = { is_faction_leader = yes is_in_faction = no }
 					ROOT = { NOT = { has_country_flag = is_war_target_of_@PREV } }
 				}
-				white_peace = ROOT
+				ROOT = { white_peace = PREV }
 			}
 			455 = {	force_enable_resistance = BPL }
 			1053 = { force_enable_resistance = BPL }
@@ -12290,9 +12385,9 @@ focus_tree = {
 			air_experience = 15
 			hidden_effect = {
 				if = {
-					limit = { NOT = { has_template = "Guards division" } }
+					limit = { NOT = { has_template = "Guards Division" } }
 					division_template = {
-						name = "Guards division"
+						name = "Guards Division"
 						is_locked = no
 						regiments = {
 							infantry = { x = 0 y = 0 }
@@ -12310,17 +12405,17 @@ focus_tree = {
 			}
 			capital_scope = {
 				create_unit = {
-					division = "name = \"1. Guards division\" division_template = \"Guards division\" start_experience_factor = 0.3" 
+					division = "name = \"1. Guards Division\" division_template = \"Guards Division\" start_experience_factor = 0.3" 
 					owner = ROOT
 					allow_spawning_on_enemy_provs = yes
 				}
 				create_unit = {
-					division = "name = \"2. Guards division\" division_template = \"Guards division\" start_experience_factor = 0.3" 
+					division = "name = \"2. Guards Division\" division_template = \"Guards Division\" start_experience_factor = 0.3" 
 					owner = ROOT
 					allow_spawning_on_enemy_provs = yes
 				}
 				create_unit = {
-					division = "name = \"3. Guards division\" division_template = \"Guards division\" start_experience_factor = 0.3" 
+					division = "name = \"3. Guards Division\" division_template = \"Guards Division\" start_experience_factor = 0.3" 
 					owner = ROOT
 					allow_spawning_on_enemy_provs = yes
 				}
@@ -13829,18 +13924,18 @@ focus_tree = {
 				add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
 				custom_effect_tooltip = anarchism_unity_add_effect
 			}
-			every_owned_state = {
-				limit = {
-					infrastructure < 9
-				}
-				add_building_construction = {
-					type = infrastructure
-					level = 2
-					instant_build = yes
-				}
-			}
 			custom_effect_tooltip = available_industrial_concern
 			show_ideas_tooltip = BPL_palestine_railways
+			capital_scope = {
+				every_neighbor_state = {
+					limit = { is_owned_and_controlled_by = ROOT }
+					build_railway = {
+						level = 1
+						start_state = ROOT.capital
+						target_state = PREV
+					}
+				}
+			}
 		}
 	}
 	
