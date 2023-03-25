@@ -1,0 +1,791 @@
+﻿###########################
+# Yugoslavian Events
+###########################
+
+add_namespace = DOD_yugoslavia
+
+
+# Yugoslavia joins axis without solving Anti-German military - coup event
+country_event = {
+	id = DOD_yugoslavia.1
+	title = DOD_yugoslavia.1.t
+	desc = DOD_yugoslavia.1.desc
+	picture = GFX_report_event_yugoslavian_king_peter
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.1" }
+	
+	fire_only_once = yes
+
+	trigger = {
+		tag = YUG
+		is_in_faction_with = GFA
+#		has_idea = anti_german_military
+		NOT = { has_government = fascism }
+		GFA = {
+			has_government = fascism
+			is_faction_leader = yes
+		}
+		NOT = { has_country_flag = has_already_decided_yugo_coup_flag }
+	}
+
+	mean_time_to_happen = { days = 7 }
+	
+	immediate = {
+		hidden_effect = {
+			set_country_flag = has_already_decided_yugo_coup_flag
+		}
+	}
+	
+	option = { #welp
+		name = DOD_yugoslavia.1.a
+		ai_chance = {
+			factor = 70
+			modifier = {
+				has_war_with = ENG
+				factor = 0.01
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = {
+					has_country_leader = {
+						ruling_only = yes
+						character = YUG_peter_ii
+					}
+				}
+			}
+			retire_country_leader = yes
+		}
+		if = {
+			limit = {
+				date < 1941.09.06
+			}
+			custom_effect_tooltip = DOD_yugoslavia.1.a.tt
+			
+			hidden_effect = {
+				YUG_peter_ii = {
+					promote_character = { ideology = dual_monarchy }
+					promote_character = { ideology = conservatism }
+				}
+				retire_character = YUG_prince_paul
+				retire_character = YUG_milan_grol
+			}
+		}
+		else = {
+			custom_effect_tooltip = DOD_yugoslavia.1.a.tt
+			swap_ruler_traits = { remove = underage_monarch add = legitimate_heir }
+			
+			hidden_effect = {
+				YUG_peter_ii = {
+					promote_character = { ideology = dual_monarchy }
+					promote_character = { ideology = conservatism }
+				}
+				retire_character = YUG_prince_paul
+				retire_character = YUG_milan_grol
+			}
+			set_party_name = { 
+				ideology = monarchy 
+				long_name = YUG_royal_party
+				name = YUG_royal_party
+			}
+			hidden_effect = {
+				YUG_peter_ii = {
+					set_portraits = {
+						civilian = {
+					    	large="GFX_portrait_yugoslavia_peter_ii_old"
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_government = monarchy
+					}
+					remove_trait = {
+						character = YUG_peter_ii
+						ideology = conservatism
+						trait = underage_monarch
+					}
+					add_trait = {
+						character = YUG_peter_ii
+						ideology = conservatism
+						trait = legitimate_heir
+					}
+				}
+				if = {
+					limit = {
+						has_government = democratic
+					}
+					remove_trait = {
+						character = YUG_peter_ii
+						ideology = dual_monarchy
+						trait = underage_monarch
+					}
+					add_trait = {
+						character = YUG_peter_ii
+						ideology = dual_monarchy
+						trait = legitimate_heir
+					}
+				}
+				set_country_flag = peter_is_of_age
+			}
+		}
+		GER = {
+			country_event = DOD_yugoslavia.2
+			add_ai_strategy = {
+				type = alliance
+				id = ROOT		
+				value = -1000
+			}
+		}
+		if = {
+			limit = {
+				is_subject_of = GER
+			}
+			set_autonomy = {
+				target = YUG
+				autonomy_state = autonomy_free
+			}
+		}
+		if = {
+			limit = {
+				is_in_faction_with = GER
+			}
+			GER = { remove_from_faction = YUG }
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = "GER"		
+				value = -1000
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "SOV"		
+				value = -1000
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "JAP"		
+				value = -1000
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "CHI"		
+				value = -1000
+			}
+			add_ai_strategy = {
+				type = alliance
+				id = "ENG"		
+				value = 1000
+			}
+			ENG = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT	
+					value = 1000
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_government = monarchy } }
+			set_politics = { ruling_party = monarchy elections_allowed = yes }
+			add_popularity = { ideology = monarchy popularity = 0.5 }
+		}
+		set_party_name = { ideology = monarchy long_name = YUG_monarchy_party_2 name = YUG_monarchy_party_2 }
+	}
+	option = { #resistance to the coup, call on Germans for support
+		name = DOD_yugoslavia.1.b
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		GER = { country_event = DOD_yugoslavia.3 }
+		YUG_start_peters_coup = yes
+		if = {
+			limit = {
+				109 = { is_owned_by = YUG }
+			}
+			set_capital = { state =  109 }
+			else = {
+				if = {
+					limit = {
+						104 = { is_owned_by = YUG }
+					}
+					set_capital = { state =  104 }
+				}
+			}
+		}
+		start_civil_war = { ideology = democratic size = 0.6 capital = 107 states = { 108 107 106 105 778 779 812 813 817 825 906 907 } }
+		random_country = {
+			limit = {
+				original_tag = YUG
+				has_government = democratic
+			}
+			retire_country_leader = yes
+			set_capital = { state =  107 }
+			create_country_leader = {
+				name = YUG_peter_ii
+				desc = "POLITICS_PETER_II_DESC"
+				picture = "Portrait_Yugoslavia_Peter_II.dds"
+				expire = "1965.1.1"
+				ideology = conservatism
+				traits = {
+				}
+			}
+		}
+	}
+}
+
+#Yugoslavian coup event - Yugoslavia has rolled over, event for Germany to intervene
+country_event = {
+	id = DOD_yugoslavia.2
+	title = DOD_yugoslavia.2.t
+	desc = DOD_yugoslavia.2.desc
+	picture = GFX_report_event_military_planning
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.2" }
+	
+	is_triggered_only = yes
+	
+	option = { #invasion!
+		name = DOD_yugoslavia.2.a	
+		if = {
+			limit = {
+				CRO = { 
+					exists = yes 
+					is_subject_of = YUG
+				}
+#				YUG = { NOT = { has_completed_focus = YUG_towards_independence } }
+			}
+			puppet = CRO
+		}
+		add_ai_strategy = {
+			type = antagonize
+			id = FROM		
+			value = 200
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = FROM
+			value = 200
+		}
+		add_ai_strategy = {
+			type = declare_war
+			id = FROM
+			value = 100
+		}
+		if = {
+			limit = { FROM = { is_in_faction_with = ROOT } }
+			FROM = { leave_faction = yes }
+		}
+		declare_war_on = {
+			type = annex_everything
+			target = FROM
+		}
+	}
+}
+
+#Yugoslavian coup event - Yugoslavian government resists the coup, Germany comes to the rescue...or not
+country_event = {
+	id = DOD_yugoslavia.3
+	title = DOD_yugoslavia.2.t
+	desc = DOD_yugoslavia.3.desc
+	picture = GFX_report_event_military_planning
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.3" }
+	
+	is_triggered_only = yes
+	
+	option = { #invasion!
+		name = DOD_yugoslavia.3.a
+		ai_chance = {
+			factor = 70
+		}	
+		create_wargoal = {
+			type = annex_everything
+			target = YUG
+		}
+	}
+
+	option = { #rescue
+		name = DOD_yugoslavia.3.b	
+		ai_chance = {
+			factor = 30
+		}
+		add_to_faction = YUG
+	}
+}
+
+#Yugoslavian independence war(s)
+country_event = {
+	id = DOD_yugoslavia.10
+	title = DOD_yugoslavia.10.t
+	desc = DOD_yugoslavia.10.desc
+	picture = GFX_report_event_yugoslavia_partisans
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.10" }
+	
+	trigger = {
+		tag = YUG
+#		has_idea = YUG_idea_croatian_opposition
+		has_war_with = GER
+		GER = {
+			has_government = fascism
+		}
+		OR = {
+			AND = {
+				CRO = { exists = yes }
+				CRO = { is_subject_of = YUG }
+			}
+			109 = { is_owned_and_controlled_by = YUG }
+		}
+	}
+	mean_time_to_happen = {
+		days = 7
+	}
+	
+	fire_only_once = yes #would be funny though
+
+	option = { 
+		name = DOD_yugoslavia.10.a
+		ai_chance = {
+			factor = 70
+		}	
+		if = {
+			limit = {
+				CRO = {
+					exists = yes
+					is_subject_of = YUG
+				}
+			}
+			set_autonomy = { target = CRO autonomy_state = autonomy_free }
+			CRO = {
+				declare_war_on = {
+					target = YUG
+					type = annex_everything
+
+				}
+			}
+		}
+		if = { #if Montenegro exists, they also join
+			limit = {
+				MNT = {
+					exists = yes
+					is_subject_of = YUG
+				}
+			}
+			set_autonomy = { target = MNT autonomy_state = autonomy_free }
+			MNT = {
+				declare_war_on = {
+					target = YUG
+					type = annex_everything
+				}
+			}
+		}
+		if = {
+			limit = {
+				CRO = {
+					exists = no
+				}
+				109 = { is_owned_and_controlled_by = YUG }
+			}
+			CRO = { transfer_state = 109 }
+			if = {
+				limit = {
+					103 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 103 }
+			}
+			if = {
+				limit = {
+					811 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 811 }
+			}
+			if = {
+				limit = {
+					827 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 827 }
+			}
+			if = {
+				limit = {
+					828 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 828 }
+			}
+			if = {
+				limit = {
+					904 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 904 }
+			}
+			if = {
+				limit = {
+					905 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 905 }
+			}
+			if = {
+				limit = {
+					906 = { is_owned_and_controlled_by = YUG }
+				}
+				CRO = { transfer_state = 906 }
+			}
+			CRO = {
+				declare_war_on = {
+					target = YUG
+					type = annex_everything
+				}
+				load_oob = "CRO_YUG_independence"
+			}
+		}
+	}
+}
+
+#Yugoslavia pressured by Germany - Anschluss
+country_event = {
+	id = DOD_yugoslavia.30
+	title = DOD_yugoslavia.30.t
+	desc = DOD_yugoslavia.30.desc
+	picture = GFX_report_event_german_speech
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.30" }
+	
+	is_triggered_only = yes
+	
+	option = { # put the squeeze on them
+		name = DOD_yugoslavia.30.a
+		ai_chance = {
+			factor = 70
+		}
+		YUG = { 
+			country_event = DOD_yugoslavia.31 
+			set_country_flag = YUG_GER_pressure_1 #for ai_weights in focus tree
+		}
+		
+	}	
+	option = { # not interested
+		name = DOD_yugoslavia.30.b
+		ai_chance = {
+			factor = 30
+		}
+		
+	}
+		
+	
+}
+
+#Yugoslavia pressured by Germany - First event
+country_event = {
+	id = DOD_yugoslavia.31
+	title = DOD_yugoslavia.31.t
+	desc = DOD_yugoslavia.31.desc
+	picture = GFX_report_event_german_speech
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.31" }
+	
+	is_triggered_only = yes
+		
+	option = { # not that bad yet
+		name = DOD_yugoslavia.31.a
+		ai_chance = {
+			factor = 30
+		}
+		
+	}
+		
+	
+}
+
+#Yugoslavia pressured by Germany - Fate of CZE
+country_event = {
+	id = DOD_yugoslavia.32
+	title = DOD_yugoslavia.30.t
+	desc = DOD_yugoslavia.32.desc
+	picture = GFX_report_event_german_troops
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.32" }
+	
+	is_triggered_only = yes
+	
+	option = { # put the squeeze on them
+		name = DOD_yugoslavia.32.a
+		ai_chance = {
+			factor = 80
+		}
+		YUG = { 
+			country_event = DOD_yugoslavia.33 
+			set_country_flag = YUG_GER_pressure_2 #for ai_weights
+		}
+		
+	}	
+	option = { # not interested
+		name = DOD_yugoslavia.32.b
+		ai_chance = {
+			factor = 20
+		}
+		
+	}
+		
+	
+}
+
+#Yugoslavia pressured by Germany - Second event
+country_event = {
+	id = DOD_yugoslavia.33
+	title = DOD_yugoslavia.31.t
+	desc = DOD_yugoslavia.33.desc
+	picture = GFX_report_event_german_troops
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.33" }
+	
+	is_triggered_only = yes
+		
+	option = { # not that bad
+		name = DOD_yugoslavia.33.a
+		
+	}
+}
+
+#Yugoslavia pressured by Germany - Last Warning - after Fall of France
+country_event = {
+	id = DOD_yugoslavia.34
+	title = DOD_yugoslavia.30.t
+	desc = DOD_yugoslavia.34.desc
+	picture = GFX_report_event_german_troops_paris
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.34" }
+	
+	mean_time_to_happen = {
+		days = 7
+	}
+	fire_only_once = yes
+	trigger = {
+		tag = GER
+		NOT = {
+			has_war_with = YUG
+		}
+		YUG = {
+			is_in_faction = no
+		}
+		event_target:NW_france_scope = {
+			OR = {
+				has_capitulated = yes
+				is_subject_of = GER
+				AND = {
+					is_subject_of = ITA
+					ITA = { is_in_faction_with = GER }
+				}
+			}
+		}
+	}
+	
+	option = { # put the squeeze on them
+		name = DOD_yugoslavia.34.a
+		ai_chance = {
+			factor = 90
+		}
+		YUG = { country_event = DOD_yugoslavia.35 }
+	}	
+	option = { # not interested
+		name = DOD_yugoslavia.34.b
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		
+	}
+	
+}
+
+#Yugoslavia pressured by Germany - third event
+country_event = {
+	id = DOD_yugoslavia.35
+	title = DOD_yugoslavia.31.t
+	desc = DOD_yugoslavia.35.desc
+	picture = GFX_report_event_german_troops_paris
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.35" }
+	
+	is_triggered_only = yes
+		
+	option = { # not that bad
+		name = DOD_yugoslavia.35.a
+		ai_chance = {
+			factor = 30
+		}
+		
+	}
+		
+	
+}
+
+
+#Yugoslavia pressured by Britain - late 1940, last warning
+country_event = {
+	id = DOD_yugoslavia.44
+	title = DOD_yugoslavia.30.t
+	desc = DOD_yugoslavia.44.desc
+	picture = GFX_report_event_french_british_officers
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.44" }
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = ENG
+		has_government = democratic
+		has_war_with = GER
+		NOT = { has_war_with = YUG }
+		NOT = { is_in_faction_with = YUG }
+		YUG = {
+			is_in_faction = no
+			NOT = { has_war_with = GER }
+			exists = yes
+		}
+		is_historical_focus_on = no
+	}
+
+	mean_time_to_happen = { days = 7 }
+	
+	option = { # put the squeeze on them
+		name = DOD_yugoslavia.44.a
+		ai_chance = {
+			factor = 90
+		}
+		YUG = { country_event = DOD_yugoslavia.45 }
+		hidden_effect = { country_event = { id = DOD_yugoslavia.46 days = 180 random_days = 672 } }
+		
+	}	
+	option = { # not interested
+		name = DOD_yugoslavia.44.b
+		ai_chance = {
+			factor = 10
+		}	
+	}
+}
+
+#Yugoslavia pressured by Britain - Third event
+country_event = {
+	id = DOD_yugoslavia.45
+	title = DOD_yugoslavia.41.t
+	desc = DOD_yugoslavia.45.desc
+	picture = GFX_report_event_british_inspect_troops
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.45" }
+	
+	is_triggered_only = yes
+		
+	option = { # not that bad yet
+		name = DOD_yugoslavia.45.a
+		ai_chance = {
+			factor = 30
+		}
+		
+	}	
+}
+
+#Yugoslavia pressured by Britain - war
+country_event = {
+	id = DOD_yugoslavia.46
+	title = DOD_yugoslavia.30.t
+	desc = DOD_yugoslavia.46.desc
+	picture = GFX_report_event_ast_army
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event DOD_yugoslavia.46" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes 
+	trigger = {
+		tag = ENG
+		has_government = democratic
+		YUG = {
+			is_in_faction = no
+			exists = yes
+		}
+		has_war_with = GER
+	}
+	
+	option = { # put the squeeze on them
+		name = DOD_yugoslavia.46.a
+		ai_chance = {
+			factor = 90
+		}
+		declare_war_on = {
+			target = YUG
+			type = puppet_wargoal_focus
+		}
+		
+	}	
+	option = { # not interested
+		name = DOD_yugoslavia.46.b
+		ai_chance = {
+			factor = 10
+		}	
+	}
+}
+
+
+#Age King Peter after a few years
+country_event = {
+	id = DOD_yugoslavia.19
+	title = DOD_yugoslavia.19.t
+	desc = DOD_yugoslavia.19.desc
+	picture = GFX_report_event_yugoslavian_king_peter
+
+	trigger = {
+		tag = YUG
+		has_country_leader = {
+		    character = YUG_peter_ii
+		    ruling_only = yes
+		}
+		NOT = { has_country_flag = peter_is_of_age }
+		date > 1941.09.06
+	}
+
+	fire_only_once = yes
+
+	option = {
+		name = DOD_yugoslavia.19.a
+		swap_ruler_traits = { remove = underage_monarch add = legitimate_heir }
+		set_party_name = {
+			ideology = monarchy 
+			long_name = YUG_royal_party
+			name = YUG_royal_party
+		}
+		hidden_effect = {
+			YUG_peter_ii = {
+				set_portraits = {
+					civilian = {
+				    	large="GFX_portrait_yugoslavia_peter_ii_old"
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_government = monarchy
+				}
+				remove_trait = {
+					character = YUG_peter_ii
+					ideology = conservatism
+					trait = underage_monarch
+				}
+				add_trait = {
+					character = YUG_peter_ii
+					ideology = conservatism
+					trait = legitimate_heir
+				}
+			}
+			if = {
+				limit = {
+					has_government = democratic
+				}
+				remove_trait = {
+					character = YUG_peter_ii
+					ideology = dual_monarchy
+					trait = underage_monarch
+				}
+				add_trait = {
+					character = YUG_peter_ii
+					ideology = dual_monarchy
+					trait = legitimate_heir
+				}
+			}
+			set_country_flag = peter_is_of_age
+		}
+	}
+}
