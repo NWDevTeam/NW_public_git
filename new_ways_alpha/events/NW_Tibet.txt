@@ -1541,6 +1541,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tibet.59" }
+	immediate = { set_global_flag = TIB_CHI_pancha_plan_flag }
 	
 	option = {
 		name = tibet.59.a
@@ -1557,15 +1558,12 @@ country_event = {
 			states = { 601 }
 		}
 		hidden_effect = {
-		    if = {
-				limit = { has_country_leader = { character = TIB_thubten_choekyi_nyima ruling_only = no } }
-				kill_ideology_leader = neutrality
-			}
 			random_other_country = {
 				limit = {
 					original_tag = ROOT
 					NOT = { tag = ROOT }
 				}
+				save_event_target_as = TIB_nyima_scope
 				add_ideas = TIB_dalay_lama_xiv
 				set_popularities = {
 					neutrality = 30
@@ -1573,17 +1571,12 @@ country_event = {
 					monarchy = 30
 					democratic = 10
 				}
-				create_country_leader = {
-					name = TIB_thubten_choekyi_nyima
-					desc = "POLITICS_JAMPHEL_YESHE_GYALTSEN_DESC"
-					picture = "gfx/leaders/TIB/Portrait_Thubten_Choekyi_Nyima.dds"
-					expire = "1965.1.1"
-					ideology = despotism
-					traits = {
-						TIB_nine_lama
-						seriously_ill
+				ROOT = {
+					TIB_thubten_choekyi_nyima = {
+						set_nationality = event_target:TIB_nyima_scope
 					}
 				}
+				promote_character = TIB_thubten_choekyi_nyima
 				load_focus_tree = nw_tibet_focus
 				unlock_national_focus = TIB_chinese_army
 				unlock_national_focus = TIB_british_commission
@@ -1665,6 +1658,7 @@ country_event = {
 					original_tag = ROOT
 					NOT = { tag = ROOT }
 				}
+				save_event_target_as = TIB_nyima_scope
 				add_ideas = TIB_dalay_lama_xiv
 				set_popularities = {
 					neutrality = 30
@@ -1672,17 +1666,12 @@ country_event = {
 					monarchy = 30
 					democratic = 10
 				}
-				create_country_leader = {
-					name = TIB_thubten_choekyi_nyima
-					desc = "POLITICS_JAMPHEL_YESHE_GYALTSEN_DESC"
-					picture = "gfx/leaders/TIB/Portrait_Thubten_Choekyi_Nyima.dds"
-					expire = "1965.1.1"
-					ideology = despotism
-					traits = {
-						TIB_nine_lama
-						seriously_ill
+				ROOT = {
+					TIB_thubten_choekyi_nyima = {
+						set_nationality = event_target:TIB_nyima_scope
 					}
 				}
+				promote_character = TIB_thubten_choekyi_nyima
 				load_focus_tree = nw_tibet_focus
 				unlock_national_focus = TIB_chinese_army
 				unlock_national_focus = TIB_british_commission
@@ -1751,23 +1740,127 @@ country_event = {
 country_event = {
 	id = tibet.60
 	title = tibet.60.t
-	desc = tibet.60.d
+	desc = {
+		text = tibet.60.desc_TIB
+		trigger = {
+			original_tag = TIB
+		}
+	}
+	desc = {
+		text = tibet.60.desc_MON
+		trigger = {
+			original_tag = MON
+		}
+	}
+	desc = {
+		text = tibet.60.desc_CHI
+		trigger = {
+			original_tag = CHI
+		}
+	}
+	desc = {
+		text = tibet.60.desc_chinese_warlord
+		trigger = {
+			WTT_is_chinese_warlord = yes
+		}
+	}
 	picture = GFX_report_event_tib_59_60_61_62
 	is_triggered_only = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tibet.60" }
+	immediate = {
+		hidden_effect = {
+			random_country = {
+				limit = { has_character = TIB_thubten_choekyi_nyima }
+				set_global_flag = TIB_panchen_lama_died
+				save_event_target_as = thubten_choekyi_nyima_owner_scope
+			}
+		}
+	}
 	
 	option = {
 		name = tibet.60.a
-		set_global_flag = TIB_panchen_lama_died
-		create_country_leader = {
-			name = CHI_wu_zhongxin
-			desc = "POLITICS_WU_ZHONGXIN_DESC"
-			picture = "gfx/leaders/TIB/Portrait_Wu_Zhongxin.dds"
-			expire = "1965.1.1"
-			ideology = despotism
-			traits = {
-				chinese_militarist
+		trigger = {
+			OR = {
+				original_tag = MON
+				original_tag = TIB
+			}
+			is_left_ideology = no
+		}
+		if = {
+			limit = { has_character = TIB_thubten_choekyi_nyima }
+			retire_character = TIB_thubten_choekyi_nyima
+			if = {
+				limit = { tag = TIB }
+				add_country_leader_role = {
+					character = CHI_wu_zhongxin
+					country_leader = {
+						desc = "POLITICS_WU_ZHONGXIN_DESC"
+						expire = "1965.1.1"
+						ideology = despotism
+						traits = {
+							chinese_militarist
+						}
+					}
+					promote_leader = yes
+				}
+			}
+		}
+		else = {
+			effect_tooltip = {
+				event_target:thubten_choekyi_nyima_owner_scope = {
+					retire_character = TIB_thubten_choekyi_nyima
+				}
+			}
+		}
+	}
+	option = {
+		name = tibet.60.b
+		trigger = {
+			OR = {
+				original_tag = MON
+				original_tag = TIB
+			}
+			is_left_ideology = yes
+		}
+		if = {
+			limit = { has_character = TIB_thubten_choekyi_nyima }
+			retire_character = TIB_thubten_choekyi_nyima
+			if = {
+				limit = { tag = TIB }
+				add_country_leader_role = {
+					character = CHI_wu_zhongxin
+					country_leader = {
+						desc = "POLITICS_WU_ZHONGXIN_DESC"
+						expire = "1965.1.1"
+						ideology = despotism
+						traits = {
+							chinese_militarist
+						}
+					}
+					promote_leader = yes
+				}
+			}
+		}
+		else = {
+			effect_tooltip = {
+				event_target:thubten_choekyi_nyima_owner_scope = {
+					retire_character = TIB_thubten_choekyi_nyima
+				}
+			}
+		}
+	}
+	option = {
+		name = tibet.60.c
+		trigger = {
+			OR = {
+				original_tag = CHI
+				WTT_is_chinese_warlord = yes
+			}
+		}
+		effect_tooltip = {
+			event_target:thubten_choekyi_nyima_owner_scope = {
+				retire_character = TIB_thubten_choekyi_nyima
 			}
 		}
 	}
@@ -1806,16 +1899,21 @@ country_event = {
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tibet.602" }
 	immediate = {
-		if = {
+		every_country = {
 			limit = {
-				NOT = { has_country_flag = TIB_CHI_pancha_plan_flag }
+				OR = {
+					original_tag = ROOT
+					original_tag = CHI
+					original_tag = MON
+					WTT_is_chinese_warlord = yes
+				}
 			}
-			country_event = { id = tibet.62 }
+			country_event = tibet.60
 		}
 	}
 }
 
-# Смерть Панчен-ламы // CHI
+# Смерть Панчен-ламы // CHI		не юзается
 country_event = {
 	id = tibet.62
 	title = tibet.62.t
@@ -1826,8 +1924,11 @@ country_event = {
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event tibet.62" }
 	
 	option = {
-		name = tibet.62.a	
-		set_global_flag = TIB_panchen_lama_died
+		name = tibet.62.a
+		random_other_country = {
+			limit = { has_character = TIB_thubten_choekyi_nyima }
+			retire_character = TIB_thubten_choekyi_nyima
+		}
 	}
 }
 
