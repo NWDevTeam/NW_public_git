@@ -2902,10 +2902,9 @@ on_actions = {
 			if = {
 				limit = {
 					original_tag = SOV
-					has_focus_tree = generic_focus
 					OR = {
-						has_government = fascism
-						has_government = monarchy
+						has_focus_tree = generic_focus
+						has_focus_tree = generic_anarchism_focus
 					}
 				}
 				mark_focus_tree_layout_dirty = yes
@@ -4151,47 +4150,47 @@ on_actions = {
 				ROOT = { add_ideas = FRA_civil_war }
 			}
 			#Польша на два фронта
-			if = {
-				limit = {
-					has_global_flag = sov_yes_pact
-					NOT = { GER = { is_in_faction_with = SOV } }
-					POL = {
-						is_in_faction = yes
-						is_faction_leader = no
-					}
-					OR = {
-						POL = { has_war_with = GER }
-						POL = { has_war_with = SOV }
-					}
-					OR = {
-						AND = {
-							FROM = { OR = { tag = SOV tag = GER } }
-							ROOT = { tag = POL }
-						}
-						AND = {
-							FROM = { tag = POL }
-							ROOT = { OR = { tag = SOV tag = GER } }
-						}
-					}
-				}
-				FROM = { set_country_flag = POL_truce }
-				ROOT = { set_country_flag = POL_truce }
-				
-				random_country = {
-					limit = {
-						is_in_faction_with = POL
-						is_faction_leader = yes
-					}
-					if = {
-						limit = { NOT = { has_war_with = FROM has_war_with = ROOT } }
-						country_event = { id = poland.war.42 }
-					}
-					else = {
-						FROM = { clr_country_flag = POL_truce }
-						ROOT = { clr_country_flag = POL_truce }
-					}
-				}
-			}
+#			if = {
+#				limit = {
+#					has_global_flag = sov_yes_pact
+#					NOT = { GER = { is_in_faction_with = SOV } }
+#					POL = {
+#						is_in_faction = yes
+#						is_faction_leader = no
+#					}
+#					OR = {
+#						POL = { has_war_with = GER }
+#						POL = { has_war_with = SOV }
+#					}
+#					OR = {
+#						AND = {
+#							FROM = { OR = { tag = SOV tag = GER } }
+#							ROOT = { tag = POL }
+#						}
+#						AND = {
+#							FROM = { tag = POL }
+#							ROOT = { OR = { tag = SOV tag = GER } }
+#						}
+#					}
+#				}
+#				FROM = { set_country_flag = POL_truce }
+#				ROOT = { set_country_flag = POL_truce }
+#				
+#				random_country = {
+#					limit = {
+#						is_in_faction_with = POL
+#						is_faction_leader = yes
+#					}
+#					if = {
+#						limit = { NOT = { has_war_with = FROM has_war_with = ROOT } }
+#						country_event = { id = poland.war.42 }
+#					}
+#					else = {
+#						FROM = { clr_country_flag = POL_truce }
+#						ROOT = { clr_country_flag = POL_truce }
+#					}
+#				}
+#			}
 			#Привлечение германских советников // PER
 			if = {
 				limit = {
@@ -4695,6 +4694,21 @@ on_actions = {
 					NOT = { has_global_flag = SOV_soviet_civil_war }
 				}
 				set_global_flag = SOV_soviet_civil_war
+			}
+			if = {
+				limit = {
+					FROM = { original_tag = FIN }
+					tag = SOV
+					SOV = { has_country_flag = soviet_finland_war_flag }
+				}
+				FROM = {
+					if = {
+						limit = { has_rule = can_create_factions }
+						set_country_flag = can_create_factions_flag
+					}
+					set_rule = { can_join_factions = no }
+					set_rule = { can_create_factions = no }
+				}
 			}
 		}
 		
@@ -6153,7 +6167,13 @@ on_actions = {
 					SOV = { has_country_flag = soviet_finland_war_flag }
 				}
 				SOV = { clr_country_flag = soviet_finland_war_flag }
-				FIN = { set_rule = { can_join_factions = yes } }
+				FIN = {
+					if = {
+						limit = { has_country_flag = can_create_factions_flag }
+						clr_country_flag = can_create_factions_flag
+						set_rule = { can_join_factions = yes }
+					}
+				}
 			}
 			#Дуче жрет ETH
 			if = {
@@ -7466,32 +7486,6 @@ on_actions = {
 				}
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): плус 1500 менпавера"
 			}
-			if = {
-				limit = {
-					original_tag = SAU
-					check_variable = { opinion_with_tribes_var < 50 }
-					check_variable = { rashidi_posralis_var < 3 }
-					has_country_flag = rashidi_posralis
-				}
-				country_event = NWsaudi.61
-			}
-			if = {
-				limit = {
-					original_tag = SAU
-					check_variable = { opinion_with_tribes_var < 50 }
-					check_variable = { rashidi_posralis_var > 2 }
-					has_country_flag = rashidi_posralis
-				}
-				country_event = NWsaudi.62
-			}
-			if = {
-				limit = {
-					original_tag = FIN
-					surrender_progress > 0.27
-					has_war_with = SOV
-				}
-				country_event = NWzatyk.4
-			}
 			#Нац.дух на слонов
 			if = {
 				limit = {
@@ -7651,6 +7645,138 @@ on_actions = {
 			
 			set_variable = { weekly_turkish_support_total = modifier@weekly_turkish_support }
 			subtract_from_variable = { weekly_turkish_support_total = modifier@weekly_greek_support }
+		}
+	}
+	
+	on_weekly_SAU = {
+		effect = {
+			if = {
+				limit = {
+					check_variable = { opinion_with_tribes_var = 0 }
+					is_subject = no
+					has_government = monarchy
+					NOT = { has_global_flag = sau_uprising }
+				}
+				country_event = NWsaudi.1
+			}
+			if = {
+				limit = {
+					check_variable = { opinion_with_ulema_var = 0 }
+					is_subject = no
+					has_government = monarchy
+					NOT = { has_global_flag = sau_uprising }
+				}
+				country_event = NWsaudi.3
+			}
+			if = {
+				limit = {
+					has_variable = concession_owner
+				}
+				if = {
+					limit = {
+						any_enemy_country = {
+							has_country_flag = concession_owner_flag
+						}	
+					}			
+					country_event = NWsaudi.34
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					check_variable = { opinion_with_tribes_var < 50 }
+					check_variable = { rashidi_posralis_var < 3 }
+					has_country_flag = rashidi_posralis
+				}
+				country_event = NWsaudi.61
+			}
+			if = {
+				limit = {
+					check_variable = { opinion_with_tribes_var < 50 }
+					check_variable = { rashidi_posralis_var > 2 }
+					has_country_flag = rashidi_posralis
+				}
+				country_event = NWsaudi.62
+			}
+		}
+	}
+	
+	on_weekly_FIN = {
+		effect = {
+			if = {
+				limit = {
+					surrender_progress > 0.27
+					has_war_with = SOV
+				}
+				country_event = NWzatyk.4
+			}
+		}
+	}
+
+	on_weekly_ALB = {
+		effect = {
+			## паранойя
+			if = {
+				limit = {
+					OR = {
+						has_idea = ALB_paranoia_of_secretary
+						has_idea = ALB_paranoia_of_secretary_2
+					}
+				}
+				add_to_variable = { 
+					var = alb_paranoia_var
+					value = 1
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						has_idea = ALB_paranoia_of_secretary_3
+						has_idea = ALB_paranoia_of_secretary_4
+					}
+				}
+				add_to_variable = { 
+					var = alb_paranoia_var
+					value = 2
+				}
+			}
+		}
+	}
+	
+	on_weekly_TUR = {
+		effect = {
+			## Государственный сектор экономики
+			if = {
+				limit = {
+					has_dynamic_modifier = { modifier = private_state_dyn }
+				}
+				if = {
+					limit = { num_of_factories < 31 }
+					set_temp_variable = { temp1 = 0.05 }
+					set_temp_variable = { temp2 = 0.03 }
+					set_temp_variable = { temp3 = 0 }
+				}
+				else_if = {
+					limit = {
+						num_of_factories > 30
+						num_of_factories < 61
+					}
+					set_temp_variable = { temp1 = 0.03 }
+					set_temp_variable = { temp2 = -0.05 }
+					set_temp_variable = { temp3 = temp2 }
+				}
+				else_if = {
+					limit = { num_of_factories > 60 }
+					set_temp_variable = { temp1 = 0.01 }
+					set_temp_variable = { temp2 = -0.1 }
+					set_temp_variable = { temp3 = temp2 }
+				}
+				set_variable = { var_tur_gr_buildings = temp1 }
+				set_variable = { var_tur_gr_max_efficiency = temp2 }
+				set_variable = { var_tur_gr_efficiency_gain = temp3 }
+				force_update_dynamic_modifier = yes
+			}
 		}
 	}
 	
@@ -7973,108 +8099,6 @@ on_actions = {
 		}
 	}
 	
-	on_weekly_SAU = {
-		effect = {
-			if = {
-				limit = {
-					check_variable = { opinion_with_tribes_var = 0 }
-					is_subject = no
-					has_government = monarchy
-					NOT = { has_global_flag = sau_uprising }
-				}
-				country_event = NWsaudi.1
-			}
-			if = {
-				limit = {
-					check_variable = { opinion_with_ulema_var = 0 }
-					is_subject = no
-					has_government = monarchy
-					NOT = { has_global_flag = sau_uprising }
-				}
-				country_event = NWsaudi.3
-			}
-			if = {
-				limit = {
-					has_variable = concession_owner
-				}
-				if = {
-					limit = {
-						any_enemy_country = {
-							has_country_flag = concession_owner_flag
-						}	
-					}			
-					country_event = NWsaudi.34
-				}
-			}
-		}
-	}
-	
-	on_weekly_ALB = {
-		effect = {
-		
-			##паранойя
-			if = {
-				limit = {
-					OR = {
-						has_idea = ALB_paranoia_of_secretary
-						has_idea = ALB_paranoia_of_secretary_2
-					}
-				}
-				add_to_variable = { 
-					var = alb_paranoia_var
-					value = 1
-				}
-			}
-			if = {
-				limit = {
-					OR = {
-						has_idea = ALB_paranoia_of_secretary_3
-						has_idea = ALB_paranoia_of_secretary_4
-					}
-				}
-				add_to_variable = { 
-					var = alb_paranoia_var
-					value = 2
-				}
-			}
-		}
-	}
-	
-	on_weekly_TUR = {
-		effect = {
-			##Государственный сектор экономики
-			if = {
-				limit = {
-					has_dynamic_modifier = { modifier = private_state_dyn }
-				}
-				if = {
-					limit = { num_of_factories < 31 }
-					set_temp_variable = { temp1 = 0.05 }
-					set_temp_variable = { temp2 = 0.03 }
-					set_temp_variable = { temp3 = 0 }
-				}
-				else_if = {
-					limit = {
-						num_of_factories > 30
-						num_of_factories < 61
-					}
-					set_temp_variable = { temp1 = 0.03 }
-					set_temp_variable = { temp2 = -0.05 }
-					set_temp_variable = { temp3 = temp2 }
-				}
-				else_if = {
-					limit = { num_of_factories > 60 }
-					set_temp_variable = { temp1 = 0.01 }
-					set_temp_variable = { temp2 = -0.1 }
-					set_temp_variable = { temp3 = temp2 }
-				}
-				set_variable = { var_tur_gr_buildings = temp1 }
-				set_variable = { var_tur_gr_max_efficiency = temp2 }
-				set_variable = { var_tur_gr_efficiency_gain = temp3 }
-				force_update_dynamic_modifier = yes
-			}
-		}
-	}
 	
 	
 	#ROOT is the nation being liberated, FROM is the leader of the liberators. 
