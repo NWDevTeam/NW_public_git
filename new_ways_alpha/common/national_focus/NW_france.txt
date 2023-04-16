@@ -1289,6 +1289,38 @@ focus_tree = {
 				threat = 2
 				name = FRA_transforming_france_into_peoples_republic
 			}
+			if = {
+				limit = {
+					is_in_faction = yes
+					is_faction_leader = no
+				}
+				if = {
+					limit = { FACTION_LEADER = { NOT = { has_government = ROOT } } }
+					FACTION_LEADER = {
+						add_ai_strategy = {
+							type = alliance
+							id = ROOT
+							value = -500
+						}
+						ROOT = {
+							add_ai_strategy = {
+								type = alliance
+								id = PREV
+								value = -500
+							}
+						}
+					}
+					leave_faction = yes
+				}
+			}
+			every_enemy_country = {
+				limit = {
+					NOT = { has_offensive_war_with = ROOT }
+					is_subject = no
+					OR = { is_faction_leader = yes is_in_faction = no }
+				}
+				white_peace = ROOT
+			}
 		}
 	}
 	
@@ -1482,7 +1514,12 @@ focus_tree = {
 		}
 		available = {
 			country_exists = SPR
-			SPR = { has_government = ROOT }
+			SPR = {
+				OR = {
+					has_government = ROOT
+					has_country_leader_ideology = socialism
+				}
+			}
 			has_global_flag = scw_over
 		}
 		bypass = {
@@ -1495,7 +1532,7 @@ focus_tree = {
 			if = {
 				limit = {
 					is_faction_leader = yes
-					SPR = { NOT = { is_in_faction_with = ROOT } }
+					NOT = { is_in_faction_with = SPR }
 				}
 				SPR = { country_event = france.17 }
 			}
