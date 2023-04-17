@@ -5905,20 +5905,33 @@ country_event = {
 			set_country_flag = PER_invest_flag
 			random_list = {
 				seed = random
-				50 = { set_country_flag = PER_want_invest_flag }
-				50 = { }
+				50 = { set_country_flag = PER_want_infrastructure_invest_flag	modifier = { factor = 0 416 = { infrastructure > 4 } } }
+				50 = { set_country_flag = PER_want_hospital_invest_flag			modifier = { factor = 0 416 = { hospital > 4 } } }
 			}
 		}
 	}
 	
 	option = {
 		name = NWpersian.96.a
-		activate_mission = PER_invest_in_infrastructure_of_mashhad
-		hidden_effect = {
-			416 = {
-				set_state_flag = PER_invest_in_infrastructure_of_mashhad_flag
-				set_variable = { infrastructure_goal = infrastructure_level }
-				add_to_variable = { infrastructure_goal = 1 }
+		if = {
+			limit = { has_country_flag = PER_want_infrastructure_invest_flag }
+			activate_mission = PER_invest_in_infrastructure_of_mashhad
+			hidden_effect = {
+				416 = {
+					set_state_flag = PER_invest_in_infrastructure_of_mashhad_flag
+					set_variable = { infrastructure_goal = infrastructure_level }
+					add_to_variable = { infrastructure_goal = 1 }
+				}
+			}
+		}
+		else = {
+			activate_mission = PER_invest_in_hospital_of_mashhad
+			hidden_effect = {
+				416 = {
+					set_state_flag = PER_invest_in_hospital_of_mashhad_flag
+					set_variable = { hospital_goal = hospital_level }
+					add_to_variable = { hospital_goal = 1 }
+				}
 			}
 		}
 	}
@@ -6241,7 +6254,10 @@ country_event = {
 						modifier = {
 							factor = 0
 							OR = {
-								416 = { infrastructure > 5 }
+								AND = {
+									416 = { infrastructure > 4 }
+									416 = { hospital > 4 }
+								}
 								has_country_flag = PER_invest_flag
 							}
 						}
