@@ -1,0 +1,85 @@
+#	THIS FILE IS FOR on_actions SPECIFICALLY FOR THE chinese TAGs
+
+on_actions = {
+	
+	on_daily = {
+		effect = {
+			if = { # ??
+				limit = { has_country_flag = chinese_integration_of_province_flag }
+				set_variable = { china_integration_of_province_time = 120 }
+				
+				set_temp_variable = { multiplier = 1 }
+				add_to_temp_variable = { multiplier = modifier@china_integration_of_province_time_modifier }
+				multiply_variable = { china_integration_of_province_time = multiplier }
+			}
+		}
+	}
+	
+	# ROOT is new controller, FROM is old controller, FROM.FROM is state ID. 
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = { is_in_array = { global.chinese_state = FROM.FROM } }
+				for_loop_effect = {
+					start = FROM.FROM.china_left_border
+					end = FROM.FROM.china_right_border
+					value = v
+					
+					add_to_array = { check_state = global.chinese_state^v }
+				}
+				if = {
+					limit = {
+						any_of = { #переделать под scope ?
+							array = check_state
+							value = state
+							
+							var:state = { NOT = { is_controlled_by = FROM } }
+						}
+					}
+					FROM = {
+						meta_effect = {
+							text = {
+								remove_targeted_decision = { target = [STATE] decision = china_integrate_province }
+								if = {
+									limit = { is_in_array = { chinese_integrate_province_state_map = [STATE] } }
+									remove_from_array = { chinese_integrate_province_state_map = [STATE] }
+								}
+							}
+							STATE = "[?FROM.FROM.china_capital_of_province]"
+						}
+					}
+				}
+				if = {
+					limit = {
+						any_of = {
+							array = check_state
+							value = state
+							
+							var:state = { NOT = { is_core_of = ROOT } }
+						}
+						all_of = {
+							array = check_state
+							value = state
+							
+							var:state = { is_controlled_by = ROOT }
+						}
+					}
+					ROOT = {
+						meta_effect = {
+							text = {
+								activate_targeted_decision = { target = [STATE] decision = china_integrate_province } 
+								if = {
+									limit = { NOT = { is_in_array = { chinese_integrate_province_state_map = [STATE] } } }
+									add_to_array = { chinese_integrate_province_state_map = [STATE] }
+								}
+							}
+							STATE = "[?FROM.FROM.china_capital_of_province]" 
+						}
+					}
+				}
+				clear_array = check_state
+				log = "[GetDateText] [FROM.FROM.GetName] [FROM.FROM.GetID]: check china_integrate_province decision trigger (ROOT: [ROOT.GetTag] FROM: [FROM.GetTag])"
+			}
+		}
+	}
+}

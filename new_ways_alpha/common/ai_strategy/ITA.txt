@@ -420,8 +420,8 @@ ITA_naval_role_ratios_historical = {
 ITA_please_help_me_buget_this_my_country_is_dieing = {
 	allowed = { original_tag = ITA }
 	enable = {
-		has_government = fascism
 		date < 1937.6.1
+		NOT = { has_tech = universal_factory_tech }
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = { type = building_target		id = industrial_complex		value = 35 }
@@ -429,9 +429,9 @@ ITA_please_help_me_buget_this_my_country_is_dieing = {
 NW_ITA_wants_civ = {
 	allowed = { original_tag = ITA }
 	enable = {
-		has_government = fascism
 		date < 1938.1.1
 		has_war = no
+		NOT = { has_tech = universal_factory_tech }
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = { type = building_target	id = industrial_complex	value = 50	}
@@ -439,13 +439,12 @@ NW_ITA_wants_civ = {
 NW_ITA_wants_arms_factory = {
 	allowed = { original_tag = ITA }
 	enable = {
-		has_government = fascism
-		has_war = no
 		has_built = { type = industrial_complex value > 49 }
-		num_of_military_factories < 100
+		num_of_military_factories < 125
+		NOT = { has_tech = universal_factory_tech }
 	}
 	abort_when_not_enabled = yes
-	ai_strategy = { type = building_target	id = arms_factory	value = 100	}
+	ai_strategy = { type = building_target	id = arms_factory	value = 125	}
 }
 
 ###################################
@@ -469,17 +468,17 @@ ITA_we_must_crash_ethiopia = {
 		}
 	}
 
-	ai_strategy = { type = equipment_production_factor id = infantry					value = 1700 }
-	ai_strategy = { type = equipment_variant_production_factor id = infantry_equipment	value = 1500 }
-	ai_strategy = { type = equipment_production_min_factories id = infantry				value = 8 }
+	ai_strategy = { type = equipment_production_factor				id = infantry				value = 1700 }
+	ai_strategy = { type = equipment_variant_production_factor		id = infantry_equipment		value = 1500 }
+	ai_strategy = { type = equipment_production_min_factories		id = infantry				value = 8 }
 	
-	ai_strategy = { type = equipment_production_factor id = support						value = 750 }
-	ai_strategy = { type = equipment_variant_production_factor id = support_equipment	value = 700 }
-	ai_strategy = { type = equipment_production_min_factories id = support				value = 6 }
+	ai_strategy = { type = equipment_production_factor				id = support				value = 750 }
+	ai_strategy = { type = equipment_variant_production_factor		id = support_equipment		value = 700 }
+	ai_strategy = { type = equipment_production_min_factories		id = support				value = 6 }
 	
-	ai_strategy = { type = equipment_production_factor id = artillery					value = 650 }
-	ai_strategy = { type = equipment_variant_production_factor id = artillery_equipment	value = 500 }
-	ai_strategy = { type = equipment_production_min_factories id = artillery			value = 3 }
+	ai_strategy = { type = equipment_production_factor				id = artillery				value = 650 }
+	ai_strategy = { type = equipment_variant_production_factor		id = artillery_equipment	value = 500 }
+	ai_strategy = { type = equipment_production_min_factories		id = artillery				value = 3 }
 }
 
 ITA_stockpile_less_early_game = {
@@ -628,6 +627,7 @@ ITA_actually_produce_armor_2 = {
 	ai_strategy = { type = template_prio						id = light_sp_artillery_brigade		value = 125 }
 	ai_strategy = { type = unit_ratio							id = armor							value = 35 }
 	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 10 }
+	ai_strategy = { type = build_army							id = artillery_armor				value = 20 }
 }
 
 # С 1941 года - ПТ-САУ
@@ -650,6 +650,7 @@ ITA_actually_produce_armor_3 = {
 	ai_strategy = { type = template_prio						id = light_tank_destroyer_brigade	value = 125 }
 	ai_strategy = { type = unit_ratio							id = armor							value = 40 }
 	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 10 }
+	ai_strategy = { type = build_army							id = armor_tank_destroyer			value = 12 }
 }
 
 # С 1943 года - средние танки, замещая постепенно лёгкие танки
@@ -674,7 +675,9 @@ ITA_time_to_leave_light_tanks = {
 	ai_strategy = { type = template_prio						id = medium_armor					value = 150 }
 	ai_strategy = { type = unit_ratio							id = armor							value = 50 }
 	ai_strategy = { type = role_ratio							id = medium_armor_role				value = 20 }
+	ai_strategy = { type = role_ratio							id = light_armor_role				value = -100 }
 	ai_strategy = { type = build_army							id = medium_armor					value = 24 }
+	ai_strategy = { type = role_ratio							id = light_armor_role				value = -100 }
 }
 
 
@@ -750,6 +753,64 @@ albania_war_goal = {
 	}		
 }
 
+
+NOT_want_to_invade_POL_FRA_ENG_with_GER = {
+	allowed = {
+		original_tag = ITA
+		is_historical_focus_on = yes
+	}
+	enable = {
+		OR = {
+			date < 1940.6.10
+			FRA = { surrender_progress < 0.6 }
+			GER = {
+				controls_state = 1165
+				controls_state = 1062
+				controls_state = 1036
+				controls_state = 17
+			}
+		}
+		is_in_faction_with = GER
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = POL
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = DNZ
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = ENG
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = GER
+		target_country = FRA
+		value = 500
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = GER
+		value = -1000
+		target = call_allies
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = GER
+		value = -1000
+		target = join_allies
+	}
+}
+
 greece_war_goal = {
 	allowed = {
 		original_tag = ITA
@@ -766,18 +827,51 @@ greece_war_goal = {
 	
 	ai_strategy = {
 		type = antagonize
-		id = "GRE"			
+		id = "GRE"
 		value = 1000
 	}	
 	ai_strategy = {
 		type = conquer
-		id = "GRE"			
+		id = "GRE"
+		value = 1000
+	}
+	ai_strategy = {
+		type = declare_war
+		id = "GRE"
+		value = 1000
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = "GRE"
+		target = declare_war
 		value = 1000
 	}
 	ai_strategy = {
 		type = invade
 		id = "GRE"
-		value = 10
+		value = 150
+	}
+	ai_strategy = {
+		type = naval_invasion_focus
+		value = 150
+	}
+	ai_strategy = {
+		type = front_control
+		strategic_region = 25	# Греция
+		ratio = 0.60
+		priority = 150
+		ordertype = invasion
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		tag = GRE
+
+		ratio = 0.5
+		priority = 150
+		ordertype = front
+		execution_type = careful
+		execute_order = yes
 	}
 }
 
@@ -1959,11 +2053,6 @@ ITA_start_pp_spend_amount = {
 		type = pp_spend_amount
 		id = decision
 		value = 50
-	}
-	ai_strategy = {
-		type = pp_spend_priority
-		id = relation
-		value = -9999
 	}
 	ai_strategy = {
 		type = pp_spend_priority

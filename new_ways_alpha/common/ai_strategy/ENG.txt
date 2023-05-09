@@ -55,7 +55,7 @@ ENG_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = cavalry_role
-		value = 0
+		value = -100
 	}
 
 	ai_strategy = {
@@ -550,7 +550,6 @@ eng_build_kgv_battleships = {
 ENG_in_for_the_long_haul_bruv = {
 	allowed = { original_tag = ENG }
 	enable = {
-		has_government = democratic
 		date < 1937.10.1
 		has_war = no
 	}
@@ -563,6 +562,23 @@ ENG_in_for_the_long_haul_bruv = {
 	ai_strategy = {
 		type = air_factory_balance
 		value = 20
+	}
+}
+
+ENG_we_need_weapons = {
+	allowed = { original_tag = ENG }
+	enable = {
+		OR = {
+			date > 1938.1.1
+			threat > 0.75
+			has_war = yes
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = arms_factory
+		value = 125
 	}
 }
 
@@ -705,6 +721,7 @@ ENG_start_produce_armor = {
 	ai_strategy = { type = role_ratio							id = armor					value = 20 }
 	ai_strategy = { type = role_ratio							id = medium_armor_role		value = 10 }
 	ai_strategy = { type = build_army							id = armor					value = 24 }
+	ai_strategy = { type = build_army							id = medium_armor_role		value = 12 }
 }
 
 ENG_super_boost_armor_div = { #lets make sure the uk upgrades rtr to divs
@@ -799,8 +816,10 @@ ENG_actually_produce_armor_1 = {
 	ai_strategy = { type = unit_ratio							id = armor							value = 40 }
 	ai_strategy = { type = role_ratio							id = heavy_armor_role				value = 20 }
 	ai_strategy = { type = role_ratio							id = light_anti_air_role			value = 10 }
+	ai_strategy = { type = role_ratio							id = light_armor_role				value = -200 }
 	ai_strategy = { type = build_army							id = heavy_armor					value = 20 }
 	ai_strategy = { type = build_army							id = light_anti_air_role			value = 14 }
+	ai_strategy = { type = build_army							id = light_armor_role				value = -200 }
 }
 ENG_super_boost_heavy_armor = {
 	allowed = { original_tag = ENG }
@@ -892,7 +911,8 @@ ENG_actually_produce_armor_2 = {
 	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 5 }
 	ai_strategy = { type = role_ratio							id = medium_artillery_armor_role	value = 10 }
 	ai_strategy = { type = role_ratio							id = medium_tank_destroyer_role		value = 10 }
-	ai_strategy = { type = build_army							id = armor							value = 50 }
+	ai_strategy = { type = build_army							id = artillery_armor				value = 50 }
+	ai_strategy = { type = build_army							id = armor_tank_destroyer			value = 50 }
 }
 ENG_super_boost_medium_artillery_armor = {
 	allowed = { original_tag = ENG }
@@ -975,14 +995,75 @@ ENG_super_boost_light_tank_destroyer = {
 #####################
 
 
+ENG_dont_protect_ROM_against_soviet = {
+	allowed = { OR = { original_tag = ENG original_tag = FRA } }
+	enable = {
+		country_exists = ROM
+		SOV = {
+			is_left_ideology = no
+		}
+		OR = {
+			has_government = democratic
+			has_government = neutrality
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = support
+		id = "ROM"
+		value = -200
+	}
+	ai_strategy = {
+		type = alliance
+		id = "ROM"
+		value = -200
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = ROM
+		target = guarantee
+		value = -200
+	}
+}
+ENG_dont_protect_NOR_against_soviet = {
+	allowed = { OR = { original_tag = ENG original_tag = FRA } }
+	enable = {
+		country_exists = NOR
+		OR = {
+			has_government = democratic
+			has_government = neutrality
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = support
+		id = "NOR"
+		value = -200
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "NOR"
+		value = 500
+	}
+}
+
 protect_poland_against_germany = {
-	allowed = { original_tag = ENG }
+	allowed = { OR = { original_tag = ENG original_tag = FRA } }
 	enable = {
 		GER = {
 			has_completed_focus = GER_end_of_czechoslovakia
 			NOT = { has_war_with = POL }
 		}
 		country_exists = POL
+		POL = {
+			is_left_ideology = no
+		}
+		OR = {
+			has_government = democratic
+			has_government = neutrality
+		}
 	}
 	abort = {
 		OR = {
@@ -992,74 +1073,27 @@ protect_poland_against_germany = {
 	}
 
 	ai_strategy = {
-		type = protect
+		type = support
 		id = "POL"
 		value = 200
 	}
 	ai_strategy = {
 		type = alliance
 		id = "POL"
-		value = 200
+		value = -200
 	}
 	ai_strategy = {
 		type = diplo_action_desire
 		id = POL
 		target = guarantee
-		value = 20
+		value = 200
+	}
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "POL"
+		value = 500
 	}
 }
-
-protect_poland_against_germany_even_more = {
-	allowed = { original_tag = ENG }
-	enable = {
-		GER = {
-			has_completed_focus = GER_end_of_czechoslovakia
-			NOT = { has_war_with = POL }
-		}
-		country_exists = POL
-	}
-	abort = {
-		NOT = { country_exists = POL }
-	}
-
-	ai_strategy = {
-		type = protect
-		id = "POL"
-		value = 200
-	}
-	ai_strategy = {
-		type = alliance
-		id = "POL"
-		value = 200
-	}
-}
-
-defend_poland_against_germany = {
-	allowed = { original_tag = ENG }
-	enable = {
-		GER = { has_war_with = POL }
-		country_exists = POL
-	}
-	abort = {
-		OR = {
-			NOT = { country_exists = POL }
-			has_war_with = POL
-		}
-	}
-
-	ai_strategy = {
-		type = befriend
-		id = "POL"
-		value = 200
-	}
-	ai_strategy = {
-		type = alliance
-		id = "POL"
-		value = 200
-	}
-}
-
-
 
 # lets make sure the allies dont overcommit to invasions early on
 careful_with_early_invasions = {
@@ -1126,6 +1160,27 @@ careful_with_early_invasions = {
 }
 
 east_prussia_invasion_is_death_trap = {
+	allowed = {
+		OR = {
+			original_tag = FRA
+			original_tag = ENG
+			original_tag = CAN
+			original_tag = AST
+			original_tag = SAF
+			original_tag = NZL
+			original_tag = RAJ
+			original_tag = SRL
+			original_tag = MAL
+			original_tag = NFL
+			original_tag = ZIM
+			original_tag = OMA
+			original_tag = USA
+			
+			original_tag = NEP
+			original_tag = NOR
+			is_subject_of = ENG		#достаточно чекнуть единожды
+		}
+	}
 	enable = {
 		OR = {
 			is_in_faction_with = ENG # anyone in allies
@@ -1236,6 +1291,42 @@ ENG_trying_to_save_benelux_is_deathtrap = {
 		area = europe
 		subtract_invasions_from_need = no
 		subtract_fronts_from_need = yes
+	}
+}
+
+ENG_trying_to_save_spain_is_deathtrap = {
+	allowed = {
+		is_historical_focus_on = yes
+		OR = {
+			original_tag = ENG
+			original_tag = CAN
+			original_tag = AST
+			original_tag = SAF
+			original_tag = NZL
+			original_tag = RAJ
+			original_tag = SRL
+			original_tag = MAL
+			original_tag = NFL
+			original_tag = ZIM
+			original_tag = OMA
+			original_tag = USA
+			
+			original_tag = NEP
+			original_tag = NOR
+			is_subject_of = ENG		#достаточно чекнуть единожды
+		}
+	}
+	enable = {
+		has_war_with = GER
+	}
+	abort = {
+		SPR = { is_ai = no }
+	}
+
+	ai_strategy = {
+		type = dont_defend_ally_borders
+		id = "SPR"
+		value = 700
 	}
 }
 

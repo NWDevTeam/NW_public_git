@@ -201,25 +201,25 @@ country_event = {
 
 # Dominican civil war events
 #Hidden dispatch event
-country_event = {
-    id = dominican.7
+#country_event = {
+#    id = dominican.7
+#
+#	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.7" }
+#	
+#   is_triggered_only = yes
+#
+#    hidden = yes
+#
+#    immediate = {
+#        random_list = {
+#            20 = { country_event = { id = dominican.8 days = 50 random_days = 30 } } #neutrality
+#            20 = { country_event = { id = dominican.9 days = 50 random_days = 30 } } #democratic
+#            20 = { country_event = { id = dominican.10 days = 50 random_days = 30 } } #communism
+#        }
+#    }
+#}
 
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.7" }
-	
-    is_triggered_only = yes
-
-    hidden = yes
-
-    immediate = {
-        random_list = {
-            20 = { country_event = { id = dominican.8 days = 50 random_days = 30 } } #neutrality
-            20 = { country_event = { id = dominican.9 days = 50 random_days = 30 } } #democratic
-            20 = { country_event = { id = dominican.10 days = 50 random_days = 30 } } #communism
-        }
-    }
-}
-
-###########Гражданская война нейтралитет##########
+###########Универсальный ивент на гражданку, епта##########
 
 country_event = {
 	id = dominican.8
@@ -243,10 +243,39 @@ country_event = {
 		name = dominican.8.a
 		ai_chance = { factor = 80 }
 		add_political_power = -50
-		DOM = {
-			start_civil_war = { ideology = neutrality size = 0.5 }
-			add_popularity = { ideology = neutrality popularity = 0.1 }
+		if = {
+			limit = {
+				has_completed_focus = DOM_liberty_ethos
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.5
+			}
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = yes
+				last_election = "1936.12.17"
+				election_frequency = 48
+			}
 		}
+		if = {
+			limit = {
+				has_completed_focus = DOM_internationalism_focus
+			}
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.5
+			}
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = yes
+				last_election = "1936.12.17"
+				election_frequency = 48
+			}
+		}
+		set_province_name = { id = 7660 name = "VICTORY_POINTS_7660_original"}
+		319 = { set_state_name = "VICTORY_POINTS_7660_original"}
+		start_civil_war = { ideology = fascism size = 0.5 states = { 870 } complete_national_focus = DOM_cult_Truhilio }
 			
 		hidden_effect = {
 			if = {
@@ -256,75 +285,13 @@ country_event = {
 			random_other_country = {
 				limit = {
 					original_tag = DOM
-					has_government = neutrality
+					has_government = fascism
 				}
 				if = { 
 					limit = { has_army_manpower = { size < 2001 } }
 					load_oob = "DOM_Civil_War2"
 				}
 			}
-		}
-	}
-}
-	
-###########Гражданская война демократия##########
-
-country_event = {
-	id = dominican.9
-	title = dominican.9.t
-	desc = dominican.9.d
-	picture = GFX_report_event_soldiers
-	
-	is_triggered_only = yes
-	
-	trigger = {
-		has_idea = DOM_fight_for_vlast
-		has_civil_war = no
-	}
-	immediate = {
-		set_country_flag = dominican.9_fired
-	}
-	
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.1" }
-	
-	option = {
-		name = dominican.9.a
-		ai_chance = { factor = 80 }
-		add_political_power = -20
-		DOM = {
-			start_civil_war = { ideology = democratic size = 0.50 }
-			add_popularity = { ideology = democratic popularity = 0.1 }
-			load_oob = "DOM_Civil_War"
-		}
-	}
-}
-	
-###########Гражданская война коммунизм##########
-
-country_event = {
-	id = dominican.10
-	title = dominican.10.t
-	desc = dominican.10.d
-	picture = GFX_report_event_soldiers
-	
-	is_triggered_only = yes
-	
-	trigger = {
-		has_idea = DOM_fight_for_vlast
-	}
-	immediate = {
-		set_country_flag = dominican.10_fired
-	}
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.10" }
-	
-	option = {
-		name = dominican.10.a
-		ai_chance = { factor = 80 }
-		add_political_power = -20
-		DOM = {
-			start_civil_war = { ideology = communism size = 0.50 }
-			add_popularity = { ideology = communism popularity = 0.1 }
-			load_oob = "DOM_Civil_War"
 		}
 	}
 }
@@ -785,14 +752,19 @@ country_event = {
 	
 	trigger = {
 		tag = DOM
-		has_government = fascism
 		has_start_date < 1936.01.02
-		GER = { owns_state = 4 }
+		GER = { owns_state = 4 has_government = fascism }
 	}
 
 	option = {
 		name = dominican.30.a
 		319 = { add_manpower = 100000 }
+		if = {
+			limit = {
+				DOM = { is_in_faction_with = GER }
+			}
+			GER = { country_event = { id = dominican.31 days = 1 } }
+		}
 	}
 	
 	option = {
@@ -801,4 +773,78 @@ country_event = {
 	}
 }
 
+country_event = { # Рейх получает весть
+	id = dominican.31
+	title = dominican.31.t
+	desc = dominican.31.d
+	picture = GFX_report_event_finnish_letter
 
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.31" }
+
+	is_triggered_only = yes
+
+	option = {
+		name = dominican.31.a
+		DOM = { country_event = { id = dominican.32 days = 1 } }
+	}
+	
+	option = {
+		name = dominican.31.b
+		add_political_power = -100
+	}
+}
+
+country_event = { # Рейх требует выслать juden
+	id = dominican.32
+	title = dominican.32.t
+	desc = dominican.32.d
+	picture = GFX_report_event_finnish_letter
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.32" }
+
+	is_triggered_only = yes
+
+	option = {
+		name = dominican.32.a
+		319 = { add_manpower = -89000 }
+		add_stability = -0.05
+		GER = { country_event = { id = dominican.33 days = 1 } }
+	}
+	
+	option = {
+		name = dominican.32.b
+		custom_effect_tooltip = DOM_can_cause_negative_tt
+		GER = { country_event = { id = dominican.34 days = 1 } }
+	}
+}
+
+country_event = { # Доминикана выслала
+	id = dominican.33
+	title = dominican.33.t
+	desc = dominican.33.d
+	picture = GFX_report_event_finnish_letter
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.32" }
+
+	is_triggered_only = yes
+
+	option = {
+		name = dominican.33.a
+	}
+}
+
+country_event = { # Доминикана отказывается
+	id = dominican.34
+	title = dominican.34.t
+	desc = dominican.34.d
+	picture = GFX_report_event_finnish_letter
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event dominican.32" }
+
+	is_triggered_only = yes
+
+	option = {
+		name = dominican.34.a
+		remove_from_faction = DOM
+	}
+}

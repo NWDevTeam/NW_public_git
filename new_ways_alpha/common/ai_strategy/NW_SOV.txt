@@ -150,10 +150,12 @@ SOV_stop_infantry_army = {
 		}
 	}
 	abort_when_not_enabled = yes
-	ai_strategy = { type = build_army id = infantry		value = -500 }
-	ai_strategy = { type = build_army id = motorized	value = 100 }
-	ai_strategy = { type = build_army id = armored_car	value = 100 }
-	ai_strategy = { type = build_army id = armor		value = 500 }
+	ai_strategy = { type = build_army id = infantry				value = -500 }
+	ai_strategy = { type = build_army id = motorized			value = 100 }
+	ai_strategy = { type = build_army id = armored_car			value = 100 }
+	ai_strategy = { type = build_army id = armor				value = 100 }
+	ai_strategy = { type = build_army id = medium_armor_role	value = 100 }
+	ai_strategy = { type = build_army id = heavy_armor_role		value = 100 }
 }
 
 SOV_boost_light_armor_template = {
@@ -275,7 +277,7 @@ SOV_higher_armor_tank_production = {
 	}
 	ai_strategy = {
 		type = role_ratio
-		id = armor
+		id = medium_armor_role
 		value = 20
 	}
 	ai_strategy = {
@@ -308,7 +310,9 @@ SOV_start_produce_light_tank_destroyer_armor = {
 	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 5 }
 	ai_strategy = { type = build_army							id = light_tank_destroyer_role		value = 24 }
 	ai_strategy = { type = build_army							id = light_artillery_armor_role		value = 10 }
+	ai_strategy = { type = build_army							id = light_armor_role				value = -50 }
 	ai_strategy = { type = role_ratio							id = infantry						value = -10 }
+	ai_strategy = { type = role_ratio							id = light_armor_role				value = -50 }
 }
 SOV_super_boost_light_tank_destroyer_armor = {
 	allowed = { original_tag = SOV }
@@ -377,9 +381,9 @@ NW_SOV_wardec_GER = {
 	}
 	
 	ai_strategy = { type = garrison value = -100 }
-	ai_strategy = { type = prepare_for_war value = 150 }
-	ai_strategy = { type = conquer id = "SOV" value = 500 }
-	ai_strategy = { type = antagonize id = "SOV" value = 500 }
+	ai_strategy = { type = prepare_for_war id = GER value = 200 }
+	ai_strategy = { type = conquer id = "GER" value = 500 }
+	ai_strategy = { type = antagonize id = "GER" value = 500 }
 	ai_strategy = {
 		type = front_unit_request
 		country_trigger = {
@@ -454,7 +458,7 @@ SOV_historical_ignore_germany = {
     }
 	ai_strategy = {
 		type = ignore
-		id = "GER"			
+		id = "GER"
 		value = 100
 	}
 }
@@ -500,12 +504,12 @@ SOV_dont_be_dumbass_and_dow_germany = {
 	}
 	ai_strategy = {
 		type = declare_war
-		id = "GER"			
+		id = "GER"
 		value = -2000 
 	}
 	ai_strategy = {
 		type = ignore
-		id = "GER"			
+		id = "GER"
 		value = 100
 	}	
 }
@@ -524,11 +528,34 @@ NW_historical_ignore_POL = {
 
 	ai_strategy = {
 		type = ignore
-		id = "POL"			
+		id = "POL"
 		value = 1000
 	}	
 }
 
+NW_SOV_want_to_invade_POL_without_ally = {
+	allowed = {
+		original_tag = SOV
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_war_with = POL 
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = diplo_action_desire
+		id = TAN
+		value = -1000
+		target = call_allies
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = MON
+		value = -1000
+		target = call_allies
+	}
+}
 NW_MON_historical_ignore_POL = {
 	allowed = {
 		original_tag = MON
@@ -543,7 +570,7 @@ NW_MON_historical_ignore_POL = {
 
 	ai_strategy = {
 		type = ignore
-		id = "POL"			
+		id = "POL"
 		value = 1000
 	}
 	ai_strategy = {
@@ -551,6 +578,12 @@ NW_MON_historical_ignore_POL = {
 		id = SOV
 		value = 1000
 		target_country = POL
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = SOV
+		value = -1000
+		target = join_allies
 	}
 }
 NW_TAN_historical_ignore_POL = {
@@ -567,7 +600,7 @@ NW_TAN_historical_ignore_POL = {
 
 	ai_strategy = {
 		type = ignore
-		id = "POL"			
+		id = "POL"
 		value = 1000
 	}
 	ai_strategy = {
@@ -575,6 +608,12 @@ NW_TAN_historical_ignore_POL = {
 		id = SOV
 		value = 1000
 		target_country = POL
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = SOV
+		value = -1000
+		target = join_allies
 	}
 }
 
@@ -601,28 +640,53 @@ NW_historical_ignore_FIN2 = {
 
 	ai_strategy = {
 		type = ignore
-		id = "FIN"			
+		id = "FIN"
 		value = 5000
 	}	
 	ai_strategy = {
 		type = ignore_claim
-		id = "FIN"			
+		id = "FIN"
 		value = 5000
 	}
 	ai_strategy = {
 		type = antagonize
-		id = "FIN"			
+		id = "FIN"
 		value = -5000
 	}
 	ai_strategy = {
 		type = ignore
-		id = "SWE"			
+		id = "SWE"
 		value = 5000
 	}
 	ai_strategy = {
 		type = ignore
-		id = "NOR"			
+		id = "NOR"
 		value = 5000
+	}
+}
+
+NW_SOV_want_to_invade_FIN_without_ally = {
+	allowed = {
+		original_tag = SOV
+		is_historical_focus_on = yes
+	}
+	enable = {
+		has_war_with = FIN
+		has_country_flag = soviet_finland_war_flag
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = diplo_action_desire
+		id = TAN
+		value = -1000
+		target = call_allies
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = MON
+		value = -1000
+		target = call_allies
 	}
 }
 
@@ -643,7 +707,7 @@ NW_MON_historical_ignore_FIN = {
 
 	ai_strategy = {
 		type = ignore
-		id = "FIN"			
+		id = "FIN"
 		value = 1000
 	}
 	ai_strategy = {
@@ -651,6 +715,12 @@ NW_MON_historical_ignore_FIN = {
 		id = SOV
 		value = 1000
 		target_country = FIN
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = SOV
+		value = -1000
+		target = join_allies
 	}
 }
 NW_TAN_historical_ignore_FIN = {
@@ -670,7 +740,7 @@ NW_TAN_historical_ignore_FIN = {
 
 	ai_strategy = {
 		type = ignore
-		id = "FIN"			
+		id = "FIN"
 		value = 1000
 	}
 	ai_strategy = {
@@ -678,6 +748,12 @@ NW_TAN_historical_ignore_FIN = {
 		id = SOV
 		value = 1000
 		target_country = FIN
+	}
+	ai_strategy = {
+		type = diplo_action_acceptance
+		id = SOV
+		value = -1000
+		target = join_allies
 	}
 }
 
@@ -1734,12 +1810,17 @@ SOV_lategame_tanks_more_useful_now = {
 	ai_strategy = {
 		type = build_army
 		id = armor
+		value = 10
+	}
+	ai_strategy = {
+		type = build_army
+		id = medium_armor_role
 		value = 100
 	}
 	ai_strategy = {
 		type = build_army
-		id = medium_armor
-		value = 100
+		id = heavy_armor_role
+		value = 50
 	}
 	ai_strategy = {	#tanks can kill tanks too!
 		type = role_ratio
@@ -1758,8 +1839,13 @@ SOV_lategame_tanks_more_useful_now = {
 	}
 	ai_strategy = {
 		type = role_ratio
-		id = armor
-		value = 30	#80
+		id = medium_armor_role
+		value = 30
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = heavy_armor_role
+		value = 15
 	}
 	ai_strategy = {
 		type = equipment_variant_production_factor

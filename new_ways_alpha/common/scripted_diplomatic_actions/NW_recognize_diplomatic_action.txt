@@ -1,0 +1,115 @@
+scripted_diplomatic_actions = {
+	
+	recognize_unrecognized_state = {
+		icon = 25
+		allowed = {		#The country making the diplomatic request
+			always = yes
+		}
+		visible = {		#The target country
+			ROOT = {
+				has_relation_modifier = {
+					target = PREV
+					modifier = unrecognized_state_static_modifier
+				}
+			}
+		}
+		selectable = {
+			NOT = { has_war_with = THIS }
+		}
+		can_be_accepted = {
+			always = yes
+		}
+		can_be_sent = {
+			always = yes
+		}
+
+		accept_title = recognize_unrecognized_state_INITIATED_TITLE
+		accept_description = recognize_unrecognized_state_INITIATED_DESC
+		
+		cost = 10
+
+		requires_acceptance = no
+
+		on_sent_effect = {}
+		complete_effect = {
+			hidden_effect = {
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): scripted diplomatic actions RECOGNIZE STATE from [This.GetName] ([This.GetTag])"
+			}
+			ROOT = {
+				remove_relation_modifier = {
+					target = PREV
+					modifier = unrecognized_state_static_modifier
+				}
+				remove_opinion_modifier = { target = PREV modifier = unrecognized_state_rel }
+				remove_opinion_modifier = { target = PREV modifier = unrecognized_state_embargo }
+			}
+			remove_opinion_modifier = { target = ROOT modifier = unrecognized_state_embargo }
+		}
+		ai_desire = { #?
+			base = 25
+			modifier = {
+				add = 150
+				is_owner_neighbor_of = ROOT
+			}
+			modifier = {
+				add = 5
+				ROOT = {
+					has_opinion = {
+						target = PREV
+						value > -80
+					}
+				}
+			}
+			modifier = {
+				add = 5
+				ROOT = {
+					has_opinion = {
+						target = PREV
+						value > -60
+					}
+				}
+			}
+			modifier = {
+				add = 5
+				ROOT = {
+					has_opinion = {
+						target = PREV
+						value > -30
+					}
+				}
+			}
+			modifier = {
+				add = 15
+				ROOT = {
+					has_opinion = {
+						target = PREV
+						value > 10
+					}
+				}
+			}
+			modifier = {
+				add = 50
+				any_other_country = {
+					has_war_with = ROOT
+					has_war_with = THIS
+				}
+			}
+			modifier = {
+				add = -50
+				is_in_array = { ROOT.potential_and_current_enemies = THIS.id }
+			}
+			modifier = {
+				add = -100
+				has_country_flag = block_AI_recognize_state
+			}
+			modifier = {
+				add = 200
+				OR = {
+					is_in_faction_with = ROOT
+					is_subject_of = ROOT
+					ROOT = { is_subject_of = PREV }
+				}
+			}
+		}
+	}
+}

@@ -696,6 +696,26 @@ GER_wants_arms_factory_for_land_cruisers = {
 	ai_strategy = { type = building_target		id = arms_factory		value = 300 }
 }
 
+GER_wants_naval_base_for_weserubung = {
+	allowed = { original_tag = GER }
+	enable = {
+		has_completed_focus = GER_mol_rib_pact
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = build_building
+		id = naval_base
+		target = 807
+		value = 10
+	}
+	ai_strategy = {
+		type = build_building
+		id = naval_base
+		target = 56
+		value = 10
+	}
+}
+
 ######## END CONSRTUCTIONS ########
 
 
@@ -1342,7 +1362,9 @@ GER_start_produce_light_artillery_armor = {
 	ai_strategy = { type = unit_ratio							id = armor							value = 10 }
 	ai_strategy = { type = role_ratio							id = light_artillery_armor_role		value = 10 }
 	ai_strategy = { type = build_army							id = light_artillery_armor_role		value = 14 }
+	ai_strategy = { type = build_army							id = light_armor_role				value = -200 }
 	ai_strategy = { type = role_ratio							id = infantry						value = -5 }
+	ai_strategy = { type = role_ratio							id = light_armor_role				value = -200 }
 }
 GER_super_boost_light_artillery_armor = {
 	allowed = { original_tag = GER }
@@ -1948,12 +1970,12 @@ norway_ally = {
 	
 	ai_strategy = {
 		type = befriend
-		id = "NOR"			
+		id = "NOR"
 		value = 100
 	}
 	ai_strategy = {
 		type = alliance
-		id = "NOR"			
+		id = "NOR"
 		value = 100
 	}	
 }
@@ -2430,8 +2452,8 @@ war_with_poland = {
 	}
 	ai_strategy = {
 		type = diplo_action_desire
-		id = "POL"		
-		target = declare_war		
+		id = "POL"
+		target = declare_war
 		value = 5000
 	}
 }
@@ -2480,7 +2502,7 @@ danzig_of_war_preparation = {
 	}
 }
 
-GER_want_to_invade_POL_without_HUN_ROM = {
+GER_want_to_invade_POL_without_HUN_ROM_ITA = {
 	allowed = {
 		original_tag = GER
 		is_historical_focus_on = yes
@@ -2489,6 +2511,10 @@ GER_want_to_invade_POL_without_HUN_ROM = {
 		date < 1940.1.1
 		POL = {
 			is_ai = yes
+		}
+		OR = {
+			has_war_with = DNZ
+			has_war_with = POL
 		}
 	}
 	abort_when_not_enabled = yes
@@ -2505,6 +2531,12 @@ GER_want_to_invade_POL_without_HUN_ROM = {
 		value = 500
 	}
 	ai_strategy = {
+		type = diplo_action_desire
+		id = HUN
+		value = -1000
+		target = call_allies
+	}
+	ai_strategy = {
 		type = dont_join_wars_with
 		id = ROM
 		target_country = POL
@@ -2515,6 +2547,30 @@ GER_want_to_invade_POL_without_HUN_ROM = {
 		id = ROM
 		target_country = DNZ
 		value = 500
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = ROM
+		value = -1000
+		target = call_allies
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = ITA
+		target_country = POL
+		value = 500
+	}
+	ai_strategy = {
+		type = dont_join_wars_with
+		id = ITA
+		target_country = DNZ
+		value = 500
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = ITA
+		value = -1000
+		target = call_allies
 	}
 }
 
@@ -2593,6 +2649,35 @@ NW_rush_poland = {
 	}
 }
 
+NW_GER_historical_ignore_FRA = {
+	allowed = { original_tag = GER is_historical_focus_on = yes }
+	enable = {
+		country_exists = POL
+		country_exists = FRA
+		has_war_with = POL
+		has_war_with = FRA
+		FRA = { is_ai = yes }
+		ENG = { is_ai = yes }
+	}
+	abort = {
+		OR = {
+			POL = { has_capitulated = yes }
+			POL = { exists = no }
+			POL = { is_puppet = yes }
+			is_in_faction_with = POL
+			NOT = { controls_state = 809 }
+			NOT = { controls_state = 835 }
+			NOT = { controls_state = 832 }
+		}
+	}
+	
+	ai_strategy = {
+		type = ignore
+		id = "FRA"
+		value = 500
+	}
+}
+
 
 make_sure_poland_is_ganked_before_we_move_1 = {
 	allowed = { original_tag = GER }
@@ -2606,7 +2691,7 @@ make_sure_poland_is_ganked_before_we_move_1 = {
 			}
 		}
 		OR = {
-			date < 1940.3.1
+			date < 1940.2.1
 			POL = {
 				has_capitulated = no
 				exists = yes
@@ -2626,7 +2711,7 @@ make_sure_poland_is_ganked_before_we_move_1 = {
 
 	ai_strategy = {
 		type = declare_war
-		id = "NOR"			
+		id = "NOR"
 		value = -2000 
 	}
 	ai_strategy = {
@@ -2913,19 +2998,187 @@ GER_enable_invasion_of_NOR = {
 		}
 	}
 	enable = {
+		focus_progress = { focus = GER_weserubung progress > 0.01 }
 		# try to invade NOR if things are looking not so bad
 		OR = {
-			date < 1940.5.1
-			event_target:NW_france_scope = { has_capitulated = yes } # uh oh, maybe we need more units against FRA
+			date < 1940.6.1
+			event_target:NW_france_scope = {		# uh oh, maybe we need more units against FRA
+				OR = {
+					has_capitulated = yes
+					is_subject_of = GER
+					is_subject_of = ITA
+					is_in_faction_with = GER
+					exists = no
+				}
+			}
+		}
+	}
+	abort = {
+		OR = {
+			has_war_with = SOV
+			NOR = {
+				OR = {
+					exists = no
+					has_capitulated = yes
+					is_subject_of = GER
+					is_subject_of = ITA
+					is_in_faction_with = GER
+				}
+			}
+		}
+	}
+	
+	ai_strategy = {
+		type = prepare_for_war
+		id = "DEN"
+		value = 100
+	}
+	ai_strategy = {
+		type = prepare_for_war
+		id = "NOR"
+		value = 100
+	}
+	ai_strategy = {
+		type = invade
+		id = "NOR"
+		value = 250
+	}
+	ai_strategy = {
+		type = naval_invasion_focus
+		value = 250
+	}
+#	ai_strategy = {
+#		type = front_control
+#		strategic_region = 11	# Южная Норвегия
+#		priority = 250
+#		ordertype = invasion
+#		execute_order = yes
+#	}
+
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 110
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 110
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 142
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 142
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 143
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 143
+		}
+		priority = 250
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	
+	
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 144
+		}
+		priority = 200
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 144
+		}
+		priority = 200
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+	
+	ai_strategy = {
+		type = front_control
+		state_trigger = {
+			state = 777
+		}
+		priority = 150
+		ratio = 0.2
+		ordertype = invasion
+		execute_order = yes
+	}
+}
+
+GER_blitz_norway = {
+	allowed = {
+		original_tag = GER
+	}
+	enable = {
+		has_war_with = NOR
+		OR = {
+			divisions_in_state = { state = 110 size > 0 }
+			divisions_in_state = { state = 142 size > 0 }
+			divisions_in_state = { state = 143 size > 0 }
+			divisions_in_state = { state = 144 size > 0 }
+			divisions_in_state = { state = 777 size > 0 }
 		}
 	}
 	abort_when_not_enabled = yes
-	
+
 	ai_strategy = {
-		type = invade
-		id = "NOR"			
-		value = 150
+		type = front_control
+		tag = NOR
+		ordertype = front
+		execution_type = rush
+		execute_order = yes
 	}
+
+	ai_strategy = { type = strategic_air_importance id = 11 value = 50000 }
+	# Dont send armor
+	ai_strategy = { type = front_armor_score id = "NOR" value = -50000 }
 }
 
 # lets not invade until we have europe
@@ -3015,13 +3268,13 @@ NW_GER_ignore_LUX = {
 	ai_strategy = {
 		type = declare_war
 		id = "LUX"
-		value = -50000
+		value = -99999
 	}
 	ai_strategy = {
 		type = diplo_action_desire
 		id = "LUX"
 		target = declare_war
-		value = -50000
+		value = -99999
 	}
 	ai_strategy = {
 		type = antagonize
@@ -3031,16 +3284,16 @@ NW_GER_ignore_LUX = {
 	ai_strategy = {
 		type = conquer
 		id = "LUX"
-		value = -5000
+		value = -9999
 	}
 	ai_strategy = {
 		type = ignore
 		id = "LUX"
-		value = 500
+		value = 9999
 	}
 	ai_strategy = {
 		type = ignore_claim
-		id = "LUX"			
+		id = "LUX"
 		value = 1
 	}
 }
@@ -3082,7 +3335,7 @@ NW_GER_ignore_BEL_HOL = {	#сначала капаем Данию и Норве�
 			country_exists = HOL
 		}
 		has_war_with = event_target:NW_france_scope
-		date < 1940.3.1
+		date < 1940.5.1
 	}
 	abort = {
 		OR = {
@@ -3090,7 +3343,8 @@ NW_GER_ignore_BEL_HOL = {	#сначала капаем Данию и Норве�
 			has_war_with = BEL
 			has_war_with = HOL
 			OR = {
-				date > 1940.3.1
+				date > 1940.5.1
+				has_completed_focus = GER_around_maginot
 				AND = {
 					DEN = {
 						OR = {
@@ -3135,7 +3389,10 @@ NW_wardec_BEL = {
 	}
 	enable = {
 		has_wargoal_against = BEL
-		date > 1940.3.1
+		OR = {
+			date > 1940.5.1
+			has_completed_focus = GER_around_maginot
+		}
 	}
 	abort_when_not_enabled = yes
 
@@ -3271,7 +3528,7 @@ GER_around_the_maginot = {
 	}
 	ai_strategy = {
 		type = ignore_claim
-		id = "LUX"			
+		id = "LUX"
 		value = 1
 	}
 	ai_strategy = {
@@ -3281,12 +3538,12 @@ GER_around_the_maginot = {
 	}
 	ai_strategy = {
 		type = front_armor_score
-		id = "HOL"			
+		id = "HOL"
 		value = 100
 	}
 	ai_strategy = {
 		type = front_armor_score
-		id = "BEL"			
+		id = "BEL"
 		value = 100
 	}
 }
@@ -3433,6 +3690,15 @@ GER_let_italy_handle_french_front_alone = {
 	ai_strategy = { type = dont_defend_ally_borders id = "ITA" value = 1000 }
 }
 
+GER_let_italy_handle_africa_front_alone = {
+	allowed = { original_tag = GER }
+	enable = {
+		is_in_faction_with = AOI
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = { type = dont_defend_ally_borders id = "AOI" value = 1000 }
+}
+
 GER_want_to_invade_FRA_without_ITA = {
 	allowed = {
 		original_tag = GER
@@ -3464,6 +3730,12 @@ GER_want_to_invade_FRA_without_ITA = {
 		id = ITA
 		target_country = FRF
 		value = 500
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = ITA
+		value = -1000
+		target = call_allies
 	}
 }
 
@@ -3663,10 +3935,10 @@ NW_GER_garrison_atlantic_wall = {
 	ai_strategy = {
 		type = put_unit_buffers
 		ratio = 0.15
-		states = { 
+		states = {
 			99
 			764
-			807			
+			807
 			58
 			59
 			801
@@ -3698,6 +3970,61 @@ NW_GER_garrison_atlantic_wall = {
 		subtract_fronts_from_need = no
 	}
 }
+
+
+### КОСТЫЛЬ ДЛЯ ИСПАНИИ
+
+NW_GER_wardec_SPR = {
+	allowed = {
+		original_tag = GER
+	}
+	enable = {
+		OR = {
+			has_war_with = SPR
+			focus_progress = { focus = GER_nationalist_spain_ally progress > 0 }
+		}
+	}
+
+	ai_strategy = { type = consider_weak	id = "SPR" value = 1000 }
+	ai_strategy = { type = conquer			id = "SPR" value = 500 }
+	ai_strategy = { type = prepare_for_war	id = "SPR" value = 100 }
+
+	ai_strategy = { type = consider_weak	id = "CAT" value = 1000 }
+	ai_strategy = { type = conquer			id = "CAT" value = 500 }
+	ai_strategy = { type = prepare_for_war	id = "CAT" value = 100 }
+
+	ai_strategy = { type = consider_weak	id = "ARA" value = 1000 }
+	ai_strategy = { type = conquer			id = "ARA" value = 500 }
+	ai_strategy = { type = prepare_for_war	id = "ARA" value = 100 }
+	
+	ai_strategy = { type = strategic_air_importance id = 41 value = 50000 }
+	ai_strategy = { type = front_armor_score id = "SPR" value = 100 }
+	
+	ai_strategy = {
+		type = front_control
+		country_trigger = {
+			OR = {
+				original_tag = SPR
+				is_subject_of = SPR
+			}
+		}
+		ordertype = front
+		priority = 250
+		execution_type = rush
+		execute_order = yes
+	}
+	
+	ai_strategy = { type = invade	id = "SPR"	value = 500	}
+	ai_strategy = {
+		type = front_control
+		strategic_region = 41	# Иберия
+		ratio = 0.2
+		priority = 500
+		ordertype = invasion
+		execute_order = yes
+	}
+}
+
 
 
 
@@ -4288,7 +4615,7 @@ NW_GER_resume_light_production_1939 = {
 	enable = {
 		original_tag = GER
 		has_start_date > 1939.1.1
-		has_template_majority_unit = medium_armor	
+		has_template_majority_unit = medium_armor
 	}
 	abort = {
 		OR = {
