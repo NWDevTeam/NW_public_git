@@ -63,6 +63,11 @@ USA_unit_production = {
 		id = mobile
 		value = 10
 	}
+	ai_strategy = {
+		type = role_ratio
+		id = motorcycle
+		value = 1
+	}
 }
 
 
@@ -123,6 +128,7 @@ USA_template_design_2 = {
 	enable = {
 		date > 1940.1.1				
 	}
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = template_prio
@@ -179,133 +185,6 @@ USA_template_design_2 = {
 	}
 }
 
-USA_naval_role_ratios_historical = {
-	allowed = {
-		has_dlc = "Man the Guns"
-		original_tag = USA
-	}
-	enable = {
-		always = yes
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_capital_bb
-		value = 10
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_capital_bc
-		value = 0
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_carrier
-		value = 25
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_submarine
-		value = 25
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_screen
-		value = 130 
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_escort
-		value = 65 
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_cruiser_light
-		value = 40
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_cruiser_heavy
-		value = 5
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_mine_sweeper
-		value = 15
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_mine_layer
-		value = 10
-	}
-
-	ai_strategy = {
-		type = unit_ratio
-		id = capital_ship
-		value = 1		 #1 to 2
-	}
-	ai_strategy = {
-		type = unit_ratio
-		id = screen_ship
-		value = 100		 #1 to 2
-	}
-	ai_strategy = {
-		type = unit_ratio
-		id = carrier
-		value = 1		 #1 to 2
-	}
-}
-
-USA_naval_role_ratios_anti_submarine = {
-	allowed = {
-		has_dlc = "Man the Guns"
-		original_tag = USA
-	}
-	enable = {
-		anti_submarine_strategy_required_trigger = yes
-	}
-	abort_when_not_enabled = yes
-	
-	ai_strategy = {
-		type = role_ratio
-		id = naval_capital_bb
-		value = -10
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_screen
-		value = -20 
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_escort
-		value = 50 
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_cruiser_light
-		value = 40
-	}
-
-	ai_strategy = {
-		type = role_ratio
-		id = naval_cruiser_heavy
-		value = -15
-	}
-}
-
 USA_semper_fi = {
 	allowed = { original_tag = USA }
 	enable = {
@@ -326,6 +205,10 @@ USA_semper_fi = {
 		id = marines
 		value = 100
 	}
+	ai_strategy = {
+		type = air_factory_balance
+		value = -40
+	}
 }
 
 
@@ -335,9 +218,7 @@ USA_convoy_hungry = {
 	allowed = { original_tag = USA }
 	enable = {
 		date > 1940.1.1
-		has_equipment = {
-  			convoy < 600
-  		}
+		has_equipment = { convoy < 600 }
 		convoy_threat < 0.2 # there are other strategies for this, so we dont want to double up
 	}
 	abort_when_not_enabled = yes
@@ -353,15 +234,11 @@ NW_USA_build_convoys_retard = {		#without convoys, no invasions-> no help-> chin
 	allowed = { original_tag = USA }
 	enable = {
 		has_war = yes
-		has_equipment = {
-			convoy_1 < 550
-		}
+		has_equipment = { convoy < 550 }
 	}
 	abort = {
 		OR = {
-			has_equipment = {
-				convoy_1 > 650
-			}
+			has_equipment = { convoy > 650 }
 			has_war = no
 		}
 	}
@@ -387,7 +264,7 @@ NW_US_air_force_production = {
 		original_tag = USA
 		OR = {
 			has_war = yes
-			#has_completed_focus = USA_air_war_plans_division
+#			has_completed_focus = USA_air_war_plans_division
 			threat > 0.8
 		}
 	}
@@ -479,7 +356,7 @@ NW_US_bomb_germany = {
 	allowed = { original_tag = USA }
 	enable = {
 		original_tag = USA
-		#has_completed_focus = USA_strategic_bombing
+#		has_completed_focus = USA_strategic_bombing
 		has_war_with = GER
 		ENG = {
 			has_war_with = GER
@@ -625,14 +502,9 @@ NW_USA_peace_in_our_time = {
 	enable = {
 		OR = {
 			date < 1939.09.01
-			OR = {
-				GER = { has_war_with = POL }
-				POL = { has_capitulated = yes }
-				NOT = { country_exists = POL }
-				GER = { has_war_with = FRA }
-				FRA = { has_capitulated = yes }
-				NOT = { country_exists = FRA }
-			}
+			GER = { OR = { has_war_with = POL has_war_with = FRA } }
+			POL = { OR = { has_capitulated = yes exists = no } }
+			FRA = { OR = { has_capitulated = yes exists = no } }
 		}
 		threat < 0.6
 		has_war = no
@@ -660,12 +532,33 @@ USA_srsly_mils_now = {
 			threat > 0.75
 			has_war = yes
 		}
+		num_of_military_factories < 250
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = {
 		type = building_target
 		id = arms_factory
 		value = 250
+	}
+}
+
+USA_srsly_dockyard_now = {
+	allowed = {
+		original_tag = USA
+	}
+	enable = {
+		OR = {
+			date > 1940.1.1
+			threat > 0.75
+			has_war = yes
+		}
+		num_of_naval_factories < 100
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = building_target
+		id = dockyard
+		value = 100
 	}
 }
 
@@ -695,7 +588,7 @@ NW_rubber_sources_lost = {
 		num_of_military_factories > 60
 		OR = {
 			AND = {
-				#has_completed_focus = USA_rubber_reserve_company
+#				has_completed_focus = USA_rubber_reserve_company
 				threat > 0.6
 				has_war = no
 			}
@@ -848,7 +741,7 @@ NW_USA_Army_WW2_armored = {
 }
 
 USA_spam_armor_please = {
-	allowed = { original_tag = GER }
+	allowed = { original_tag = USA }
 	enable = {
 		OR = {
 			date > 1941.01.01
@@ -925,12 +818,13 @@ USA_produce_support_armor = {
 	ai_strategy = { type = role_ratio							id = light_tank_destroyer_role		value = 15 }
 	ai_strategy = { type = role_ratio							id = light_anti_air_role			value = 10 }
 	ai_strategy = { type = build_army							id = medium_armor					value = 50 }
+	ai_strategy = { type = build_army							id = medium_tank_destroyer_role		value = 14 }
 	ai_strategy = { type = build_army							id = light_artillery_armor_role		value = 10 }
 	ai_strategy = { type = build_army							id = light_tank_destroyer_role		value = 10 }
 	ai_strategy = { type = build_army							id = light_anti_air_role			value = 10 }
 }
-GER_super_boost_medium_tank_destroyer_armor = {
-	allowed = { original_tag = GER }
+USA_super_boost_medium_tank_destroyer_armor = {
+	allowed = { original_tag = USA }
 	enable = {
 		OR = {
 			has_tech = improved_medium_tank
@@ -946,7 +840,7 @@ GER_super_boost_medium_tank_destroyer_armor = {
 	}
 
 	ai_strategy = { type = land_xp_spend_priority	id = division_template					value = 100 }
-	ai_strategy = { type = template_prio			id = medium_tank_destroyer_brigade		value = 250	}
+	ai_strategy = { type = template_prio			id = medium_tank_destroyer_brigade		value = 100	}
 }
 USA_super_boost_light_artillery_armor = {
 	allowed = { original_tag = USA }
@@ -964,7 +858,7 @@ USA_super_boost_light_artillery_armor = {
 	abort_when_not_enabled = yes
 
 	ai_strategy = { type = land_xp_spend_priority	id = division_template				value = 100 }
-	ai_strategy = { type = template_prio			id = light_sp_artillery_brigade		value = 250	}
+	ai_strategy = { type = template_prio			id = light_sp_artillery_brigade		value = 100	}
 }
 USA_super_boost_light_tank_destroyer_armor = {
 	allowed = { original_tag = USA }
@@ -982,7 +876,7 @@ USA_super_boost_light_tank_destroyer_armor = {
 	abort_when_not_enabled = yes
 
 	ai_strategy = { type = land_xp_spend_priority	id = division_template					value = 100 }
-	ai_strategy = { type = template_prio			id = light_tank_destroyer_brigade		value = 250	}
+	ai_strategy = { type = template_prio			id = light_tank_destroyer_brigade		value = 100	}
 }
 USA_super_boost_light_anti_air_armor = {
 	allowed = { original_tag = USA }
@@ -1000,7 +894,7 @@ USA_super_boost_light_anti_air_armor = {
 	abort_when_not_enabled = yes
 
 	ai_strategy = { type = land_xp_spend_priority	id = division_template					value = 100 }
-	ai_strategy = { type = template_prio			id = light_sp_anti_air_brigade			value = 250	}
+	ai_strategy = { type = template_prio			id = light_sp_anti_air_brigade			value = 100	}
 }
 
 USA_stop_infantry_army = {
@@ -1097,9 +991,8 @@ USA_ask_ENG_FRA_for_access_before_war = {
 }
 
 NW_USA_historical_dont_ally_ENG = {
-	allowed = { tag = USA }
+	allowed = { tag = USA is_historical_focus_on = yes }
 	enable = {
-		is_historical_focus_on = yes
 		date < 1941.12.07
 		NOT = { has_war_with = GER }
 		NOT = { has_war_with = JAP }
@@ -1325,6 +1218,7 @@ USA_gang_up_GER_with_ENG = {
 		date > 1940.6.6
 		is_in_faction_with = ENG
 	}
+	abort_when_not_enabled = yes
 	
 	# help fronts in europe & africa
 	ai_strategy = {
@@ -1839,12 +1733,12 @@ USA_defends_australia_new_zealand = {
 }
 
 USA_produce_floating_harbors = {
-	allowed = {	original_tag = USA }
+	allowed = {	tag = USA is_historical_focus_on = yes has_dlc = "Man the Guns" }
 	enable = {
-		is_historical_focus_on = yes
 		date > 1941.1.1
 		has_war = yes
 		num_of_naval_factories > 25
+		has_tech = mtg_landing_craft
 	}
 	abort_when_not_enabled = yes
 
@@ -1892,8 +1786,8 @@ USA_think_about_retaliation = {
 USA_go_time = {
 	allowed = {
 		OR = {
-			original_tag = USA
-			original_tag = ENG
+			tag = USA
+			tag = ENG
 		}
 		is_historical_focus_on = yes
 	}
@@ -1930,6 +1824,7 @@ USA_start_buffering_in_pacific = {
 	enable = {
 		date > 1943.3.3
 	}
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = put_unit_buffers
@@ -1995,5 +1890,81 @@ USA_start_pp_spend_amount = {
 		type = pp_spend_priority
 		id = guarantee
 		value = -9999
+	}
+}
+
+
+USA_truck_export = { #GM
+	allowed = { original_tag = USA has_dlc = "Arms Against Tyranny" }
+	enable = {
+		date > 1938.1.1
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 1
+	}
+	ai_strategy = {
+		type = equipment_production_factor
+		id = motorized
+		value = 40
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_factor
+		id = motorized
+		value = 100
+	}
+}
+
+USA_fighter_export = { #GM
+	allowed = { original_tag = USA has_dlc = "Arms Against Tyranny" }
+	enable = {
+		always = yes
+	}
+	abort = {
+		always = no
+	}
+	
+	ai_strategy = {
+		type = equipment_production_factor
+		id = fighter
+		value = 15
+	}
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = fighter
+		value = 1
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_factor
+		id = fighter
+		value = 300 #We mostly use CV fighters
+	}
+	
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = fighter
+		value = -60
+	}
+}
+
+USA_market_to_HAI = {
+	allowed = { tag = USA has_dlc = "Arms Against Tyranny" }
+	enable = {
+		HAI = {
+			NOT = {
+				has_war_with = ROOT
+				has_government = fascism
+				is_left_ideology = yes
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = equipment_market_trade_desire
+		id = HAI		# desired trade partner
+		value = 75		# Increases the acceptance and desire values by this
 	}
 }

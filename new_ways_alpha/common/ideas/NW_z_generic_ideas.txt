@@ -140,6 +140,173 @@ ideas = {
 				enemy_justify_war_goal_time = -0.5
 			}
 		}
+		
+		generic_democratic_international_authority_active_intervention_idea = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			cancel = {
+				NOT = { has_government = democratic }
+			}
+			removal_cost = -1
+			
+			on_add = {
+				add_to_variable = { send_volunteers_tension_intervention = -1 }
+				add_to_variable = { send_volunteer_divisions_required_intervention = -0.25 }
+				add_to_variable = { send_volunteer_size_intervention = 1 }
+			}
+			on_remove = {
+				add_to_variable = { send_volunteers_tension_intervention = 1 }
+				add_to_variable = { send_volunteer_divisions_required_intervention = 0.25 }
+				add_to_variable = { send_volunteer_size_intervention = -1 }
+			}
+			
+			modifier = {
+				send_volunteers_tension = -1
+				send_volunteer_divisions_required = -0.25
+				send_volunteer_size = 1
+			}
+			rule = {
+				can_send_volunteers = yes
+			}
+		}
+		
+		generic_democratic_international_authority_expand_intervention_idea = {
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			cancel = {
+				NOT = { has_government = democratic }
+			}
+			removal_cost = -1
+			
+			on_add = {
+				add_to_variable = { send_volunteer_divisions_required_intervention = -0.25 }
+				add_to_variable = { send_volunteer_size_intervention = 2 }
+			}
+			on_remove = {
+				add_to_variable = { send_volunteer_divisions_required_intervention = 0.25 }
+				add_to_variable = { send_volunteer_size_intervention = -2 }
+			}
+			
+			modifier = {
+				send_volunteer_divisions_required = -0.25
+				send_volunteer_size = 2
+			}
+			rule = {
+				can_send_volunteers = yes
+			}
+		}
+		
+		generic_democratic_efficiency_flexible_cabinet_idea = {	# смена эффекта требует фикса локи GENERIC_DEMOCRATIC_FLEXIBLE_CABINET_IDEA_CURRENT_EFFECT
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			cancel = {
+				NOT = { has_government = democratic }
+			}
+			removal_cost = -1
+			
+			modifier = {
+				political_advisor_cost_factor = -0.33
+			}
+		}
+		
+		generic_democratic_efficiency_reorganization_apparatus_idea = {	# смена эффекта требует фикса локи GENERIC_DEMOCRATIC_REORGANIZATION_APPARATUS_IDEA_CURRENT_EFFECT
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			cancel = {
+				NOT = { has_government = democratic }
+			}
+			removal_cost = -1
+			
+			modifier = {
+				economy_cost_factor = -0.25
+				trade_laws_cost_factor = -0.25
+				mobilization_laws_cost_factor = -0.25
+			}
+		}
+		
+		generic_democratic_international_authority_political_mimicry_idea = {
+			name = generic_democratic_international_authority_political_mimicry_op
+			allowed = {
+				always = no
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			cancel = {
+				NOT = { has_government = democratic }
+			}
+			removal_cost = -1
+			
+			on_add = {
+				if = {
+					limit = {
+						OR = {
+							has_country_leader_ideology = national_conservatism
+							has_country_leader_ideology = national_etatism
+							has_country_leader_ideology = tridemism
+						}
+					}
+					every_other_country = {
+						limit = {
+							OR = {
+								has_government = fascism
+								has_government = neutrality
+							}
+						}
+						add_opinion_modifier = { target = ROOT modifier = generic_democratic_international_authority_political_mimicry_op }
+						ROOT = { add_opinion_modifier = { target = PREV modifier = generic_democratic_international_authority_political_mimicry_op } }
+					}
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_country_leader_ideology = social_conservatism
+							has_country_leader_ideology = socialism
+							has_country_leader_ideology = democratic_communism
+							has_country_leader_ideology = democratic_socialism
+						}
+					}
+					every_other_country = {
+						limit = {
+							OR = {
+								has_government = communism
+								has_government = trozkism
+							}
+						}
+						add_opinion_modifier = { target = ROOT modifier = generic_democratic_international_authority_political_mimicry_op }
+						ROOT = { add_opinion_modifier = { target = PREV modifier = generic_democratic_international_authority_political_mimicry_op } }
+					}
+				}
+			}
+			on_remove = {
+				every_other_country = {
+					limit = {
+						has_opinion_modifier = generic_democratic_international_authority_political_mimicry_op
+					}
+					remove_opinion_modifier = { target = ROOT modifier = generic_democratic_international_authority_political_mimicry_op }
+					ROOT = { remove_opinion_modifier = { target = PREV modifier = generic_democratic_international_authority_political_mimicry_op } }
+				}
+			}
+			
+			modifier = {
+			}
+		}
 	}
 
 	# Special ones that can be applied on other countries through focus system.
@@ -652,19 +819,11 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = communism
-					has_government = fascism
-					has_government = trozkism
-					has_government = neutrality
-					has_government = monarchy
-					communism > 0.3
-					fascism > 0.3
-					trozkism > 0.3
-					has_global_flag = generic_all_flag
-				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
+			cancel = {
+				democratic < 0.01
+				neutrality < 0.01
+				technocracy < 0.01
+				monarchy < 0.01
 			}
 			allowed_civil_war = {
 				OR = {
@@ -673,7 +832,6 @@ ideas = {
 					has_government = trozkism
 				}
 			}
-			cancel = { has_country_flag = reset_focus_ideas_flag }
 			removal_cost = -1
 			picture = generic_pp_unity_bonus
 			modifier = {
@@ -685,8 +843,6 @@ ideas = {
 		}
 	
 		liberty_ethos_focus = {
-			
-			
 			allowed = {
 				always = no
 			}
@@ -708,15 +864,19 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = monarchy
-					has_government = fascism
-					fascism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = fascism
+							has_government = monarchy
+						}
+						fascism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = fascism
@@ -733,15 +893,19 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = monarchy
-					has_government = fascism
-					fascism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = fascism
+							has_government = monarchy
+						}
+						fascism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = fascism
@@ -757,15 +921,19 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = monarchy
-					has_government = fascism
-					fascism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = fascism
+							has_government = monarchy
+						}
+						fascism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = fascism
@@ -783,15 +951,19 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = communism
-					communism > 0.4
-					has_global_flag = generic_all_flag
-					original_tag = POL
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = communism
+							original_tag = POL
+						}
+						communism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = communism
@@ -809,18 +981,25 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = fascism
-					has_government = communism
-					has_government = trozkism
-					fascism > 0.4
-					communism > 0.4
-					trozkism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = fascism
+							has_government = communism
+							has_government = trozkism
+						}
+						AND = {
+							fascism < 0.41
+							communism < 0.41
+							trozkism < 0.41
+						}
+						has_focus_tree = generic_anarchism_focus
+						has_country_flag = reset_focus_ideas_flag
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				OR = {
@@ -829,7 +1008,6 @@ ideas = {
 					has_government = trozkism
 				}
 			}
-			cancel = { has_country_flag = reset_focus_ideas_flag }
 			removal_cost = -1
 			picture = generic_pp_unity_bonus
 			rule = {
@@ -846,14 +1024,18 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = communism
-					communism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = communism
+						}
+						communism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = communism
@@ -895,19 +1077,25 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = technocracy
-					has_government = democratic
-					has_government = monarchy
-					neutrality > 0.3
-					technocracy > 0.3
-					democratic > 0.3
-					monarchy > 0.3
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = democratic
+							has_government = neutrality
+							has_government = technocracy
+							has_government = monarchy
+						}
+						AND = {
+							democratic < 0.31
+							neutrality < 0.31
+							technocracy < 0.31
+							monarchy < 0.31
+						}
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = neutrality
@@ -926,19 +1114,25 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = technocracy
-					has_government = democratic
-					has_government = monarchy
-					neutrality > 0.3
-					technocracy > 0.3
-					democratic > 0.3
-					monarchy > 0.3
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = democratic
+							has_government = neutrality
+							has_government = technocracy
+							has_government = monarchy
+						}
+						AND = {
+							democratic < 0.31
+							neutrality < 0.31
+							technocracy < 0.31
+							monarchy < 0.31
+						}
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = neutrality
@@ -954,20 +1148,26 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = technocracy
-					has_government = democratic
-					has_government = monarchy
-					neutrality > 0.3
-					technocracy > 0.3
-					democratic > 0.3
-					monarchy > 0.3
-					has_global_flag = generic_all_flag
-					original_tag = CZE
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = democratic
+							has_government = neutrality
+							has_government = technocracy
+							has_government = monarchy
+							original_tag = CZE
+						}
+						AND = {
+							democratic < 0.31
+							neutrality < 0.31
+							technocracy < 0.31
+							monarchy < 0.31
+						}
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				has_government = neutrality
@@ -1002,15 +1202,19 @@ ideas = {
 			allowed = {
 				always = no
 			}
-			available = {
-				OR = {
-					has_government = neutrality
-					has_government = communism
-					has_government = trozkism
-					communism > 0.4
-					has_global_flag = generic_all_flag
+			cancel = {
+				if = {
+					limit = { NOT = { has_global_flag = generic_all_flag } }
+					OR = {
+						NOT = {
+							has_government = neutrality
+							has_government = communism
+							has_government = trozkism
+						}
+						communism < 0.41
+						has_focus_tree = generic_anarchism_focus
+					}
 				}
-				NOT = { has_focus_tree = generic_anarchism_focus }
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1019,6 +1223,10 @@ ideas = {
 			picture = generic_intel_bonus
 			modifier = {
 				foreign_subversive_activites = -0.75
+				enemy_operative_capture_chance_factor = 0.135
+				enemy_operative_detection_chance_factor = 0.135
+				party_popularity_stability_factor = 0.1
+				political_power_factor = 0.05
 			}			
 		}
 
@@ -1133,8 +1341,15 @@ ideas = {
 			allowed_civil_war = {
 				always = yes
 			}
-
+		
 			picture = generic_manpower_bonus
+			
+			on_add = {
+				if = {
+					limit = { NOT = { has_active_mission = draft_dodging_mission } }
+					activate_mission = draft_dodging_mission
+				}
+			}
 			
 			modifier = {
 				conscription_factor = -0.2
@@ -1152,8 +1367,15 @@ ideas = {
 			allowed_civil_war = {
 				always = yes
 			}
-
+		
 			picture = generic_manpower_bonus
+			
+			on_add = {
+				if = {
+					limit = { NOT = { has_active_mission = draft_dodging_mission } }
+					activate_mission = draft_dodging_mission
+				}
+			}
 			
 			modifier = {
 				conscription_factor = -0.3
@@ -1174,6 +1396,13 @@ ideas = {
 
 			picture = generic_manpower_bonus
 			
+			on_add = {
+				if = {
+					limit = { NOT = { has_active_mission = draft_dodging_mission } }
+					activate_mission = draft_dodging_mission
+				}
+			}
+			
 			modifier = {
 				conscription_factor = -0.4
 			}
@@ -1192,6 +1421,19 @@ ideas = {
 			}
 
 			picture = generic_production_bonus
+			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = strikes_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = strikes_mission
+				}
+			}
 			
 			modifier = {
 				consumer_goods_factor = 0.2
@@ -1214,6 +1456,19 @@ ideas = {
 
 			picture = generic_production_bonus
 			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = strikes_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = strikes_mission
+				}
+			}
+			
 			modifier = {
 				consumer_goods_factor = 0.3
 				local_resources_factor = -0.3
@@ -1235,6 +1490,19 @@ ideas = {
 
 			picture = generic_production_bonus
 			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = strikes_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = strikes_mission
+				}
+			}
+			
 			modifier = {
 				consumer_goods_factor = 0.5
 				local_resources_factor = -0.5
@@ -1255,6 +1523,19 @@ ideas = {
 			}
 
 			picture = generic_army_problems
+			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = mutiny_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = mutiny_mission
+				}
+			}
 			
 			modifier = {
 				army_morale_factor = -0.2
@@ -1278,6 +1559,19 @@ ideas = {
 
 			picture = generic_army_problems
 			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = mutiny_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = mutiny_mission
+				}
+			}
+			
 			modifier = {
 				army_morale_factor = -0.35
 				training_time_factor = 0.35
@@ -1299,6 +1593,19 @@ ideas = {
 			}
 
 			picture = generic_army_problems
+			
+			on_add = {
+				if = {
+					limit = {
+						NOT = { has_active_mission = mutiny_mission }
+						OR = {
+							has_country_flag = crisis_in_progress #needed to avoid doubling up with demob strikes
+							has_civil_war = yes
+						}
+					}
+					activate_mission = mutiny_mission
+				}
+			}
 			
 			modifier = {
 				army_morale_factor = -0.5
@@ -1497,35 +1804,15 @@ ideas = {
 			picture = generic_tank_manufacturer_1
 			
 			allowed = {
-				NOT = { OR = { original_tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BEL tag = CZE tag = BUL tag = RSI tag = BRA tag = ARG tag = TUR tag = ETH } }
 				NOT = {
+					OR = { original_tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BEL tag = CZE tag = BUL tag = RSI tag = BRA tag = ARG tag = TUR tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = tank_manufacturer 
 						limit = 1
 						ignore = generic_tank_manufacturer
 					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = AST tag = SAF tag = NZL tag = CAN }
-						has_dlc = "Together for Victory"
-					}
-				}
-				NOT = {
-					AND = {
-						OR = {
-							is_literally_china = yes
-							tag = MAN
-						}
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						tag = MEX
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1549,27 +1836,16 @@ ideas = {
 			picture = generic_naval_manufacturer_1
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = SWE tag = HUN tag = CZE tag = RSI tag = PAR tag = BUL tag = ARG tag = SPR tag = SPA tag = TUR tag = DEN tag = ETH } }
-				NOT = { OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = SWE tag = HUN tag = CZE tag = RSI tag = PAR tag = BUL tag = ARG tag = SPR tag = SPA tag = TUR tag = DEN tag = ETH }
+					OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = naval_manufacturer 
 						limit = 1
 						ignore = generic_naval_manufacturer
 					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = AST tag = CAN tag = NZL tag = RAJ }
-						has_dlc = "Together for Victory"
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1593,32 +1869,15 @@ ideas = {
 			picture = generic_air_manufacturer_1
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = ARG tag = TUR tag = PER tag = DEN tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = ARG tag = TUR tag = PER tag = DEN tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = light_aircraft_manufacturer 
 						limit = 1
 						ignore = generic_light_aircraft_manufacturer
 					} 
-				}
-				if = {
-					limit = {
-						has_dlc = "Death or Dishonor"
-					}
-					NOT = { tag = ROM } NOT = { tag = YUG }
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1637,32 +1896,15 @@ ideas = {
 			picture = generic_air_manufacturer_3
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = ROM tag = BUL tag = TUR tag = PER tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = ROM tag = BUL tag = TUR tag = PER tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = medium_aircraft_manufacturer 
 						limit = 1
 						ignore = generic_medium_aircraft_manufacturer
 					} 
-				}
-				if = {
-					limit = {
-						has_dlc = "Death or Dishonor"
-					}
-					NOT = { tag = YUG }
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1681,32 +1923,15 @@ ideas = {
 			picture = generic_air_manufacturer_2
 			
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = CAN tag = ROM tag = BUL tag = SPR tag = SPA tag = PER tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = CAN tag = ROM tag = BUL tag = SPR tag = SPA tag = PER tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = heavy_aircraft_manufacturer 
 						limit = 1
 						ignore = generic_heavy_aircraft_manufacturer
 					} 
-				}
-				if = {
-					limit = {
-						has_dlc = "Death or Dishonor"
-					}
-					NOT = { tag = YUG }
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1725,28 +1950,15 @@ ideas = {
 			picture = generic_naval_manufacturer_2
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = CAN tag = ROM tag = YUG tag = BUL tag = PER tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = CAN tag = ROM tag = YUG tag = BUL tag = PER tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = naval_aircraft_manufacturer 
 						limit = 1
 						ignore = generic_naval_aircraft_manufacturer
 					} 
-				}
-				if = {
-					limit = {
-						has_dlc = "Waking the Tiger"
-					}
-					NOT = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1768,26 +1980,15 @@ ideas = {
 			picture = generic_industrial_concern_1
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = HUN tag = BUL tag = LUX tag = BRA tag = ARG tag = CHL tag = PRU tag = SAU tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BRA tag = CHL tag = PRU tag = SPR tag = SPA tag = SAU tag = ETH tag = POL tag = ARG tag = CZE tag = BUL tag = MEX tag = NOR tag = LUX tag = PRU tag = URG tag = CHI tag = CAN tag = FIN tag = ICE tag = HOL tag = NOR tag = SPR tag = AST tag = BOL tag = COL tag = GRE tag = HUN tag = MAN tag = NZL tag = BRW tag = COG tag = SPR tag = MON tag = SAU tag = PER tag = POR tag = ROM tag = SIK tag = SAF tag = SWI tag = TUR }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = industrial_concern 
 						limit = 1
 						ignore = generic_industrial_concern
 					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = MEX tag = HOL }
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1806,29 +2007,9 @@ ideas = {
 			picture = generic_electronics_concern_1
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BRA tag = CHL tag = PRU tag = SPR tag = SPA tag = SAU tag = ETH } }
 				NOT = {
-					# ignore if a (historical) minister already available
-					has_allowed_idea_with_traits = { 
-						idea = electronics_concern 
-						limit = 1
-						ignore = generic_electronics_concern
-					} 
-				}
-				NOT = {
-					AND = {
-						has_DLC = "Waking the Tiger"
-						OR = {
-							original_tag = MAN
-							is_literally_china = yes
-						}
-					}
-				}
-				NOT = {
-					AND = {
-						OR = { tag = HOL tag = MEX }
-						has_dlc = "Man the Guns"
-					}
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BRA tag = CHL tag = PRU tag = SPR tag = SPA tag = SAU tag = ETH tag = POL tag = ARG tag = CZE tag = BUL tag = MEX tag = NOR tag = LUX tag = PRU tag = URG tag = CHI tag = CAN tag = FIN tag = ICE tag = HOL tag = NOR tag = SPR }
+					has_allowed_idea_with_traits = { idea = electronics_concern limit = 1 }
 				}
 			}
 			
@@ -1852,26 +2033,10 @@ ideas = {
 			picture = generic_motorized_equipment_manufacturer_3
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = BRA tag = ARG tag = PRU tag = SPR tag = SPA tag = SAU tag = ETH } }
 				NOT = {
-					# ignore if a (historical) minister already available
-					has_allowed_idea_with_traits = { 
-						idea = motorized_equipment_manufacturer 
-						limit = 1
-						ignore = generic_motorized_equipment_manufacturer
-					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						tag = HOL
-						has_dlc = "Man the Guns"
-					}
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = BRA tag = ARG tag = PRU tag = SPR tag = SPA tag = SAU tag = ETH }
+					original_tag = SAI
+					has_allowed_idea_with_traits = { idea = motorized_equipment_manufacturer limit = 1 }
 				}
 			}
 			
@@ -1890,26 +2055,10 @@ ideas = {
 			picture = generic_infantry_equipment_manufacturer_2
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = HUN tag = BUL tag = BRA tag = ARG tag = CHL tag = SPR tag = SPA tag = TUR tag = DEN tag = SAU tag = ETH } }
 				NOT = {
-					# ignore if a (historical) minister already available
-					has_allowed_idea_with_traits = { 
-						idea = infantry_equipment_manufacturer 
-						limit = 1
-						ignore = generic_infantry_equipment_manufacturer
-					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						tag = HOL
-						has_dlc = "Man the Guns"
-					}
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = HUN tag = BUL tag = BRA tag = ARG tag = CHL tag = SPR tag = SPA tag = TUR tag = DEN tag = SAU tag = ETH }
+					original_tag = SAI
+					has_allowed_idea_with_traits = { idea = infantry_equipment_manufacturer limit = 1 }
 				}
 			}
 			
@@ -1928,26 +2077,15 @@ ideas = {
 			picture = generic_artillery_manufacturer_2
 
 			allowed = {
-				NOT = { OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = SPR tag = SPA tag = SAU tag = ETH } }
 				NOT = {
+					OR = { tag = GER tag = ENG tag = SOV tag = FRA tag = ITA tag = JAP tag = USA tag = BUL tag = SPR tag = SPA tag = SAU tag = ETH }
+					original_tag = SAI
 					# ignore if a (historical) minister already available
 					has_allowed_idea_with_traits = { 
 						idea = artillery_manufacturer 
 						limit = 1
 						ignore = generic_artillery_manufacturer
 					} 
-				}
-				NOT = {
-					AND = {
-						OR = { tag = CHI tag = PRC tag = MAN tag = SHX tag = XSM tag = GXC tag = YUN tag = SIK  tag = EHB tag = YUL tag = NGX tag = HCP tag = MEN tag = SHA tag = SIH tag = XIK tag = TNG tag = NEA }
-						has_dlc = "Waking the Tiger"
-					}
-				}
-				NOT = {
-					AND = {
-						tag = HOL
-						has_dlc = "Man the Guns"
-					}
 				}
 			}
 			
@@ -1961,5 +2099,4 @@ ideas = {
 			traits = { artillery_manufacturer }
 		}
 	}
-	
 }

@@ -13,7 +13,7 @@ ideas = {
 			removal_cost = -1
 		
 			modifier = {
-				consumer_goods_factor = 0.50
+				consumer_goods_expected_value = 0.50
 				production_speed_industrial_complex_factor = -0.5
 				production_speed_arms_factory_factor = -0.5
 				production_speed_dockyard_factor = -0.5
@@ -56,7 +56,7 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.4
+				consumer_goods_expected_value = 0.4
 				production_speed_industrial_complex_factor = -0.4
 				production_speed_arms_factory_factor = -0.4
 				production_speed_dockyard_factor = -0.4
@@ -64,6 +64,7 @@ ideas = {
 				conversion_cost_mil_to_civ_factor = 0.4
 				generate_wargoal_tension = 1.00
 				join_faction_tension = 0.20
+				lend_lease_tension = 0.10
 				send_volunteers_tension = 0.20
 				guarantee_tension = 0.5
 				max_fuel_factor = -0.35
@@ -79,7 +80,7 @@ ideas = {
 					has_focus_tree = generic_focus
 				}
 				if = {
-					limit = { original_tag = OMA }
+					limit = { original_tag = OMA NOT = { has_focus_tree = generic_focus } }
 					NOT = { has_completed_focus = OMA_isolation_enhancement }
 				}
 			}
@@ -94,13 +95,15 @@ ideas = {
 		}
 		
 		civilian_economy = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 		
 			cost = 150
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.35
+				consumer_goods_expected_value = 0.35
 				production_speed_industrial_complex_factor = -0.3
 				production_speed_arms_factory_factor = -0.3
 				conversion_cost_civ_to_mil_factor = 0.3
@@ -110,6 +113,8 @@ ideas = {
 				monthly_population = 0.5
 				research_speed_factor = 0.05
 				mobilization_speed = -0.25
+				mio_funds_stolen_base_modifier = 0.03
+				mio_funds_stolen_bonus_modifier = 0.07
 			}
 			
 			available = {
@@ -124,25 +129,37 @@ ideas = {
 			default = yes
 			
 			cancel_if_invalid = no
+			
+			allowed_to_remove = {
+				if = {
+					limit = {
+						original_tag = POR
+						has_completed_focus = POR_strengthening_regime_pvde
+						has_completed_focus = POR_start_fight_against_bourgeoisie_in_country_or_POR_direct_economy_to_domestic_problems
+					}
+					NOT = { has_idea = POR_rebuilding_the_country }
+				}
+			}
 		}
 		
 		low_economic_mobilisation = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
 				has_war_support > 0.15
-#				if = {
-#					limit = {
-#						original_tag = HUN
-#						has_dlc = "Death or Dishonor"
-#					}
-#					NOT = { has_idea = HUN_treaty_of_triannon }
-#				}
 				if = {
 					limit = {
 						original_tag = BUL
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+#				else_if = {
+#					limit = {
+#						original_tag = HUN
+#					}
+#					NOT = { has_idea = HUN_treaty_of_triannon }
+#				}
 				hidden_trigger = {
 					NOT = { has_government = anarchism }
 				}
@@ -155,22 +172,23 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.3
+				consumer_goods_expected_value = 0.3
 				production_speed_industrial_complex_factor = -0.1
 				production_speed_arms_factory_factor = -0.1
 				fuel_gain_factor = -0.25
 				monthly_population = 0.2
 				research_speed_factor = 0.02
+				mio_funds_stolen_base_modifier = 0.04
+				mio_funds_stolen_bonus_modifier = 0.08
 			}
 			
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 2
+   				factor = 3
 
    				modifier = {
 					factor = 20
-					
 					is_major = yes
 				}
 				modifier = {
@@ -187,26 +205,26 @@ ideas = {
 		}
 		
 		partial_economic_mobilisation = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
 				has_war_support > 0.25
-
-#				if = {
-#					limit = {
-#						original_tag = HUN
-#						has_dlc = "Death or Dishonor"
-#					}
-#					OR = {
-#						has_completed_focus = HUN_secret_rearmament
-#						NOT = { has_idea = HUN_treaty_of_triannon }
-#					}
-#				}
 				if = {
 					limit = {
 						original_tag = BUL
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+#				else_if = {
+#					limit = {
+#						original_tag = HUN
+#					}
+#					OR = {
+#						has_completed_focus = HUN_secret_rearmament
+#						NOT = { has_idea = HUN_treaty_of_triannon }
+#					}
+#				}				
 				hidden_trigger = {
 					NOT = { has_government = anarchism }
 				}
@@ -219,23 +237,32 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.25
+				consumer_goods_expected_value = 0.25
 				production_speed_arms_factory_factor = 0.1
 				conversion_cost_civ_to_mil_factor= -0.1
 				conversion_cost_mil_to_civ_factor = -0.1
 				fuel_gain_factor = -0.1
 				mobilization_speed = 0.05
+				mio_funds_stolen_base_modifier = 0.05
+				mio_funds_stolen_bonus_modifier = 0.08
 			}
 			
 			cancel_if_invalid = no
 		
 			ai_will_do = {
-   				factor = 2
+   				factor = 3
 
    				modifier = {
 					factor = 20
-					
 					is_major = yes
+				}
+				modifier = {
+					has_war_support > 0.25
+					factor = 2
+				}
+				modifier = {
+					has_war_support > 0.5
+					factor = 0
 				}
    				modifier = {
 					factor = 20
@@ -246,11 +273,19 @@ ideas = {
 						GER = { has_completed_focus = GER_anschluss }
 					}
 				}
+				modifier = {
+					factor = 10
+					tag = EGY
+					has_war = no
+					date < 1939.1.1
+				}
    			}
 		}
 		
 		war_economy = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
 				has_war_support > 0.5
 				OR = {
@@ -274,19 +309,18 @@ ideas = {
 						}
 					}
 				}
-#				if = {
-#					limit = {
-#						original_tag = HUN
-#						has_dlc = "Death or Dishonor"
-#					}
-#					NOT = { has_idea = HUN_treaty_of_triannon }
-#				}
 				if = {
 					limit = {
 						original_tag = BUL
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+#				else_if = {
+#					limit = {
+#						original_tag = HUN
+#					}
+#					NOT = { has_idea = HUN_treaty_of_triannon }
+#				}				
 				hidden_trigger = {
 					NOT = { has_government = anarchism }
 				}
@@ -299,29 +333,32 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.2
+				consumer_goods_expected_value = 0.2
 				production_speed_arms_factory_factor = 0.2
 				conversion_cost_civ_to_mil_factor= -0.2
 				conversion_cost_mil_to_civ_factor = -0.2
 				research_speed_factor = -0.025
 				mobilization_speed = 0.15
-				
+				mio_funds_stolen_base_modifier = 0.05
+				mio_funds_stolen_bonus_modifier = 0.08
 			}
 			
 			cancel_if_invalid = no
 			
 			ai_will_do = {
    				factor = 5
-
+				
+				modifier = {
+					has_war_support > 0.5
+					factor = 2
+				}
 				modifier = {
 					#High prio on production
 					factor = 20
 					manpower_per_military_factory >  1000
 				}
-   		
 				modifier = {
 					add = 1800
-					
 					# revert from closed_economy if we have large allies
 					has_idea = closed_economy
 					has_large_ally_not_pick_closed_economy = yes
@@ -348,12 +385,21 @@ ideas = {
 						has_completed_focus = GER_danzig_or_war
 					}
 				}
+				modifier = {
+					factor = 10
+					tag = EGY
+					OR = {
+						has_war = yes
+						date > 1939.1.1
+					}
+				}
 			}
 		}
 		
 		tot_economic_mobilisation = {
-			
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
 				has_war = yes
 				has_war_support > 0.8
@@ -363,20 +409,18 @@ ideas = {
 						ratio > 0.5
 					}
 				}
-
-#				if = {
-#					limit = {
-#						original_tag = HUN
-#						has_dlc = "Death or Dishonor"
-#					}
-#					NOT = { has_idea = HUN_treaty_of_triannon }
-#				}
 				if = {
 					limit = {
 						original_tag = BUL
 					}
 					NOT = { has_idea = BUL_peace_great_war_idea }
 				}
+#				else_if = {
+#					limit = {
+#						original_tag = HUN
+#					}
+#					NOT = { has_idea = HUN_treaty_of_triannon }
+#				}				
 				hidden_trigger = {
 					NOT = { has_government = anarchism }
 				}
@@ -440,13 +484,15 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.10
+				consumer_goods_expected_value = 0.10
 				conscription = -0.03
 				production_speed_arms_factory_factor = 0.3
 				conversion_cost_civ_to_mil_factor= -0.3
 				conversion_cost_mil_to_civ_factor = -0.3
 				research_speed_factor = -0.05
 				mobilization_speed = 0.3
+				mio_funds_stolen_base_modifier = 0.05
+				mio_funds_stolen_bonus_modifier = 0.1
 			}
 			
 			cancel_if_invalid = no
@@ -469,7 +515,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.15
+				consumer_goods_expected_value = 0.15
 				production_speed_buildings_factor = -0.15
 
 			}
@@ -480,6 +526,7 @@ ideas = {
    				factor = 0
    			}
 		}
+		
 		new_economic_policy_2 = {
 			name = new_economic_policy
 
@@ -498,7 +545,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.10
+				consumer_goods_expected_value = 0.10
 				production_speed_buildings_factor = -0.2
 				global_building_slots_factor = 0.1
 			}
@@ -511,7 +558,9 @@ ideas = {
 		}
 		
 		technocratic_economic = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
 				OR = {
 					has_idea = technocratic_economic
@@ -547,7 +596,7 @@ ideas = {
 			removal_cost = -1
 			
 			modifier = {
-				consumer_goods_factor = 0.25
+				consumer_goods_expected_value = 0.25
 				production_speed_arms_factory_factor = 0.15
 				production_speed_industrial_complex_factor = 0.15
 				production_speed_infrastructure_factor = 0.15
@@ -578,62 +627,129 @@ ideas = {
 				}
   			}
 		}
+		
+		shadow_economic_law = {
+			allowed = {
+				always = no
+			}
+			available = {
+				
+			}
+			removal_cost = -1
+			
+			modifier = {
+				consumer_goods_expected_value = 0.1
+				global_building_slots_factor = 0.125
+				line_change_production_efficiency_factor = 0.3
+				production_speed_buildings_factor = -0.2
+				research_speed_factor = -0.3
+				mobilization_speed = -0.25
+			}
+			cancel_if_invalid = no
+			allowed_to_remove = {
+				if = {
+					limit = { tag = HAI }
+					always = no
+				}
+			}
+			picture = market_is_source_of_law
+			ai_will_do = {
+   				factor = 0
+			}
+		}
+		
+		HOL_economic_management_of_the_proletariat = {
+			allowed = { always = no }
+			removal_cost = -1		
+			modifier = {
+				consumer_goods_expected_value = 0.25
+				production_speed_industrial_complex_factor = 0.1
+				production_speed_rail_way_factor = 0.1
+				production_speed_buildings_factor = 0.05
+				conversion_cost_civ_to_mil_factor = 0.25
+				conversion_cost_mil_to_civ_factor = 0.25
+				fuel_gain_factor = -0.1
+				mobilization_speed = 0.1
+				industrial_capacity_factory = 0.1
+				industrial_capacity_dockyard = 0.1
+				global_building_slots = 1
+			}
+			allowed_to_remove = { always = no }
+			visible = { 
+				if = {
+					limit = {
+						original_tag = HOL
+						has_government = trozkism
+					}
+					has_completed_focus = HOL_the_economic_dictatorship_of_the_proletariat 
+				}
+			}
+			available = {
+				hidden_trigger = {
+					NOT = { has_government = anarchism }
+				}
+			}		
+			cancel_if_invalid = yes
+		}
+		
+		SPR_collectivized_society = {
+
+			picture = SPR_collectivized_society		
+			
+			allowed = {
+				always = no
+			}
+			removal_cost = -1
+		
+			modifier = {
+				resistance_target = -0.2
+				consumer_goods_factor = 0.15
+				production_speed_industrial_complex_factor = 0.15
+				production_speed_arms_factory_factor = 0.3
+				conversion_cost_civ_to_mil_factor= -0.3
+				conversion_cost_mil_to_civ_factor = -0.3
+				global_building_slots_factor = 0.1
+				industry_free_repair_factor = 0.5
+				industrial_capacity_factory = 0.7
+				industrial_capacity_dockyard = 0.7
+				research_speed_factor = -0.1
+				production_factory_efficiency_gain_factor = -0.2
+				production_factory_max_efficiency_factor = -0.2
+				line_change_production_efficiency_factor = 0.1
+			}
+			
+			allowed_to_remove = {
+				always = no
+			}
+			
+			cancel_if_invalid = no
+		}
 	}
+	
 	
 	trade_laws = {
 		law = yes
 		use_list_view = yes
 		
-		uncontrolled_exports_AFR = {	#only for AFR
-			name = uncontrolled_exports
-
-			allowed = {
-				always = no
-			}
-			removal_cost = -1
-			picture = eng_steady_as_she_goes
-
-			modifier = {
-				min_export = 1.0
-				ai_focus_peaceful_factor = 1
-				ai_call_ally_desire_factor = 1
-				ai_focus_military_equipment_factor = 0.5
-				ai_focus_aviation_factor = 0.5
-				ai_desired_divisions_factor = 0.5
-				ai_license_acceptance = 1
-				faction_trade_opinion_factor = 1.5
-				autonomy_gain_trade_factor = -0.9
-				consumer_goods_factor = 0.05
-				civilian_intel_to_others = 40.0
-				navy_intel_to_others = 40.0
-				agency_upgrade_time = 0.15
-			}
-
-			allowed_to_remove = {
-				if = {
-					limit = { original_tag = AFR }
-					is_subject = no
-				}
-			}
-
-			cancel_if_invalid = no
-		}
 		
 		uncontrolled_exports = {
-
-
 			allowed = {
 				always = no
 			}
 			removal_cost = -1
 			picture = isolation
+			
+			rule = {
+				can_access_market = no
+			}
 
 			modifier = {
 				min_export = 0.25
-				consumer_goods_factor = 0.05
+				consumer_goods_expected_value = 0.05
 				civilian_intel_to_others = 40.0
 				navy_intel_to_others = 40.0
 				agency_upgrade_time = 0.15
+				cic_construction_boost = 0.15
 			}
 			
 			on_add = {
@@ -671,24 +787,31 @@ ideas = {
 		}
 
 		free_trade = {
-			
-			available = {
+			allowed = {
+				NOT = { tag = SAI }
+			}
+			allowed_to_remove = {
 				if = {
-					limit = { has_focus_tree = generic_focus }
-					NOT = { has_completed_focus = resource_security }
+					limit = { tag = HOL has_government = democratic }
+					NOT = { has_completed_focus = HOL_rely_on_a_self_regulating_market_economy }
 				}
+			}
+			available = {
 				if = {
 					limit = { has_idea = technocratic_economic }
 					NOT = { has_idea = technocratic_economic }
 				}
-				#if = {
-				#	limit = {
-				#		original_tag = SPR
-				#		has_dlc = "La Resistance"
-				#	}
-				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
-				#}
 				if = {
+					limit = { has_focus_tree = generic_focus }
+					NOT = { has_completed_focus = resource_security }
+				}
+#				else_if = {
+#					limit = {
+#						original_tag = SPR
+#					}
+#					NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
+#				}
+				else_if = {
 					limit = {
 						tag = GBF
 					}
@@ -700,7 +823,7 @@ ideas = {
 					}
 					NOT = { has_idea = GER_european_autarky }
 				}
-				if = {
+				else_if = {
 					limit = {
 						has_idea = GER_european_autarky_2
 					}
@@ -718,6 +841,12 @@ ideas = {
 					else = { has_idea = communication_with_black_market_focus }
 				}
 				NOT = { has_idea = closed_border }
+			}
+			allowed_to_remove = {
+				if = {
+					limit = { original_tag = HAI NOT = { has_focus_tree = generic_focus } }
+					NOT = { has_idea = HAI_pernicious_situation_of_agriculture_idea_6_1 }
+				}
 			}
 			
 			cost = 150
@@ -745,6 +874,7 @@ ideas = {
 				research_speed_factor = 0.10
 				civilian_intel_to_others = 40.0
 				navy_intel_to_others = 20.0
+				cic_construction_boost_factor = 0.1
 			}
 			
 			cancel_if_invalid = no
@@ -779,29 +909,29 @@ ideas = {
 		}
 		
 		export_focus = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
-			
-				#if = {
-				#	limit = {
-				#		original_tag = SPR
-				#		has_dlc = "La Resistance"
-				#	}
-				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
-				#}
 				if = {
 					limit = {
 						tag = GBF
 					}
 					NOT = { has_idea = GER_national_autarky }
 				}
+#				else_if = {
+#					limit = {
+#						original_tag = SPR
+#					}
+#					NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
+#				}
 				if = {
 					limit = {
 						has_idea = GER_european_autarky
 					}
 					NOT = { has_idea = GER_european_autarky }
 				}
-				if = {
+				else_if = {
 					limit = {
 						has_idea = GER_european_autarky_2
 					}
@@ -850,6 +980,7 @@ ideas = {
 				research_speed_factor = 0.05
 				civilian_intel_to_others = 20.0
 				navy_intel_to_others = 10.0
+				cic_construction_boost_factor = 0.05
 			}
 			
 			default = yes
@@ -879,8 +1010,15 @@ ideas = {
 		}
 		
 		limited_exports = {
-			
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
+			allowed_to_remove = {
+				if = {
+					limit = { tag = HOL has_government = democratic NOT = { has_focus_tree = generic_focus } }
+					NOT = { has_completed_focus = HOL_creating_a_corporatist_model }
+				}
+			}
 			available = {
 				OR = {
 					AND = {
@@ -910,7 +1048,6 @@ ideas = {
 				#if = {
 				#	limit = {
 				#		original_tag = SPR
-				#		has_dlc = "La Resistance"
 				#	}
 				#	NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
 				#}
@@ -952,6 +1089,8 @@ ideas = {
 				research_speed_factor = 0.01
 				civilian_intel_to_others = 10.0
 				navy_intel_to_others = 5
+				lend_lease_tension = 0.20
+				cic_construction_boost = -0.05
 			}
 			
 			cancel_if_invalid = no
@@ -960,7 +1099,7 @@ ideas = {
    				factor = 1
 
    				modifier = {
-					factor = 0
+					add = -1
 					
 					is_major = no
 					is_in_faction = yes
@@ -974,7 +1113,13 @@ ideas = {
 					is_major = no
 					has_war = no
 				}
-				
+				modifier = {
+					factor = 200
+					NOT = { has_government = fascism }
+					NOT = { has_idea = closed_economy }
+					has_war = yes
+					is_major = yes
+				}
 				modifier = {
 					add = 1500
 					
@@ -986,12 +1131,10 @@ ideas = {
 		}
 		
 		closed_economy = {
-			
+			allowed = {
+				NOT = { tag = SAI }
+			}
 			available = {
-				if = {
-					limit = { NOT = { has_government = anarchism } }
-					has_war = yes
-				}
 				OR = {
 					if = {
 						limit = { tag = SPA }
@@ -1012,11 +1155,43 @@ ideas = {
 					has_idea = war_economy
 					has_idea = tot_economic_mobilisation
 				}
-				OR = {
-					NOT = {	tag = SOV }
+				if = {
+					limit = {
+						OR = {
+							tag = SOV
+							tag = GER
+						}
+					}
 					NOT = { has_opinion_modifier = MR_pact }
 				}
-
+				else_if = {
+					limit = {
+						tag = POR
+						NOT = { has_idea = closed_economy }
+					}
+					always = no
+				}
+				else_if = {
+					limit = {
+						original_tag = TUR
+						OR = {
+							has_completed_focus = TUR_the_clodius_agreement_2
+							has_completed_focus = TUR_the_clodius_agreement_3
+						}
+					}
+					OR = {
+						is_subject = yes
+						NOT = { country_exists = GER }
+						GER = {
+							OR = {
+								is_subject = yes
+								NOT = { has_government = fascism }
+								has_war_with = ROOT
+							}
+						}
+						
+					}
+				}
 				if = {
 					limit = { has_government = anarchism }
 					if = {
@@ -1028,28 +1203,7 @@ ideas = {
 					}
 					else = { has_idea = communication_with_black_market_focus }
 				}
-				if = {
-					limit = {
-						tag = POR
-						NOT = { has_idea = closed_economy }
-					}
-					always = no
-				}
-				if = {
-					limit = {
-						OR = {
-							has_completed_focus = TUR_the_clodius_agreement_2
-							has_completed_focus = TUR_the_clodius_agreement_3
-						}
-					}
-					OR = {
-						is_subject = yes
-						NOT = { country_exists = GER }
-						GER = { is_subject = yes }
-						GER = { NOT = { has_government = fascism } }
-						has_war_with = GER
-					}
-				}
+				else = { has_war = yes }
 			}
 			
 			cost = 150
@@ -1058,27 +1212,42 @@ ideas = {
 			
 			modifier = {
 				min_export = 0
-				#civilian_intel_to_others = 0.0
+#				civilian_intel_to_others = 0.0
+				lend_lease_tension = 0.40
+				cic_construction_boost = -0.1
 			}
 			
-			on_add = {
-				custom_effect_tooltip = closed_economy_TT
-			}
+#			on_add = {
+#				custom_effect_tooltip = closed_economy_TT
+#			}
 			
 			cancel_if_invalid = no
 			
 			allowed_to_remove = {
 				if = {
+					limit = { tag = NGX }
+					custom_trigger_tooltip = {
+						tooltip = NGX_hongkui_style_economic_tt		
+						NOT = {
+							has_idea = NGX_hongkui_style
+							has_idea = NGX_hongkui_style_1
+							has_idea = NGX_hongkui_style_2
+							has_idea = NGX_hongkui_style_3
+						}
+					}
+				}
+				else_if = {
+					limit = { tag = TIB NOT = { has_focus_tree = generic_focus } }
+					has_completed_focus = TIB_emerge_from_isolation
+				}
+				else_if = {
+					limit = { original_tag = COG has_country_leader = { character = COG_simon_kimbangu } }
+					has_country_flag = COG_kimbangu_capitalism_allowed # !!
+				}
+				if = {
 					limit = { has_government = anarchism }
 					NOT = {
 						has_idea = economic_degradation
-					}
-				}
-				if = {
-					limit = { tag = TIB }
-					OR = {
-						has_completed_focus = TIB_emerge_from_isolation
-						has_focus_tree = generic_focus
 					}
 				}
 			}
@@ -1117,6 +1286,78 @@ ideas = {
 					num_of_military_factories < 180
 				}
    			}
+		}
+		
+		black_market_law = {
+			allowed = {
+				always = no
+			}
+			available = {
+				
+			}
+			removal_cost = -1
+			
+			modifier = {
+				min_export = 0
+				trade_opinion_factor = -0.75
+				production_lack_of_resource_penalty_factor = -0.385
+				stability_factor = -0.15
+				cic_construction_boost_factor = -0.15
+			}
+#			on_add = {
+#				custom_effect_tooltip = closed_economy_TT
+#			}
+			cancel_if_invalid = no
+			allowed_to_remove = {
+				if = {
+					limit = { tag = HAI }
+					always = no
+				}
+			}
+			picture = communication_with_black_market
+			ai_will_do = {
+   				factor = 0
+			}
+		}
+		
+		uncontrolled_exports_AFR = {	#only for AFR
+			name = uncontrolled_exports
+
+			allowed = {
+				always = no
+			}
+			removal_cost = -1
+			picture = eng_steady_as_she_goes
+			
+			rule = {
+				can_access_market = no
+			}
+
+			modifier = {
+				min_export = 1.0
+				ai_focus_peaceful_factor = 1
+				ai_call_ally_desire_factor = 1
+				ai_focus_military_equipment_factor = 0.5
+				ai_focus_aviation_factor = 0.5
+				ai_desired_divisions_factor = 0.5
+				ai_license_acceptance = 1
+				faction_trade_opinion_factor = 1.5
+				autonomy_gain_trade_factor = -0.9
+				consumer_goods_expected_value = 0.05
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 40.0
+				agency_upgrade_time = 0.15
+				cic_construction_boost = 0.15
+			}
+
+			allowed_to_remove = {
+				if = {
+					limit = { tag = AFR }
+					is_subject = no
+				}
+			}
+
+			cancel_if_invalid = no
 		}
 	}
 }

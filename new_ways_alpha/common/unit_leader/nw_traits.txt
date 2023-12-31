@@ -20,10 +20,14 @@
 #	custom_prerequisite_tooltip = "" # loc key
 #	custom_gain_xp_trigger_tooltip = "" # loc key
 #	mutually_exclusive = other_trait # trait key
-#	parent = other_trait # trait key
-#	num_parents_needed = -1 # integer, -1 means "all"
-#	gui_row = -1 # integer, starts at 0, -1 means auto
-#	gui_column = -1 # integer, starts at 0, -1 means auto
+#	parent = { # Can be added multiple times
+#	    traits = {XXX YYY ZZZ}  # A list of other traits that
+#       num_parents_needed = 1 # The number of the above traits that must be true
+#   }
+#   any_parent = { XXX YYY ZZZ } # shorthand for parent when num_parents_needed are defaulted to 1
+#   all_parents = { XXX YYY ZZZ } # shorthand for parent when num_parents_needed are the same as the number of parents
+#	gui_row = 0 # integer, starts at 0, unset or -1 means the trait does not appear in unlockable trait tree.
+#	gui_column = 0 # integer, starts at 0, unset or -1 means auto
 #	allowed = trigger # scope is a unit leader
 #	prerequisites = trigger # scope is an unit leader
 #	gain_xp = trigger # scope is a combatant
@@ -106,6 +110,23 @@ leader_traits = {
 		
 		ai_will_do = {
 			factor = 1
+		}
+		new_commander_weight = {
+			factor = 0
+		}
+	}
+	
+	supporter_of_the_medical_approach_in_the_army = {
+		type = land
+		trait_type = personality_trait
+		gain_xp = {
+			always = no
+		}
+		allowed = {
+		}
+		modifier = {
+			experience_loss_factor = -0.1
+			out_of_supply_factor = -0.1
 		}
 		new_commander_weight = {
 			factor = 0
@@ -231,7 +252,7 @@ leader_traits = {
 	}
 	
 	JAP_member_of_manchurian_fraction = {
-
+		
 		type = all
 		trait_type = personality_trait
 
@@ -257,7 +278,9 @@ leader_traits = {
 	}
 	
 	GER_ss_leader = {
-
+		allowed = {
+			FROM = { original_tag = GER }
+		}
 		type = all
 		trait_type = personality_trait
 
@@ -267,7 +290,9 @@ leader_traits = {
 	}
 	
 	GER_luftwaffe_leader = {
-
+		allowed = {
+			FROM = { original_tag = GER }
+		}
 		type = all
 		trait_type = personality_trait
 
@@ -284,6 +309,279 @@ leader_traits = {
 		new_commander_weight = {
 			factor = 0
 		}
+	}
+	
+	
+	### POR TITUL TRAITS
+	trait_duque = {
+		allowed = {
+			FROM = { original_tag = POR }
+		}
+		prerequisites = {
+			FROM = {
+				has_completed_focus = POR_restore_noble_titles
+				set_temp_variable = { temp_var = 20 }
+				custom_trigger_tooltip = {
+					tooltip = POR_legitimacy_of_crown_more_trigger_tt
+					check_variable = { POR_legitimacy_of_crown_var > temp_var }
+				}
+				any_controlled_state = {
+					is_core_of = FROM
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+		}
+		type = field_marshal
+		trait_type = assignable_trait
+		cost = 0
+		
+		attack_skill = 1
+		defense_skill = 1
+		
+		non_shared_modifier = {
+			promote_cost_factor = -0.5
+		}
+		field_marshal_modifier = {
+			max_army_group_size = 1
+			planning_speed = 0.1
+		}
+		corps_commander_modifier = {
+			max_commander_army_size = 4
+		}
+		modifier = {
+			max_dig_in = 5
+		}
+		
+		on_add = {
+			FROM = {
+				add_to_variable = { POR_legitimacy_of_crown_var = -20 tooltip = POR_legitimacy_of_crown_tt }
+				POR_legitimacy_of_crown_check_effect = yes
+				random_controlled_state = {
+					limit = {
+						is_core_of = FROM
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+					hidden_effect = {
+						add_to_variable = { local_building_slots_var = 1 }
+						add_state_modifier = { modifier = { local_building_slots = -1 } }
+					}
+					effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+				}
+			}
+			remove_unit_leader_trait = trait_marques
+		}
+		
+		new_commander_weight = {
+			factor = 0
+		}
+		gui_row = 23
+		gui_column = 2
+		any_parent = { trait_marques }
+	}
+	
+	trait_marques = {
+		allowed = {
+			FROM = { original_tag = POR }
+		}
+		prerequisites = {
+			has_trait = trait_graf
+			FROM = {
+				has_completed_focus = POR_restore_noble_titles
+				set_temp_variable = { temp_var = 10 }
+				custom_trigger_tooltip = {
+					tooltip = POR_legitimacy_of_crown_more_trigger_tt
+					check_variable = { POR_legitimacy_of_crown_var > temp_var }
+				}
+				any_controlled_state = {
+					is_core_of = FROM
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+		}
+		type = corps_commander
+		trait_type = assignable_trait
+		cost = 0
+		
+		defense_skill = 1
+		
+		non_shared_modifier = {
+			promote_cost_factor = -0.5
+		}
+		corps_commander_modifier = {
+			max_commander_army_size = 4
+		}
+		modifier = {
+			max_dig_in = 5
+		}
+		
+		on_add = {
+			FROM = {
+				add_to_variable = { POR_legitimacy_of_crown_var = -10 tooltip = POR_legitimacy_of_crown_tt }
+				POR_legitimacy_of_crown_check_effect = yes
+				random_controlled_state = {
+					limit = {
+						is_core_of = FROM
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+					hidden_effect = {
+						add_to_variable = { local_building_slots_var = 1 }
+						add_state_modifier = { modifier = { local_building_slots = -1 } }
+					}
+					effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+				}
+			}
+			remove_unit_leader_trait = trait_graf
+		}
+		
+		new_commander_weight = {
+			factor = 0
+		}
+		gui_row = 23
+		gui_column = 1
+	}
+	
+	trait_graf = {
+		allowed = {
+			FROM = { original_tag = POR }
+		}
+		prerequisites = {
+			has_trait = trait_barao
+			FROM = {
+				has_completed_focus = POR_restore_noble_titles
+				has_political_power > 100
+				set_temp_variable = { temp_var = 10 }
+				custom_trigger_tooltip = {
+					tooltip = POR_legitimacy_of_crown_more_trigger_tt
+					check_variable = { POR_legitimacy_of_crown_var > temp_var }
+				}
+				any_controlled_state = {
+					is_core_of = FROM
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+		}
+		type = corps_commander
+		trait_type = assignable_trait
+		cost = 0
+		
+		defense_skill = 1
+		
+		non_shared_modifier = {
+			promote_cost_factor = -0.5
+		}
+		corps_commander_modifier = {
+			max_commander_army_size = 4
+		}
+		
+		on_add = {
+			FROM = {
+				add_political_power = -100
+				add_to_variable = { POR_legitimacy_of_crown_var = -10 tooltip = POR_legitimacy_of_crown_tt }
+				POR_legitimacy_of_crown_check_effect = yes
+				random_controlled_state = {
+					limit = {
+						is_core_of = FROM
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+					hidden_effect = {
+						add_to_variable = { local_building_slots_var = 1 }
+						add_state_modifier = { modifier = { local_building_slots = -1 } }
+					}
+					effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+				}
+			}
+			remove_unit_leader_trait = trait_barao
+		}
+		
+		new_commander_weight = {
+			factor = 0
+		}
+		gui_row = 22
+		gui_column = 1
+	}
+	
+	trait_barao = {
+		allowed = {
+			FROM = { original_tag = POR }
+		}
+		prerequisites = {
+			FROM = {
+				has_completed_focus = POR_restore_noble_titles
+				set_temp_variable = { temp_var = 10 }
+				custom_trigger_tooltip = {
+					tooltip = POR_legitimacy_of_crown_more_trigger_tt
+					check_variable = { POR_legitimacy_of_crown_var > temp_var }
+				}
+				any_controlled_state = {
+					is_core_of = FROM
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = no
+					}
+				}
+			}
+		}
+		type = corps_commander
+		gain_xp = {
+			always = no # not gainable
+		}
+		trait_type = assignable_trait
+		cost = 0
+		
+		defense_skill = 1
+		
+		on_add = {
+			FROM = {
+				add_to_variable = { POR_legitimacy_of_crown_var = -10 tooltip = POR_legitimacy_of_crown_tt }
+				POR_legitimacy_of_crown_check_effect = yes
+				random_controlled_state = {
+					limit = {
+						is_core_of = FROM
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = no
+						}
+					}
+					hidden_effect = {
+						add_to_variable = { local_building_slots_var = 1 }
+						add_state_modifier = { modifier = { local_building_slots = -1 } }
+					}
+					effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+				}
+			}
+		}
+		
+		new_commander_weight = {
+			factor = 0
+		}
+		gui_row = 21
+		gui_column = 1
 	}
 
 
@@ -404,7 +702,7 @@ leader_traits = {
 		}
 		
 		trait_type = assignable_trait
-		parent = art_leader
+		any_parent = { art_leader }
 		
 		gui_row = 16
 	}
@@ -449,7 +747,7 @@ leader_traits = {
 		}
 		
 		trait_type = assignable_trait
-		parent = fire_leader
+		any_parent = { fire_leader }
 		
 		gui_row = 17
 	}
@@ -492,7 +790,7 @@ leader_traits = {
 		}
 		
 		trait_type = assignable_trait
-		parent = fire_leader
+		any_parent = { fire_leader }
 		
 		gui_row = 18
 	}
@@ -515,11 +813,13 @@ leader_traits = {
 		}
 		
 		trait_type = assignable_trait
-		parent = combined_avia_leader
+		any_parent = { combined_avia_leader }
 		
 		
 		gui_row = 19
 	}
+	
+	
 	### SAU
 	trait_very_old_guard = {
 		type = land

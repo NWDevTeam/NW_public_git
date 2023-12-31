@@ -1580,9 +1580,8 @@ focus_tree = {
 			#Event for unification
 			if = {
 				limit = {
-					any_other_country = {
+					any_allied_country = {
 						BUL_is_balkan_nation = yes
-						is_in_faction_with = ROOT
 					}
 				}
 				every_other_country = {
@@ -3393,13 +3392,11 @@ focus_tree = {
 			}
 			if = { #Allied-controlled Bulgarian states are transferred back to Bulgaria
 				limit = {
-					any_state = {
-						has_state_flag = BUL_initial_bulgarian_state_flag
-						ROOT = {
-							any_allied_country = {
-								NOT = { original_tag = ROOT }
-								PREV.PREV = { is_fully_controlled_by = PREV }
-							}
+					any_allied_country = {
+						NOT = { original_tag = ROOT }
+						any_controlled_state = {
+							is_fully_controlled_by = PREV
+							has_state_flag = BUL_initial_bulgarian_state_flag
 						}
 					}
 				}
@@ -3626,8 +3623,7 @@ focus_tree = {
 			add_to_tech_sharing_group = BUL_technological_cooperation_program
 			if  = {
 				limit = {
-					any_other_country = {
-						is_in_faction_with = ROOT
+					any_allied_country = {
 						is_faction_leader = yes
 					}
 				}
@@ -3642,9 +3638,7 @@ focus_tree = {
 			else_if = {
 				limit = {
 					is_faction_leader = yes
-					any_other_country = {
-						is_in_faction_with = ROOT
-					}
+					num_faction_members > 1
 				}
 				random_other_country = {
 					limit = {
@@ -6389,9 +6383,11 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_unite_Hungary"
-			if = {
-				limit = { HUN = { is_in_faction = no } }
-				HUN = { country_event = { id = bulgaria.29 hours = 6 } }
+			HUN = {
+				if = {
+					limit = { is_in_faction = no }
+					country_event = { id = bulgaria.29 hours = 6 }
+				}
 			}
 			create_wargoal = {
 				type = take_state_focus
@@ -6853,10 +6849,28 @@ focus_tree = {
 			NOT = { has_war_with = YUG }
 			has_civil_war = no
 		}
+		bypass = {
+			OR = {
+				NOT = { country_exists = YUG }
+				has_war_with = YUG
+			}
+		}
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_friendship_Yugoslavia"
-			YUG = { country_event = { id = bulgaria.6 hours = 6 } }
+			YUG = {
+				country_event = { id = bulgaria.6 hours = 6 }
+				effect_tooltip = {
+					add_opinion_modifier = { target = ROOT modifier = BUL_YUG_friend }
+					ROOT = { add_opinion_modifier = { target = PREV modifier = BUL_YUG_friend } }
+					diplomatic_relation = {
+						country = ROOT
+						relation = non_aggression_pact
+						active = yes
+					}
+				}
+				custom_effect_tooltip = needs_approval
+			}
 		}
 		
 		ai_will_do = {
@@ -10954,7 +10968,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = BUL_pilot_training_program
 
-		cost = 7.2
+		cost = 5
 
 		ai_will_do = {
 			factor = 10
@@ -11021,16 +11035,21 @@ focus_tree = {
 		cost = 7.2
 
 		available = {
-			NOT = { has_idea = BUL_army_restrictions }
+#			NOT = { has_idea = BUL_army_restrictions }
+			NOT = { has_idea = BUL_peace_great_war_idea }
+		}
+		historical_ai = {
+			num_of_civilian_factories > 20
+			OR = {
+				has_war = yes
+				date > 1938.6.1
+			}
 		}
 		
-		search_filters = {FOCUS_FILTER_RESEARCH}
+		search_filters = {FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY}
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus BUL_reorganize_the_military_industry"
-			add_timed_idea = {
-				idea = BUL_rearmament_idea
-				days = 360
-			}
+			add_timed_idea = { idea = BUL_rearmament_idea days = 360 }
 			add_tech_bonus = {
 				name = BUL_reorganize_the_military_industry
 			    bonus = 1.0
@@ -11077,8 +11096,21 @@ focus_tree = {
 			    uses = 2
 				category = light_air
 			}
-			custom_effect_tooltip = available_designer
-			show_ideas_tooltip = BUL_dar
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}	
+				custom_effect_tooltip = available_mio_tt
+				show_mio_tooltip = BUL_dar_organization
+
+				mio:BUL_dar_organization = {
+					add_mio_size = 3
+				}
+			}
+			else = {
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_dar
+			}
 		}
 	}
 
@@ -11212,6 +11244,21 @@ focus_tree = {
 			    uses = 2
 				category = cat_strategic_bomber
 				category = tactical_bomber
+			}
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}	
+				custom_effect_tooltip = available_mio_tt
+				show_mio_tooltip = BUL_kaproni_bulgarski_organization
+
+				mio:BUL_kaproni_bulgarski_organization = {
+					add_mio_size = 3
+				}
+			}
+			else = {
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = BUL_kaproni_bulgarski
 			}
 		}
 	}
@@ -11463,7 +11510,25 @@ focus_tree = {
 				}
 				add_ideas = BUL_prussia_of_the_balkans_01
 			}
-			BUL_replace_national_aircraft_designer = yes
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}
+				every_military_industrial_organization = {
+					limit = {
+						OR = {
+							is_military_industrial_organization = BUL_dar_organization
+							is_military_industrial_organization = BUL_kaproni_bulgarski_organization
+							is_military_industrial_organization = BUL_dvf_organization
+							is_military_industrial_organization = BUL_dvf_sopot_organization
+						}
+					}
+					complete_mio_trait = BUL_mio_trait_prussia_of_the_balkans
+				}
+			}
+			else = {
+				BUL_replace_national_aircraft_designer = yes
+			}
 		}
 	}
 
@@ -11887,7 +11952,8 @@ focus_tree = {
 		cost = 7.2
 
 		available = {
-			NOT = { has_idea = BUL_army_restrictions }
+#			NOT = { has_idea = BUL_army_restrictions }
+			NOT = { has_idea = BUL_peace_great_war_idea }
 			OR = {
 				AND = {
 					BUL = {
@@ -11989,9 +12055,11 @@ focus_tree = {
 			}
 			if = {
 				limit = {
-					any_other_country = {
-						has_full_control_of_state = 341 #EDIRNE
-						has_full_control_of_state = 843 #ISTANBUL
+					341 = {
+						controller = {
+							has_full_control_of_state = 341 #EDIRNE
+							has_full_control_of_state = 843 #ISTANBUL
+						}
 					}
 				}
 				random_country = {
@@ -12104,9 +12172,7 @@ focus_tree = {
 					}
 				}
 			}
-			effect_tooltip = {
-				activate_mission = BUL_dominance_in_the_black_sea_mission
-			}
+			activate_mission = BUL_dominance_in_the_black_sea_mission
 		}
 	}
 
@@ -12201,9 +12267,7 @@ focus_tree = {
 					}
 				}
 			}
-			effect_tooltip = {
-				activate_mission = BUL_dominance_in_the_aegean_sea_mission
-			}
+			activate_mission = BUL_dominance_in_the_aegean_sea_mission
 		}
 	}
 
@@ -12298,9 +12362,7 @@ focus_tree = {
 					}
 				}
 			}
-			effect_tooltip = {
-				activate_mission = BUL_dominance_in_the_adriatic_sea_mission
-			}
+			activate_mission = BUL_dominance_in_the_adriatic_sea_mission
 		}
 	}
 
@@ -12577,7 +12639,18 @@ focus_tree = {
 			    category = cl_tech
 			    category = ca_tech
 			}
-			BUL_replace_national_naval_designer = yes
+			
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}
+				mio:BUL_varna_naval_dockyard_organization = {
+					complete_mio_trait = BUL_mio_trait_an_aegean_sea_fleet
+				}
+			}
+			else = {
+				BUL_replace_national_naval_designer = yes
+			}
 
 			custom_effect_tooltip = BUL_an_aegean_sea_fleet_tt
 			every_controlled_state = {

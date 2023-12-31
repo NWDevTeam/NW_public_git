@@ -12,6 +12,21 @@ country_event = {
 	}
 }
 
+news_event = {
+	id = NW_chinese_reunification.1
+	title = NW_chinese_reunification.1.t
+	desc = NW_chinese_reunification.1.d
+	picture = GFX_news_event_001
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_chinese_reunification.1" }
+	
+	major = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = NW_chinese_reunification.1.a
+	}
+}
+
 add_namespace = NW_JAP_surrender
 
 country_event = { #from KR
@@ -25,6 +40,7 @@ country_event = { #from KR
 		has_war = yes
 		has_capitulated = no
 		NOT = { 
+			# has_active_mission = JAP_capitulation_timer_MGM - маньчжурия !
 			has_active_mission = JAP_capitulation_timer
 			has_global_flag = JAP_will_surrender
 		}
@@ -309,9 +325,24 @@ country_event = {
 			id = "NEA" 
 			value = 500
 		}
+		FROM = {
+		    if = {
+			    limit = {
+				    is_faction_leader = no
+			    }
+			    set_rule = { can_create_factions = yes }
+			    create_faction = CHI_the_peoples_front
+			    add_to_faction = PRC
+		    }
+		    else = {
+		        add_to_faction = PRC
+		    }
+		}
 		every_country = {
 			limit = {
-				is_chinese_warlord = yes
+			    NOT = { has_war_with = CHI }
+				NOT = { is_subject_of = CHI }
+				WTT_is_chinese_warlord = yes
 				NOT = { tag = NEA }
 			}
 			country_event = {
@@ -319,7 +350,7 @@ country_event = {
 				days = 1
 			}
 		}
-		PRC = {
+		FSR = {
 		    country_event = {
 				id = NW_xian_incident.15
 				days = 1
@@ -335,19 +366,29 @@ country_event = {
 	       		neutrality = 20
 				fascism = 80
             }
-			CHI_he_yingqin = {
-				add_country_leader_role = {
-					country_leader = {
-						expire = "1965.1.1"
-						ideology = nationalism_ideology
-						traits = {
-							military_genius
-							projapanese
-							anti_communist
-						}	
+			add_country_leader_role = {
+				character = CHI_he_yingqin
+				country_leader = {
+					desc=""
+					ideology = nationalism_ideology
+					traits = {
+					    military_genius
+						projapanese
+						anti_communist
 					}
+					expire = "1965.1.1"
 				}
 				promote_leader = yes
+			}
+			NEA = {
+				set_politics = {
+					ruling_party = communism
+					elections_allowed = no
+				}
+				set_popularities = {
+	       			communism = 70
+					neutrality = 30
+           	    }
 			}
 		}
     }
@@ -566,8 +607,8 @@ country_event = {
 country_event = {
 	id = NW_xian_incident.11
 	title = NW_xian_incident.11.t
-	desc = { text = NW_xian_incident.10.desc_a trigger = { has_country_flag = PRC_xian_execute } }
-	desc = { text = NW_xian_incident.10.desc_b trigger = { has_country_flag = PRC_xian_united_front } }
+	desc = { text = NW_xian_incident.11.desc_a trigger = { has_country_flag = PRC_xian_execute } }
+	desc = { text = NW_xian_incident.11.desc_b trigger = { has_country_flag = PRC_xian_united_front } }
 	picture = GFX_report_event_china_politicians_captured
 	is_triggered_only = yes
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_xian_incident.11" }
@@ -589,7 +630,11 @@ country_event = {
 		    limit = {
 				has_country_flag = PRC_xian_united_front
 			}
-		    add_opinion_modifier = { target = FROM modifier = PRC_ignored_our_opinion }
+		    FROM = { add_opinion_modifier = { target = ROOT modifier = PRC_ignored_our_opinion }}
+		}
+		set_politics = {
+			ruling_party = communism
+			elections_allowed = no
 		}
 		CHI = {
 			declare_war_on = {
@@ -631,9 +676,22 @@ country_event = {
 				value = 500
 			}
 		}
+		if = {
+		    limit = {
+			    is_faction_leader = no
+		    }
+		    set_rule = { can_create_factions = yes }
+		    create_faction = CHI_the_peoples_front
+		    add_to_faction = PRC
+		}
+		else = {
+	        add_to_faction = PRC
+		}
 		every_country = {
 			limit = {
-				is_chinese_warlord = yes
+			    NOT = { has_war_with = CHI }
+				NOT = { is_subject_of = CHI }
+				WTT_is_chinese_warlord = yes
 				NOT = { tag = NEA }
 			}
 			country_event = {
@@ -642,6 +700,10 @@ country_event = {
 			}
 		}
 		hidden_effect = {
+		    set_popularities = {
+	         	communism = 70
+		    	neutrality = 30
+            }
 		    CHI = {
 				retire_character = CHI_chiang_kaishek
 				set_politics = {
@@ -652,17 +714,17 @@ country_event = {
 	           		neutrality = 20
 					fascism = 80
             	}
-				CHI_he_yingqin = {
-					add_country_leader_role = {
-						country_leader = {
-							expire = "1965.1.1"
-							ideology = nationalism_ideology
-							traits = {
-								military_genius
-								projapanese
-								anti_communist
-							}	
+				add_country_leader_role = {
+					character = CHI_he_yingqin
+					country_leader = {
+						desc=""
+						ideology = nationalism_ideology
+						traits = {
+						    military_genius
+							projapanese
+							anti_communist
 						}
+						expire = "1965.1.1"
 					}
 					promote_leader = yes
 				}
@@ -683,7 +745,7 @@ country_event = {
 		    limit = {
 				has_country_flag = PRC_xian_execute
 			}
-		    add_opinion_modifier = { target = FROM modifier = PRC_ignored_our_opinion }
+		    FROM = { add_opinion_modifier = { target = ROOT modifier = PRC_ignored_our_opinion }}
 		}	
 		CHI = {
 			country_event = NW_xian_incident.10
@@ -783,6 +845,10 @@ country_event = {
 				target = ROOT
 				transfer_troops = yes
 			}
+		}		 		
+		every_state = {
+			limit = { is_core_of = ROOT }
+			add_core_of = CHI
 		}
 		hidden_effect = {
 		    PRC = { country_event = { id = NW_xian_incident.16 days = 1 } }
@@ -840,41 +906,56 @@ country_event = {
 			}
 			modifier = {
 				tag = PRC
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = SHA
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = GXC
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = SIH
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = SIK
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = SHX
-				factor = 2
+				factor = 50
 			}
 		    modifier = {
 				tag = YUL
-				factor = 2
+				factor = 50
 			}	
-			modifier = {
-				tag = HCP
-				factor = 2
-			}
 		}
 		hidden_effect = {
 			add_to_war = {
 				targeted_alliance = NEA
 				enemy = CHI
+			}
+			give_military_access = NEA
+			add_ai_strategy = {
+				type = antagonize
+				id = "CHI"
+				value = 500
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = "CHI" 
+				value = 500
+			}		
+			add_ai_strategy = {
+				type = protect
+				id = "NEA" 
+				value = 500
+			}
+			NEA = { 
+			    give_military_access = ROOT 
 			}
 		}
 	}
@@ -882,7 +963,11 @@ country_event = {
 	option = {
 		name = NW_xian_incident.15.b #Останемся в стороне
 		ai_chance = {
-			factor = 0
+			base = 50
+			modifier = {
+				tag = HCP
+				factor = 50
+			}
 		}
 	}
 	
@@ -896,29 +981,48 @@ country_event = {
 			}
 			modifier = {
 				tag = YUN
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = TNG
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = XSM
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = NGX
-				factor = 2
+				factor = 50
 			}
 			modifier = {
 				tag = XIK
-				factor = 2
+				factor = 50
 			}
 		}
 		hidden_effect = {
 			add_to_war = {
 				targeted_alliance = CHI
 				enemy = NEA
+			}
+			give_military_access = CHI
+			add_ai_strategy = {
+				type = antagonize
+				id = "NEA"
+				value = 500
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = "NEA" 
+				value = 500
+			}		
+			add_ai_strategy = {
+				type = protect
+				id = "CHI" 
+				value = 500
+			}
+			CHI = { 
+			    give_military_access = ROOT 
 			}
 		}
 	}
@@ -932,7 +1036,7 @@ country_event = {
 	is_triggered_only = yes
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_xian_incident.16" }
 	option = {
-		name = NW_xian_incident.2.a #ask him to ally with the communists
+		name = NW_xian_incident.16.a #
 		ai_chance = {
 			factor = 100
 		}
@@ -940,6 +1044,9 @@ country_event = {
 		add_war_support = 0.1
 		transfer_state = 622
 		set_capital = { state =  622 }
+		622 = {
+			add_core_of = PRC
+		}	
     }
 }
 
@@ -1721,6 +1828,12 @@ country_event = { #Столкновение на мосту Марко Поло
 			}
 		}
 		declare_war_on = { target = HCP type = annex_everything } 
+		CHI = {
+		    country_event = {
+				id = NW_marco_polo_bridge.15
+				days = 1
+			}
+		}
 	}
 	
 	option = { # 
@@ -1927,6 +2040,12 @@ country_event = {
 		JAP = {
 			declare_war_on = { target = HCP type = annex_everything } 
 		}
+		CHI = {
+		    country_event = {
+				id = NW_marco_polo_bridge.15
+				days = 1
+			}
+		}
 	}
 }
 
@@ -1954,6 +2073,12 @@ country_event = {
 		name = NW_marco_polo_bridge.14.b
 		ai_chance = { factor = 50 }
 		declare_war_on = { target = HCP type = annex_everything } 
+		CHI = {
+		    country_event = {
+				id = NW_marco_polo_bridge.15
+				days = 1
+			}
+		}
 	}
 }
 
@@ -1962,19 +2087,9 @@ country_event = {
 	title = NW_marco_polo_bridge.15.t
 	desc = NW_marco_polo_bridge.15.d
 	picture = GFX_report_event_chinese_officers
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = CHI
-		HCP = { has_war_with = JAP }
-		JAP = { has_offensive_war = yes }
-		NOT = { is_in_faction_with = HCP }
-	}
-
-	mean_time_to_happen = {
-		days = 3
-	}
+	
+	is_triggered_only = yes
+	
 	
 	option = {
 		ai_chance = { factor = 100 }
@@ -1999,6 +2114,8 @@ country_event = {
 				limit = {
 					is_literally_china = yes
 					NOT = { tag = HCP }
+			  	    NOT = { has_war_with = CHI }
+					NOT = { is_subject_of = JAP }
 				}
 				country_event = {
 					id = NW_marco_polo_bridge.16

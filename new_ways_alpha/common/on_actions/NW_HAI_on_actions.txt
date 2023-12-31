@@ -1,0 +1,242 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			### Гаити и Доминикана стартпак
+			if = {
+				limit = {
+					has_start_date < 1936.01.02
+				}
+				DOM = {
+					activate_mission = HAI_escalation_on_dominican_haitian_border
+				}
+				HAI = {
+					activate_mission = HAI_escalation_on_dominican_haitian_border
+					country_event = { id = NWhaiti.18 days = 1961 }
+					country_event = { id = NWhaiti.55 days = 35 }
+				}
+			}
+		}
+	}
+	
+	# FROM is war target
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							AND = {
+								original_tag = USA
+								OR = {
+									has_government = neutrality
+									has_government = democratic
+								}
+							}
+							is_subject_of = USA
+						}
+					}
+					ROOT = { original_tag = JAP }
+					any_country_with_original_tag = {
+						original_tag_to_check = HAI
+						OR = {
+							has_government = neutrality
+							has_government = democratic
+						}
+						NOT = {
+							has_war_with = FROM
+							has_war_with = ROOT
+							has_country_flag = NWhaiti_15_flag
+						}
+					}
+				}
+				random_country = {
+					limit = {
+						original_tag = HAI
+						OR = {
+							has_government = neutrality
+							has_government = democratic
+						}
+					}
+					country_event = { id = NWhaiti.15 days = 1 }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							ROOT = { original_tag = HAI }
+							FROM = { original_tag = USA }
+						}
+						AND = {
+							FROM = { original_tag = HAI }
+							ROOT = { original_tag = USA }
+						}
+					}
+				}
+				393 = {
+					if = {
+						limit = {
+							has_state_flag = HAI_creation_of_terrorist_cell_in_detroit
+							controller = { original_tag = USA }
+						}
+						clr_state_flag = HAI_creation_of_terrorist_cell_in_detroit
+						state_event = { id = NWhaiti.37 hours = 6 random_hours = 18 trigger_for = controller }
+					}
+				}
+				358 = {
+					if = {
+						limit = {
+							has_state_flag = HAI_creation_of_terrorist_cell_in_new_york
+							controller = { original_tag = USA }
+						}
+						clr_state_flag = HAI_creation_of_terrorist_cell_in_new_york
+						state_event = { id = NWhaiti.38 hours = 6 random_hours = 18 trigger_for = controller }
+					}
+				}
+				371 = {
+					if = {
+						limit = {
+							has_state_flag = HAI_creation_of_terrorist_cell_in_louisiana
+							controller = { original_tag = USA }
+						}
+						clr_state_flag = HAI_creation_of_terrorist_cell_in_louisiana
+						state_event = { id = NWhaiti.39 hours = 6 random_hours = 18 trigger_for = controller }
+					}
+				}
+				378 = {
+					if = {
+						limit = {
+							has_state_flag = HAI_creation_of_terrorist_cell_in_california
+							controller = { original_tag = USA }
+						}
+						clr_state_flag = HAI_creation_of_terrorist_cell_in_california
+						state_event = { id = NWhaiti.40 hours = 6 random_hours = 18 trigger_for = controller }
+					}
+				}
+			}
+		}
+	}
+	
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_global_flag = HAI_fate_of_DOM_flag }
+					ROOT = { original_tag = DOM has_country_leader = { character = DOM_rafael_trujillo ruling_only = yes } }
+					FROM = { original_tag = HAI has_government = fascism }
+				}
+				set_global_flag = HAI_fate_of_DOM_flag
+				FROM = { country_event = { id = NWhaiti.68 hours = 6 } }
+			}
+		}
+	}
+	
+	on_weekly_HAI = {
+		effect = {
+			if = {
+				limit = {
+					has_completed_focus = HAI_hunting_for_white_devils
+				}
+				every_controlled_state = {
+					limit = { NOT = { check_variable = { modifier@local_population_weekly = 0 } } }
+					add_manpower = modifier@local_population_weekly
+				}
+			}
+			779 = {
+				if = {
+					limit = { NOT = { check_variable = { modifier@local_population_weekly = 0 } } }
+					add_manpower = modifier@local_population_weekly
+				}
+			}
+			558 = {
+				if = {
+					limit = { NOT = { check_variable = { modifier@local_population_weekly = 0 } } }
+					add_manpower = modifier@local_population_weekly
+				}
+			}
+			700 = {
+				if = {
+					limit = { NOT = { check_variable = { modifier@local_population_weekly = 0 } } }
+					add_manpower = modifier@local_population_weekly
+				}
+			}
+			
+			if = {
+				limit = { has_variable = points_of_dependence_on_ussr_var }
+				if = {
+					limit = {
+						OR = {
+							NOT = { country_exists = SOV }
+							SOV = {
+								OR = {
+									has_capitulated = yes
+									NOT = {
+										has_government = communism
+										has_government = trozkism
+										is_in_faction_with = ROOT
+									}
+								}
+							}
+							is_major = yes
+							AND = {
+								controls_province = 7552	# Новый Орлеан
+								controls_province = 1843	# Майами
+								controls_province = 3878	# Нью-Йорк
+								controls_province = 3957	# Вашингтон
+								controls_province = 9671	# Сан-Франциско
+								controls_province = 9814	# Лос-Анджелес
+								controls_province = 3960	# Даллас
+								controls_province = 6710	# Детройт
+							}
+						}
+					}
+					clear_variable = points_of_dependence_on_ussr_var
+					set_country_flag = HAI_points_of_dependence_on_ussr_block_flag	# юзается для проверки негативного отключения механики (т.е. исключая случай отключения механа при 100% зависимости и марионетстве от СССР)
+					log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): set_country_flag = HAI_points_of_dependence_on_ussr_block_flag"
+				}
+				else = {
+					if = {
+						limit = { check_variable = { num_of_factories = HAI_current_target_num_of_factories compare = greater_than_or_equals } }
+						add_to_variable = { HAI_current_target_num_of_factories = 10 }
+						add_to_variable = { points_of_dependence_on_ussr_var = -6 tooltip = points_of_dependence_on_ussr_effect_tt }
+						clamp_variable = { var = points_of_dependence_on_ussr_var min = 0 max = 100 }
+						HAI_update_actual_points_of_dependence_on_ussr_idea = yes
+					}
+					if = {
+						limit = { check_variable = { num_battalions = HAI_current_target_num_battalions compare = greater_than_or_equals } }
+						add_to_variable = { HAI_current_target_num_battalions = 12 }
+						add_to_variable = { points_of_dependence_on_ussr_var = -5 tooltip = points_of_dependence_on_ussr_effect_tt }
+						clamp_variable = { var = points_of_dependence_on_ussr_var min = 0 max = 100 }
+						HAI_update_actual_points_of_dependence_on_ussr_idea = yes
+					}
+				}
+			}
+			
+			if = {
+				limit = {
+					has_idea = HAI_national_defense_plan_idea
+					has_war = yes
+					any_core_state = { is_owned_by = ROOT NOT = { is_controlled_by = ROOT } }
+				}
+				country_event = { id = NWhaiti.54 hours = 6 }
+			}
+		}
+	}
+	
+	on_monthly_HAI = {
+		effect = {
+			if = {
+				limit = { has_variable = points_of_dependence_on_ussr_var }
+				if = {
+					limit = { SOV = { is_lend_leasing = HAI } }
+					add_to_variable = { points_of_dependence_on_ussr_var = 8 tooltip = points_of_dependence_on_ussr_effect_tt }
+					clamp_variable = { var = points_of_dependence_on_ussr_var min = 0 max = 100 }
+					HAI_update_actual_points_of_dependence_on_ussr_idea = yes
+				}
+			}
+		}
+	}
+}

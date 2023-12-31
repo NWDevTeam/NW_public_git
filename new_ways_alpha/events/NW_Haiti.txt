@@ -1,0 +1,3078 @@
+﻿add_namespace = NWhaiti
+
+#delete haiti division // HAI
+country_event = {
+	id = NWhaiti.0
+	hidden = yes
+	
+	trigger = {
+		tag = HAI
+		surrender_progress < 0.01
+		has_template = "Milice Populaire de la Jeunesse"
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.0" }
+	immediate = {
+		delete_unit_template_and_units = { division_template = "Milice Populaire de la Jeunesse" }
+	}
+}
+
+
+
+# Петрушечная резня // HAI
+country_event = {
+	id = NWhaiti.1
+	title = NWhaiti.1.t
+	desc = NWhaiti.1.desc
+	picture = GFX_report_event_hai_1
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.1" }
+	
+	option = {
+		name = NWhaiti.1.a
+		effect_tooltip = { 1189 = { add_manpower = -14000 } }
+		add_manpower = -3000
+		add_opinion_modifier = { target = DOM modifier = HAI_petrushka_massacre_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_petrushka_massacre_op } }
+		if = {
+			limit = { has_idea = HAI_rearmament_program_idea }
+			remove_ideas = HAI_rearmament_program_idea
+		}
+		add_ideas = HAI_consequences_of_petrushka_massacre_idea_1
+		add_popularity = { ideology = var:current_party_ideology_group popularity = -0.1 }
+		unlock_national_focus = HAI_consequences_of_the_petrushka_massacre
+		activate_mission = HAI_calixtas_coup_miss
+		activate_mission = HAI_vincents_reaction
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = NWhaiti_56_a_flag }
+				add_days_mission_timeout = { mission = HAI_calixtas_coup_miss days = 30 }
+			}
+			else = { add_days_mission_timeout = { mission = HAI_calixtas_coup_miss days = -30 } }
+			if = {
+				limit = { has_country_flag = NWhaiti_58_a_flag }
+				add_days_mission_timeout = { mission = HAI_calixtas_coup_miss days = -30 }
+			}
+			else = { add_days_mission_timeout = { mission = HAI_calixtas_coup_miss days = 25 } }
+		}
+	}
+}
+
+# Переворот Каликсты // HAI
+country_event = {
+	id = NWhaiti.2
+	title = NWhaiti.2.t
+	desc = NWhaiti.2.desc
+	picture = GFX_report_event_hai_2
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.2" }
+	immediate = {
+		hidden_effect = {
+			set_country_flag = HAI_calixtas_coup_flag
+			unlock_national_focus = HAI_calixtas_coup
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	
+	option = {
+		name = NWhaiti.2.a
+		effect_tooltip = {
+			unlock_national_focus = HAI_rise_of_noirism
+			unlock_national_focus = HAI_end_conflict_with_trujillo
+		}
+		retire_country_leader = yes
+		add_political_power = 50
+		add_stability = -0.085
+		set_party_name = { ideology = neutrality	long_name = HAI_calixta_regime			name = HAI_calixta_regime }
+		set_party_name = { ideology = democratic	long_name = HAI_freedom_movement		name = HAI_freedom_movement }
+		set_party_name = { ideology = fascism		long_name = HAI_national_peoples_party	name = HAI_national_peoples_party }
+		add_country_leader_role = {
+			character = HAI_demosthenes_petrus_calixte
+			promote_leader = yes
+			country_leader = {
+				ideology = centrism
+				expire = 1965.1.1
+				traits = { a_political_opportunist }
+			}
+		}
+		add_country_leader_role = {
+			character = HAI_jean_price_mars
+			promote_leader = yes
+			country_leader = {
+				ideology = conservatism
+				expire = 1965.1.1
+				traits = { defender_of_haitian_identity }
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_idea = HAI_apolitical_armed_forces_idea_1
+					has_idea = HAI_apolitical_armed_forces_idea_2
+					has_idea = HAI_apolitical_armed_forces_idea_3
+				}
+			}
+			if = {
+				limit = { has_idea = HAI_apolitical_armed_forces_idea_1 }
+				remove_ideas = HAI_apolitical_armed_forces_idea_1
+			}
+			else_if = {
+				limit = { has_idea = HAI_apolitical_armed_forces_idea_2 }
+				remove_ideas = HAI_apolitical_armed_forces_idea_2
+			}
+			else_if = {
+				limit = { has_idea = HAI_apolitical_armed_forces_idea_3 }
+				remove_ideas = HAI_apolitical_armed_forces_idea_3
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+			effect_tooltip = { remove_ideas = HAI_consequences_of_petrushka_massacre_idea_1 }
+			hidden_effect = {
+				remove_ideas = {
+					HAI_consequences_of_petrushka_massacre_idea_1
+					HAI_consequences_of_petrushka_massacre_idea_1_1
+					HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+		}
+	}
+}
+
+# Ограничение прессы // HAI
+country_event = {
+	id = NWhaiti.3
+	title = NWhaiti.3.t
+	desc = NWhaiti.3.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.3" }
+	
+	option = {
+		name = NWhaiti.3.a
+		add_stability = 0.025
+		add_war_support = -0.085
+		add_popularity = { ideology = neutrality popularity = -0.1 }
+	}
+}
+
+# Пропагандистская кампания против Трухильо // HAI
+country_event = {
+	id = NWhaiti.4
+	title = NWhaiti.4.t
+	desc = NWhaiti.4.desc
+	picture = GFX_report_event_hai_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.4" }
+	
+	option = {
+		name = NWhaiti.4.a
+		add_stability = -0.035
+		add_war_support = 0.1
+		add_political_power = 75
+		add_popularity = { ideology = neutrality popularity = 0.085 }
+		add_manpower = 10000
+	}
+}
+
+# Гаитяно-американские переговоры // USA
+country_event = {
+	id = NWhaiti.5
+	title = NWhaiti.5.t
+	desc = NWhaiti.5.desc
+	picture = GFX_report_event_hai_5
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.5" }
+	
+	option = {
+		name = NWhaiti.5.a
+	}
+}
+
+# Компенсация Гаити // DOM
+country_event = {
+	id = NWhaiti.6
+	title = NWhaiti.6.t
+	desc = NWhaiti.6.desc
+	picture = GFX_report_event_hai_6
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.6" }
+	
+	option = {
+		name = NWhaiti.6.a
+		ai_chance = {
+			factor = 80
+		}
+		FROM = { country_event = { id = NWhaiti.7 hours = 6 } }
+		add_timed_idea = { idea = HAI_payment_of_compensation_idea days = 410 }
+	}
+	
+	option = {
+		name = NWhaiti.6.b
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		FROM = { country_event = { id = NWhaiti.8 hours = 6 } }
+		USA = { country_event = { id = NWhaiti.9 hours = 6 } }
+	}
+}
+
+# Доминиканские выплаты // HAI
+country_event = {
+	id = NWhaiti.7
+	title = NWhaiti.7.t
+	desc = NWhaiti.7.desc
+	picture = GFX_report_event_hai_7
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.7" }
+	
+	option = {
+		name = NWhaiti.7.a
+		add_timed_idea = { idea = HAI_dominican_compensation_idea days = 410 }
+		effect_tooltip = { FROM = { add_timed_idea = { idea = HAI_payment_of_compensation_idea days = 410 } } }
+		set_country_flag = HAI_dominican_compensation_flag
+	}
+}
+
+# Провал на переговорах // HAI
+country_event = {
+	id = NWhaiti.8
+	title = NWhaiti.8.t
+	desc = NWhaiti.8.desc
+	picture = GFX_report_event_hai_8
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.8" }
+	
+	option = {
+		name = NWhaiti.8.a
+		add_war_support = -0.1
+		add_political_power = -200
+		add_days_mission_timeout = { mission = HAI_calixtas_coup_miss days = -60 }
+		add_popularity = { ideology = neutrality popularity = -0.1 }
+		add_opinion_modifier = { target = FROM modifier = HAI_petrushka_massacre_2_op }
+		FROM = { add_opinion_modifier = { target = ROOT modifier = HAI_petrushka_massacre_2_op } }
+		set_country_flag = HAI_dominican_compensation_fail_flag
+	}
+}
+
+# Доминиканская республика не идет на уступки! // USA
+country_event = {
+	id = NWhaiti.9
+	title = NWhaiti.9.t
+	desc = NWhaiti.9.desc
+	picture = GFX_report_event_hai_9
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.9" }
+	
+	option = {
+		name = NWhaiti.9.a
+		send_embargo = DOM
+		DOM = { country_event = { id = NWhaiti.10 hours = 6 } }
+	}
+}
+
+# Американское эмбарго // DOM
+country_event = {
+	id = NWhaiti.10
+	title = NWhaiti.10.t
+	desc = NWhaiti.10.desc
+	picture = GFX_report_event_hai_10
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.10" }
+	
+	option = {
+		name = NWhaiti.10.a
+		send_embargo = FROM
+		add_stability = -0.075
+	}
+}
+
+# Гаити сводит войска к границе // DOM
+country_event = {
+	id = NWhaiti.11
+	title = NWhaiti.11.t
+	desc = NWhaiti.11.desc
+	picture = GFX_report_event_hai_11
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.11" }
+	
+	option = {
+		name = NWhaiti.11.a
+		add_war_support = 0.1
+	}
+}
+
+# Гаитянский ультиматум! // DOM
+country_event = {
+	id = NWhaiti.12
+	title = NWhaiti.12.t
+	desc = NWhaiti.12.desc
+	picture = GFX_report_event_hai_12
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.12" }
+	
+	option = {
+		name = NWhaiti.12.a
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0
+				num_divisions < 1
+			}
+		}
+		FROM = { country_event = { id = NWhaiti.13 hours = 3 } }
+	}
+	
+	option = {
+		name = NWhaiti.12.b
+		ai_chance = {
+			factor = 1
+		}
+		FROM = {
+			transfer_state = 870
+			country_event = { id = NWhaiti.14 hours = 3 }
+		}
+		319 = {
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		add_ideas = HAI_dominican_weakness_idea
+	}
+}
+
+# Трухильо отвергает наш ультиматум! // HAI
+country_event = {
+	id = NWhaiti.13
+	title = NWhaiti.13.t
+	desc = NWhaiti.13.desc
+	picture = GFX_report_event_hai_13
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.13" }
+	
+	option = {
+		name = NWhaiti.13.a
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+	}
+}
+
+# Доминиканская республика идет на уступки // HAI
+country_event = {
+	id = NWhaiti.14
+	title = NWhaiti.14.t
+	desc = NWhaiti.14.desc
+	picture = GFX_report_event_hai_14
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.14" }
+	
+	option = {
+		name = NWhaiti.14.a
+		effect_tooltip = {
+			transfer_state = 870
+			319 = {
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			FROM = { add_ideas = HAI_dominican_weakness_idea }
+		}
+		add_offsite_building = { type = industrial_complex level = 1 }
+	}
+}
+
+
+# Вступление Гаити в войну // HAI
+country_event = {
+	id = NWhaiti.15
+	title = NWhaiti.15.t
+	desc = NWhaiti.15.desc
+	picture = GFX_report_event_hai_15
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.15" }
+	immediate = { set_country_flag = NWhaiti_15_flag }
+	
+	option = {
+		name = NWhaiti.15.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				num_divisions < 1
+				is_historical_focus_on = no
+			}
+		}
+		add_to_war = { targeted_alliance = USA enemy = JAP hostility_reason = asked_to_join }
+		add_war_support = 0.2
+		add_stability = 0.15
+	}
+	
+	option = {
+		name = NWhaiti.15.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_opinion_modifier = { target = USA modifier = HAI_NWhaiti_15_op }
+		add_opinion_modifier = { target = USA modifier = HAI_NWhaiti_15_op_trade }
+		USA = {
+			add_opinion_modifier = { target = ROOT modifier = HAI_NWhaiti_15_op }
+			add_opinion_modifier = { target = ROOT modifier = HAI_NWhaiti_15_op_trade }
+		}
+	}
+}
+
+# Студенческие протесты в столице // HAI
+country_event = {
+	id = NWhaiti.16
+	title = NWhaiti.16.t
+	desc = NWhaiti.16.desc
+	picture = GFX_report_event_hai_16
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.16" }
+	
+	option = {
+		name = NWhaiti.16.a
+		add_stability = -0.1
+		add_manpower = -9000
+	}
+}
+
+# Сокращение темнокожего офицерского командования // HAI
+country_event = {
+	id = NWhaiti.17
+	title = NWhaiti.17.t
+	desc = NWhaiti.17.desc
+	picture = GFX_report_event_hai_17
+	is_triggered_only = yes
+	
+	trigger = {
+		has_manpower > 50000
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.17" }
+	
+	option = {
+		name = NWhaiti.17.a
+		add_war_support = -0.045
+		army_experience = -10
+		add_manpower = -45000
+	}
+}
+
+# Отставка Венсана //  15 мая 1941 // HAI
+country_event = {
+	id = NWhaiti.18
+	title = NWhaiti.18.t
+	desc = NWhaiti.18.desc
+	picture = GFX_report_event_hai_18
+	is_triggered_only = yes
+	
+	trigger = {
+		has_country_leader = { character = HAI_stenio_vincent ruling_only = yes }
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.18" }
+	
+	option = {
+		name = NWhaiti.18.a
+		retire_country_leader = yes
+		add_country_leader_role = {
+			character = HAI_elie_lescot
+			country_leader = {
+				ideology = authoritarian_democracy
+				desc = "POLITICS_ELIE_LESCOT_DESC"
+				traits = {
+				}
+				expire = "1965.1.1"
+			}
+			promote_leader = yes
+		}
+	}
+}
+
+# Студенческие протесты // HAI
+country_event = {
+	id = NWhaiti.19
+	title = NWhaiti.19.t
+	desc = NWhaiti.19.desc
+	picture = GFX_report_event_hai_19
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.19" }
+	
+	option = {
+		name = NWhaiti.19.a
+		add_stability = -0.08
+		add_popularity = { ideology = democratic popularity = 0.105 }
+		add_popularity = { ideology = communism popularity = 0.045 }
+	}
+}
+
+# Нападения на церкви // HAI
+country_event = {
+	id = NWhaiti.20
+	title = NWhaiti.20.t
+	desc = NWhaiti.20.desc
+	picture = GFX_report_event_hai_20
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.20" }
+	
+	option = {
+		name = NWhaiti.20.a
+		add_war_support = -0.105
+		add_stability = -0.045
+		add_popularity = { ideology = fascism popularity = 0.095 }
+		every_controlled_state = {
+			limit = { hospital > 0 }
+			damage_building = {
+				type = hospital
+				damage = 0.25
+			}
+		}
+	}
+}
+
+# Потеря лояльности военных // HAI
+country_event = {
+	id = NWhaiti.21
+	title = NWhaiti.21.t
+	desc = NWhaiti.21.desc
+	picture = GFX_report_event_hai_21
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.21" }
+	
+	option = {
+		name = NWhaiti.10.a
+		add_war_support = -0.185
+		add_popularity = { ideology = neutrality popularity = -0.185 }
+		add_equipment_to_stockpile = { type = infantry_equipment amount = -1000 }
+	}
+}
+
+# Протесты против Второй оккупации // HAI
+country_event = {
+	id = NWhaiti.22
+	title = NWhaiti.22.t
+	desc = NWhaiti.22.desc
+	picture = GFX_report_event_hai_22
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.22" }
+	
+	option = {
+		name = NWhaiti.22.a
+		add_war_support = -0.1
+		add_stability = -0.065
+		add_popularity = { ideology = neutrality popularity = -0.09 }
+		add_popularity = { ideology = fascism popularity = 0.03 }
+		add_popularity = { ideology = communism popularity = 0.03 }
+		add_popularity = { ideology = democratic popularity = 0.03 }
+		capital_scope = {
+			damage_building = {
+				type = naval_base
+				damage = 0.1
+			}
+		}
+	}
+}
+
+# Переворот нуаристов! // HAI
+country_event = {
+	id = NWhaiti.23
+	title = NWhaiti.23.t
+	desc = NWhaiti.23.desc
+	picture = GFX_report_event_hai_23
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.23" }
+	
+	option = {
+		name = NWhaiti.23.a
+		add_political_power = 200
+		set_country_flag = HAI_end_noirists_calixtas_opposite_flag
+		add_popularity = { ideology = democratic popularity = 0.4 }
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = yes
+		}
+		if = {
+			limit = { has_idea = HAI_religious_setting__dominance_of_catholicism_idea }
+			swap_ideas = {
+				remove_idea = HAI_religious_setting__dominance_of_catholicism_idea
+				add_idea = HAI_religious_setting__syncretic_catholicism_idea
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_black_government_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_black_government_op } }
+		remove_ideas = HAI_amendments_to_education_system_idea
+		unlock_national_focus = HAI_coup_of_noirists
+		if = {
+			limit = {
+				OR = {
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+			effect_tooltip = { remove_ideas = HAI_consequences_of_petrushka_massacre_idea_1 }
+			hidden_effect = {
+				remove_ideas = {
+					HAI_consequences_of_petrushka_massacre_idea_1
+					HAI_consequences_of_petrushka_massacre_idea_1_1
+					HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+		}
+		if = {
+			limit = { has_idea = HAI_liberal_coalition_idea }
+			remove_ideas = HAI_liberal_coalition_idea
+		}
+		if = {
+			limit = { has_idea = HAI_underground_labor_movement_idea }
+			remove_ideas = HAI_underground_labor_movement_idea
+		}
+		if = {
+			limit = { has_idea = HAI_instability_among_voodoo }
+			remove_ideas = HAI_instability_among_voodoo
+		}
+	}
+}
+
+# Подавление нуаристского мятежа // HAI
+country_event = {
+	id = NWhaiti.24
+	title = NWhaiti.24.t
+	desc = NWhaiti.24.desc
+	picture = GFX_report_event_hai_24
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.24" }
+	
+	option = {
+		name = NWhaiti.24.a
+		set_country_flag = HAI_end_noirists_calixtas_opposite_flag
+		add_political_power = 200
+		add_stability = -0.15
+		add_popularity = { ideology = neutrality popularity = 0.385 }
+		random_owned_controlled_state = {
+			prioritize = { 318 }
+			limit = { industrial_complex > 0 }
+			damage_building = {
+				type = industrial_complex
+				damage = 0.25
+			}
+		}
+		random_owned_controlled_state = {
+			prioritize = { 869 }
+			limit = { industrial_complex > 0 }
+			damage_building = {
+				type = industrial_complex
+				damage = 0.25
+			}
+		}
+		if = {
+			limit = { owns_state = 1189 }
+			remove_state_core = 1189
+			DOM = {
+				add_state_core = 1189
+				transfer_state = 1189
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_settle_territorial_dispute_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_settle_territorial_dispute_op } }
+		remove_ideas = {
+			HAI_rise_of_noirism_idea
+			HAI_progressive_sentiments_idea
+			HAI_instability_among_voodoo
+		}
+		uncomplete_national_focus = { focus = HAI_rise_of_noirism		uncomplete_children = yes }
+		if = {
+			limit = { NOT = { has_completed_focus = HAI_settle_territorial_dispute } }
+			unlock_national_focus = HAI_settle_territorial_dispute
+		}
+	}
+}
+
+# Наплыв гаитянских беженцев // USA BRA CUB
+country_event = {
+	id = NWhaiti.25
+	title = NWhaiti.25.t
+	desc = NWhaiti.25.desc
+	picture = GFX_report_event_hai_25
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.25" }
+	
+	option = {
+		name = NWhaiti.25.a
+		add_timed_idea = { idea = HAI_haitian_immigration_idea days = 795 }
+	}
+}
+
+# Студенческие протесты 2 // HAI
+country_event = {
+	id = NWhaiti.26
+	title = NWhaiti.19.t
+	desc = NWhaiti.26.desc
+	picture = GFX_report_event_hai_26
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.26" }
+	
+	option = {
+		name = NWhaiti.26.a
+		add_popularity = { ideology = democratic popularity = 0.10 }
+		add_popularity = { ideology = communism popularity = 0.05 }
+	}
+}
+
+# Студенческие протесты 2 // HAI
+country_event = {
+	id = NWhaiti.27
+	title = NWhaiti.27.t
+	desc = NWhaiti.27.desc
+	picture = GFX_report_event_hai_27
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.27" }
+	
+	option = {
+		name = NWhaiti.27.a
+		add_popularity = { ideology = fascism popularity = 0.055 }
+		add_stability = -0.11
+		capital_scope = { add_manpower = -1500 }
+		if = {
+			limit = { controls_state = 1189 }
+			1189 = { add_manpower = -1000 }
+		}
+		if = {
+			limit = { controls_state = 869 }
+			869 = { add_manpower = -1250 }
+		}
+	}
+}
+
+# Переворот нуаристов! 2 // HAI
+country_event = {
+	id = NWhaiti.28
+	title = NWhaiti.23.t
+	desc = NWhaiti.28.desc
+	picture = GFX_report_event_hai_28
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.28" }
+	
+	option = {
+		name = NWhaiti.28.a
+		set_country_flag = HAI_end_noirists_calixtas_opposite_flag
+		add_political_power = 200
+		add_stability = 0.2
+		add_war_support = 0.15
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = yes
+		}
+		if = {
+			limit = { has_idea = HAI_religious_setting__dominance_of_catholicism_idea }
+			swap_ideas = {
+				remove_idea = HAI_religious_setting__dominance_of_catholicism_idea
+				add_idea = HAI_religious_setting__syncretic_catholicism_idea
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_black_government_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_black_government_op } }
+		remove_ideas = {
+			HAI_rise_of_noirism_idea
+			HAI_amendments_to_education_system_idea
+			HAI_loss_of_military_loyalty_idea
+			HAI_progressive_sentiments_idea
+			HAI_instability_among_voodoo
+		}
+		show_unit_leaders_tooltip = HAI_paul_eugene_magloire
+		hidden_effect = {
+			HAI_paul_eugene_magloire = { clr_character_flag = remove_unit_leader_role_flag }
+		}
+		if = {
+			limit = { NOT = { has_completed_focus = HAI_engage_mulatto_opposition } }
+			HAI_franck_lavaud = { effect_tooltip = { remove_unit_leader_role = yes } set_character_flag = remove_unit_leader_role_flag }
+			HAI_antoine_levelt = { effect_tooltip = { remove_unit_leader_role = yes } set_character_flag = remove_unit_leader_role_flag }
+		}
+		unlock_national_focus = HAI_coup_of_noirists
+		if = {
+			limit = {
+				OR = {
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_1_1
+					has_idea = HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+			effect_tooltip = { remove_ideas = HAI_consequences_of_petrushka_massacre_idea_1 }
+			hidden_effect = {
+				remove_ideas = {
+					HAI_consequences_of_petrushka_massacre_idea_1
+					HAI_consequences_of_petrushka_massacre_idea_1_1
+					HAI_consequences_of_petrushka_massacre_idea_2_1
+				}
+			}
+		}
+		if = {
+			limit = { has_idea = HAI_liberal_coalition_idea }
+			remove_ideas = HAI_liberal_coalition_idea
+		}
+		if = {
+			limit = { has_idea = HAI_underground_labor_movement_idea }
+			remove_ideas = HAI_underground_labor_movement_idea
+		}
+		if = {
+			limit = { has_idea = HAI_instability_among_voodoo }
+			remove_ideas = HAI_instability_among_voodoo
+		}
+		if = {
+			limit = { has_completed_focus = HAI_loyalty_of_military }
+			custom_effect_tooltip = HAI_bonus_effect_tt
+			add_manpower = 50000
+			add_war_support = 0.15
+		}
+		
+	}
+}
+
+# Победа либерального фронта на выборах // HAI
+country_event = {
+	id = NWhaiti.29
+	title = NWhaiti.29.t
+	desc = NWhaiti.29.desc
+	picture = GFX_report_event_hai_29
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.29" }
+	
+	option = {
+		name = NWhaiti.29.a
+		add_political_power = 200
+		add_popularity = { ideology = democratic popularity = 0.15 }
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = yes
+		}
+		unlock_national_focus = HAI_victory_of_the_liberal_front
+	}
+}
+
+# Победа КПГ на выборах // HAI
+country_event = {
+	id = NWhaiti.30
+	title = NWhaiti.30.t
+	desc = NWhaiti.30.desc
+	picture = GFX_report_event_hai_30
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.30" }
+	
+	option = {
+		name = NWhaiti.30.a
+		add_political_power = 200
+		add_popularity = { ideology = communism popularity = 0.15 }
+		set_politics = {
+			ruling_party = communism
+			elections_allowed = no
+		}
+		unlock_national_focus = HAI_PHC_victory
+	}
+}
+
+# Победа ННП на выборах // HAI
+country_event = {
+	id = NWhaiti.31
+	title = NWhaiti.31.t
+	desc = NWhaiti.31.desc
+	picture = GFX_report_event_hai_31
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.31" }
+	
+	option = {
+		name = NWhaiti.31.a
+		add_political_power = 200
+		add_popularity = { ideology = fascism popularity = 0.15 }
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+		unlock_national_focus = HAI_lorimers_victory
+	}
+}
+
+# Гаити разрывает военно-политические связи! // USA
+country_event = {
+	id = NWhaiti.32
+	title = NWhaiti.32.t
+	desc = NWhaiti.32.desc
+	picture = GFX_report_event_hai_32
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.32" }
+	
+	option = {
+		name = NWhaiti.32.a
+		ai_chance = {
+			factor = 50
+		}
+		add_war_support = -0.05
+	}
+	
+	option = {
+		name = NWhaiti.32.b
+		ai_chance = {
+			factor = 50
+		}
+		send_embargo = FROM
+		FROM = { country_event = { id = NWhaiti.33 hours = 3 } }
+	}
+	
+	option = {
+		name = NWhaiti.32.c
+		ai_chance = {
+			factor = 50
+		}
+		trigger = { has_country_leader = { character = USA_franklin_delano_roosevelt ruling_only = yes } }
+		create_wargoal = {
+			target = FROM
+			type = topple_government
+			expire = 0
+		}
+	}
+}
+
+# Америка накладывает эмбарго! // HAI
+country_event = {
+	id = NWhaiti.33
+	title = NWhaiti.33.t
+	desc = NWhaiti.33.desc
+	picture = GFX_report_event_hai_33
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.33" }
+	
+	option = {
+		name = NWhaiti.33.a
+		add_war_support = 0.025
+	}
+}
+
+# Вопрос партийного лидерства // HAI
+country_event = {
+	id = NWhaiti.34
+	title = NWhaiti.34.t
+	desc = NWhaiti.34.desc
+	picture = GFX_report_event_hai_34
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.34" }
+	
+	option = {
+		name = NWhaiti.34.a
+		ai_chance = {
+			factor = 50
+		}
+		add_popularity = { ideology = democratic popularity = -0.02 }
+	}
+	
+	option = {
+		name = NWhaiti.34.b
+		ai_chance = {
+			factor = 50
+		}
+		add_country_leader_role = {
+			character = HAI_dumarsais_estime
+			promote_leader = yes
+			country_leader = {
+				ideology = conservatism
+				expire = 1965.1.1
+				traits = { son_of_the_people }
+			}
+		}
+	}
+}
+
+# Международная выставка в Порт-О-Пренсе // HAI
+country_event = {
+	id = NWhaiti.35
+	title = NWhaiti.35.t
+	desc = NWhaiti.35.desc
+	picture = GFX_report_event_hai_35
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.35" }
+	
+	option = {
+		name = NWhaiti.35.a
+		add_political_power = 170
+		add_offsite_building = { type = industrial_complex level = 1 }
+		every_possible_country = {
+			limit = { capital_scope = { is_on_continent = africa } }
+			add_opinion_modifier = { target = ROOT modifier = HAI_international_exhibition_in_porto_au_prince_op }
+		}
+	}
+}
+
+# Коммунистический переворот на Гаити! // USA
+country_event = {
+	id = NWhaiti.36
+	title = NWhaiti.36.t
+	desc = NWhaiti.36.desc
+	picture = GFX_report_event_hai_36
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.36" }
+	
+	option = {
+		name = NWhaiti.36.a
+		ai_chance = {
+			factor = 85
+		}
+		add_stability = -0.025
+		add_war_support = -0.025
+	}
+	
+	option = {
+		name = NWhaiti.36.b
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 0.1
+				FROM = { is_in_faction_with = SOV }
+			}
+		}
+		add_stability = -0.06
+		add_war_support = 0.05
+		create_wargoal = {
+			type = topple_government
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# Теракт в Детройте! // 393 controller
+state_event = {
+	id = NWhaiti.37
+	title = NWhaiti.37.t
+	desc = NWhaiti.37.desc
+	picture = GFX_report_event_hai_37
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.37"}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWhaiti.37.a
+		ROOT = { add_stability = -0.035 }
+		393 = {
+			add_manpower = -50
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = arms_factory			damage = 0.4 }
+			damage_building = { type = arms_factory			damage = 0.4 }
+			damage_building = { type = infrastructure		damage = 0.4 }
+		}
+	}
+}
+
+# Теракт в Нью-Йорке! // 358 controller
+state_event = {
+	id = NWhaiti.38
+	title = NWhaiti.38.t
+	desc = NWhaiti.38.desc
+	picture = GFX_report_event_hai_38
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.38"}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWhaiti.37.a
+		ROOT = { add_stability = -0.035 }
+		358 = {
+			add_manpower = -50
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = industrial_complex	damage = 0.4 }
+			damage_building = { type = arms_factory			damage = 0.4 }
+			damage_building = { type = arms_factory			damage = 0.4 }
+			damage_building = { type = dockyard				damage = 0.4 }
+			damage_building = { type = infrastructure		damage = 0.4 }
+		}
+	}
+}
+
+# Темнокожие беспорядки в Луизиане! // 371 controller
+state_event = {
+	id = NWhaiti.39
+	title = NWhaiti.39.t
+	desc = NWhaiti.39.desc
+	picture = GFX_report_event_hai_39
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.39"}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWhaiti.39.a
+		ROOT = { add_stability = -0.055 }
+		371 = {
+			add_manpower = -350
+			if = {
+				limit = { industrial_complex > 0 }
+				set_temp_variable = { temp_1 = building_level@industrial_complex }
+				multiply_temp_variable = { temp_1 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_1]"
+				}
+			}
+			if = {
+				limit = { arms_factory > 0 }
+				set_temp_variable = { temp_2 = building_level@arms_factory }
+				multiply_temp_variable = { temp_2 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_2]"
+				}
+			}
+			if = {
+				limit = { dockyard > 0 }
+				set_temp_variable = { temp_3 = building_level@dockyard }
+				multiply_temp_variable = { temp_3 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = dockyard	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_3]"
+				}
+			}
+			if = {
+				limit = { infrastructure > 0 }
+				set_temp_variable = { temp_4 = building_level@infrastructure }
+				multiply_temp_variable = { temp_4 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_4]"
+				}
+			}
+			if = {
+				limit = { hospital > 0 }
+				set_temp_variable = { temp_5 = building_level@hospital }
+				multiply_temp_variable = { temp_5 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = hospital	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_5]"
+				}
+			}
+			if = {
+				limit = { air_base > 0 }
+				set_temp_variable = { temp_6 = building_level@air_base }
+				multiply_temp_variable = { temp_6 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = air_base	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_6]"
+				}
+			}
+			if = {
+				limit = { supply_node > 0 }
+				set_temp_variable = { temp_7 = building_level@supply_node }
+				multiply_temp_variable = { temp_7 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = supply_node	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_7]"
+				}
+			}
+			if = {
+				limit = { naval_base > 0 }
+				set_temp_variable = { temp_8 = building_level@naval_base }
+				multiply_temp_variable = { temp_8 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = naval_base	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_8]"
+				}
+			}
+			if = {
+				limit = { anti_air_building > 0 }
+				set_temp_variable = { temp_9 = building_level@anti_air_building }
+				multiply_temp_variable = { temp_9 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = anti_air_building	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_9]"
+				}
+			}
+			if = {
+				limit = { synthetic_refinery > 0 }
+				set_temp_variable = { temp_10 = building_level@synthetic_refinery }
+				multiply_temp_variable = { temp_10 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = synthetic_refinery	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_10]"
+				}
+			}
+			if = {
+				limit = { fuel_silo > 0 }
+				set_temp_variable = { temp_11 = building_level@fuel_silo }
+				multiply_temp_variable = { temp_11 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = fuel_silo	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_11]"
+				}
+			}
+			if = {
+				limit = { radar_station > 0 }
+				set_temp_variable = { temp_12 = building_level@radar_station }
+				multiply_temp_variable = { temp_12 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = radar_station	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_12]"
+				}
+			}
+			if = {
+				limit = { nuclear_reactor > 0 }
+				set_temp_variable = { temp_13 = building_level@nuclear_reactor }
+				multiply_temp_variable = { temp_13 = 0.12 }
+				meta_effect = {
+					text = { damage_building = { type = nuclear_reactor	damage = [DAMAGE] } }
+					DAMAGE = "[?temp_13]"
+				}
+			}
+		}
+	}
+}
+
+# Диверсии на калифорнийских верфях! // 378 controller
+state_event = {
+	id = NWhaiti.40
+	title = NWhaiti.40.t
+	desc = NWhaiti.40.desc
+	picture = GFX_report_event_hai_40
+	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.40"}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = NWhaiti.39.a
+		ROOT = {
+			add_stability = -0.045
+			add_popularity = { ideology = communism popularity = 0.04 }
+		}
+		358 = {
+			add_manpower = -70
+			damage_building = { type = dockyard		damage = 0.32 }
+			damage_building = { type = dockyard		damage = 0.32 }
+			damage_building = { type = dockyard		damage = 0.32 }
+		}
+	}
+}
+
+# Гаитянское вступление в Коминтерн // SOV
+country_event = {
+	id = NWhaiti.41
+	title = NWhaiti.41.t
+	desc = NWhaiti.41.desc
+	picture = GFX_report_event_hai_41
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.41" }
+	
+	option = {
+		name = NWhaiti.41.a
+		ai_chance = {
+			factor = 1
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = FROM
+				value = 200
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = 200
+				}
+			}
+		}
+		add_to_faction = FROM
+		hidden_effect = {
+			FROM = {
+				set_variable = { points_of_dependence_on_ussr_var = 0 }
+				HAI_update_actual_points_of_dependence_on_ussr_idea = yes
+				HAI_start_points_of_dependence_on_ussr_mission = yes
+				
+				set_variable = { HAI_current_target_num_of_factories = num_of_factories }
+				add_to_variable = { HAI_current_target_num_of_factories = 10 }
+				
+				set_variable = { HAI_current_target_num_battalions = num_battalions }
+				add_to_variable = { HAI_current_target_num_battalions = 12 }
+			}
+		}
+	}
+	
+	option = {
+		name = NWhaiti.41.b
+		ai_chance = {
+			factor = 0
+		}
+		FROM = {
+			add_opinion_modifier = { target = ROOT modifier = HAI_joining_the_comintern_negative_op }
+			country_event = { id = NWhaiti.42 hours = 6 }
+			hidden_effect = { country_event = { id = NWhaiti.420 days = 230 } }
+		}
+		hidden_effect = {
+			add_ai_strategy = {
+				type = alliance
+				id = FROM
+				value = -999
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT
+					value = -999
+				}
+			}
+		}
+	}
+}
+
+# Рандомная миссия Гаити // HAI
+country_event = {
+	id = NWhaiti.420
+	is_triggered_only = yes
+	hidden = yes
+	
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.420"
+		HAI_start_points_of_dependence_on_ussr_mission = yes
+		country_event = { id = NWhaiti.420 days = 230 }
+	}
+}
+
+# Советский Союз отклоняет нашу заявку в Коминтерн! // HAI
+country_event = {
+	id = NWhaiti.42
+	title = NWhaiti.42.t
+	desc = NWhaiti.42.desc
+	picture = GFX_report_event_hai_42
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.42" }
+	
+	option = {
+		name = NWhaiti.42.a
+		effect_tooltip = { add_opinion_modifier = { target = FROM modifier = HAI_joining_the_comintern_negative_op } }
+	}
+}
+
+# Расовые беспорядки на Юге // USA
+country_event = {
+	id = NWhaiti.43
+	title = NWhaiti.43.t
+	desc = NWhaiti.43.desc
+	picture = GFX_report_event_hai_43
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.43" }
+	
+	option = {
+		name = NWhaiti.43.a
+		add_stability = -0.115
+		add_war_support = -0.115
+		add_popularity = { ideology = democratic popularity = -0.115 }
+		remove_ideas = HAI_rise_of_black_separatism_idea
+		add_ideas = HAI_race_riots_idea
+		371 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+		370 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+		367 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+		366 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+		365 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+		364 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				set_variable_to_random = { var = random_num min = -300 max = -15 }
+				add_manpower = random_num
+				clear_variable = random_num
+				set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+				meta_effect = {
+					text = { damage_building = { type = industrial_complex	damage = [DAMAGE] } }
+					DAMAGE = "[?random_damage]"
+				}
+				clear_variable = random_damage
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = arms_factory	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+				random = {
+					chance = 50
+					set_variable_to_random = { var = random_damage min = 0.1 max = 0.7 integer = yes }
+					meta_effect = {
+						text = { damage_building = { type = infrastructure	damage = [DAMAGE] } }
+						DAMAGE = "[?random_damage]"
+					}
+					clear_variable = random_damage
+				}
+			}
+		}
+	}
+}
+
+# Черная революция на Юге // USA
+country_event = {
+	id = NWhaiti.44
+	title = NWhaiti.44.t
+	desc = NWhaiti.44.desc
+	picture = GFX_report_event_hai_44
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.44" }
+	
+	option = {
+		name = NWhaiti.44.a
+		AAU = {
+			set_province_controller = 1843
+			set_province_controller = 1453
+			set_province_controller = 4535
+			set_province_controller = 12398
+			set_province_controller = 12735
+			set_province_controller = 7480
+			hidden_effect = {
+				division_template = {
+					name = "Black Panthers"
+					template_counter = 20
+					regiments = { 
+						infantry = { x = 0 y = 0 } 
+						infantry = { x = 0 y = 1 } 
+						infantry = { x = 1 y = 0 } 
+						infantry = { x = 1 y = 1 }
+					} 
+					support = { 
+						logistics_company = { x = 0 y = 0 } 
+					} 
+				}
+				load_oob = USA_AAU_rebels_1843
+				load_oob = USA_AAU_rebels_1453
+				load_oob = USA_AAU_rebels_4535
+				load_oob = USA_AAU_rebels_12398
+				load_oob = USA_AAU_rebels_12735
+				load_oob = USA_AAU_rebels_7480
+				
+				set_temp_variable = { num_cucle = FROM.HAI_organizing_armed_patrols }
+				while_loop_effect = {
+					limit = {
+						check_variable = { num_cucle > 0 }
+					}
+					random_list = {
+						seed = random
+						1 = { load_oob = USA_AAU_rebels_1843 }
+						1 = { load_oob = USA_AAU_rebels_1453 }
+						1 = { load_oob = USA_AAU_rebels_4535 }
+						1 = { load_oob = USA_AAU_rebels_12398 }
+						1 = { load_oob = USA_AAU_rebels_12735 }
+						1 = { load_oob = USA_AAU_rebels_7480 }
+					}
+					add_to_temp_variable = { num_cucle = -1 }
+				}
+				declare_war_on = { target = ROOT type = civil_war }
+				add_civil_war_target = ROOT
+				ROOT = { add_civil_war_target = AAU }
+			}
+		}
+		if = {
+			limit = { check_variable = { FROM.HAI_organizing_armed_patrols = 6 } }
+			367 = { remove_core_of = ROOT }
+			366 = { remove_core_of = ROOT }
+			371 = { remove_core_of = ROOT }
+			375 = { add_core_of = AAU }
+		}
+		FROM = {
+			set_autonomy = {
+				target = AAU
+				autonomy_state = autonomy_integrated_puppet
+				end_wars = no
+				end_civil_wars = no
+			}
+			clear_variable = HAI_organizing_armed_patrols
+		}
+	}
+}
+
+# Вопросы состоятельности гаитянской промышленности // HAI
+country_event = {
+	id = NWhaiti.45
+	title = NWhaiti.45.t
+	desc = NWhaiti.45.desc
+	picture = GFX_report_event_hai_45
+	is_triggered_only = yes
+	
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.45"
+		hidden_effect = {
+			set_variable = { target_num_of_constructed_civilian_factory = total_constructed_civilian_factory }
+			activate_mission = HAI_prove_strength_of_caribbean_industry_mission
+		}
+	}
+	
+	option = {
+		name = NWhaiti.45.a
+		effect_tooltip = { activate_mission = HAI_prove_strength_of_caribbean_industry_mission }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = industrial_complex	value = 1 } }
+	}
+}
+
+# Уверенное развитие тяжелой промышленности // HAI
+country_event = {
+	id = NWhaiti.46
+	title = NWhaiti.46.t
+	desc = NWhaiti.46.desc
+	picture = GFX_report_event_hai_46
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.46" }
+	
+	option = {
+		name = NWhaiti.46.a
+		random_list = {
+			seed = random
+			60 = { add_political_power = 10 }
+			25 = {
+				modifier = { factor = 0 all_core_state = { infrastructure > 4 } }
+				random_core_state = {
+					limit = { infrastructure < 5 }
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			15 = {
+				add_tech_bonus = {
+					name = NWhaiti.46.t
+					bonus = 0.3
+					uses = 1
+					category = industry
+				}
+			}
+		}
+	}
+}
+
+# Экономические затруднения // HAI
+country_event = {
+	id = NWhaiti.47
+	title = NWhaiti.47.t
+	desc = NWhaiti.47.desc
+	picture = GFX_report_event_hai_47
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.47" }
+	
+	option = {
+		name = NWhaiti.47.a
+		add_political_power = -15
+		add_popularity = { ideology = communism popularity = -0.025 }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = industrial_complex	value = -1 } }
+	}
+}
+
+# Вопросы гаитянского ВПК // HAI
+country_event = {
+	id = NWhaiti.48
+	title = NWhaiti.48.t
+	desc = NWhaiti.48.desc
+	picture = GFX_report_event_hai_48
+	is_triggered_only = yes
+	
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.48"
+		hidden_effect = {
+			set_variable = { target_num_of_military_factories = num_of_military_factories }
+			activate_mission = HAI_establish_independent_military_production_mission
+		}
+	}
+	
+	option = {
+		name = NWhaiti.48.a
+		effect_tooltip = { activate_mission = HAI_establish_independent_military_production_mission }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = arms_factory	value = 1 } }
+	}
+}
+
+
+# Успехи военного производства // HAI
+country_event = {
+	id = NWhaiti.49
+	title = NWhaiti.49.t
+	desc = NWhaiti.49.desc
+	picture = GFX_report_event_hai_49
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.49" }
+	
+	option = {
+		name = NWhaiti.49.a
+		random_list = {
+			seed = random
+			60 = { add_war_support = 0.05 }
+			25 = { add_equipment_to_stockpile = { type = infantry_equipment_1 amount = 1000 } }
+			15 = {
+				add_equipment_to_stockpile = { type = motorized_equipment amount = 200 }
+				add_equipment_to_stockpile = { type = artillery_equipment_1 amount = 350 }
+				add_equipment_to_stockpile = { type = support_equipment amount = 700 }
+			}
+		}
+	}
+}
+
+# Неудовлетворительные отчеты о ВПК // HAI
+country_event = {
+	id = NWhaiti.50
+	title = NWhaiti.50.t
+	desc = NWhaiti.50.desc
+	picture = GFX_report_event_hai_50
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.50" }
+	
+	option = {
+		name = NWhaiti.50.a
+		add_war_support = -0.05
+		add_popularity = { ideology = communism popularity = -0.035 }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = arms_factory	value = -1 } }
+	}
+}
+
+# Вопросы Карибского ВМФ // HAI
+country_event = {
+	id = NWhaiti.51
+	title = NWhaiti.51.t
+	desc = NWhaiti.51.desc
+	picture = GFX_report_event_hai_51
+	is_triggered_only = yes
+	
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.51"
+		hidden_effect = {
+			set_variable = { target_num_of_naval_factories = num_of_naval_factories }
+			activate_mission = HAI_show_development_of_our_navy_mission
+		}
+	}
+	
+	option = {
+		name = NWhaiti.51.a
+		effect_tooltip = { activate_mission = HAI_show_development_of_our_navy_mission }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = dockyard	value = 1 } }
+	}
+}
+
+
+# Триумф карибского судостроения // HAI
+country_event = {
+	id = NWhaiti.52
+	title = NWhaiti.52.t
+	desc = NWhaiti.52.desc
+	picture = GFX_report_event_hai_52
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.52" }
+	
+	option = {
+		name = NWhaiti.52.a
+		random_list = {
+			seed = random
+			60 = { navy_experience = 10 }
+			25 = {
+				add_tech_bonus = {
+					name = NWhaiti.52.t
+					bonus = 0.25
+					uses = 2
+					category = mio_cat_tech_all_destroyer_and_modules
+					category = mio_cat_tech_all_submarine_and_modules
+				}
+			}
+			15 = {
+				add_tech_bonus = {
+					name = NWhaiti.52.t
+					bonus = 0.5
+					uses = 2
+					category = marine_tech
+					category = tp_tech
+				}
+			}
+		}
+	}
+}
+
+# Торможение программы развития ВМФ // HAI
+country_event = {
+	id = NWhaiti.53
+	title = NWhaiti.53.t
+	desc = NWhaiti.53.desc
+	picture = GFX_report_event_hai_53
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.53" }
+	
+	option = {
+		name = NWhaiti.53.a
+		add_war_support = -0.05
+		add_popularity = { ideology = communism popularity = -0.035 }
+		hidden_effect = { add_ai_strategy = { type = building_target	id = dockyard	value = -1 } }
+	}
+}
+
+# Активация плана национальной обороны // HAI
+country_event = {
+	id = NWhaiti.54
+	title = NWhaiti.54.t
+	desc = NWhaiti.54.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.54" }
+	
+	option = {
+		name = NWhaiti.54.a
+		add_war_support = 0.1
+		add_manpower = 100000
+		add_equipment_to_stockpile = { type = infantry_equipment_1 amount = 2500 }
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_template = "Milice Patriotique" } }
+				division_template = {
+					name = "Milice Patriotique"
+					template_counter = 3
+					is_locked = yes
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 1 y = 0 }
+						militia = { x = 1 y = 1 }
+					}
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"Milice Patriotique\" division_template = \"Milice Patriotique\" start_experience_factor = 0.2"
+				owner = ROOT
+				count = 3
+				allow_spawning_on_enemy_provs = yes
+			}
+		}
+		swap_ideas = {
+			remove_idea = HAI_national_defense_plan_idea
+			add_idea = HAI_activating_defense_plan_idea
+		}
+	}
+}
+
+# Каликста предлагает укрепить границу // HAI +35
+country_event = {
+	id = NWhaiti.55
+	title = NWhaiti.55.t
+	desc = NWhaiti.55.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.55" }
+	immediate = {
+		hidden_effect = {
+			country_event = { id = NWhaiti.57 days = 40 }
+			country_event = { id = NWhaiti.58 days = 80 }
+		}
+	}
+	
+	trigger = {
+		has_active_mission = HAI_escalation_on_dominican_haitian_border
+	}
+	
+	option = {
+		name = NWhaiti.55.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_days_mission_timeout = { mission = HAI_escalation_on_dominican_haitian_border	days = -60 }
+		add_opinion_modifier = { target = DOM modifier = HAI_border_fortifications_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_border_fortifications_op } }
+		custom_effect_tooltip = add_1_DOM_bunker_tt
+		hidden_effect = {
+			random_list = {
+				seed = random
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14693 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14693
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14692 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14692
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 4641 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 4641
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14689 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14689
+						}
+					}
+				}
+			}
+			country_event = { id = NWhaiti.56 days = 80 }
+		}
+		add_timed_idea = { idea = HAI_strengthening_border_forces_idea days = 80 }
+	}
+	
+	option = {
+		name = NWhaiti.55.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_HAI_AI_DEMOCRATIC
+					has_country_flag = NW_HAI_AI_FASCIST
+					has_country_flag = NW_HAI_AI_COMMUNIST
+				}
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_an_attempt_at_reconciliation_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_an_attempt_at_reconciliation_op } }
+	}
+}
+
+# Отчет об пограничном укреплении // HAI
+country_event = {
+	id = NWhaiti.56
+	title = NWhaiti.56.t
+	desc = NWhaiti.56.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.56" }
+	
+	option = {
+		name = NWhaiti.56.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_HAI_AI_DEMOCRATIC
+					has_country_flag = NW_HAI_AI_FASCIST
+					has_country_flag = NW_HAI_AI_COMMUNIST
+				}
+			}
+		}
+		set_country_flag = NWhaiti_56_a_flag
+	}
+	
+	option = {
+		name = NWhaiti.56.b
+		ai_chance = {
+			factor = 50
+		}
+		custom_effect_tooltip = NWhaiti.56.tt
+	}
+}
+
+# Небольшой презент // HAI +40
+country_event = {
+	id = NWhaiti.57
+	title = NWhaiti.57.t
+	desc = NWhaiti.57.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.57" }
+	
+	trigger = {
+		has_active_mission = HAI_escalation_on_dominican_haitian_border
+	}
+	
+	option = {
+		name = NWhaiti.57.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_HAI_AI_DEMOCRATIC
+					has_country_flag = NW_HAI_AI_FASCIST
+					has_country_flag = NW_HAI_AI_COMMUNIST
+				}
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_political_detente_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_political_detente_op } }
+		add_war_support = -0.05
+		add_country_leader_trait = successful_entrepreneur
+	}
+	
+	option = {
+		name = NWhaiti.57.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_strengthening_of_border_zones_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_strengthening_of_border_zones_op } }
+		add_war_support = 0.075
+		add_political_power = -20
+		add_equipment_to_stockpile = { type = support_equipment amount = 300 }
+		add_days_mission_timeout = { mission = HAI_escalation_on_dominican_haitian_border	days = -30 }
+		custom_effect_tooltip = add_2_DOM_bunker_tt
+		hidden_effect = {
+			random_list = {
+				seed = random
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14693 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14693
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14692 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14692
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 4641 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 4641
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14689 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14689
+						}
+					}
+				}
+			}
+			random_list = {
+				seed = random
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14693 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14693
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14692 } }
+					1189 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14692
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 4641 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 4641
+						}
+					}
+				}
+				1 = {
+					modifier = { factor = 0 NOT = { controls_province = 14689 } }
+					318 = {
+						add_building_construction = {
+							type = bunker
+							level = 1
+							instant_build = yes
+							province = 14689
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Слухи о предательстве Каликсты // HAI +80
+country_event = {
+	id = NWhaiti.58
+	title = NWhaiti.58.t
+	desc = NWhaiti.58.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.58" }
+	
+	trigger = {
+		has_active_mission = HAI_escalation_on_dominican_haitian_border
+	}
+	
+	option = {
+		name = NWhaiti.58.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		custom_effect_tooltip = NWhaiti.56.tt
+		add_command_power = -10
+		set_country_flag = NWhaiti_58_a_flag
+	}
+	
+	option = {
+		name = NWhaiti.58.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_HAI_AI_DEMOCRATIC
+					has_country_flag = NW_HAI_AI_FASCIST
+					has_country_flag = NW_HAI_AI_COMMUNIST
+				}
+			}
+		}
+		add_political_power = -25
+	}
+}
+
+# Трухильо предлагает провести разоружение // HAI +140
+country_event = {
+	id = NWhaiti.59
+	title = NWhaiti.59.t
+	desc = NWhaiti.59.desc
+	picture = GFX_report_event_generic_rally_3
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.59" }
+	
+	trigger = {
+		tag = HAI
+		DOM = { has_opinion = { target = HAI value > 20 } }
+		has_active_mission = HAI_escalation_on_dominican_haitian_border
+		check_variable = { days_mission_timeout@HAI_escalation_on_dominican_haitian_border < 500 }
+		check_variable = { days_mission_timeout@HAI_escalation_on_dominican_haitian_border > 40 }
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	option = {
+		name = NWhaiti.59.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_opinion_modifier = { target = DOM modifier = HAI_refusal_to_disarm_op }
+		DOM = { add_opinion_modifier = { target = ROOT modifier = HAI_refusal_to_disarm_op } }
+		add_days_mission_timeout = { mission = HAI_escalation_on_dominican_haitian_border	days = -40 }
+		add_war_support = 0.15
+	}
+	
+	option = {
+		name = NWhaiti.59.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_HAI_AI_DEMOCRATIC
+					has_country_flag = NW_HAI_AI_FASCIST
+					has_country_flag = NW_HAI_AI_COMMUNIST
+				}
+			}
+		}
+		add_stability = 0.05
+		add_war_support = -0.1
+		add_offsite_building = { type = industrial_complex level = 1 }
+		add_ideas = HAI_rearmament_program_idea
+	}
+}
+
+# С миру по мачете! // HAI
+country_event = {
+	id = NWhaiti.60
+	title = NWhaiti.60.t
+	desc = NWhaiti.60.desc
+	picture = GFX_report_event_generic_rally_3
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.60" }
+	
+	trigger = {
+		tag = HAI
+		DOM = { has_opinion = { target = HAI value < -30 } }
+		has_active_mission = HAI_escalation_on_dominican_haitian_border
+		check_variable = { days_mission_timeout@HAI_escalation_on_dominican_haitian_border < 50 }
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	option = {
+		name = NWhaiti.60.a
+		add_equipment_to_stockpile = { type = infantry_equipment_0 amount = 1200 }
+		add_equipment_to_stockpile = { type = support_equipment amount = 100 }
+		add_offsite_building = { type = arms_factory level = 1 }
+		add_war_support = 0.085
+		if = {
+			limit = { has_war_support > 0.4 }
+			custom_effect_tooltip = add_1_DOM_bunker_tt
+			hidden_effect = {
+				random_list = {
+					seed = random
+					1 = {
+						modifier = { factor = 0 NOT = { controls_province = 14693 } }
+						1189 = {
+							add_building_construction = {
+								type = bunker
+								level = 1
+								instant_build = yes
+								province = 14693
+							}
+						}
+					}
+					1 = {
+						modifier = { factor = 0 NOT = { controls_province = 14692 } }
+						1189 = {
+							add_building_construction = {
+								type = bunker
+								level = 1
+								instant_build = yes
+								province = 14692
+							}
+						}
+					}
+					1 = {
+						modifier = { factor = 0 NOT = { controls_province = 4641 } }
+						318 = {
+							add_building_construction = {
+								type = bunker
+								level = 1
+								instant_build = yes
+								province = 4641
+							}
+						}
+					}
+					1 = {
+						modifier = { factor = 0 NOT = { controls_province = 14689 } }
+						318 = {
+							add_building_construction = {
+								type = bunker
+								level = 1
+								instant_build = yes
+								province = 14689
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Буффер событий нуаристов // HAI
+country_event = {
+	id = NWhaiti.61
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.61" }
+	immediate = {
+		country_event = { id = NWhaiti.61 days = 70 }
+		random_list = {
+			seed = random
+			15 = { country_event = NWhaiti.62 }
+			20 = { country_event = NWhaiti.63 }
+			20 = { country_event = NWhaiti.64 }
+			20 = { country_event = NWhaiti.65 }
+			15 = { country_event = NWhaiti.66 }
+			10 = {
+				modifier = { factor = 0 has_country_flag = NWhaiti_67_flag }
+				country_event = NWhaiti.67
+			}
+		}
+	}
+	
+	trigger = {
+		NOT = {
+			has_completed_focus = HAI_coup_of_noirists
+			has_completed_focus = HAI_settle_territorial_dispute
+		}
+	}
+}
+
+# Кровавые ритуалы Гонаива // HAI
+country_event = {
+	id = NWhaiti.62
+	title = NWhaiti.62.t
+	desc = NWhaiti.62.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.62" }
+
+	option = {
+		name = NWhaiti.62.a
+		add_popularity = { ideology = fascism popularity = 0.055 }
+		add_stability = -0.025
+		capital_scope = { add_manpower = -1 }
+	}
+}
+
+# Забастовка портовых рабочих // HAI
+country_event = {
+	id = NWhaiti.63
+	title = NWhaiti.63.t
+	desc = NWhaiti.63.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.63" }
+
+	option = {
+		name = NWhaiti.63.a
+		add_popularity = { ideology = communism popularity = 0.06 }
+		capital_scope = { damage_building = { type = dockyard damage = 0.1 } }
+	}
+}
+
+# Расстрелы в казарме // HAI
+country_event = {
+	id = NWhaiti.64
+	title = NWhaiti.64.t
+	desc = NWhaiti.64.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.64" }
+
+	option = {
+		name = NWhaiti.64.a
+		add_popularity = { ideology = neutrality popularity = -0.065 }
+		add_manpower = -200
+	}
+}
+
+# Попытка терракта у Национального дворца // HAI
+country_event = {
+	id = NWhaiti.65
+	title = NWhaiti.65.t
+	desc = NWhaiti.65.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.65" }
+
+	option = {
+		name = NWhaiti.65.a
+		random_list = {
+			seed = random
+			1 = { add_popularity = { ideology = fascism popularity = 0.055 } }
+			1 = { add_popularity = { ideology = communism popularity = 0.055 } }
+		}
+		capital_scope = {
+			random_list = {
+				seed = random
+				1 = {
+					modifier = { factor = 0 industrial_complex < 1 }
+					damage_building = { type = industrial_complex	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 arms_factory < 1 }
+					damage_building = { type = arms_factory	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 dockyard < 1 }
+					damage_building = { type = dockyard	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 infrastructure < 1 }
+					damage_building = { type = infrastructure	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 hospital < 1 }
+					damage_building = { type = hospital	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 air_base < 1 }
+					damage_building = { type = air_base	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 supply_node < 1 }
+					damage_building = { type = supply_node	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 anti_air_building < 1 }
+					damage_building = { type = anti_air_building	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 synthetic_refinery < 1 }
+					damage_building = { type = synthetic_refinery	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 fuel_silo < 1 }
+					damage_building = { type = fuel_silo	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 radar_station < 1 }
+					damage_building = { type = radar_station	damage = 0.2 }
+				}
+				1 = {
+					modifier = { factor = 0 nuclear_reactor < 1 }
+					damage_building = { type = nuclear_reactor	damage = 0.2 }
+				}
+			}
+		}
+	}
+}
+
+# Дети кукурузы // HAI
+country_event = {
+	id = NWhaiti.66
+	title = NWhaiti.66.t
+	desc = NWhaiti.66.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.66" }
+
+	option = {
+		name = NWhaiti.66.a
+		add_popularity = { ideology = fascism popularity = 0.045 }
+		869 = { add_manpower = -20 }
+		add_tech_bonus = {
+			name = NWhaiti.66.t
+			bonus = 0.01
+			uses = 1
+			category = flamethrower_tech
+		}
+	}
+}
+
+# Продажный нигер // HAI
+country_event = {
+	id = NWhaiti.67
+	title = NWhaiti.67.t
+	desc = NWhaiti.67.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.67" }
+	immediate = { set_country_flag = NWhaiti_67_flag }
+
+	option = {
+		name = NWhaiti.67.a
+		add_popularity = { ideology = neutrality popularity = -0.11 }
+		if = {
+			limit = { has_active_mission = HAI_preparing_coup }
+			add_days_mission_timeout = { mission = HAI_preparing_coup	days = -40 }
+		}
+		if = {
+			limit = { has_active_mission = HAI_concessions_to_dominican_republic }
+			add_days_mission_timeout = { mission = HAI_concessions_to_dominican_republic	days = -40 }
+		}
+		add_country_leader_trait = corrupt_traitor_to_race
+	}
+}
+
+
+# Судьба Трухильо // HAI
+country_event = {
+	id = NWhaiti.68
+	title = NWhaiti.68.t
+	desc = NWhaiti.68.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.68" }
+
+	option = {
+		name = NWhaiti.68.a
+		ai_chance = {
+			factor = 50
+		}
+		random_other_country = {
+			limit = { has_country_leader = { character = DOM_rafael_trujillo ruling_only = yes } }
+			kill_country_leader = yes
+		}
+		add_war_support = 0.05
+		hidden_effect = { news_event = { id = trworldnews.209 days = 10 } }
+	}
+	
+	option = {
+		name = NWhaiti.68.a
+		ai_chance = {
+			factor = 50
+		}
+		random_other_country = {
+			limit = { has_country_leader = { character = DOM_rafael_trujillo ruling_only = yes } }
+			kill_country_leader = yes
+		}
+		add_war_support = 0.05
+		hidden_effect = { news_event = { id = trworldnews.210 days = 10 } }
+	}
+	
+	option = {
+		name = NWhaiti.68.a
+		trigger = { has_completed_focus = HAI_satisfy_the_hunger_of_the_slums }
+		ai_chance = {
+			factor = 50
+		}
+		random_other_country = {
+			limit = { has_country_leader = { character = DOM_rafael_trujillo ruling_only = yes } }
+			kill_country_leader = yes
+		}
+		add_war_support = 0.05
+		hidden_effect = { news_event = { id = trworldnews.211 days = 10 } }
+	}
+}
+
+
+
+
+
+# TEST 1
+country_event = {
+	id = NWhaiti.995
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_active_mission = HAI_revive_haitis_transportation_system_mission
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.998" }
+	
+	option = {
+		name = 1
+	}
+}
+
+# Подсчет Ж/Д
+country_event = {
+	id = NWhaiti.996
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_active_mission = HAI_revive_haitis_transportation_system_mission
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.998" }
+	immediate = {
+		hidden_effect = {
+			clear_variable = total_num_of_rail
+			while_loop_effect = {
+				limit = {
+					rail_way > var:num_of_rail
+				}
+				add_to_temp_variable = { num_of_rail = 1 }
+			}
+			add_to_variable = { total_num_of_rail = num_of_rail }
+			
+			set_variable = { delta_num_of_rail = target_num_of_rail }
+			subtract_from_variable = { delta_num_of_rail = total_num_of_rail }
+			subtract_from_variable = { delta_num_of_rail = start_num_of_rail }
+			
+			country_event = { id = NWhaiti.996 days = 14 }
+		}
+	}
+}
+
+# Подсчет приморских укрепов
+country_event = {
+	id = NWhaiti.997
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_active_mission = HAI_coast_fortification_plan_mission
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.997" }
+	immediate = {
+		hidden_effect = {
+			clear_variable = total_num_of_bunker
+			while_loop_effect = {
+				limit = {
+					coastal_bunker > var:num_of_coastal_bunker
+				}
+				add_to_temp_variable = { num_of_coastal_bunker = 1 }
+			}
+			add_to_variable = { total_num_of_bunker = num_of_coastal_bunker }
+			
+			set_variable = { delta_num_of_bunker = target_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = total_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = start_num_of_bunker }
+			
+			country_event = { id = NWhaiti.997 days = 14 }
+		}
+	}
+}
+
+# Подсчет бункеров и приморских укрепов
+country_event = {
+	id = NWhaiti.998
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_active_mission = HAI_caribbean_bastion_mission
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.998" }
+	immediate = {
+		hidden_effect = {
+			clear_variable = total_num_of_bunker
+			while_loop_effect = {
+				limit = {
+					bunker > var:num_of_bunker
+				}
+				add_to_temp_variable = { num_of_bunker = 1 }
+			}
+			while_loop_effect = {
+				limit = {
+					coastal_bunker > var:num_of_coastal_bunker
+				}
+				add_to_temp_variable = { num_of_coastal_bunker = 1 }
+			}
+			add_to_variable = { total_num_of_bunker = num_of_bunker }
+			add_to_variable = { total_num_of_bunker = num_of_coastal_bunker }
+			
+			set_variable = { delta_num_of_bunker = target_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = total_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = start_num_of_bunker }
+			
+			country_event = { id = NWhaiti.998 days = 14 }
+		}
+	}
+}
+
+# ТЕСТ
+country_event = {
+	id = NWhaiti.99999
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.999" }
+	option = {
+		every_state = {
+			limit = {
+				NOT = { is_core_of = ROOT }
+				OR = {
+					state = 692
+					state = 308
+					state = 694
+					state = 689
+					state = 690
+					state = 693
+					state = 691
+					state = 695
+					state = 686
+				}
+			}
+			add_core_of = ROOT
+		}
+		every_state = {
+			limit = {
+				NOT = { is_controlled_by = ROOT }
+				OR = {
+					state = 309
+					state = 310
+					state = 687
+				}
+			}
+			add_claim_by = ROOT
+		}
+		309 = {		# HOL
+			owner = {
+				ROOT = {
+					create_wargoal = {
+						type = take_state_focus
+						target = PREV
+						generator = { 309 }
+					}
+					hidden_effect = {
+						add_ai_strategy = {
+							type = antagonize
+							id = PREV
+							value = 200
+						}
+						add_ai_strategy = {
+							type = declare_war
+							id = PREV
+							value = 100
+						}
+					}
+				}
+			}
+		}
+		310 = {		# FRA
+			owner = {
+				ROOT = {
+					declare_war_on = {
+						type = take_state_focus
+						target = PREV
+						generator = { 310 }
+					}
+					hidden_effect = {
+						add_ai_strategy = {
+							type = antagonize
+							id = PREV
+							value = 200
+						}
+						add_ai_strategy = {
+							type = declare_war
+							id = PREV
+							value = 100
+						}
+					}
+				}
+			}
+		}
+		687 = {		# ENG
+			owner = {
+				ROOT = {
+					declare_war_on = {
+						type = take_state_focus
+						target = PREV
+						generator = { 687 }
+					}
+					hidden_effect = {
+						add_ai_strategy = {
+							type = antagonize
+							id = PREV
+							value = 200
+						}
+						add_ai_strategy = {
+							type = declare_war
+							id = PREV
+							value = 100
+						}
+					}
+				}
+			}
+		}
+		unlock_decision_tooltip = HAI_afro_caribbean_association
+		
+		hidden_effect = {
+		
+			division_template = {
+				name = "Révolutionnaires Caribéens"
+				template_counter = 14
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+				}
+			}
+			
+			set_province_controller = 12304
+			set_province_controller = 693
+			load_oob = HAI_arm_bustamante_strikers_oob
+			load_oob = HAI_sponsor_plp_oob
+
+			BWI = {
+				set_cosmetic_tag = BWI_haf
+				set_country_flag = BWI_haf
+				set_capital = { state = 694 }
+				
+				ROOT = {
+					set_autonomy = {
+						target = BWI
+						autonomy_state = autonomy_integrated_puppet
+						end_wars = no
+						end_civil_wars = no
+					}
+				}
+				
+				set_popularities = {
+					communism = 100
+				}
+				set_politics = {
+					ruling_party = communism
+					elections_allowed = no
+				}
+				
+				add_state_core = 686
+				add_state_core = 1146
+				add_state_core = 1140
+				add_state_core = 934
+				add_state_core = 1142
+				add_state_core = 308
+				add_state_core = 694
+				add_state_core = 692
+				add_state_core = 1144
+				add_state_core = 691
+				
+				set_state_owner = 694
+				set_province_controller = 177
+				set_province_controller = 13084
+				set_province_controller = 13009
+				set_province_controller = 7123
+				set_province_controller = 9377
+				load_oob = HAI_create_committee_for_liberation_of_antilles_oob
+				
+				ROOT = {
+					HAI_rene_menil = {
+						set_nationality = BWI
+					}
+				}
+				add_country_leader_role = {
+					character = HAI_rene_menil
+					country_leader = {
+						desc="POLITICS_RENE_MENIL_DESC"
+						ideology = marxism
+						traits = {
+						}
+						expire = "1965.1.1"
+					}
+					promote_leader = yes
+				}
+			}
+		
+		}
+	}
+}
+
+# ТЕСТ
+country_event = {
+	id = NWhaiti.999
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWhaiti.999" }
+	immediate = {
+		hidden_effect = {
+			set_variable = { num_of_bunker = 0 }
+			set_variable = { num_of_coastal_bunker = 0 }
+			set_variable = { target_num_of_bunker = 0 }
+			while_loop_effect = {
+				limit = {
+					bunker > var:num_of_bunker
+				}
+				add_to_variable = { num_of_bunker = 1 }
+			}
+			while_loop_effect = {
+				limit = {
+					coastal_bunker > var:num_of_coastal_bunker
+				}
+				add_to_variable = { num_of_coastal_bunker = 1 }
+			}
+			set_variable = { target_num_of_bunker = num_of_bunker }
+			add_to_variable = { target_num_of_bunker = num_of_coastal_bunker }
+			set_variable = { start_num_of_bunker = target_num_of_bunker }
+			add_to_variable = { target_num_of_bunker = 18 }
+			
+			set_variable = { delta_num_of_bunker = target_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = total_num_of_bunker }
+			subtract_from_variable = { delta_num_of_bunker = start_num_of_bunker }
+		}
+	}
+	
+	option = {
+		name = "1"
+		custom_effect_tooltip = xxxxxx_tt
+	}
+	
+	option = {
+		name = "2"
+		every_controlled_state = {
+			limit = {
+				OR = {
+					is_core_of = ROOT
+					is_core_of = CUB
+					is_core_of = DOM
+				}
+			}
+			add_building_construction = {
+				type = coastal_bunker
+				level = 3
+				province = {
+					all_provinces = yes
+					limit_to_naval_base = yes
+				}
+				instant_build = yes
+			}
+			add_building_construction = {
+				type = naval_base
+				level = 1
+				province = {
+					all_provinces = yes
+					limit_to_naval_base = yes
+				}
+				instant_build = yes
+			}
+			add_building_construction = {
+				type = air_base
+				level = 1
+				instant_build = yes
+			}
+		}
+	}
+}

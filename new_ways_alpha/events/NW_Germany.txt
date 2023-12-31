@@ -2176,7 +2176,7 @@ country_event = {
 			character = GER_heinrich_himmler
 			country_leader = {
 				desc = "POLITICS_HEINRICH_HIMMLER_DESC"
-				ideology = nazism
+				ideology = esoteric_nazism
 				traits = {
 					esoteric
 				}
@@ -2274,7 +2274,13 @@ country_event = {
 			ruling_party = neutrality
 			elections_allowed = no
 		}
-		remove_ideas = GER_rivalry_between_ss_and_wehrmacht
+		if = {
+			limit = {
+				has_any_power_balance = yes
+			}
+			remove_power_balance = { id = GER_power_balance }
+		}
+#		remove_ideas = GER_rivalry_between_ss_and_wehrmacht
 		set_variable = { var_nazi_resistance = 100 }
 		set_variable = { var_ger_nazi_resistance_stability = -0.003 }
 		multiply_variable = { var_ger_nazi_resistance_stability = var_nazi_resistance }
@@ -2329,13 +2335,15 @@ country_event = {
 		name = NWgermany.35.a
 		add_popularity = { ideology = neutrality popularity = -0.05 }
 		add_popularity = { ideology = fascism popularity = 0.05 }
-		GER_werner_von_fritsch = {
-			retire = yes
-		}
-		GER_werner_von_blomberg = {
-			retire = yes
+		if = { limit = { has_character = GER_werner_von_fritsch }		GER_werner_von_fritsch = { retire = yes } }
+		if = { limit = { has_character = GER_werner_von_blomberg }		GER_werner_von_blomberg = { retire = yes } }
+		effect_tooltip = {
+			if = { limit = { has_character = GER_wilhelm_ritter_von_leeb }	GER_wilhelm_ritter_von_leeb = { retire = yes } }
+			if = { limit = { has_character = GER_gerd_von_rundstedt }		GER_gerd_von_rundstedt = { retire = yes } }
+			if = { limit = { has_character = GER_erich_von_manstein }		GER_erich_von_manstein = { retire = yes } }
 		}
 		remove_ideas = GER_political_autonomy_of_wehrmacht
+		set_country_flag = NWgermany_35_flag
 	}
 }
 
@@ -2950,8 +2958,32 @@ country_event = {
 	
 	option = {
 		name = NWgermany.53.a
-		effect_tooltip = {
-			unlock_national_focus = CHI_closer_ties_with_germany
+		add_political_power = 75
+		hidden_effect = { #ROOT & FROM are not happy with each other's actions
+			add_ai_strategy = {
+				type = alliance
+				id = FROM			
+				value = 100
+			}
+
+			add_ai_strategy = {
+				type = befriend
+				id = FROM			
+				value = 100
+			}
+			FROM = {
+				add_ai_strategy = {
+					type = alliance
+					id = ROOT			
+					value = 100
+				}
+
+				add_ai_strategy = {
+					type = befriend
+					id = ROOT			
+					value = 100
+				}
+			}
 		}
 	}
 }
@@ -3196,6 +3228,7 @@ country_event = {
 		}
 		unlock_decision_category_tooltip = GER_austrian_referendum_category
 		set_country_flag = GER_austrian_referendum_category_flag
+		activate_mission = GER_days_before_referendum
 		add_to_variable = { global.agitation_of_germany = 5 }
 		add_to_variable = { global.agitation_of_austria = 2 }
 		FROM.FROM = {
@@ -3226,6 +3259,7 @@ country_event = {
 	option = {
 		name = NWgermany.59.a
 		unlock_decision_category_tooltip = GER_austrian_referendum_category
+		activate_mission = GER_days_before_referendum
 	}
 }
 
@@ -3739,6 +3773,7 @@ country_event = {
 		}
 		unlock_decision_category_tooltip = GER_cze_referendum_category
 		set_country_flag = GER_cze_referendum_category_flag
+		activate_mission = GER_cze_days_before_referendum
 		add_to_variable = { global.agitation_of_cze_germany = 5 }
 		add_to_variable = { global.agitation_of_cze = 2 }
 		FROM.FROM = {
@@ -3769,6 +3804,7 @@ country_event = {
 	option = {
 		name = NWgermany.59.a
 		unlock_decision_category_tooltip = GER_cze_referendum_category
+		activate_mission = GER_cze_days_before_referendum
 	}
 }
 
@@ -3851,11 +3887,6 @@ country_event = {
 			limit = { 4 = { is_owned_by = ROOT } }
 			847 = { add_core_of = GBF }
 			GBF = { transfer_state = 847 }
-		}
-		if = {
-			limit = { 152 = { is_owned_by = ROOT } }
-			848 = { add_core_of = GBF }
-			GBF = { transfer_state = 848 }
 		}
 		if = {
 			limit = { 67 = { is_owned_by = ROOT } }
@@ -3966,14 +3997,13 @@ country_event = {
 					declare_war_on = {
 						type = take_state_focus
 						target = PREV
-						generator = { 69 847 848 74 }
+						generator = { 69 847 74 }
 					}
 				}
 			}
 		}
 		add_state_claim = 69
 		add_state_claim = 847
-		add_state_claim = 848
 		add_state_claim = 74
 	}
 }
@@ -5694,41 +5724,41 @@ state_event = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -5744,41 +5774,41 @@ state_event = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = wehrmacht_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -5843,41 +5873,41 @@ state_event = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -5893,41 +5923,41 @@ state_event = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = strasserist_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -5992,41 +6022,41 @@ state_event = {
 					limit = {
 						has_state_flag = communist_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -6042,41 +6072,41 @@ state_event = {
 					limit = {
 						has_state_flag = communist_state_withdrawn1
 					}
-					damage_building = { type = industrial_complex damage = 0.5 }
-					damage_building = { type = arms_factory damage = 0.5 }
-					damage_building = { type = infrastructure damage = 0.5 }
+					damage_building = { type = industrial_complex	damage = 0.5 }
+					damage_building = { type = arms_factory			damage = 0.5 }
+					damage_building = { type = infrastructure		damage = 0.5 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn2
 					}
-					damage_building = { type = industrial_complex damage = 0.8 }
-					damage_building = { type = arms_factory damage = 0.8 }
-					damage_building = { type = infrastructure damage = 0.8 }
+					damage_building = { type = industrial_complex	damage = 0.8 }
+					damage_building = { type = arms_factory			damage = 0.8 }
+					damage_building = { type = infrastructure		damage = 0.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn3
 					}
-					damage_building = { type = industrial_complex damage = 1.2 }
-					damage_building = { type = arms_factory damage = 1.2 }
-					damage_building = { type = infrastructure damage = 1.2 }
+					damage_building = { type = industrial_complex	damage = 1.2 }
+					damage_building = { type = arms_factory			damage = 1.2 }
+					damage_building = { type = infrastructure		damage = 1.2 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn4
 					}
-					damage_building = { type = industrial_complex damage = 1.8 }
-					damage_building = { type = arms_factory damage = 1.8 }
-					damage_building = { type = infrastructure damage = 1.8 }
+					damage_building = { type = industrial_complex	damage = 1.8 }
+					damage_building = { type = arms_factory			damage = 1.8 }
+					damage_building = { type = infrastructure		damage = 1.8 }
 				}
 				if = {
 					limit = {
 						has_state_flag = communist_state_withdrawn5
 					}
-					damage_building = { type = industrial_complex damage = 2.5 }
-					damage_building = { type = arms_factory damage = 2.5 }
-					damage_building = { type = infrastructure damage = 2.5 }
+					damage_building = { type = industrial_complex	damage = 2.5 }
+					damage_building = { type = arms_factory			damage = 2.5 }
+					damage_building = { type = infrastructure		damage = 2.5 }
 				}
 			}
 		}
@@ -6155,6 +6185,61 @@ country_event = {
 		effect_tooltip = {
 			event_target:current_target_fraternization_state = {
 				add_dynamic_modifier = { modifier = GER_fraternization_state_dyn days = 30 }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = NWgermany.1999
+	title = NWgermany.1999.t
+	desc = NWgermany.1999.desc
+	picture = GFX_report_event_generic_read_write
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgermany.1999" }
+	
+	trigger = {
+		GER = { controls_state = 1096 }
+	}
+	
+	option = {
+		name = NWgermany.1999.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 100
+				is_historical_focus_on = yes 
+			}
+		}
+		hidden_effect = {
+			LKT = {
+				transfer_state = 1096
+				add_to_war = {
+					targeted_alliance = GER
+					enemy = SOV
+					hostility_reason = asked_to_join
+				}
+				add_ideas = LKT_colonial_things
+			}
+			set_autonomy = {
+				target = LKT
+				autonomy_state = autonomy_integrated_puppet
+				end_wars = no
+				end_civil_wars = no
+			}
+		}
+		custom_effect_tooltip = NW_GER_Lokot_cores_tt
+	}
+	
+	option = {
+		name = NWgermany.1999.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
 			}
 		}
 	}

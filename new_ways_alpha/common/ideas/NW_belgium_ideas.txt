@@ -5,8 +5,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				has_capitulated = no
+			cancel = {
+				has_capitulated = yes
 			}
 			allowed_civil_war = {
 				always = yes
@@ -23,12 +23,14 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				any_owned_state = {
-					is_core_of = FLA
-				}
-				any_owned_state = {
-					is_core_of = WLN
+			cancel = {
+				NOT = {
+					any_owned_state = {
+						OR = {
+							is_core_of = FLA
+							is_core_of = WLN
+						}
+					}
 				}
 			}
 			allowed_civil_war = {
@@ -46,14 +48,16 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				all_of_scopes = {
-					array = FLA.core_states
-					is_controlled_by = ROOT
-				}
-				all_of_scopes = {
-					array = WLN.core_states
-					is_controlled_by = ROOT
+			cancel = {
+				OR = {
+					all_of_scopes = {
+						array = FLA.core_states
+						NOT = { is_controlled_by = ROOT }
+					}
+					all_of_scopes = {
+						array = WLN.core_states
+						NOT = { is_controlled_by = ROOT }
+					}
 				}
 			}
 			allowed_civil_war = {
@@ -70,8 +74,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				NOT = {
+			cancel = {
+				OR = {
 					has_government = communism
 					has_government = trozkism
 					has_government = anarchism
@@ -111,6 +115,21 @@ ideas = {
 			picture = healthcare_system
 			modifier = {
 				production_factory_max_efficiency_factor = 0.05
+				production_speed_buildings_factor = 0.05
+				MONTHLY_POPULATION = 0.15
+			}
+		}
+		BEL_extension_compulsory_education = {
+			allowed = {
+				always = yes
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			picture = generic_army_war_college
+			modifier = {
+				research_speed_factor = 0.05
 			}
 		}
 		BEL_continuing_social_reforms = {
@@ -159,29 +178,33 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
+			cancel = {
 				if = {
 					limit = { original_tag = BEL }
 					OR = {
 						AND = {
-							country_exists = HOL
-							NOT = { has_war_with = HOL }
+							NOT = { country_exists = HOL }
+							has_war_with = HOL
 						}
 						AND = {
-							country_exists = LUX
-							NOT = { has_war_with = LUX }
+							NOT = { country_exists = LUX }
+							has_war_with = LUX
 						}
 					}
 				}
 				if = {
 					limit = { original_tag = HOL }
-					country_exists = BEL
-					NOT = { has_war_with = BEL }
+					OR = {
+						NOT = { country_exists = BEL }
+						has_war_with = BEL
+					}
 				}
 				if = {
 					limit = { original_tag = LUX }
-					country_exists = BEL
-					NOT = { has_war_with = BEL }
+					OR = {
+						NOT = { country_exists = BEL }
+						has_war_with = BEL
+					}
 				}
 			}
 			allowed_civil_war = {
@@ -244,6 +267,8 @@ ideas = {
 			picture = generic_production_bonus
 			modifier = {
 				production_speed_buildings_factor = 0.08
+				production_factory_efficiency_gain_factor = 0.05
+				global_building_slots_factor = 0.1
 			}
 		}
 		BEL_protection_from_germany = {
@@ -303,8 +328,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				is_subject_of = BEL
+			cancel = {
+				NOT = { is_subject_of = BEL }
 			}
 			allowed_civil_war = {
 				is_subject_of = BEL
@@ -330,6 +355,9 @@ ideas = {
 			picture = generic_war_departament
 			modifier = {
 				conscription = 0.03
+				war_support_factor = 0.07
+				mobilization_speed = 0.07
+				experience_gain_army_factor = 0.15
 			}
 		}
 		BEL_role_of_working_party = {
@@ -365,9 +393,10 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				country_exists = HOL
-				NOT = { has_war_with = HOL }
+			cancel = {
+				HOL = {
+					OR = { exists = no has_war_with = ROOT }
+				}
 			}
 			allowed_civil_war = {
 				always = yes
@@ -389,9 +418,14 @@ ideas = {
 			removal_cost = -1
 			picture = trotskyite_plot_purged
 			modifier = {
-				production_factory_max_efficiency_factor = 0.05
-				industrial_capacity_factory = 0.05
+				choose_preferred_tactics_cost = -0.1
 				war_support_factor = 0.1
+				land_reinforce_rate = 0.05
+				land_equipment_upgrade_xp_cost = -0.15
+				out_of_supply_factor = -0.1
+				truck_attrition_factor = -0.25
+				pocket_penalty = -0.125
+				army_core_defence_factor = 0.05
 			}
 		}
 		BEL_abolition_monarchy = {
@@ -472,8 +506,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -514,8 +548,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				NOT = {
+			cancel = {
+				OR = {
 					has_government = communism
 					has_autonomy_state = autonomy_dominion
 				}
@@ -529,6 +563,27 @@ ideas = {
 				communism_drift = 0.1
 			}
 		}
+		BEL_struggle_for_freedom = {
+			allowed = {
+				always = yes
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			picture = chi_war_of_resistance2
+			modifier = {
+				war_support_factor = 0.05
+				mobilization_speed = 0.075
+				surrender_limit = 0.1
+				land_reinforce_rate = 0.1
+				max_planning_factor = 0.25
+				planning_speed = 0.1
+				max_dig_in_factor = 0.1
+				dig_in_speed_factor = 0.1
+				recon_factor_while_entrenched = 0.1
+			}
+		}
 		BEL_social_state = {
 			allowed = {
 				always = yes
@@ -539,8 +594,11 @@ ideas = {
 			removal_cost = -1
 			picture = tri_plane_up
 			modifier = {
-				production_factory_max_efficiency_factor = 0.1
+				production_factory_max_efficiency_factor = 0.05
+				production_factory_efficiency_gain_factor = 0.065
 				industrial_capacity_factory = 0.1
+				consumer_goods_factor = 0.035
+				production_speed_buildings_factor = 0.075
 			}
 		}
 		BEL_obstacles_absolutism = {
@@ -619,8 +677,8 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				BEL = { has_civil_war = yes }
+			cancel = {
+				BEL = { has_civil_war = no }
 			}
 			allowed_civil_war = {
 				always = yes
@@ -663,9 +721,11 @@ ideas = {
 			allowed = {
 				always = yes
 			}
-			available = {
-				BEL = { has_civil_war = yes }
-				is_subject = yes
+			cancel = {
+				OR = {
+					BEL = { has_civil_war = no }
+					is_subject = no
+				}
 			}
 			allowed_civil_war = {
 				always = yes
@@ -678,8 +738,8 @@ ideas = {
 		}
 		BEL_belgian_prisoners_war = {
 			allowed = { always = no }
-			available = {
-				any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT }
+			cancel = {
+				NOT = { any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT } }
 			}
 			allowed_civil_war = {
 				always = yes
@@ -692,8 +752,8 @@ ideas = {
 		}
 		BEL_belgian_payments = {
 			allowed = { always = yes }
-			available = {
-				any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT }
+			cancel = {
+				NOT = { any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT } }
 			}
 			allowed_civil_war = {
 				always = yes
@@ -706,8 +766,8 @@ ideas = {
 		}
 		BEL_belgian_food = {
 			allowed = { always = no }
-			available = {
-				any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT }
+			cancel = {
+				NOT = { any_country_with_original_tag = { original_tag_to_check = BEL is_subject_of = ROOT } }
 			}
 			allowed_civil_war = {
 				always = yes
@@ -721,8 +781,8 @@ ideas = {
 		
 		BEL_prisoners_war_in_foreign_land = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -735,8 +795,8 @@ ideas = {
 		}
 		BEL_payments_to_winners = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -749,8 +809,8 @@ ideas = {
 		}
 		BEL_hunger_in_big_cities = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -765,7 +825,7 @@ ideas = {
 		}
 		BEL_col_plan_de_man = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -779,7 +839,7 @@ ideas = {
 		}
 		BEL_col_mobilize_all_segments_of_population_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -792,7 +852,7 @@ ideas = {
 		}
 		BEL_col_antibolshevism = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -806,7 +866,7 @@ ideas = {
 		}
 		BEL_col_adopt_nazi_principles = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -820,7 +880,7 @@ ideas = {
 		}
 		BEL_col_establishment_of_planned_economy_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -833,7 +893,7 @@ ideas = {
 		}
 		BEL_col_put_trade_unions_under_state_control_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -849,7 +909,7 @@ ideas = {
 		}
 		BEL_col_armed_uprising = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -863,7 +923,7 @@ ideas = {
 		}
 		BEL_col_great_belgium = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -876,7 +936,7 @@ ideas = {
 		}
 		BEL_col_cooperation_with_right_wing_parties_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -891,7 +951,7 @@ ideas = {
 		}
 		BEL_col_walloon_ss_detachment_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -904,7 +964,7 @@ ideas = {
 		}
 		BEL_col_germanic_origins_of_walloons_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -919,7 +979,7 @@ ideas = {
 		}
 		BEL_col_spread_real_country_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -932,7 +992,7 @@ ideas = {
 		}
 		BEL_germanic_origins_of_walloons_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -946,7 +1006,7 @@ ideas = {
 		}
 		BEL_col_subject_burgundy = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -964,7 +1024,7 @@ ideas = {
 		}
 		BEL_model_state = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -979,7 +1039,7 @@ ideas = {
 		}
 		BEL_expanding_power_of_catholic_church_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -992,8 +1052,8 @@ ideas = {
 		}
 		BEL_great_burgundy = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1006,8 +1066,8 @@ ideas = {
 		}
 		BEL_col_cooperation_with_german_administration_idea = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1020,8 +1080,8 @@ ideas = {
 		}
 		BEL_col_gradual_strengthening_of_civil_administration = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1034,8 +1094,8 @@ ideas = {
 		}
 		BEL_col_rally_flemings_around_fns_idea = {
 			allowed = { always = no }
-			available = {
-				is_subject = yes
+			cancel = {
+				is_subject = no
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1048,7 +1108,7 @@ ideas = {
 		}
 		BEL_col_association_of_moderate_politicians_and_radicals = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1062,7 +1122,7 @@ ideas = {
 		}
 		BEL_col_great_netherlands = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1076,7 +1136,7 @@ ideas = {
 		}
 		BEL_col_send_jews_to_labor_camps_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1089,7 +1149,7 @@ ideas = {
 		}
 		BEL_col_expand_police_idea = {
 			allowed = { always = no }
-			available = {
+			cancel = {
 			}
 			allowed_civil_war = {
 				always = yes
@@ -1100,8 +1160,194 @@ ideas = {
 				conscription = 0.02
 			}
 		}
+		BEL_defence_plan_against_germany = {
+			allowed = { always = no }
+			cancel = {
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			picture = generic_wall_line
+			modifier = {
+				production_speed_bunker_factor = 0.15
+			}
+		}
+		BEL_defence_plan_against_great_britain = {
+			allowed = { always = no }
+			cancel = {
+			}
+			allowed_civil_war = {
+				always = yes
+			}
+			removal_cost = -1
+			picture = ast_naval_auxiliary_patrol
+			modifier = {
+				production_speed_coastal_bunker_factor = 0.15
+			}
+		}
+		BEL_expand_ardennes_chasseurs_regiment = {
+			removal_cost = -1
+			allowed = { always = no }
+			allowed_civil_war = {
+				has_completed_focus = BEL_expand_ardennes_chasseurs_regiment
+			}
+			picture = expand_number_of_casadors_idea
+			modifier = {
+				special_forces_min = 50
+			}
+		}
+	}
+	
+	
+	tank_manufacturer = {
+		
+		designer = yes
+		
+		renault_bel = {
+			picture = renault
+
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			
+			research_bonus = {
+				armor = 0.15
+			}
+			
+			traits = { fast_tank_manufacturer }
+			
+			modifier = {
+				# Renault FT
+			}
+		}
+
+		vickers_armstrong_bel = {
+			picture = generic_tank_manufacturer_2
+		
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			
+			research_bonus = {
+				armor = 0.15
+			}
+			
+			traits = { medium_tank_manufacturer }
+			
+			modifier = {
+				
+			}
+		}
 	}
 
+	aircraft_manufacturer = {
+	
+		designer = yes
+		
+		avions_fairey = {
+			picture = generic_air_manufacturer_2
+
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			
+			traits = { light_aircraft_manufacturer }
+			
+			equipment_bonus = {
+				# Tipsy B, firefly, fairey fox
+			}
+			
+			ai_will_do = {
+				factor = 1
+			}
+		}
+
+		renard = {
+			picture = generic_air_manufacturer_2
+
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			
+			research_bonus = {
+				air_equipment = 0.15
+			}
+			
+			traits = { medium_aircraft_manufacturer }
+			
+			equipment_bonus = {
+				# Tipsy B, firefly, fairey fox
+			}
+			
+			ai_will_do = {
+				factor = 1
+			}
+		}
+	}
+	
+	naval_manufacturer = { 
+		
+		designer = yes
+		
+		cockerill = { 
+			picture = generic_naval_manufacturer_1
+
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			
+			research_bonus = {
+				naval_equipment = 0.15
+			}
+						
+			traits = { naval_manufacturer }
+		}
+	}
+
+	materiel_manufacturer = {
+		
+		designer = yes
+		
+		fn_herstol = {
+			
+			picture = generic_infantry_equipment_manufacturer_2
+
+			
+			allowed = {
+				original_tag = BEL
+				NOT = { has_dlc = "Arms Against Tyranny" }
+			}
+			available = {
+				has_completed_focus = BEL_production_their_own_equipment
+			}
+			
+			research_bonus = {
+				infantry_weapons = 0.15
+			}
+			
+			
+			traits = { infantry_equipment_manufacturer }
+			
+			equipment_bonus = {
+				infantry_equipment = {
+					build_cost_ic = -0.1 reliability = 0.1 instant = yes
+				}
+			}
+		}
+	}
 }
-
-

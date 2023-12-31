@@ -1,0 +1,79 @@
+#name ?
+
+scripted_diplomatic_actions = {
+	
+	start_selling_ivory = {
+		icon = 1
+		allowed = {		#The country making the diplomatic request
+			ROOT = { original_tag = COG }
+		}
+		visible = {		#The target country
+			ROOT = { has_completed_focus = COG_back_to_ivory_mining }
+			NOT = { has_opinion_modifier = COG_sale_of_ivory }
+		}
+		selectable = {
+			NOT = { has_war_with = ROOT }
+			ROOT = { has_equipment = { elephant_equipment > 0 } } #?
+		}
+		cost = 10
+		
+		send_description = start_selling_ivory_send_description
+
+		requires_acceptance = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): scripted diplomatic actions START_SELLING_IVORY from [This.GetName] ([This.GetTag])"
+			set_technology = { #?
+				elephant_art_support = 1
+				elephant_art_support_unit = 1
+			}
+			add_to_variable = { COG_elephants_weekly = 1 }
+			add_opinion_modifier = { #торговые отношения тоже ? !
+				target = ROOT
+				modifier = COG_sale_of_ivory
+			}
+			reverse_add_opinion_modifier = {
+				target = ROOT
+				modifier = COG_sale_of_ivory
+			}
+			ROOT = {
+				save_event_target_as = FROM_scope
+				PREV = { country_event = congo.59 }
+			}
+		}
+		ai_desire = {
+			base = 0
+		}
+	}
+	stop_selling_ivory = {
+		icon = 1
+		allowed = {		#The country making the diplomatic request
+			ROOT = { original_tag = COG }
+		}
+		visible = {		#The target country
+			has_opinion_modifier = COG_sale_of_ivory
+		}
+	
+		send_description = stop_selling_ivory_send_description
+
+		requires_acceptance = no
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): scripted diplomatic actions stop_selling_ivory from [This.GetName] ([This.GetTag])"
+			ROOT = {
+				remove_opinion_modifier = { #?
+					target = PREV
+					modifier = COG_sale_of_ivory
+				}
+			}
+			subtract_from_variable = { COG_elephants_weekly = 1 }
+			remove_opinion_modifier = { #торговые отношения тоже ? !
+				target = ROOT
+				modifier = COG_sale_of_ivory
+			}
+		}
+		ai_desire = {
+			base = 100
+		}
+	}
+}

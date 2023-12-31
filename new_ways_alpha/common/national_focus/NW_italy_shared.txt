@@ -88,10 +88,12 @@
 			}
 		}
 		completion_reward = {
-			add_timed_idea = {
-				idea = ITA_gas_idea
-				days = 365             
+			add_ideas = ITA_gas_idea
+			hidden_effect = {
+				set_technology = { chemical_weapons_attack = 1 popup = no }
 			}
+			custom_effect_tooltip = unlock_tactic_chemical_weapons_attack_tt
+			
 			hidden_effect = {
 				EGY = { country_event = { id = egy.65 days = 5 } }
 			}
@@ -150,7 +152,7 @@
 		relative_position_id = ITA_march_steel
 		cost = 5
 		ai_will_do = {
-			factor = 1
+			factor = 50
 		}	
 		completion_reward = {
 			if = {
@@ -184,7 +186,10 @@
 		}
 
 		search_filters = {FOCUS_FILTER_INDUSTRY FOCUS_FILTER_ARMY_XP}
-
+		
+		ai_will_do = {
+			factor = 50
+		}
 		completion_reward = {
 			army_experience = 25
 
@@ -319,6 +324,102 @@
 			}
 		}
 	}
+	
+	shared_focus = {
+		id = ITA_reform_general
+		icon = GFX_z_goal_italian_generals
+		prerequisite = { focus = ITA_army_primacy_bba }
+		mutually_exclusive = { focus = ITA_more_wheaphones }
+
+		available_if_capitulated = no
+
+		x = -1
+		y = 1
+		relative_position_id = ITA_army_primacy_bba
+		
+		cost = 10
+		ai_will_do = {
+			factor = 4
+		}	
+		completion_reward = {
+			country_event = { hours = 6 id = duce.27 }
+		}
+	}
+	
+	shared_focus = {
+		id = ITA_more_wheaphones
+		icon = GFX_goal_generic_construct_mil_factory
+		prerequisite = { focus = ITA_army_primacy_bba }
+		mutually_exclusive = { focus = ITA_reform_general }
+
+		available_if_capitulated = no
+
+		x = 1
+		y = 1
+		relative_position_id = ITA_army_primacy_bba
+		
+		cost = 15
+		ai_will_do = {
+			factor = 4
+			modifier = {
+				factor = 5
+				OR = {
+					is_historical_focus_on = yes
+					has_country_flag = NW_ITA_AI_FASCIST_HISTORICAL
+				}
+			}
+		}	
+		
+		completion_reward = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = arms_factory
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	
 
 	shared_focus = {
 		id = ITA_preserve_army_traditions
@@ -326,14 +427,28 @@
 		prerequisite = { focus = ITA_army_primacy_bba }
 		mutually_exclusive = { focus = ITA_a_bandits_war }
 		x = -3
-		y = 1
+		y = 2
 		relative_position_id = ITA_army_primacy_bba
 		cost = 5
 		available = {
 		}
 
 		search_filters = {FOCUS_FILTER_INDUSTRY FOCUS_FILTER_ARMY_XP}
-
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_government = communism
+					has_government = fascism
+				}
+			}
+			modifier = {
+				factor = 0
+				has_government = neutrality
+			}
+		}
 		completion_reward = {
 			add_to_variable = { ITA_re_army_army_org_factor = 0.05 }
 			add_to_variable = { ITA_re_army_morale_factor = 0.05 }
@@ -383,21 +498,45 @@
 		prerequisite = { focus = ITA_army_primacy_bba }
 		mutually_exclusive = { focus = ITA_preserve_army_traditions }
 		x = 3
-		y = 1
+		y = 2
 		relative_position_id = ITA_army_primacy_bba
 		cost = 5
 		available = {
 		}
 
 		search_filters = {FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_ARMY_XP}
-
+		
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_government = monarchy
+					has_government = anarchism
+					has_government = democratic
+				}
+			}
+			modifier = {
+				factor = 0
+				has_government = neutrality
+			}
+		}
 		completion_reward = {
 			add_to_variable = { ITA_re_org_loss_when_moving = -0.15 }
 			add_to_variable = { ITA_re_army_speed_factor = 0.05 }
 			custom_effect_tooltip = ITA_a_bandits_war_re_tt
-
-			custom_effect_tooltip = available_chief_of_army
-			show_ideas_tooltip = ITA_alberto_pariani
+			
+			if = {
+				limit = { NOT = { tag = CLN } }
+				custom_effect_tooltip = available_chief_of_army
+				show_ideas_tooltip = ITA_alberto_pariani
+			}
+			else = {
+				custom_effect_tooltip = available_theorist
+				show_ideas_tooltip = giovanni_messe
+				custom_effect_tooltip = available_military_high_command
+				show_ideas_tooltip = giovanni_messe_high_command
+			}
 
 			add_doctrine_cost_reduction = {
 				name = ITA_a_bandits_war
@@ -2282,8 +2421,15 @@
 
 		completion_reward = {
 			navy_experience = 10
-			custom_effect_tooltip = available_designer
-			show_ideas_tooltip = Tirrenia
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				custom_effect_tooltip = available_mio_tt
+				show_mio_tooltip = ITA_cantiere_oto_organization
+			}
+			else = {
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = Tirrenia
+			}
 		}
 	}
 	
@@ -5710,6 +5856,7 @@
 		}	
 		completion_reward = {
 			add_ideas = ITA_support_corporations_idea
+			mio:ITA_Astaldi_organization = { add_mio_size = 1 }
 		}
 	}
 	
@@ -6707,9 +6854,15 @@
 		search_filters = {FOCUS_FILTER_INDUSTRY}
 
 		completion_reward = {
-			custom_effect_tooltip = available_designer
-			show_ideas_tooltip = ITA_fiocchi_munizioni
-			
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				custom_effect_tooltip = available_mio_tt
+				show_mio_tooltip = ITA_fiocchi_munizioni_organization
+			}
+			else = {
+				custom_effect_tooltip = available_designer
+				show_ideas_tooltip = ITA_fiocchi_munizioni
+			}
 			if = {
 				limit = {
 					159 = {
@@ -6974,15 +7127,22 @@
 
 		completion_reward = {
 			if = {
-				limit = { has_idea = ITA_alfa_romeo_pre_war }
-				swap_ideas = {
-					remove_idea = ITA_alfa_romeo_pre_war
-					add_idea = ITA_alfa_romeo_war
-				}
+				limit = { has_dlc = "Arms Against Tyranny" }
+				custom_effect_tooltip = available_mio_tt
+				show_mio_tooltip = ITA_alfa_romeo_organization
 			}
 			else = {
-				custom_effect_tooltip = available_designer
-				show_ideas_tooltip = ITA_alfa_romeo_war
+				if = {
+					limit = { has_idea = ITA_alfa_romeo_pre_war }
+					swap_ideas = {
+						remove_idea = ITA_alfa_romeo_pre_war
+						add_idea = ITA_alfa_romeo_war
+					}
+				}
+				else = {
+					custom_effect_tooltip = available_designer
+					show_ideas_tooltip = ITA_alfa_romeo_war
+				}
 			}
 			
 			if = {

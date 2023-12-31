@@ -1,0 +1,253 @@
+scripted_gui = {
+	capital_self_state = {
+	
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		
+		window_name = "capital_self_state_container"
+		
+		visible = {
+			ROOT = { is_ai = no }
+			FROM.FROM = {
+				is_capital = no
+				is_fully_controlled_by = ROOT
+				is_core_of = ROOT
+				OR = {
+					has_state_category = city
+					has_state_category = large_city
+					has_state_category = large_town
+					has_state_category = megalopolis
+					has_state_category = metropolis
+					has_state_category = town
+				}
+			}
+		}
+		
+		ai_enabled = {
+			always = no
+		}
+
+		effects = {
+			new_capital_click = {
+				#set_capital = { state =  FROM.FROM }
+				FROM.FROM = {
+					set_state_flag = new_capital
+					state_event = { id = NWcapital.1 trigger_for = controller }
+				}
+			}
+		}
+		
+		triggers = {
+			new_capital_click_enabled = {
+				ROOT = {
+					NOT = { has_idea = new_capital }
+					OR = {
+						AND = {
+							has_political_power > 50
+							has_war = no
+							has_civil_war = no
+						}
+						AND = {
+							has_political_power > 100
+							OR = {
+								has_war = yes
+								has_civil_war = yes
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	state_coup = {
+	
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		
+		window_name = "state_coup_container"
+		
+		visible = {
+			ROOT = {
+				has_country_flag = state_coup_flag
+				if = {
+					limit = { tag = FRF }
+					OR = {
+						has_government = fascism
+						has_government = neutrality
+					}
+				}
+				if = {
+					limit = { tag = IFA }
+					has_government = anarchism
+				}
+			}
+			FROM.FROM = {
+				owner = {
+					OR = {
+						has_war_with = ROOT
+						ROOT = { has_wargoal_against = PREV }
+					}
+				}
+				NOT = {
+					is_controlled_by = ROOT
+				}
+			}
+		}
+
+		effects = {
+			state_coup_click = {
+				log = "[GetDateText]: ROOT: [Root.GetName] ([Root.GetTag]) // TARGET: [From.From.Owner.GetName] ([From.From.Owner.GetTag]) [From.From.GetName] : gui effects state_coup_click"
+				hidden_effect = {
+					FROM.FROM = {
+						set_state_flag = state_coup_state_flag
+						owner = {
+							if = {
+								limit = { NOT = { has_war_with = ROOT } }
+								set_country_flag = { flag = state_coup_once days = 180 }
+							}
+							if = {
+								limit = {
+									has_war_with = ROOT
+									has_country_flag = state_coup_once
+								}
+								clr_country_flag = state_coup_once
+							}
+							country_event = { id = NWstate_coup.1 days = 1 }
+						}
+					}
+					ROOT = { add_political_power = -50 }
+				}
+				effect_tooltip = {
+					FROM.FROM = {
+						random_list = {
+							3 = {
+								modifier = { factor = 0 supply_node < 1 }
+								damage_building = { type = supply_node damage = 0.35 }
+							}
+							1 = {
+								modifier = { factor = 0 industrial_complex < 2 }
+								damage_building = { type = industrial_complex damage = 2 }
+							}
+							1 = {
+								modifier = { factor = 0 arms_factory < 2 }
+								damage_building = { type = arms_factory damage = 2 }
+							}
+							2 = {
+								modifier = { factor = 0 infrastructure < 1 }
+								damage_building = { type = infrastructure damage = 0.35 }
+							}
+							2 = {
+								modifier = { factor = 0 rail_way < 1 }
+								if = {
+									limit = { rail_way > 2 }
+									damage_building = { type = rail_way damage = 3 }
+								}
+								else_if = {
+									limit = { rail_way > 1 }
+									damage_building = { type = rail_way damage = 2 }
+								}
+								else = { damage_building = { type = rail_way damage = 1 } }
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		triggers = {
+			state_coup_click_enabled = {
+				hidden_trigger = {
+					ROOT = { has_political_power > 49.99 }
+				}
+				FROM.FROM = {
+					owner = {
+						OR = {
+							has_war_with = ROOT
+							ROOT = { has_wargoal_against = PREV }
+						}
+					}
+					NOT = {
+						is_controlled_by = ROOT
+					}
+				}
+			}
+		}
+		
+		ai_test_scopes = test_enemy_owned_states
+		
+		ai_enabled = {
+            OR = {
+				original_tag = FRF
+				original_tag = PER
+				original_tag = BPL
+				original_tag = TUR
+				tag = IFA
+			}
+		}
+		
+		ai_test_interval = 144
+		ai_test_variance = 24
+		ai_max_weight_taken_per_test = 5
+		
+		ai_check = {
+			ROOT = {
+				has_country_flag = state_coup_flag
+				if = {
+					limit = { tag = FRF }
+					OR = {
+						has_government = fascism
+						has_government = neutrality
+					}
+				}
+				if = {
+					limit = { tag = IFA }
+					has_government = anarchism
+				}
+			}
+		}
+		
+		ai_check_scope = {
+			NOT = {
+				is_controlled_by = ROOT
+			}
+		}
+		
+		ai_weights = {
+			state_coup_click = {
+				ai_will_do = {
+					factor = 0
+					modifier = {
+						add = 2
+						FROM.FROM = {
+							is_capital = yes
+							owner = {
+								NOT = { has_country_flag = state_coup_once }
+							}
+						}
+					}
+					modifier = {
+						add = 2
+						FROM.FROM = {
+							owner = {
+								has_war_with = ROOT
+								has_country_flag = state_coup_once
+							}
+						}
+					}
+					modifier = {
+						add = 1
+						ROOT = { has_political_power > 149.99 }
+						FROM.FROM = {
+							owner = {
+								has_war_with = ROOT
+							}
+						}
+					}
+					
+				}
+			}
+		}
+	}
+}

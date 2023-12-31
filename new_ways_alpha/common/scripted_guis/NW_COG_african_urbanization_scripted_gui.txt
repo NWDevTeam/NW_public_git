@@ -1,0 +1,189 @@
+scripted_gui = {
+	
+	state_urbanization = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		# dirty = COG_state_urbanization_update
+		
+		window_name = "state_urbanization_container"
+		
+		visible = {
+			ROOT = {
+				original_tag = COG
+				has_completed_focus = COG_african_urbanization
+			}
+			is_on_continent = africa
+			is_fully_controlled_by = ROOT
+			NOT = { has_state_category = megalopolis }
+		}
+
+		effects = {
+			state_urbanization_button_click = {
+				set_state_flag = state_urbanization_flag
+				if = {
+					limit = { is_core_of = ROOT }
+					set_variable = { ROOT.COG_state_urbanization_days_remove_var = 180 }
+					else = {
+						set_variable = { ROOT.COG_state_urbanization_days_remove_var = 360 }
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							has_state_category = large_town
+							has_state_category = town
+							has_state_category = city
+						}
+					}
+					multiply_variable = { ROOT.COG_state_urbanization_days_remove_var = 1.5 }
+					else_if = {
+						limit = {
+							OR = {
+								has_state_category = large_city
+								has_state_category = metropolis
+							}
+						}
+						multiply_variable = { ROOT.COG_state_urbanization_days_remove_var = 2 }
+					}
+				}
+				ROOT = {
+					add_to_array = { COG_state_urbanization_current_state = PREV }
+					hidden_effect = { activate_targeted_decision = { target = PREV decision = COG_state_urbanization_decision } }
+					unlock_decision_tooltip = { decision = COG_state_urbanization_decision show_effect_tooltip = yes show_modifiers = yes }
+					
+					add_to_variable = { COG_su_civilian_factory_use = 5 tooltip = civilian_factory_use_tooltip }
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+		
+		triggers = {
+			state_urbanization_button_click_enabled = {
+				hidden_trigger = { impassable = no }
+				# is_fully_controlled_by = ROOT
+				NOT = { has_state_flag = state_urbanization_flag }
+				is_border_conflict = no
+				
+				ROOT = {
+					num_of_civilian_factories_available_for_projects > 4
+				}
+				if = {	#pastoral
+					limit = { has_state_category = pastoral is_core_of = ROOT }
+					ROOT = { num_of_factories > 9 }
+					infrastructure > 0
+					
+					# check_variable = { ROOT.num_of_factories > 9 }
+				}
+				else_if = {
+					limit = { has_state_category = pastoral NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 19 }
+					infrastructure > 0
+				}
+				else_if = {	#rural
+					limit = { has_state_category = rural is_core_of = ROOT }
+					ROOT = { num_of_factories > 14 }
+					infrastructure > 1
+					hospital > 0
+				}
+				else_if = {
+					limit = { has_state_category = rural NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 24 }
+					infrastructure > 1
+					hospital > 0
+				}
+				else_if = {	#town
+					limit = { has_state_category = town is_core_of = ROOT }
+					ROOT = { num_of_factories > 19 }
+					infrastructure > 2
+					hospital > 0
+				}
+				else_if = {
+					limit = { has_state_category = town NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 29 }
+					infrastructure > 2
+					hospital > 0
+				}
+				else_if = {	#large_town
+					limit = { has_state_category = large_town is_core_of = ROOT }
+					ROOT = { num_of_factories > 29 }
+					infrastructure > 3
+					hospital > 1
+				}
+				else_if = {
+					limit = { has_state_category = large_town NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 39 }
+					infrastructure > 3
+					hospital > 1
+				}
+				else_if = {	#city
+					limit = { has_state_category = city is_core_of = ROOT }
+					ROOT = { num_of_factories > 49 }
+					infrastructure > 3
+					hospital > 2
+				}
+				else_if = {
+					limit = { has_state_category = city NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 59 }
+					infrastructure > 3
+					hospital > 2
+				}
+				else_if = {	#large_city
+					limit = { has_state_category = large_city is_core_of = ROOT }
+					ROOT = { num_of_factories > 69 }
+					infrastructure > 4
+					hospital > 3
+				}
+				else_if = {
+					limit = { has_state_category = large_city NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 79 }
+					infrastructure > 4
+					hospital > 3
+				}
+				else_if = {	#metropolis
+					limit = { has_state_category = metropolis is_core_of = ROOT }
+					ROOT = { num_of_factories > 99 }
+					infrastructure > 4
+					hospital > 4
+				}
+				else_if = {
+					limit = { has_state_category = metropolis NOT = { is_core_of = ROOT } }
+					ROOT = { num_of_factories > 109 }
+					infrastructure > 4
+					hospital > 4
+				}
+			}
+		}
+		
+		ai_test_scopes = test_self_controlled_states
+		
+		ai_enabled = {
+            original_tag = COG
+		}
+		
+		ai_weights = {
+			state_urbanization_button_click = {
+				ai_will_do = {
+					factor = 0
+					modifier = {
+						add = 1
+						OR = {
+							ROOT = { has_war = no }
+							FROM.FROM = {
+								all_neighbor_state = {
+									controller = {
+										OR = {
+											tag = ROOT
+											is_subject_of = ROOT
+											is_in_faction_with = ROOT
+											NOT = { has_war_with = ROOT }
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

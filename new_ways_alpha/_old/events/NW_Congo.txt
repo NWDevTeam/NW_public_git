@@ -1,0 +1,952 @@
+﻿add_namespace = cog
+
+country_event = {
+	id = cog.1
+	title = cog.1.t
+	desc = cog.1.d
+	picture = GFX_report_event_dead_soldiers
+	fire_only_once = yes
+	
+	trigger = {
+		tag = COG
+		date > 1944.11.25
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.1" }
+	
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = cog.1.a
+		718 = { add_manpower = -40000 }
+	}
+}
+country_event = {
+	id = cog.2
+	title = cog.2.t
+	desc = cog.2.d
+	picture = GFX_report_event_african_soldiers
+	fire_only_once = yes
+	trigger = {
+		tag = COG
+		OR = {
+			AND = {
+				COG = { is_subject_of = BEL } 
+				BEL = { has_capitulated = yes }
+			}
+			BEL = { has_government = communism }
+		}
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.2" }
+	
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = cog.2.a
+		BEL = { release = COG country_event = { id = cog.3 } }
+	}
+	option = {
+		name = cog.2.b
+	}
+}
+country_event = {
+	id = cog.3
+	title = cog.3.t
+	desc = cog.3.d
+	picture = GFX_report_event_african_soldiers
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.3" }
+	
+	option = {
+		name = cog.3.a
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = COG
+		}
+		add_ai_strategy = {
+			type = antagonize
+			id = "COG"
+			value = 500
+		}
+		add_ai_strategy = {
+			type = conquer
+			id = "COG"
+			value = 500
+		}
+	}
+}
+country_event = {
+	id = cog.4
+	title = cog.4.t
+	desc = cog.4.d
+	picture = GFX_report_event_generic_rally
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.4" }
+	
+	option = {
+		name = cog.4.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_COG_AI_NEUTRAL_ALTERNATE
+			}
+		}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.05
+		}
+		set_country_flag = cog.4.a_flag
+		set_country_flag = cog.4.c_flag
+	}
+	option = {
+		name = cog.4.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_country_flag = NW_COG_AI_FASCIST
+			}
+		}
+		add_war_support = 0.05
+		add_popularity = {
+			ideology = neutrality
+			popularity = -0.05
+		}
+		set_country_flag = cog.4.b_flag
+	}
+}
+country_event = {
+	id = cog.5
+	title = cog.5.t
+	desc = cog.5.d
+	picture = GFX_report_event_king_speech
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.5" }
+	
+	option = {
+		name = cog.5.a
+		remove_unit_leader = 901
+		set_politics = { ruling_party = fascism }
+		if = {
+			limit = { COG = { is_subject = yes } }
+			OVERLORD = {
+				country_event = { id = cog.21 }
+				set_autonomy = {
+					target = ROOT
+					autonomy_state = autonomy_free
+				}
+			}
+		}
+		if = {
+			limit = {
+				owns_state = 295
+				295 = { is_core_of = ROOT }
+			}
+			if = {
+				limit = { 295 = { is_capital = no } }
+				set_capital = { state =  295 }
+			}
+			set_victory_points = { province = 5117 value = 10 }
+			295 = { set_state_name = 295_Nkamba_Jerusalem }
+			set_province_name = { id = 5117 name = 295_Nkamba_Jerusalem }
+		}
+		else_if = {
+			limit = {
+				owns_state = 1005
+				1005 = { is_core_of = ROOT }
+			}
+			set_capital = { state =  1005 }
+			set_victory_points = { province = 8193 value = 10 }
+		}
+		else_if = {
+			limit = { owns_state = 538 }
+			set_capital = { state =  538 }
+			set_victory_points = { province = 10071 value = 10 }
+		}
+	}
+}
+
+#Огненный дождь сошёл на землю и уничтожил всех белых
+country_event = {
+	id = cog.6
+	title = cog.6.t
+	desc = cog.6.d
+	picture = GFX_report_event_ace_promoted
+	fire_only_once = yes
+	trigger = {
+		tag = COG
+		has_government = fascism
+		has_war = yes
+		OR = {
+			has_deployed_air_force_size = {
+				size > 0
+				type = fighter
+			}
+			has_deployed_air_force_size = {
+				size > 0
+				type = naval_bomber
+			}
+			has_deployed_air_force_size = {
+				size > 0
+				type = tactical_bomber
+			}
+			has_deployed_air_force_size = {
+				size > 0
+				type = strategic_bomber
+			}
+		}
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.6" }
+	
+	mean_time_to_happen = { days = 3 }
+	option = {
+		name = cog.6.a
+		add_ideas = COG_air_bonus
+	}
+}
+
+#Небесные воины сошли на землю и обратили белых в бегство
+country_event = {
+	id = cog.7
+	title = cog.7.t
+	desc = cog.7.d
+	picture = GFX_report_event_south_africa_patrol
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.7" }
+	immediate = { set_country_flag = COG_no_state_flag }
+	
+	option = {
+		name = cog.7.a
+		add_ideas = COG_army_bonus
+	}
+}
+
+#Конголезцы прошли по воде и уничтожили флот белых
+country_event = {
+	id = cog.8
+	title = cog.8.t
+	desc = cog.8.d
+	picture = GFX_report_event_ast_navy
+	fire_only_once = yes
+	trigger = {
+		tag = COG
+		has_government = fascism
+		has_war = yes
+		OR = {
+			has_navy_size = {
+				size > 0
+				type = submarine
+			}
+			has_navy_size = {
+				size > 0
+				type = screen_ship
+			}
+			has_navy_size = {
+				size > 0
+				type = capital_ship
+			}
+		}
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.8" }
+	
+	mean_time_to_happen = { days = 6 }
+	option = {
+		name = cog.8.a
+		add_ideas = COG_navy_bonus
+	}
+}
+
+#Святое войско уничтожило источник Сатаны на земле белых
+country_event = {
+	id = cog.9
+	title = cog.9.t
+	desc = cog.9.d
+	picture = GFX_report_event_south_africa_patrol
+	is_triggered_only = yes
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.9" }
+	immediate = { set_country_flag = COG_no_capitulation_flag }
+	
+	option = {
+		name = cog.9.a
+		add_ideas = COG_capitulation_bonus
+	}
+}
+country_event = {
+	id = cog.10
+	title = cog.10.t
+	desc = cog.10.d
+	picture = GFX_report_event_hitler_handshake
+	fire_only_once = yes
+	trigger = {
+		tag = COG
+		OR = {
+			is_in_faction_with = ITA
+			is_in_faction_with = event_target:NW_france_scope
+			is_in_faction_with = GER
+			is_in_faction_with = ENG
+		}
+		OR = {
+			event_target:NW_france_scope = { has_government = fascism }
+			ENG = { has_government = fascism }
+		}
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.10" }
+	
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = cog.10.a
+	}
+}
+country_event = {
+	id = cog.11
+	title = cog.11.t
+	desc = cog.11.d
+	picture = GFX_report_event_king_speech
+	fire_only_once = yes
+	trigger = {
+		tag = COG
+		has_country_flag = cog.4.c_flag 
+	}
+	
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.11" }
+	
+	mean_time_to_happen = { days = 14 }
+	option = {
+		name = cog.11.a
+		add_ideas = COG_crunch_kimbangu
+	}
+}
+
+#Администрация Конго предлагает продать Кабинду
+country_event = {
+	id = cog.12
+	title = cog.12.t
+	desc = cog.12.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.12" }
+	
+	option = {
+		name = cog.12.a
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0
+				has_government = fascism
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+				level = 1
+				instant_build = yes
+			}
+		}
+		1056 = {
+			FROM = { transfer_state = PREV }
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+	}
+	
+	option = {
+		name = cog.12.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = cog.13 days = 1 } }
+	}
+}
+
+#Отказ в продаже Кабинды // COG
+country_event = {
+	id = cog.13
+	title = cog.13.t
+	desc = cog.13.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.13" }
+	
+	option = {
+		name = cog.13.a
+	}
+}
+
+#Конго желает приобрести Среднее Конго // event_target:NW_france_scope
+country_event = {
+	id = cog.14
+	title = cog.14.t
+	desc = cog.14.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.14" }
+	
+	option = {
+		name = cog.14.a
+		ai_chance = {
+			factor = 90
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 2
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = {
+				type = industrial_complex
+				level = 3
+				instant_build = yes
+			}
+		}
+		every_state = {
+			limit = {
+				OR = {
+					state = 539
+					state = 1005
+				}
+			}
+			FROM = { transfer_state = PREV }
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+	}
+	
+	option = {
+		name = cog.14.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = cog.15 days = 1 } }
+	}
+}
+
+#Отказ в продаже колоний // COG
+country_event = {
+	id = cog.15
+	title = cog.15.t
+	desc = cog.15.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.15" }
+	
+	option = {
+		name = cog.15.a
+	}
+}
+
+#Конго желает приобрести Уганду // ENG
+country_event = {
+	id = cog.16
+	title = cog.16.t
+	desc = cog.16.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.16" }
+	
+	option = {
+		name = cog.16.a
+		ai_chance = {
+			factor = 90
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				industrial_complex > 0
+			}
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		random_owned_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 3
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 4
+			add_building_construction = {
+				type = industrial_complex
+				level = 4
+				instant_build = yes
+			}
+		}
+		548 = {
+			FROM = { transfer_state = PREV }
+			add_core_of = FROM
+			remove_core_of = ROOT
+		}
+	}
+	
+	option = {
+		name = cog.16.b
+		ai_chance = {
+			factor = 10
+		}
+		FROM = { country_event = { id = cog.15 days = 1 } }
+	}
+}
+
+#Иностранные колдуны рассказали про уран
+country_event = {
+	id = cog.17
+	title = cog.17.t
+	desc = cog.17.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.17" }
+	
+	option = {
+		name = cog.17.a
+		ai_chance = {
+			factor = 50
+		}
+		random_owned_controlled_state = {
+			set_temp_variable = { temp1 = random }
+			multiply_temp_variable = { temp1 = 15000 }
+			set_temp_variable = { temp2 = random }
+			multiply_temp_variable = { temp2 = 1500 }
+			set_temp_variable = { temp3 = random }
+			multiply_temp_variable = { temp3 = 150 }
+			set_temp_variable = { temp4 = random }
+			multiply_temp_variable = { temp4 = 10 }
+			add_to_temp_variable = { temp1 = temp2 }
+			add_to_temp_variable = { temp1 = temp3 }
+			add_to_temp_variable = { temp1 = temp4 }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			multiply_temp_variable = { temp1 = -1 }
+			add_manpower = temp1
+		}
+		random_owned_controlled_state = {
+			set_temp_variable = { temp1 = random }
+			multiply_temp_variable = { temp1 = 15000 }
+			set_temp_variable = { temp2 = random }
+			multiply_temp_variable = { temp2 = 1500 }
+			set_temp_variable = { temp3 = random }
+			multiply_temp_variable = { temp3 = 150 }
+			set_temp_variable = { temp4 = random }
+			multiply_temp_variable = { temp4 = 10 }
+			add_to_temp_variable = { temp1 = temp2 }
+			add_to_temp_variable = { temp1 = temp3 }
+			add_to_temp_variable = { temp1 = temp4 }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			multiply_temp_variable = { temp1 = -1 }
+			add_manpower = temp1
+		}
+		random_owned_controlled_state = {
+			set_temp_variable = { temp1 = random }
+			multiply_temp_variable = { temp1 = 15000 }
+			set_temp_variable = { temp2 = random }
+			multiply_temp_variable = { temp2 = 1500 }
+			set_temp_variable = { temp3 = random }
+			multiply_temp_variable = { temp3 = 150 }
+			set_temp_variable = { temp4 = random }
+			multiply_temp_variable = { temp4 = 10 }
+			add_to_temp_variable = { temp1 = temp2 }
+			add_to_temp_variable = { temp1 = temp3 }
+			add_to_temp_variable = { temp1 = temp4 }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			multiply_temp_variable = { temp1 = -1 }
+			add_manpower = temp1
+		}
+		random_owned_controlled_state = {
+			set_temp_variable = { temp1 = random }
+			multiply_temp_variable = { temp1 = 15000 }
+			set_temp_variable = { temp2 = random }
+			multiply_temp_variable = { temp2 = 1500 }
+			set_temp_variable = { temp3 = random }
+			multiply_temp_variable = { temp3 = 150 }
+			set_temp_variable = { temp4 = random }
+			multiply_temp_variable = { temp4 = 10 }
+			add_to_temp_variable = { temp1 = temp2 }
+			add_to_temp_variable = { temp1 = temp3 }
+			add_to_temp_variable = { temp1 = temp4 }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			multiply_temp_variable = { temp1 = -1 }
+			add_manpower = temp1
+		}
+		random_owned_controlled_state = {
+			set_temp_variable = { temp1 = random }
+			multiply_temp_variable = { temp1 = 15000 }
+			set_temp_variable = { temp2 = random }
+			multiply_temp_variable = { temp2 = 1500 }
+			set_temp_variable = { temp3 = random }
+			multiply_temp_variable = { temp3 = 150 }
+			set_temp_variable = { temp4 = random }
+			multiply_temp_variable = { temp4 = 10 }
+			add_to_temp_variable = { temp1 = temp2 }
+			add_to_temp_variable = { temp1 = temp3 }
+			add_to_temp_variable = { temp1 = temp4 }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			if = { limit = { check_variable = { temp1 < 20001 } } multiply_temp_variable = { temp1 = 1.5 } }
+			multiply_temp_variable = { temp1 = -1 }
+			add_manpower = temp1
+		}
+		add_ideas = COG_uranium_arrowheads
+	}
+	
+	option = {
+		name = cog.17.b
+		ai_chance = {
+			factor = 50
+		}
+		add_tech_bonus = {
+			name = COG_invite_magicians_from_europe
+			bonus = 1.25
+			uses = 2
+			category = nuclear
+		}
+		add_tech_bonus = {
+			name = COG_invite_magicians_from_europe
+			ahead_reduction = 2
+			uses = 1
+			category = nuclear
+		}
+	}
+}
+
+#Симон Кимбангу предлагает «расплатиться за нашу ересь» // ETH
+country_event = {
+	id = cog.18
+	title = cog.18.t
+	desc = cog.18.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.18" }
+	
+	option = {
+		name = cog.18.a
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0
+				is_in_faction = yes
+			}
+		}
+		FROM = { add_to_faction = ROOT }
+	}
+	
+	option = {
+		name = cog.18.b
+		ai_chance = {
+			factor = 1
+		}
+		FROM = { country_event = { id = cog.19 } }
+	}
+}
+
+#Православные еретики отказали нам
+country_event = {
+	id = cog.19
+	title = cog.19.t
+	desc = cog.19.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.19" }
+	
+	option = {
+		name = cog.19.a
+	}
+}
+
+#Автономистские настроения в Конго // BEL
+country_event = {
+	id = cog.20
+	title = cog.20.t
+	desc = cog.20.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.20" }
+	
+	option = {
+		name = cog.20.a
+		ai_chance = {
+			factor = 25
+		}
+		trigger = { NOT = { has_idea = BEL_social_pacifism } }
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+		hidden_effect = {
+			COG = {
+				set_country_flag = autonomists_cog_flag
+				country_event = { id = cog.22 days = 90 }
+			}
+		}
+	}
+	
+	option = {
+		name = cog.20.b
+		ai_chance = {
+			factor = 75
+		}
+		add_stability = 0.05
+	}
+}
+
+#Негры захватывают власть в Конго
+country_event = {
+	id = cog.21
+	title = cog.21.t
+	desc = cog.21.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.21" }
+	
+	option = {
+		name = cog.21.a
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				has_government = fascism
+			}
+		}
+		add_political_power = -10
+	}
+	
+	option = {
+		name = cog.21.b
+		ai_chance = {
+			factor = 50
+		}
+		trigger = { NOT = { has_idea = BEL_social_pacifism } }
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+		hidden_effect = {
+			COG = {
+				set_country_flag = autonomists_cog_flag
+				country_event = { id = cog.22 days = 90 }
+			}
+		}
+	}
+}
+
+#прошло 3 месяца войны
+country_event = {
+	id = cog.22
+	title = cog.22.t
+	desc = cog.22.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.22" }
+	
+	option = {
+		name = cog.22.a
+		if = {
+			limit = { has_war_with = FROM }
+			set_country_flag = took_three_months_flag
+		}
+	}
+}
+
+#Конголезское предложение мира
+country_event = {
+	id = cog.23
+	title = cog.23.t
+	desc = cog.23.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.23" }
+	
+	option = {
+		name = cog.23.a
+		add_stability = -0.05
+		add_political_power = -50
+		white_peace = FROM
+	}
+}
+
+#Статуя
+country_event = {
+	id = cog.24
+	title = cog.24.t
+	desc = cog.24.desc
+	picture = GFX_report_event_congo_statue
+	is_triggered_only = yes
+	trigger = {
+		tag = COG
+		date > 1938.01.01
+	}	
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.24" }
+	
+	option = {
+		name = cog.24.a
+		add_stability = 0.04
+	}
+}
+
+#Конголезское предложение мира
+country_event = {
+	id = cog.999
+	title = cog.23.t
+	desc = cog.23.desc
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event cog.23" }
+	
+	option = {
+		
+		if = {
+			limit = {
+				#CZE = { is_in_faction_with = ROOT }
+				OR = {
+					ROM = {
+						is_faction_leader = yes
+						is_in_faction_with = YUG
+					}
+					ROM = {
+						is_faction_leader = yes
+						is_in_faction_with = ROM
+					}
+				}
+			}
+			CZE = {
+				random_country = {
+					limit = {
+						is_faction_leader = yes
+						OR = {
+							tag = ROM
+							tag = YUG
+						}
+					}
+					country_event = { id = generic.2 }
+				}
+			}
+		}
+		
+	}
+}

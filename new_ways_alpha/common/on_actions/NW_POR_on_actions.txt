@@ -1,0 +1,591 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			### Португалия стартпак
+			if = {
+				limit = {
+					has_start_date < 1936.01.02
+				}
+				POR = {
+					activate_mission = POR_delegation_in_moscow
+					country_event = { id = NWportugal.480 days = 253 }	# Восстание моряков
+				}
+			}
+		}
+	}
+	
+	
+	# FROM is war target
+	on_declare_war = {
+		effect = {
+			### Поддержка Испанских националистов // POR
+			if = {
+				limit = {
+					NOT = { has_global_flag = NWportugal_15_flag }
+					SPR_scw_in_progress = yes
+					FROM = { is_literally_spain = yes }
+					ROOT = { is_literally_spain = yes }
+					OR = {
+						FROM = { original_tag = SPA }
+						ROOT = { original_tag = SPA }
+					}
+				}
+				set_global_flag = NWportugal_15_flag
+				random_other_country = {
+					limit = {
+						original_tag = POR
+						has_civil_war = no
+						OR = {
+							has_government = neutrality
+							has_government = fascism
+							has_government = monarchy
+						}
+					}
+					country_event = { id = NWportugal.15 days = 3 }
+				}
+			}
+			### Франсишку Ролан Прету уходит к SPA // POR
+			if = {
+				limit = {
+					has_global_flag = POR_francisco_rolao_preto_transfer_SPA_flag
+					has_global_flag = POR_francisco_rolao_preto_transfer_SPA_count
+					FROM = { is_literally_spain = yes }
+					ROOT = { is_literally_spain = yes }
+					OR = {
+						FROM = { original_tag = SPA }
+						ROOT = { original_tag = SPA }
+					}
+				}
+				clr_global_flag = POR_francisco_rolao_preto_transfer_SPA_count
+				random_other_country = {
+					limit = {
+						original_tag = POR
+						has_character = POR_francisco_rolao_preto
+					}
+					POR_francisco_rolao_preto = { set_nationality = SPA }
+				}
+			}
+		}
+	}
+
+
+	# FROM is faction leader on join faction requests. 
+	on_join_faction = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_dynamic_modifier = { modifier = POR_working_spirit_dyn }
+					}
+				}
+				FROM = {
+					set_temp_variable = { POR_working_spirit_temp_var = 1 }
+					add_to_temp_variable = { POR_working_spirit_temp_var = num_faction_members }
+					divide_temp_variable = { POR_working_spirit_temp_var = 100 }
+					set_variable = { POR_working_spirit_var = POR_working_spirit_temp_var }
+					force_update_dynamic_modifier = yes
+					
+					every_other_country = {
+						limit ={ has_dynamic_modifier = { modifier = POR_working_spirit_dyn } }
+						set_temp_variable = { POR_working_spirit_temp_var = 1 }
+						add_to_temp_variable = { POR_working_spirit_temp_var = num_faction_members }
+						divide_temp_variable = { POR_working_spirit_temp_var = 100 }
+						set_variable = { POR_working_spirit_var = POR_working_spirit_temp_var }
+						force_update_dynamic_modifier = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = POR
+						has_government = neutrality
+						has_dynamic_modifier = { modifier = POR_strikes_in_portugal_dyn }
+					}
+					FROM = {
+						OR = {
+							original_tag = GER
+							AND = {
+								is_in_faction_with = GER
+								GER = { has_government = fascism }
+							}
+						}
+						has_government = fascism
+					}
+					NOT = { has_global_flag = red_pcw_is_start }
+				}
+				ROOT = {
+					country_event = { id = NWportugal.60 days = 1 }
+				}
+			}
+			# Эмбарго мажорам
+			if = {
+				limit = {
+					ROOT = { original_tag = POR }
+					FROM = { is_major = yes }
+				}
+				every_other_country = {
+					limit = {
+						NOT = {
+							is_in_faction_with = ROOT
+							is_embargoed_by = ROOT
+						}
+						is_major = yes
+					}
+					set_country_flag = POR_send_embargo_majors_flag
+					ROOT = {
+						send_embargo = PREV
+					}
+				}
+			}
+		}
+	}
+	
+	
+	#FROM is ex faction leader, ROOT is leaver
+	on_leave_faction = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_dynamic_modifier = { modifier = POR_working_spirit_dyn }
+					}
+				}
+				FROM = {
+					set_temp_variable = { POR_working_spirit_temp_var = 1 }
+					add_to_temp_variable = { POR_working_spirit_temp_var = num_faction_members }
+					divide_temp_variable = { POR_working_spirit_temp_var = 100 }
+					set_variable = { POR_working_spirit_var = POR_working_spirit_temp_var }
+					force_update_dynamic_modifier = yes
+				}
+			}
+			# Разэмбарго мажорам
+			if = {
+				limit = {
+					ROOT = { original_tag = POR }
+				}
+				every_other_country = {
+					limit = {
+						has_country_flag = POR_send_embargo_majors_flag
+						is_embargoed_by = ROOT
+						is_major = yes
+					}
+					clr_country_flag = POR_send_embargo_majors_flag
+					ROOT = {
+						break_embargo = PREV
+					}
+				}
+			}
+		}
+	}
+	
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = POR
+					has_government = communism
+					has_completed_focus = POR_formation_of_popular_front
+				}
+				country_event = { id = NWportugal.50 days = 1 }
+			}
+			if = {
+				limit = {
+					original_tag = POR
+					has_government = communism
+					has_global_flag = red_pcw_is_start
+					NOT = { has_global_flag = red_pcw_is_end }
+				}
+				news_event = { id = trworldnews.185 hours = 6 }
+				if = {
+					limit = { has_global_flag = alvaro_cunhal_red_pcw_is_start }
+					country_event = { id = NWportugal.61 days = 1 }
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_government = communism
+					}
+					has_global_flag = red_pcw_is_start
+					NOT = { has_global_flag = red_pcw_is_end }
+				}
+				news_event = { id = trworldnews.186 hours = 6 }
+			}
+			if = {
+				limit = {
+					original_tag = POR
+					has_government = fascism
+					has_completed_focus = POR_revolt_against_salazar_regime
+					NOT = { has_global_flag = POR_revolt_against_salazar_regime_cw_is_end }
+				}
+				news_event = { id = trworldnews.187 hours = 6 }
+			}
+			if = {
+				limit = {
+					original_tag = POR
+					has_government = monarchy
+					NOT = { has_global_flag = POR_cw_end }
+				}
+				set_global_flag = POR_cw_end
+				country_event = { id = NWportugal.79 days = 7 }
+			}
+			if = {
+				limit = {
+					original_tag = POR
+					has_government = anarchism
+					NOT = { has_global_flag = POR_cw_end }
+				}
+				set_global_flag = POR_cw_end
+				country_event = { id = NWportugal.113 days = 1 }
+			}
+		}
+	}
+
+
+	on_daily_POR = {
+		effect = {
+			if = {
+				limit = {
+					any_of_scopes = {
+						array = ANG.core_states
+						controller = { OR = { tag = ROOT is_subject_of = ROOT } }
+					}
+					has_variable = ANG_colony_stability_total
+				}
+				add_to_variable = { ANG_colony_stability_total = modifier@ANG_colony_stability_modifier }
+				clamp_variable = { var = ANG_colony_stability_total min = 0.0 max = 100.00 }
+				if = {
+					limit = { check_variable = { ANG_colony_stability_total = 0.00 } }
+					set_country_flag = ANG_colony_is_gone_flag
+					set_variable = { colony_is_gone_var = token:ANG }
+					set_variable = { colony_is_gone_num_var = 3 }
+					country_event = { id = NWportugal.22 }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					any_of_scopes = {
+						array = MZB.core_states
+						controller = { OR = { tag = ROOT is_subject_of = ROOT } }
+					}
+					has_variable = MZB_colony_stability_total
+				}
+				add_to_variable = { MZB_colony_stability_total = modifier@MZB_colony_stability_modifier }
+				clamp_variable = { var = MZB_colony_stability_total min = 0.0 max = 100.00 }
+				if = {
+					limit = { check_variable = { MZB_colony_stability_total = 0.00 } }
+					set_country_flag = MZB_colony_is_gone_flag
+					set_variable = { colony_is_gone_var = token:MZB }
+					set_variable = { colony_is_gone_num_var = 3 }
+					country_event = { id = NWportugal.22 }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					721 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
+					has_variable = TIM_colony_stability_total
+				}
+				add_to_variable = { TIM_colony_stability_total = modifier@TIM_colony_stability_modifier }
+				clamp_variable = { var = TIM_colony_stability_total min = 0.0 max = 100.00 }
+				if = {
+					limit = { check_variable = { TIM_colony_stability_total = 0.00 } }
+					set_country_flag = TIM_colony_is_gone_flag
+					set_variable = { colony_is_gone_var = token:TIM }
+					set_variable = { colony_is_gone_num_var = 1 }
+					country_event = { id = NWportugal.22 }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					729 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
+					has_variable = MKO_colony_stability_total
+				}
+				add_to_variable = { MKO_colony_stability_total = modifier@MKO_colony_stability_modifier }
+				clamp_variable = { var = MKO_colony_stability_total min = 0.0 max = 100.00 }
+				if = {
+					limit = { check_variable = { MKO_colony_stability_total = 0.00 } }
+					set_country_flag = MKO_colony_is_gone_flag
+					set_variable = { colony_is_gone_var = token:MKO }
+					set_variable = { colony_is_gone_num_var = 1 }
+					country_event = { id = NWportugal.22 }
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { check_variable = { modifier@new_order_modifier = 0 } }
+				}
+				add_to_variable = { POR_creating_new_order_var = modifier@new_order_modifier }
+				clamp_variable = { var = POR_creating_new_order_var min = 0 max = 100 }
+				# for POR_new_man_dyn
+				set_variable = { POR_creating_new_order_army_core_factor = POR_creating_new_order_var }
+				divide_variable = { POR_creating_new_order_army_core_factor = 100 }
+				POR_creating_new_order_check_effect = yes
+				POR_creating_new_order_icon_frame_set_effect = yes
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { check_variable = { modifier@political_instability_modifier = 0 } }
+				}
+				add_to_variable = { POR_political_instability_var = modifier@political_instability_modifier }
+				clamp_variable = { var = POR_political_instability_var min = 0 max = 100 }
+				if = {
+					limit = { check_variable = { POR_political_instability_var = 100.00 } }
+					country_event = { id = NWportugal.108 }
+				}
+			}
+		}
+	}
+	
+	
+	#ROOT is subject FROM is previous overlord
+	on_subject_free = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_government = communism
+						has_completed_focus = POR_liberate_africa
+					}
+					is_african_country_for_POR_liberate_africa = yes
+				}
+				drop_cosmetic_tag = yes
+			}
+		}
+	}
+	
+	#ROOT is the nation being puppeted, FROM is the overlord.
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_government = communism
+						has_completed_focus = POR_liberate_africa
+					}
+					is_african_country_for_POR_liberate_africa = yes
+				}
+				set_cosmetic_POR_REDCOL_subject = yes
+				set_POR_REDCOL_start_effect = yes
+				if = {
+					limit = { NOT = { has_focus_tree = nw_portugal_redcol } }
+					load_focus_tree = { tree = nw_portugal_redcol keep_completed = no }
+				}
+				FROM = {
+					set_autonomy = {
+						target = ROOT
+						autonomy_state = autonomy_integrated_puppet
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is the nation being released, FROM is the overlord.
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_government = communism
+						has_completed_focus = POR_liberate_africa
+					}
+					is_african_country_for_POR_liberate_africa = yes
+				}
+				set_cosmetic_POR_REDCOL_subject = yes
+				set_POR_REDCOL_start_effect = yes
+				if = {
+					limit = { NOT = { has_focus_tree = nw_portugal_redcol } }
+					load_focus_tree = { tree = nw_portugal_redcol keep_completed = no }
+				}
+				FROM = {
+					set_autonomy = {
+						target = ROOT
+						autonomy_state = autonomy_integrated_puppet
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is subject FROM is overlord
+	on_subject_autonomy_level_change = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						FROM = {
+							original_tag = POR
+							has_government = communism
+							has_completed_focus = POR_liberate_africa
+						}
+					}
+					is_african_country_for_POR_liberate_africa = yes
+					OR = {
+						has_cosmetic_tag = ETH_POR_REDCOL_subject 
+						has_cosmetic_tag = LIB_POR_REDCOL_subject 
+						has_cosmetic_tag = SAF_POR_REDCOL_subject 
+						has_cosmetic_tag = EGY_POR_REDCOL_subject 
+						has_cosmetic_tag = LBA_POR_REDCOL_subject 
+						has_cosmetic_tag = ANG_POR_REDCOL_subject 
+						has_cosmetic_tag = MZB_POR_REDCOL_subject 
+						has_cosmetic_tag = ZIM_POR_REDCOL_subject 
+						has_cosmetic_tag = COG_POR_REDCOL_subject 
+						has_cosmetic_tag = KEN_POR_REDCOL_subject 
+						has_cosmetic_tag = BOT_POR_REDCOL_subject 
+						has_cosmetic_tag = MAD_POR_REDCOL_subject 
+						has_cosmetic_tag = ALG_POR_REDCOL_subject 
+						has_cosmetic_tag = MOR_POR_REDCOL_subject 
+						has_cosmetic_tag = TUN_POR_REDCOL_subject 
+						has_cosmetic_tag = SUD_POR_REDCOL_subject 
+						has_cosmetic_tag = ERI_POR_REDCOL_subject 
+						has_cosmetic_tag = DJI_POR_REDCOL_subject 
+						has_cosmetic_tag = SOM_POR_REDCOL_subject 
+						has_cosmetic_tag = UGA_POR_REDCOL_subject 
+						has_cosmetic_tag = RWA_POR_REDCOL_subject 
+						has_cosmetic_tag = BRD_POR_REDCOL_subject 
+						has_cosmetic_tag = TZN_POR_REDCOL_subject 
+						has_cosmetic_tag = ZAM_POR_REDCOL_subject 
+						has_cosmetic_tag = MLW_POR_REDCOL_subject 
+						has_cosmetic_tag = GAB_POR_REDCOL_subject 
+						has_cosmetic_tag = RCG_POR_REDCOL_subject 
+						has_cosmetic_tag = EQG_POR_REDCOL_subject 
+						has_cosmetic_tag = CMR_POR_REDCOL_subject 
+						has_cosmetic_tag = CAR_POR_REDCOL_subject 
+						has_cosmetic_tag = CHA_POR_REDCOL_subject 
+						has_cosmetic_tag = NGA_POR_REDCOL_subject 
+						has_cosmetic_tag = DAH_POR_REDCOL_subject 
+						has_cosmetic_tag = TOG_POR_REDCOL_subject 
+						has_cosmetic_tag = GHA_POR_REDCOL_subject 
+						has_cosmetic_tag = IVO_POR_REDCOL_subject 
+						has_cosmetic_tag = VOL_POR_REDCOL_subject 
+						has_cosmetic_tag = MLI_POR_REDCOL_subject 
+						has_cosmetic_tag = SIE_POR_REDCOL_subject 
+						has_cosmetic_tag = GNA_POR_REDCOL_subject 
+						has_cosmetic_tag = GNB_POR_REDCOL_subject 
+						has_cosmetic_tag = SEN_POR_REDCOL_subject 
+						has_cosmetic_tag = GAM_POR_REDCOL_subject 
+						has_cosmetic_tag = NGR_POR_REDCOL_subject 
+						has_cosmetic_tag = MRT_POR_REDCOL_subject 
+						has_cosmetic_tag = NMB_POR_REDCOL_subject 
+						has_cosmetic_tag = TNR_POR_REDCOL_subject 
+						has_cosmetic_tag = TIG_POR_REDCOL_subject 
+						has_cosmetic_tag = LES_POR_REDCOL_subject 
+						has_cosmetic_tag = ESW_POR_REDCOL_subject 
+						has_cosmetic_tag = REH_POR_REDCOL_subject 
+						has_cosmetic_tag = BTS_POR_REDCOL_subject 
+						has_cosmetic_tag = ZAN_POR_REDCOL_subject 
+						has_cosmetic_tag = AFA_POR_REDCOL_subject 
+					}
+				}
+				ROOT = { drop_cosmetic_tag = yes }
+			}
+			if = {
+				limit = {
+					FROM = {
+						original_tag = POR
+						has_government = communism
+						has_completed_focus = POR_liberate_africa
+					}
+					is_african_country_for_POR_liberate_africa = yes
+					NOT = {
+						has_cosmetic_tag = ETH_POR_REDCOL_subject 
+						has_cosmetic_tag = LIB_POR_REDCOL_subject 
+						has_cosmetic_tag = SAF_POR_REDCOL_subject 
+						has_cosmetic_tag = EGY_POR_REDCOL_subject 
+						has_cosmetic_tag = LBA_POR_REDCOL_subject 
+						has_cosmetic_tag = ANG_POR_REDCOL_subject 
+						has_cosmetic_tag = MZB_POR_REDCOL_subject 
+						has_cosmetic_tag = ZIM_POR_REDCOL_subject 
+						has_cosmetic_tag = COG_POR_REDCOL_subject 
+						has_cosmetic_tag = KEN_POR_REDCOL_subject 
+						has_cosmetic_tag = BOT_POR_REDCOL_subject 
+						has_cosmetic_tag = MAD_POR_REDCOL_subject 
+						has_cosmetic_tag = ALG_POR_REDCOL_subject 
+						has_cosmetic_tag = MOR_POR_REDCOL_subject 
+						has_cosmetic_tag = TUN_POR_REDCOL_subject 
+						has_cosmetic_tag = SUD_POR_REDCOL_subject 
+						has_cosmetic_tag = ERI_POR_REDCOL_subject 
+						has_cosmetic_tag = DJI_POR_REDCOL_subject 
+						has_cosmetic_tag = SOM_POR_REDCOL_subject 
+						has_cosmetic_tag = UGA_POR_REDCOL_subject 
+						has_cosmetic_tag = RWA_POR_REDCOL_subject 
+						has_cosmetic_tag = BRD_POR_REDCOL_subject 
+						has_cosmetic_tag = TZN_POR_REDCOL_subject 
+						has_cosmetic_tag = ZAM_POR_REDCOL_subject 
+						has_cosmetic_tag = MLW_POR_REDCOL_subject 
+						has_cosmetic_tag = GAB_POR_REDCOL_subject 
+						has_cosmetic_tag = RCG_POR_REDCOL_subject 
+						has_cosmetic_tag = EQG_POR_REDCOL_subject 
+						has_cosmetic_tag = CMR_POR_REDCOL_subject 
+						has_cosmetic_tag = CAR_POR_REDCOL_subject 
+						has_cosmetic_tag = CHA_POR_REDCOL_subject 
+						has_cosmetic_tag = NGA_POR_REDCOL_subject 
+						has_cosmetic_tag = DAH_POR_REDCOL_subject 
+						has_cosmetic_tag = TOG_POR_REDCOL_subject 
+						has_cosmetic_tag = GHA_POR_REDCOL_subject 
+						has_cosmetic_tag = IVO_POR_REDCOL_subject 
+						has_cosmetic_tag = VOL_POR_REDCOL_subject 
+						has_cosmetic_tag = MLI_POR_REDCOL_subject 
+						has_cosmetic_tag = SIE_POR_REDCOL_subject 
+						has_cosmetic_tag = GNA_POR_REDCOL_subject 
+						has_cosmetic_tag = GNB_POR_REDCOL_subject 
+						has_cosmetic_tag = SEN_POR_REDCOL_subject 
+						has_cosmetic_tag = GAM_POR_REDCOL_subject 
+						has_cosmetic_tag = NGR_POR_REDCOL_subject 
+						has_cosmetic_tag = MRT_POR_REDCOL_subject 
+						has_cosmetic_tag = NMB_POR_REDCOL_subject 
+						has_cosmetic_tag = TNR_POR_REDCOL_subject 
+						has_cosmetic_tag = TIG_POR_REDCOL_subject 
+						has_cosmetic_tag = LES_POR_REDCOL_subject 
+						has_cosmetic_tag = ESW_POR_REDCOL_subject 
+						has_cosmetic_tag = REH_POR_REDCOL_subject 
+						has_cosmetic_tag = BTS_POR_REDCOL_subject 
+						has_cosmetic_tag = ZAN_POR_REDCOL_subject 
+						has_cosmetic_tag = AFA_POR_REDCOL_subject
+					}
+				}
+				ROOT = {
+					set_cosmetic_POR_REDCOL_subject = yes
+					set_POR_REDCOL_start_effect = yes
+					if = {
+						limit = { NOT = { has_focus_tree = nw_portugal_redcol } }
+						load_focus_tree = { tree = nw_portugal_redcol keep_completed = no }
+					}
+				}
+			}
+		}
+	}
+	
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { original_tag = SPR has_country_flag = POR_workers_of_iberia_unite_TARGET_flag }
+					POR = { has_completed_focus = POR_workers_of_iberia_unite }
+				}
+				ROOT = { clr_country_flag = POR_workers_of_iberia_unite_TARGET_flag }
+				POR = { uncomplete_national_focus = { focus = POR_workers_of_iberia_unite	uncomplete_children = yes } }
+			}
+		}
+	}
+}

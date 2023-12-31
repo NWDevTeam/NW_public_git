@@ -1,667 +1,4362 @@
-COG_category = {
-
-	COG_offer_belgium_world = {
-		icon = generic_form_nation
+nw_political_actions = {
+	COG_take_land_from_tribes = {
+		# icon = COG_take_land_from_tribes
+		
+		allowed = {
+			original_tag = COG
+		}
 		available = {
-			has_war_with = BEL
+			FROM = { 
+				custom_trigger_tooltip = {
+					tooltip = COG_loyalty_lvl_more_than_1_tt
+					check_variable = { COG_loyalty_lvl_var > 1 }
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_take_unused_lands
+		}
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT 
+				has_variable = COG_loyalty_lvl_var
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		cost = 30
+
+		days_remove = 15
+		days_re_enable = 180
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_take_land_from_tribes ([FROM.GetID] [FROM.GetName])"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_take_land_from_tribes ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				effect_tooltip = { add_extra_state_shared_building_slots = 1 }
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = 1 } } }
+				set_temp_variable = { lvl = COG_loyalty_lvl_var }
+				add_to_temp_variable = { lvl = -1 }
+				clamp_temp_variable = { var = lvl min = 1 max = 5 }
+				custom_effect_tooltip = COG_decrease_loyalty_lvl
+				
+				add_to_variable = { COG_loyalty_lvl_var = -1 }
+				clamp_variable = { var = COG_loyalty_lvl_var min = 1 max = 5 }
+			}
+			add_stability = -0.01
+			hidden_effect = {
+				COG_update_administration_of_tribal_leaders_idea = yes
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	COG_expand_plantations_of_lianas = {
+		# icon = COG_expand_plantations_of_lianas
+		
+		allowed = {
+			original_tag = COG
+		}
+		available = {
+			FROM = {
+				if = {
+					limit = { has_variable = COG_loyalty_lvl_var }
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_1_tt
+						check_variable = { COG_loyalty_lvl_var > 1 }
+					}
+				}
+			}
 			custom_trigger_tooltip = {
-				tooltip = all_core_is_controlled_tt
+				tooltip = COG_NOT_agricultural_research_points_100
+				check_variable = { COG_agricultural_research_points_var < 100 }
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_rubber_mining
+		}
+		target_trigger = {
+			FROM = {
+				is_controlled_by = ROOT
+				free_building_slots = {
+					building = fuel_silo #?
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		cost = 30
+		# custom_cost_trigger = {
+		#	 set_temp_variable = { custom_cost_pp = 30 }
+		#	 check_variable = { has_political_power > custom_cost_pp }
+		# }
+		# custom_cost_text = slot_and_pol_cost
+
+		days_remove = 30
+		days_re_enable = 365
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_expand_plantations_of_lianas ([FROM.GetID] [FROM.GetName])"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_expand_plantations_of_lianas ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				add_resource = {
+					type = rubber
+					amount = 5
+				}
+			}
+			add_to_variable = { COG_agricultural_research_points_var = 10 tooltip = COG_agricultural_research_points_tooltip }
+			clamp_variable = { var = COG_agricultural_research_points_var min = 0 max = 100 }
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	COG_plant_new_palm_trees = {
+		# icon = COG_plant_new_palm_trees
+		
+		allowed = {
+			original_tag = COG
+		}
+		available = { # ?
+			if = {
+				limit = { NOT = { has_completed_focus = COG_stop_ethnic_struggle } }
+				FROM = { 
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_1_tt
+						check_variable = { COG_loyalty_lvl_var > 1 }
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = COG_NOT_agricultural_research_points_100
+				check_variable = { COG_agricultural_research_points_var < 100 }
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_palm_oil_extraction
+		}
+		target_trigger = {
+			FROM = {
+				is_controlled_by = ROOT
+				free_building_slots = {
+					building = fuel_silo #?
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		cost = 30
+
+		days_remove = 30
+		days_re_enable = 365
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_plant_new_palm_trees ([FROM.GetID] [FROM.GetName])"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_plant_new_palm_trees ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 } #?(tooltip)
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				add_resource = {
+					type = oil
+					amount = 3
+				}
+			}
+			add_to_variable = { COG_agricultural_research_points_var = 10 tooltip = COG_agricultural_research_points_tooltip }
+			clamp_variable = { var = COG_agricultural_research_points_var min = 0 max = 100 }
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	COG_expand_cotton_plantations = {
+		# icon = COG_expand_cotton_plantations
+		
+		allowed = {
+			original_tag = COG
+		}
+		available = { # ?
+			custom_trigger_tooltip = {
+				tooltip = COG_NOT_agricultural_research_points_100
+				check_variable = { COG_agricultural_research_points_var < 100 }
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = COG_stop_ethnic_struggle } }
+				FROM = { 
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_1_tt
+						check_variable = { COG_loyalty_lvl_var > 1 }
+					}
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_cotton_extraction
+		}
+		target_trigger = {
+			FROM = {
+				is_controlled_by = ROOT
+				free_building_slots = {
+					building = fuel_silo #?
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		cost = 30
+
+		days_remove = 30
+		days_re_enable = 365
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_expand_cotton_plantations ([FROM.GetID] [FROM.GetName])"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_expand_cotton_plantations ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 } #?(tooltip)
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+			}
+			add_to_variable = { COG_cotton_plantations_var = 1 tooltip = COG_expand_cotton_plantations_tooltip }
+			custom_effect_tooltip = empty_line_tooltip #?
+			add_to_variable = { COG_agricultural_research_points_var = 10 tooltip = COG_agricultural_research_points_tooltip }
+			custom_effect_tooltip = empty_line_tooltip #?
+			clamp_variable = { var = COG_agricultural_research_points_var min = 0 max = 100 }
+			if = { #? !
+				limit = { has_completed_focus = COG_cotton_roads }
+				FROM = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+					damage_building = {
+						type = infrastructure
+						damage = 1
+					}
+				}
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	
+	COG_demand_independence = {
+		icon = generic_nationalism
+		
+		allowed = { always = no }
+		
+		available = {
+			all_core_state = { #?
+				is_controlled_by = ROOT
+			}
+		}
+		visible = { #?
+			has_war_with = FROM
+		}
+
+		cost = 50
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_demand_independence"
+			hidden_effect = {
+				annex_country = { target = COG }
+			}
+			every_enemy_country = { #TODO: ивент
+				limit = {
+					OR = {
+						is_in_faction_with = FROM
+						tag = FROM
+					}
+				} 
+				white_peace = ROOT 
+			}
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	COG_white_peace = {
+		icon = generic_nationalism
+		
+		allowed = { always = no }
+		
+		available = {
+			has_war_with = FROM
+			FROM = {
+				NOT = {
+					any_controlled_state = {
+						is_claimed_by = ROOT
+					}
+				}
+			}
+		}
+		# visible = { ?
+			# has_war_with = FROM
+		# }
+
+		cost = 50
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_white_peace"
+			every_controlled_state = {
+				limit = { 
+					is_owned_by = FROM
+					is_claimed_by = ROOT
+				}
+				transfer_state_to = ROOT
+			}
+			effect_tooltip = {
+				set_truce = {
+					target = FROM
+					days = 365 #?
+				}
+			}
+			hidden_effect = {
+				every_enemy_country = { #TODO: ивент
+					limit = { OR = { is_in_faction_with = FROM tag = FROM } }
+					white_peace = ROOT 
+				}
+				remove_targeted_decision = { decision = COG_white_peace target = FROM }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	COG_stop_activities_of_george_baker = {
+		icon = generic_nationalism
+		
+		allowed = { always = no }
+
+		target_root_trigger = {
+			has_idea = COG_immigrants_from_america_USA
+		}
+
+		cost = 75
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stop_activities_of_george_baker"
+			remove_ideas = COG_immigrants_from_america_USA
+			FROM = { country_event = { id = congo.74 days = 15 random_days = 30 } }
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_integrate_state = {
+		icon = generic_decision
+		
+		allowed = { always = no } #activated by effect
+		
+		available = {
+			has_full_control_of_state = FROM
+			FROM = {
+				compliance > 70
+				resistance < 20
+			}
+		}
+		target_trigger = {
+			FROM = { 
+				NOT = { is_core_of = ROOT } 
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_only
+		
+		cost = 75
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_state"
+			FROM = { add_core_of = ROOT }
+			hidden_effect = { #?
+				remove_targeted_decision = { decision = COG_integrate_state target = FROM }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	COG_international_intervention = {
+		icon = generic_decision
+		
+		allowed = { 
+			# always = no TODO: придумать что-то с этим
+			NOT = { original_tag = COG }
+		}
+		available = {
+			NOT = { has_war_with = FROM }
+		}
+		
+		targets = { COG }
+		targets_dynamic = yes
+		target_trigger = {
+			NOT = { has_country_flag = COG_international_intervention_flag }
+			FROM = {
+				has_country_leader = { character = COG_simon_kimbangu }
+				NOT = {
+					has_country_leader_with_trait = COG_simon_kimbangu_diplomaticness_lvl_1
+					has_country_leader_with_trait = COG_simon_kimbangu_diplomaticness_lvl_2
+					has_country_leader_with_trait = COG_simon_kimbangu_diplomaticness_lvl_3
+				} 
+			}
+			has_opinion = {
+				target = FROM 
+				value < -150 
+			}
+		}
+		
+		cost = 50
+		days_remove = 90
+		fire_only_once = no
+		war_with_target_on_remove = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_international_intervention ([FROM.GetID] [FROM.GetName])"
+			FROM = { country_event = { id = congo.77 random_days = 60 } }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_international_intervention ([FROM.GetID] [FROM.GetName])"
+			set_country_flag = COG_international_intervention_flag
+			hidden_effect = { news_event = congo.76 }
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = FROM
+			}
+			add_ai_strategy = { #?
+				type = antagonize
+				id = FROM
+				value = 200
+			}
+			add_ai_strategy = {
+				type = conquer
+				id = FROM
+				value = 100
+			}
+			add_ai_strategy = {
+				type = declare_war
+				id = FROM
+				value = 100
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+			modifier = {
+				factor = 0
+				strength_ratio = {
+					tag = FROM
+					ratio < 1
+				}
+			}
+		}
+	}
+	
+	COG_recall_advisors = {
+		icon = generic_decision
+		
+		allowed = { always = no } #activated by effect
+		
+		visible = { is_left_ideology = yes }
+		target_trigger = {
+			FROM = {
+				any_character = {
+					has_character_flag = COG_advisor@ROOT
+				}
+			}
+		}
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_recall_advisors"
+			FROM = { 
+				country_event = congo.79
+			}
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 100
+				has_war_with = FROM
+			}
+			modifier = {
+				add = 100
+				# original_tag = SOV
+				has_opinion_modifier = COG_deviation_from_course_of_moscow
+			}
+		}
+	}
+	COG_invite_advisors = {
+		icon = generic_decision
+		
+		allowed = { always = no } #activated by effect
+		
+		available = { #?
+			FROM = {
+				if = {
+					limit = { is_left_ideology = yes }
+					NOT = { has_war_with = ROOT }
+				}
+			}
+		}
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_invite_advisors"
+			FROM = {
+				if = {
+					limit = { is_left_ideology = yes }
+					country_event = congo.78
+					custom_effect_tooltip = if_they_accept
+					event_option_tooltip = congo.78.a
+				}
+				else = {
+					set_temp_variable = { cog_tag = ROOT }
+					set_temp_variable = { num_pol_advisors = cog_tag.COG_pol_advisors_limit@THIS }
+					set_temp_variable = { num_mil_advisors = cog_tag.COG_mil_advisors_limit@THIS }
+					COG_invite_advisors_effect = yes
+				}
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 100
+		}
+	}
+}
+
+COG_cotton_regime = {
+	COG_make_tribes_loyal = {
+		# icon = COG_make_tribes_loyal
+
+		available = {
+			FROM = { 
+				custom_trigger_tooltip = {
+					tooltip = COG_NOT_loyalty_lvl_5_tt
+					check_variable = { COG_loyalty_lvl_var < 5 }
+				}
+			}
+		}
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT
+				has_variable = COG_loyalty_lvl_var
+			}
+			# check_variable = { COG_loyalty_lvl_var < 5 }
+		}
+
+		state_target = yes
+		
+		fixed_random_seed = no
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 30 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
+
+		days_remove = 30
+		days_re_enable = 60
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_make_tribes_loyal ([FROM.GetID] [FROM.GetName])"
+			hidden_effect = {
+				add_command_power = -30
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_make_tribes_loyal ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				set_temp_variable = { lvl = COG_loyalty_lvl_var }
+				add_to_temp_variable = { lvl = 1 }
+				clamp_temp_variable = { var = lvl min = 1 max = 5 }
+				custom_effect_tooltip = COG_increase_loyalty_lvl
+				
+				add_to_variable = { COG_loyalty_lvl_var = 1 }
+				clamp_variable = { var = COG_loyalty_lvl_var min = 1 max = 5 }
+			}
+			effect_tooltip = {
+				custom_effect_tooltip = COG_make_tribes_loyal_title_tt
+				
+				custom_effect_tooltip = COG_make_tribes_loyal_1_tt
+				add_political_power = -30
+				
+				custom_effect_tooltip = COG_make_tribes_loyal_2_tt
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -25
+				}
+				
+				custom_effect_tooltip = COG_make_tribes_loyal_3_tt
+				FROM = { add_manpower = -30 }
+				add_stability = -0.005
+			}
+			hidden_effect = {
+				random_list = {
+					1 = { add_political_power = -30 }
+					1 = { add_equipment_to_stockpile = { type = infantry_equipment amount = -25 } }
+					1 = { FROM = { add_manpower = -30 } add_stability = -0.005 } #?
+				}
+				COG_update_administration_of_tribal_leaders_idea = yes
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	
+	COG_stop_ethnic_struggle_decision = {
+		icon = COG_make_tribes_loyal #?
+
+		available = {
+			FROM = { 
+				if = {
+					limit = { has_state_flag = COG_collectivization_flag }
+					custom_trigger_tooltip = {
+						tooltip = COG_evolues_var_more_than_1000
+						check_variable = { COG_evolues_var > 999 }
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = COG_evolues_var_more_than_2000 # коммунистов ? !
+						check_variable = { COG_evolues_var > 1999 }
+					}
+				}
+				if = {
+					limit = { has_variable = COG_loyalty_lvl_var }
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_1_tt
+						check_variable = { COG_loyalty_lvl_var > 1 }
+					}
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_stop_ethnic_struggle
+		}
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT 
+				has_variable = COG_loyalty_lvl_var
+				NOT = { 
+					has_state_flag = COG_stop_ethnic_struggle_cooldown 
+					has_variable = COG_stop_ethnic_struggle_var
+				}
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 50 }
+			set_temp_variable = { cp_cost = 50 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stop_ethnic_struggle_decision ([FROM.GetID] [FROM.GetName])"
+			hidden_effect = {
+				COG_update_administration_of_tribal_leaders_idea = yes
+				add_political_power = -50
+				add_command_power = -50
+			}
+			FROM = {
+				set_temp_variable = { lvl = COG_loyalty_lvl_var } # в effect !!
+				add_to_temp_variable = { lvl = -2 }
+				clamp_temp_variable = { var = lvl min = 1 max = 5 }
+				custom_effect_tooltip = COG_decrease_loyalty_lvl
+				
+				add_to_variable = { COG_loyalty_lvl_var = -2 }
+				clamp_variable = { var = COG_loyalty_lvl_var min = 1 max = 5 }
+				
+				# TODO: добавить решения на сопротивление !
+			}
+			custom_effect_tooltip = empty_line_tooltip
+			
+			set_variable = { FROM.COG_stop_ethnic_struggle_var = 1 }
+			set_variable = { COG_ses_days_remove = FROM.COG_ses_days_remove }
+			activate_targeted_decision = { decision = COG_stop_ethnic_struggle_mission target = FROM }
+			set_temp_variable = { mission_days_remove = COG_ses_days_remove }
+			custom_effect_tooltip = COG_target_mission_days_remove
+			effect_tooltip = {
+				COG_stop_ethnic_struggle_effect = yes
+			}
+		}
+		
+		ai_will_do = { #?
+			factor = 10
+		}
+	}
+	COG_stop_ethnic_struggle_mission = {
+		icon = COG_make_tribes_loyal #?
+		
+		allowed = { 
+			always = no 
+		}
+		activation = { 
+			always = no 
+		}
+		available = {
+			FROM = {
+				if = {
+					limit = { has_variable = COG_stop_ethnic_struggle_var }
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						if = {
+							limit = { has_variable = COG_loyalty_lvl_var }
+							custom_trigger_tooltip = {
+								tooltip = COG_loyalty_lvl_less_than_2_tt
+								check_variable = { var = COG_loyalty_lvl_var value = 1 compare = less_than_or_equals }
+							}
+						}
+						if = {
+							limit = { has_state_flag = COG_collectivization_flag } 
+							custom_trigger_tooltip = {
+								tooltip = COG_evolues_var_less_than_1000
+								check_variable = { COG_evolues_var < 1000 }
+							}
+						}
+						else = {
+							custom_trigger_tooltip = {
+								tooltip = COG_evolues_var_less_than_2000 # TODO: коммунистов?
+								check_variable = { COG_evolues_var < 2000 }
+							}
+						}
+					}
+				}
+			}
+		}
+		state_target = yes
+		
+		is_good = yes
+		selectable_mission = no
+		days_mission_timeout = COG_ses_days_remove
+
+		fire_only_once = yes # ? !
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stop_ethnic_struggle_mission ([FROM.GetID] [FROM.GetName])"
+			FROM = { 
+				set_state_flag = { flag = COG_stop_ethnic_struggle_cooldown days = 14 value = 1 } 
+				clear_variable = COG_stop_ethnic_struggle_var
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_stop_ethnic_struggle_mission ([FROM.GetID] [FROM.GetName])"
+			COG_stop_ethnic_struggle_effect = yes
+			
+			add_to_variable = { COG_planned_economy_lvl = 1 }
+			add_to_variable = { COG_stop_ethnic_struggle_count = 1 } #?? !!
+		}
+	}
+	
+	COG_end_ethnic_struggle = {
+		icon = COG_make_tribes_loyal #?
+		
+		visible = { has_completed_focus = COG_stop_ethnic_struggle }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = COG_end_ethnic_struggle_completed_tt
+				check_variable = { COG_stop_ethnic_struggle_count = 6 }
+			}
+		}
+		
+		cost = 10
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stop_ethnic_struggle_decision ([FROM.GetID] [FROM.GetName])"
+			every_owned_state = { 
+				limit = { is_original_congo_state = yes }
+				remove_dynamic_modifier = { modifier = COG_tribal_system }
+				set_state_flag = COG_tribal_system_block
+			}
+			hidden_effect = {
+				COG_clear_administration_of_tribal_leaders_idea = yes
+			}
+			set_country_flag = COG_end_ethnic_struggle_flag # ?
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+COG_create_new_social_class_category = {
+	COG_stimulate_evolues_growth = {
+		icon = COG_export_of_soybean_varieties
+		
+		available = { 
+			has_idea = COG_assimilation_of_congolese
+			has_civil_war = no
+		}
+		cancel_trigger = {
+			# NOT = { has_idea = COG_assimilation_of_congolese }
+			has_civil_war = yes
+		}
+		
+		cost = 50 #рост со временем ?
+		days_remove = 180
+		days_re_enable = 90
+		
+		modifier = {
+			political_power_factor = -0.15
+			# custom_modifier_tooltip = COG_stimulate_evolues_growth_tt
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stimulate_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes has_variable = COG_evolues_gain_var }
+				set_variable = { COG_seg_decision_add_evolues = COG_evolues_gain_var }
+				
+				custom_effect_tooltip = COG_evolues_add_modifier_tooltip
+				multiply_variable = { COG_evolues_gain_var = 2 tooltip = COG_stimulate_evolues_growth_tt }
+				add_to_array = { COG_evolues_modifiers = 14 }
+				
+				custom_effect_tooltip = empty_line_tooltip
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_stimulate_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes } # has_variable = COG_seg_decision_add_evolues
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_var = COG_seg_decision_add_evolues tooltip = COG_stimulate_evolues_growth_tt }
+				remove_from_array = { COG_evolues_modifiers = 14 }
+				
+				clear_variable = COG_seg_decision_add_evolues
+			}
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_stimulate_evolues_growth"
+			random_owned_controlled_state = {
+				limit = { is_original_congo_state = yes }
+				set_temp_variable = { evolues = 250 }
+				add_to_variable = { COG_evolues_count_@token:low_skilled = evolues tooltip = COG_add_low_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:low_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues } #?
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			every_state = {
+				limit = { is_original_congo_state = yes } # has_variable = COG_seg_decision_add_evolues
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_var = COG_seg_decision_add_evolues tooltip = COG_stimulate_evolues_growth_tt }
+				remove_from_array = { COG_evolues_modifiers = 14 }
+				
+				clear_variable = COG_seg_decision_add_evolues
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_stimulate_medium_skilled_evolues_growth = {
+		icon = COG_export_of_soybean_varieties
+		
+		available = { 
+			has_idea = COG_assimilation_of_congolese
+			has_civil_war = no			
+		}
+		cancel_trigger = {
+			# NOT = { has_idea = COG_assimilation_of_congolese }
+			has_civil_war = yes
+		}
+		
+		cost = 70
+		days_remove = 180
+		days_re_enable = 90
+		
+		modifier = {
+			political_power_factor = -0.15
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stimulate_medium_skilled_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				set_variable = { COG_smse_decision_add_ms_evolues = COG_evolues_gain_factor_@token:medium_skilled }
+				
+				custom_effect_tooltip = COG_evolues_add_modifier_tooltip
+				multiply_variable = { COG_evolues_gain_factor_@token:medium_skilled = 2 tooltip = COG_evolues_medium_skilled_growth_2_tt }
+				add_to_array = { COG_evolues_modifiers = 12 }
+				
+				custom_effect_tooltip = empty_line_tooltip
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_stimulate_medium_skilled_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_factor_@token:medium_skilled = COG_smse_decision_add_ms_evolues tooltip = COG_evolues_medium_skilled_growth_2_tt }
+				remove_from_array = { COG_evolues_modifiers = 12 }
+				
+				clear_variable = COG_smse_decision_add_ms_evolues
+			}
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_stimulate_medium_skilled_evolues_growth"
+			random_owned_controlled_state = {
+				limit = { is_original_congo_state = yes }
+				set_temp_variable = { evolues = 150 }
+				add_to_variable = { COG_evolues_count_@token:medium_skilled = evolues tooltip = COG_add_medium_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:medium_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues } #?
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_factor_@token:medium_skilled = COG_smse_decision_add_ms_evolues tooltip = COG_evolues_medium_skilled_growth_2_tt }
+				remove_from_array = { COG_evolues_modifiers = 12 }
+				
+				clear_variable = COG_smse_decision_add_ms_evolues
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_evolues_officer_training = {
+		icon = COG_export_of_soybean_varieties
+		
+		visible = {
+			has_completed_focus = COG_force_publique
+		}
+		available = { 
+			has_idea = COG_assimilation_of_congolese
+			has_civil_war = no			
+		}
+		
+		cost = 50
+		days_remove = 90
+		days_re_enable = 90
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_officer_training"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_evolues_officer_training"
+			army_experience = 5
+			random_owned_controlled_state = {
+				limit = { is_original_congo_state = yes }
+				prioritize = { 295 }
+				set_temp_variable = { evolues = 100 }
+				add_to_variable = { COG_evolues_count_@token:medium_skilled = evolues tooltip = COG_add_medium_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:medium_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues } #?
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_stimulate_high_skilled_evolues_growth = {
+		icon = COG_export_of_soybean_varieties
+		
+		available = { 
+			has_idea = COG_assimilation_of_congolese 
+			has_civil_war = no
+			NOT = { has_country_leader = { character = COG_simon_kimbangu } }
+		}
+		cancel_trigger = {
+			# NOT = { has_idea = COG_assimilation_of_congolese }
+			has_civil_war = yes
+		}
+
+		cost = 90
+		days_remove = 180
+		days_re_enable = 90
+		
+		modifier = {
+			political_power_factor = -0.2
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_stimulate_high_skilled_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				set_variable = { COG_shse_decision_add_hs_evolues = COG_evolues_gain_factor_@token:high_skilled }
+				multiply_variable = { COG_shse_decision_add_hs_evolues = 3 }
+				
+				custom_effect_tooltip = COG_evolues_add_modifier_tooltip
+				multiply_variable = { COG_evolues_gain_factor_@token:high_skilled = 4 tooltip = COG_evolues_high_skilled_growth_4_tt }
+				add_to_array = { COG_evolues_modifiers = 13 }
+				
+				custom_effect_tooltip = empty_line_tooltip
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_stimulate_high_skilled_evolues_growth"
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_factor_@token:high_skilled = COG_shse_decision_add_hs_evolues tooltip = COG_evolues_high_skilled_growth_4_tt }
+				remove_from_array = { COG_evolues_modifiers = 13 }
+
+				clear_variable = COG_shse_decision_add_hs_evolues
+			}
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_stimulate_high_skilled_evolues_growth"
+			random_owned_controlled_state = {
+				limit = { is_original_congo_state = yes }
+				set_temp_variable = { evolues = 50 }
+				add_to_variable = { COG_evolues_count_@token:high_skilled = evolues tooltip = COG_add_high_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:high_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues } #?
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			every_state = {
+				limit = { is_original_congo_state = yes }
+				custom_effect_tooltip = COG_evolues_remove_modifier_tooltip
+				subtract_from_variable = { COG_evolues_gain_factor_@token:high_skilled = COG_shse_decision_add_hs_evolues tooltip = COG_evolues_high_skilled_growth_4_tt }
+				remove_from_array = { COG_evolues_modifiers = 13 }
+
+				clear_variable = COG_shse_decision_add_hs_evolues
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	COG_start_political_repression = {
+		icon = COG_export_of_soybean_varieties
+		
+		visible = { NOT = { has_country_flag = COG_start_political_repression_flag } }
+		available = { has_idea = COG_assimilation_of_congolese }
+
+		cost = 25
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_start_political_repression"
+			set_country_flag = COG_start_political_repression_flag
+			custom_effect_tooltip = COG_evolues_repressions_tooltip
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_end_political_repression = {
+		icon = COG_export_of_soybean_varieties
+		
+		visible = { has_country_flag = COG_start_political_repression_flag }
+		available = { has_idea = COG_assimilation_of_congolese }
+
+		cost = 10
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_end_political_repression"
+			clr_country_flag = COG_start_political_repression_flag
+			custom_effect_tooltip = COG_evolues_end_to_repression_tooltip
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	COG_evolues_expand_school_education = {
+		icon = GFX_decision_generic_propaganda
+		visible = { #!
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_trigger = {
+			FROM = { NOT = { has_state_flag = COG_expand_school_education_flag } }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_expand_school_education
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 40
+		days_remove = 40
+		
+		# fire_only_once = yes
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_evolues_expand_school_education" #!
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_expand_school_education"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_evolues_expand_school_education"
+			FROM = {
+				custom_effect_tooltip = COG_evolues_add_modifier_tooltip
+				multiply_variable = { COG_evolues_gain_factor_@token:medium_skilled = 2 tooltip = COG_evolues_medium_skilled_growth_2_tt  }
+				add_to_array = { COG_evolues_modifiers = 12 }
+				
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+				set_state_flag = COG_expand_school_education_flag
+			}
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 3 }
+			COG_add_evolues_gain_in_state = yes
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	# навести порядок в решениях !!
+	COG_evolues_likbez = {
+		icon = GFX_decision_generic_propaganda
+		visible = {
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_homo_futurus_focus
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 25
+		days_remove = 90
+		# days_re_enable = 90 ?
+		
+		modifier = {
+			political_power_factor = -0.05
+		}
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_evolues_likbez"
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_likbez"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_evolues_likbez"
+			FROM = {
+				set_temp_variable = { evolues = 50 }
+				if = {
+					limit = { always = no } # TODO: советник
+					multiply_temp_variable = { evolues = 2 }
+				}
+				if = {
+					limit = { ROOT = { has_completed_focus = COG_organize_a_workers_party } }
+					multiply_temp_variable = { evolues = 2 }
+				}
+				add_to_variable = { COG_evolues_count_@token:low_skilled = evolues tooltip = COG_add_low_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:low_skilled = evolues }
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues }
+				COG_evolues_political_counts_update = yes # TODO: какая-то часть evolues будет точно комми/тро ?
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_evolues_commie_propaganda = {
+		icon = GFX_decision_generic_propaganda
+		visible = { #!
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+			# TODO: принудительно ограничить
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_homo_futurus_focus
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 25
+		days_remove = 1
+		# days_re_enable = 90 ?
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_evolues_commie_propaganda"
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_commie_propaganda"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_evolues_commie_propaganda"
+			add_to_temp_array = { ideologies = token:democratic }
+			# add_to_temp_array = { ideologies = token:communism }
+			add_to_temp_array = { ideologies = token:fascism }
+			add_to_temp_array = { ideologies = token:neutrality }
+			add_to_temp_array = { ideologies = token:technocracy }
+			# add_to_temp_array = { ideologies = token:trozkism }
+			add_to_temp_array = { ideologies = token:monarchy }
+			add_to_temp_array = { ideologies = token:anarchism }
+			if = {
+				limit = { has_completed_focus = COG_accept_help_from_SAF_trade_unions }
+				set_temp_variable = { curr_value = -0.25 } # TODO: с этим могут быть баги, пофиксить
+				FROM = { set_state_flag = { flag = COG_evolues_commie_propaganda_flag days = 180 value = 1 } } # TODO: с этим будут баги, пофиксить
+			}
+			else = { 
+				set_temp_variable = { curr_value = -0.15 } 
+				FROM = { set_state_flag = { flag = COG_evolues_commie_propaganda_flag days = 110 value = 1 } }
+			}
+			FROM = {
+				custom_effect_tooltip = COG_evolues_add_modifiers_tooltip # TODO: параходы ахуели сломали отображение тултипов
+				custom_effect_tooltip = COG_evolues_big_temp_increase_count_limit_communism_tt
+				custom_effect_tooltip = COG_evolues_big_temp_increase_count_limit_trozkism_tt
+				COG_evolues_change_count_limit = yes
+				add_to_array = { COG_evolues_modifiers = 10 }
+				add_to_array = { COG_evolues_modifiers = 11 }
+			}
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 } #!
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_evolues_create_youth_clubs = {
+		icon = GFX_decision_generic_propaganda
+		visible = { #!
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_creation_of_youth_organizations
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 50
+		days_remove = 45
+		# days_re_enable = 90 ?
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_evolues_create_youth_clubs" #!
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_create_youth_clubs"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_evolues_create_youth_clubs"
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 1 }
+			COG_add_evolues_gain_in_state = yes
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	COG_recruit_congolese_to_administrations = {
+		# icon = COG_recruit_congolese_to_administrations
+		visible = {
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_recruitment_of_people_to_administration
+			NOT = { #?
+				has_completed_focus = COG_create_a_congo_republic
+				has_completed_focus = COG_pierre_VIII_du_kongo
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 25
+		days_remove = 90
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_recruit_congolese_to_administrations"
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_recruit_congolese_to_administrations"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_recruit_congolese_to_administrations"
+			FROM = {
+				set_temp_variable = { evolues = 200 }
+				add_to_variable = { COG_evolues_count_@token:low_skilled = evolues tooltip = COG_add_low_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:low_skilled = evolues }
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues }
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+			
+			add_autonomy_score = { value = 300 }
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_teach_congolese_bureaucracy = {
+		# icon = COG_teach_congolese_bureaucracy
+		visible = {
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_recruitment_of_people_to_administration
+			NOT = { #?
+				has_completed_focus = COG_create_a_congo_republic
+				has_completed_focus = COG_pierre_VIII_du_kongo
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 35
+		days_remove = 90
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_teach_congolese_bureaucracy"
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_teach_congolese_bureaucracy"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_teach_congolese_bureaucracy"
+			FROM = {
+				set_temp_variable = { evolues = 100 }
+				add_to_variable = { COG_evolues_count_@token:medium_skilled = evolues tooltip = COG_add_medium_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:medium_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues }
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+			
+			add_autonomy_score = { value = 300 }
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_start_recruiting_new_undergraduates = {
+		# icon = COG_start_recruiting_new_undergraduates
+		visible = {
+			OR = {
+				check_variable = { nw_CGME_highlight_states^0 = FROM }
+				check_variable = { nw_CGME_highlight_states^1 = FROM }
+			}
+		}
+		available = {
+			controls_state = FROM
+		}
+		cancel_trigger = {
+			NOT = { controls_state = FROM }
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_recruitment_of_people_to_administration
+			NOT = { #?
+				has_completed_focus = COG_create_a_congo_republic
+				has_completed_focus = COG_pierre_VIII_du_kongo
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+		
+		cost = 50
+		days_remove = 90
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_start_recruiting_new_undergraduates"
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_start_recruiting_new_undergraduates"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_start_recruiting_new_undergraduates"
+			FROM = {
+				set_temp_variable = { evolues = 25 }
+				add_to_variable = { COG_evolues_count_@token:high_skilled = evolues tooltip = COG_add_high_skilled_evolues_tooltip }
+				add_to_variable = { ROOT.COG_evolues_count_@token:high_skilled = evolues } #?
+				
+				add_to_variable = { COG_evolues_var = evolues }
+				add_to_variable = { ROOT.COG_evolues_var = evolues }
+				COG_evolues_political_counts_update = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+			
+			add_autonomy_score = { value = 400 }
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_evolues_resettle_decision = {
+		icon = GFX_decision_generic_propaganda
+		visible = {
+			NOT = { check_variable = { nw_CongoGoogleMapsEvolues_resettle = 1 } }
+			has_variable = nw_CGME_highlight_states^1
+		}
+		available = {
+			var:nw_CGME_highlight_states^1 = {
+				custom_trigger_tooltip = {
+					tooltip = COG_resettle_not_employed_tt
+					NOT = {
+						has_variable = COG_evolues_resettle_count_@token:high_skilled
+						has_variable = COG_evolues_resettle_count_@token:medium_skilled
+						has_variable = COG_evolues_resettle_count_@token:low_skilled
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_evolues_resettle_decision"
+			add_to_variable = { nw_CongoGoogleMapsEvolues_resettle = 1 }
+			# add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 } #?
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	COG_evolues_resettle_mission = {
+		icon = GFX_decision_generic_propaganda
+		
+		allowed = { always = no }
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		state_target = yes
+		
+		days_mission_timeout = 45
+		selectable_mission = no #?
+		fire_only_once = yes
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_evolues_resettle_mission [FROM.GetName] ([FROM.GetID])"
+			FROM = {
+				set_state_flag = { flag = COG_resettle_cooldown days = 14 value = 1 }
+				add_to_variable = { 
+					var = COG_evolues_count_@token:low_skilled
+					value = COG_evolues_resettle_count_@token:low_skilled
+				}
+				add_to_variable = { 
+					var = COG_evolues_count_@token:medium_skilled
+					value = COG_evolues_resettle_count_@token:medium_skilled
+				}
+				add_to_variable = { 
+					var = COG_evolues_count_@token:high_skilled
+					value = COG_evolues_resettle_count_@token:high_skilled
+				}
+				#?
+				
+				add_to_temp_variable = { evolues = COG_evolues_resettle_count_@token:high_skilled }
+				add_to_temp_variable = { evolues = COG_evolues_resettle_count_@token:medium_skilled }
+				add_to_temp_variable = { evolues = COG_evolues_resettle_count_@token:low_skilled }
+				add_to_variable = { 
+					var = COG_evolues_var
+					value = evolues
+				}
+				add_to_variable = { 
+					var = ROOT.COG_evolues_var
+					value = evolues
+				}
+				COG_evolues_political_counts_update = yes
+				nw_CongoGoogleMapsEvolues_resettle_ClearVar = yes
+				
+				COG_evolues_interface_update = yes
+			}
+			COG_evolues_growth_update = yes
+			add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 } 
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+COG_agricultural_reform = {
+	COG_create_textile_factory = {
+		# icon = COG_create_textile_factory
+
+		available = { # visible
+			has_completed_focus = COG_cotton_extraction
+		}
+		
+		custom_cost_trigger = {
+			has_political_power > 24.99
+			check_variable = {
+				var = COG_cotton_plantations_var
+				value = COG_ctf_cotton_plantations_cost
+				compare = greater_than_or_equals
+			}
+		}
+		custom_cost_text = COG_POL_25_COTPLANT_7 # ?
+
+		# days_remove = 3 #?
+		# days_re_enable = 60 #?
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_create_textile_factory"
+			hidden_effect = {
+				add_political_power = -25
+				subtract_from_variable = { COG_cotton_plantations_var = COG_ctf_cotton_plantations_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_create_textile_factory"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_local_farmers_program_decision = {
+		# icon = COG_local_farmers_program_decision
+		
+		available = {
+			FROM = {			
+				if = {
+					limit = { has_variable = COG_loyalty_lvl_var }
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_3_tt
+						check_variable = { COG_loyalty_lvl_var > 3 }
+					}
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_local_farmers_program
+			NOT = { has_completed_focus = COG_collectivization }
+		}
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT
+				NOT = { has_state_flag = COG_local_farmers_program_flag } 
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		custom_cost_trigger = {
+			has_political_power > 49.99
+			check_variable = { COG_agricultural_research_points_var > 99.99 }
+		}
+		custom_cost_text = COG_POL_50_AGRRES_100 # ?
+
+		days_remove = 180
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_local_farmers_program_decision ([FROM.GetID] [FROM.GetName])"
+			hidden_effect = {
+				add_political_power = -50
+				add_to_variable = { COG_agricultural_research_points_var = -100 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_local_farmers_program_decision ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				up_state_category = yes
+				if = {
+					limit = { has_dynamic_modifier = { modifier = COG_tribal_system } }
+					custom_effect_tooltip = COG_tribal_system_tooltip
+					add_to_variable = { COG_ts_recruitable_population_factor = 0.1 tooltip = recruitable_population_factor_tooltip }
+				}
+				set_state_flag = COG_local_farmers_program_flag
+				
+				if = { #?? !
+					limit = { PREV = { has_completed_focus = COG_stop_ethnic_struggle } }
+					custom_effect_tooltip = COG_stop_ethnic_struggle_days_remove_tt
+				}
+				divide_variable = { COG_ses_days_remove = 1.5 }
+				clamp_variable = { var = COG_ses_days_remove min = 180 }
+				
+				if = {
+					limit = { PREV = { has_completed_focus = COG_advisors_from_moscow } }
+					custom_effect_tooltip = COG_collectivization_days_remove_tt
+				}
+				divide_variable = { COG_cd_days_remove = 1.5 }
+				clamp_variable = { var = COG_cd_days_remove min = 180 }
+			}
+			if = { #?
+				limit = { has_dynamic_modifier = { modifier = COG_underdeveloped_tribal_agriculture } }
+				custom_effect_tooltip = COG_underdeveloped_tribal_agriculture_tooltip
+				add_to_variable = { COG_udta_monthly_population = 0.025 tooltip = monthly_population_tooltip }
+				add_to_variable = { COG_udta_consumer_goods_factor = 0.05 tooltip = consumer_goods_factor_tooltip }
+				add_to_variable = { COG_udta_global_building_slots_factor = 0.075 tooltip = global_building_slots_tooltip }
+				add_to_variable = { COG_udta_production_speed_buildings_factor = 0.015 tooltip = production_speed_buildings_tooltip }
+				custom_effect_tooltip = empty_line_tooltip
+			}
+			
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 3 }
+			COG_add_evolues_gain_in_state = yes
+			
+			add_to_variable = { COG_local_farmers_program_count = 1 } #?
+			hidden_effect = {
+				if = {
+					limit = {
+						has_completed_focus = COG_plant_new_soybean_varieties
+						NOT = { has_country_flag = COG_plant_new_soybean_varieties_flag } # ?
+					}
+					random_controlled_state = {
+						limit = { 
+							is_original_congo_state = yes
+							has_state_flag = COG_local_farmers_program_flag
+							NOT = { has_dynamic_modifier = { modifier = COG_new_varieties_of_soybeans } }
+						}
+						ROOT = { 
+							activate_targeted_decision = { target = PREV decision = COG_plant_new_soybean_varieties_mission }
+							set_country_flag = COG_plant_new_soybean_varieties_flag
+						}
+					}
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_introduce_rules_of_agriculture = {
+		# icon = COG_introduce_rules_of_agriculture
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_local_farmers_program_completed_tt
+				check_variable = { COG_local_farmers_program_count > 5 } #== 6
+			}
+		}
+		visible = {
+			has_completed_focus = COG_local_farmers_program
+			NOT = { has_completed_focus = COG_collectivization }
+			has_dynamic_modifier = { modifier = COG_underdeveloped_tribal_agriculture }
+		}
+
+		cost = 100
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_introduce_rules_of_agriculture"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_introduce_rules_of_agriculture"
+			add_stability = 0.2
+			remove_dynamic_modifier = { modifier = COG_underdeveloped_tribal_agriculture }
+			
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 3 }
+			COG_add_evolues_gain_in_state = yes
+			
+			clear_variable = COG_local_farmers_program_count
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_collectivization_decision = {
+		icon = COG_local_farmers_program_decision #?
+		
+		available = {
+			FROM = {			
+				if = {
+					limit = { has_variable = COG_loyalty_lvl_var }
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_3_tt
+						check_variable = { COG_loyalty_lvl_var > 3 }
+					}
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_collectivization
+		}
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT
+				NOT = {
+					has_state_flag = COG_collectivization_flag 
+					has_state_flag = COG_start_collectivization_flag 
+				} 
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = decision_view_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		custom_cost_trigger = {
+			has_political_power > 49.99
+			check_variable = { COG_agricultural_research_points_var > 99.99 } # ? !
+		}
+		custom_cost_text = COG_POL_50_AGRRES_100 # ?
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_collectivization_decision ([FROM.GetID] [FROM.GetName])"
+			hidden_effect = {
+				add_political_power = -50
+				add_to_variable = { COG_agricultural_research_points_var = -100 }
+			}
+			FROM = { 
+				set_state_flag = COG_start_collectivization_flag 
+				set_variable = { COG_collectivization_var = 1 }
+			}
+			set_variable = { COG_cd_days_remove = FROM.COG_cd_days_remove }
+			activate_targeted_decision = { decision = COG_collectivization_mission target = FROM }
+			set_temp_variable = { mission_days_remove = COG_cd_days_remove }
+			custom_effect_tooltip = COG_target_mission_days_remove
+			effect_tooltip = { #TODO: подпись, что это эффект после завершения
+				COG_collectivization_effect = yes
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_collectivization_mission = {
+		icon = COG_local_farmers_program_decision #?
+		
+		allowed = { 
+			always = no 
+		}
+		activation = { 
+			always = no 
+		}
+		available = {
+			FROM = {
+				if = {
+					limit = { has_variable = COG_collectivization_var } #?
+					OR = {
+						NOT = { is_controlled_by = ROOT }
+						if = {
+							limit = { has_variable = COG_loyalty_lvl_var }
+							custom_trigger_tooltip = {
+								tooltip = COG_loyalty_lvl_less_than_4_tt
+								check_variable = { var = COG_loyalty_lvl_var value = 3 compare = less_than_or_equals }
+							}
+						}
+					}
+				}
+			}
+		}
+		target_trigger = { #?
+			FROM = { 
+				is_controlled_by = ROOT 
+				has_variable = COG_loyalty_lvl_var
+			}
+		}
+		state_target = yes
+		
+		is_good = yes
+		days_mission_timeout = COG_cd_days_remove
+		selectable_mission = no
+
+		fire_only_once = yes # ? !
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_collectivization_mission ([FROM.GetID] [FROM.GetName])"
+			FROM = { set_state_flag = { flag = COG_start_collectivization_flag days = 14 value = 1 } }
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_collectivization_mission ([FROM.GetID] [FROM.GetName])"
+			COG_collectivization_effect = yes
+			
+			add_to_variable = { COG_planned_economy_lvl = 1 }
+			# TODO: COG_plant_new_soybean_varieties_mission
+		}
+	}
+	
+	COG_plant_new_soybean_varieties_mission = {
+	
+	    # icon = COG_plant_new_soybean_varieties_mission
+		
+		allowed = { always = no } #?
+		
+		available = { NOT = { controls_state = FROM } } #?
+		
+		activation = { always = no }
+		
+		is_good = yes
+		days_mission_timeout = 180
+		
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_plant_new_soybean_varieties_mission ([FROM.GetID] [FROM.GetName])"
+			clr_country_flag = COG_plant_new_soybean_varieties_flag
+			hidden_effect = {
+				random_controlled_state = {
+					limit = { 
+						is_original_congo_state = yes
+						has_state_flag = COG_local_farmers_program_flag
+						NOT = { has_dynamic_modifier = { modifier = COG_new_varieties_of_soybeans } }
+					}
+					ROOT = { 
+						activate_targeted_decision = { target = PREV decision = COG_plant_new_soybean_varieties_mission }
+						set_country_flag = COG_plant_new_soybean_varieties_flag
+					}
+				}
+			}
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_plant_new_soybean_varieties_mission ([FROM.GetID] [FROM.GetName])"
+			clr_country_flag = COG_plant_new_soybean_varieties_flag
+			FROM = {
+				add_dynamic_modifier = { modifier = COG_new_varieties_of_soybeans }
+			}
+			add_to_variable = { COG_plant_new_soybean_varieties_count = 1 }
+			hidden_effect = {
+				random_controlled_state = {
+					limit = { 
+						is_original_congo_state = yes
+						has_state_flag = COG_local_farmers_program_flag
+						NOT = { has_dynamic_modifier = { modifier = COG_new_varieties_of_soybeans } }
+					}
+					ROOT = { 
+						activate_targeted_decision = { target = PREV decision = COG_plant_new_soybean_varieties_mission }
+						set_country_flag = COG_plant_new_soybean_varieties_flag
+					}
+				}
+			}
+		}
+	}
+	
+	COG_coffee_for_army = {
+		icon = generic_nationalism
+		
+		visible = {
+			has_completed_focus = COG_coffee_cultivation
+		}
+
+		custom_cost_trigger = {
+			has_political_power > 99.99
+			check_variable = { COG_agricultural_research_points_var > 99.99 }
+		}
+		custom_cost_text = COG_POL_100_AGRRES_100 # ?
+		
+		#days_remove = 10
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_coffee_for_army"
+			hidden_effect = {
+				add_political_power = -100
+				add_to_variable = { COG_agricultural_research_points_var = -100 }
+			}
+			if = { #?
+				limit = { has_dynamic_modifier = { modifier = COG_congolese_coffee } }
+				custom_effect_tooltip = COG_congolese_coffee_tooltip
+				set_variable = { COG_cc_army_morale_factor = 0.08 tooltip = army_morale_factor_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_coffee_for_export = {
+		icon = generic_nationalism
+		
+		available = {
+			has_completed_focus = COG_expand_export_of_domestic_products
+		}
+		visible = {
+			has_completed_focus = COG_coffee_cultivation
+		}
+
+		custom_cost_trigger = {
+			has_political_power > 99.99
+			check_variable = { COG_agricultural_research_points_var > 99.99 }
+		}
+		custom_cost_text = COG_POL_100_AGRRES_100 # ?
+		
+		#days_remove = 10
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_coffee_for_export"
+			hidden_effect = {
+				add_political_power = -100
+				add_to_variable = { COG_agricultural_research_points_var = -100 }
+			}
+			if = { #?
+				limit = { has_dynamic_modifier = { modifier = COG_congolese_coffee } }
+				custom_effect_tooltip = COG_congolese_coffee_tooltip
+				set_variable = { COG_cc_consumer_goods_factor = -0.15 tooltip = consumer_goods_factor_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_coffee_for_workers = {
+		icon = generic_nationalism
+		
+		visible = {
+			has_completed_focus = COG_coffee_cultivation
+		}
+
+		custom_cost_trigger = {
+			has_political_power > 49.99
+			check_variable = { COG_agricultural_research_points_var > 99.99 }
+		}
+		custom_cost_text = COG_POL_50_AGRRES_100 # ?
+		
+		#days_remove = 10
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_coffee_for_workers"
+			hidden_effect = {
+				add_political_power = -50
+				add_to_variable = { COG_agricultural_research_points_var = -100 }
+			}
+			if = { #?
+				limit = { has_dynamic_modifier = { modifier = COG_congolese_coffee } }
+				custom_effect_tooltip = COG_congolese_coffee_tooltip
+				set_variable = { COG_cc_production_factory_efficiency_gain_factor = 0.05 tooltip = production_factory_efficiency_gain_factor_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_build_hospital = {
+		# icon = COG_build_hospital
+		
+		available = {
+			FROM = {			
+				if = {
+					limit = { has_variable = COG_loyalty_lvl_var }
+					custom_trigger_tooltip = {
+						tooltip = COG_loyalty_lvl_more_than_3_tt #name ?
+						check_variable = { COG_loyalty_lvl_var > 3 }
+					}
+				}
+			}
+		}
+		target_root_trigger = {
+			has_completed_focus = COG_creation_of_hospitals
+		}
+		target_trigger = {
+			FROM = { is_controlled_by = ROOT }
+		}
+		state_target = yes
+		
+		on_map_mode = map_only # map_and_decisions_view
+		targets = { 295 886 1065 538 718 915 }
+
+		custom_cost_trigger = {
+			check_variable = { COG_agricultural_research_points_var > 49.99 }
+		}
+		custom_cost_text = COG_AGRRES_50 # ?
+
+		days_remove = 30 #?
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_build_hospital ([FROM.GetID] [FROM.GetName])"
+			hidden_effect = {
+				add_to_variable = { COG_agricultural_research_points_var = -50 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_build_hospital ([FROM.GetID] [FROM.GetName])"
+			FROM = {
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_to_variable = { COG_agricultural_research_points_var = 10 tooltip = COG_agricultural_research_points_tooltip }
+			clamp_variable = { var = COG_agricultural_research_points_var min = 0 max = 100 }
+			if = {
+				limit = { has_dynamic_modifier = { modifier = COG_tropical_diseases } }
+				custom_effect_tooltip = COG_tropical_diseases_tooltip
+				add_to_variable = { COG_td_monthly_population = 0.05 tooltip = monthly_population_tooltip }
+				add_to_variable = { COG_td_stability_factor = 0.012 tooltip = stability_factor_tooltip } #0.0125 ?
+				custom_effect_tooltip = empty_line_tooltip
+			}
+			
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 3 }
+			COG_add_evolues_gain_in_state = yes
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+COG_export_of_domestic_products_category = {
+	COG_export_of_soybean_varieties = {
+		# icon = COG_export_of_soybean_varieties
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_plant_new_soybean_varieties_completed_tt
+				check_variable = { COG_plant_new_soybean_varieties_count > 5 } #== 6
+			}
+		}
+
+		cost = 50
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_export_of_soybean_varieties"
+			if = {
+				limit = { has_dynamic_modifier = { modifier = COG_export_of_domestic_products } }
+				custom_effect_tooltip = COG_export_of_domestic_products_tooltip
+				add_to_variable = { COG_edp_political_power_factor = 0.05 tooltip = political_power_factor_tooltip }
+				add_to_variable = { COG_edp_min_export = 0.05 tooltip = min_export_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_grow_cotton_for_export = {
+		# icon = COG_grow_cotton_for_export
+
+		available = {
+			has_dynamic_modifier = { modifier = COG_faithful_administration_of_tribal_leaders }
+		}
+		
+		custom_cost_trigger = {
+			check_variable = {
+				var = COG_cotton_plantations_var
+				value = 10
+				compare = greater_than_or_equals
+			}
+		}
+		custom_cost_text = COG_COTPLANT_10 # ?
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_grow_cotton_for_export"
+			hidden_effect = {
+				subtract_from_variable = { COG_cotton_plantations_var = 10 }
+			}
+			if = {
+				limit = { has_dynamic_modifier = { modifier = COG_export_of_domestic_products } }
+				custom_effect_tooltip = COG_export_of_domestic_products_tooltip
+				add_to_variable = { COG_edp_political_power_factor = 0.05 tooltip = political_power_factor_tooltip }
+				add_to_variable = { COG_edp_min_export = 0.05 tooltip = min_export_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_palm_oil_exports = {
+		# icon = COG_palm_oil_exports
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_has_resourse_oil_50
+				check_variable = { resource@oil > 49 }
+			}
+		}
+		
+		cost = 50
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_palm_oil_exports"
+			if = { #?
+				limit = { has_dynamic_modifier = { modifier = COG_export_of_domestic_products } }
+				custom_effect_tooltip = COG_export_of_domestic_products_tooltip
+				add_to_variable = { COG_edp_political_power_factor = 0.05 tooltip = political_power_factor_tooltip }
+				add_to_variable = { COG_edp_min_export = 0.05 tooltip = min_export_tooltip }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+COG_management_of_union_miniere_company = {
+	COG_redistribution_of_funds_first = {
+		icon = COG_redistribution_of_funds
+
+		available = {
+			date > 1937.01.01
+			is_left_ideology = no
+		}
+		visible = {
+			has_country_flag = COG_management_of_union_miniere_company_flag #?
+		}
+		
+		cost = 30
+		days_remove = 90
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_redistribution_of_funds_first"
+			# +5% текущей эффективности производства
+			add_stability = 0.05
+			add_manpower = 1000 #??
+			modify_country_flag = { flag = COG_management_of_union_miniere_company_flag value = 1 } #?
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_redistribution_of_funds_second = {
+		icon = generic_nationalism
+
+		available = {
+			date > 1939.01.01
+			is_left_ideology = no
+		}
+		visible = {
+			has_country_flag = COG_management_of_union_miniere_company_flag #?
+			has_country_flag = {
+				flag = COG_management_of_union_miniere_company_flag
+				value > 1
+			}
+		}
+		
+		cost = 30
+		days_remove = 90
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_redistribution_of_funds_second"
+			# +5% текущей эффективности производства
+			add_stability = 0.05
+			add_manpower = 1000 #??
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_nationalise_katanga_industries_decision = {
+		icon = generic_nationalism
+		
+		allowed = { always = no }
+		
+		visible = { controls_state = FROM }
+		target_root_trigger = {
+			NOT = { has_global_flag = COG_nationalise_katanga_industries_flag }
+		}
+		state_target = yes
+		
+		cost = 30
+		days_remove = 30
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_nationalise_katanga_industries_decision"
+			add_to_temp_variable = { union_miniere_factory_FROM = BEL.COG_union_miniere_factory }
+			BEL = {
+				set_temp_variable = { union_miniere_factory = COG_union_miniere_factory }
+				multiply_temp_variable = { union_miniere_factory = -1 }
+				add_offsite_building = { type = industrial_complex level = union_miniere_factory } #?
+				clear_variable = COG_union_miniere_factory
+				
+				send_embargo = ROOT
+				custom_effect_tooltip = embargo_relation_tt
+			}
+			add_to_temp_variable = { union_miniere_factory_FROM = ENG.COG_union_miniere_factory }
+			ENG = {
+				set_temp_variable = { union_miniere_factory = COG_union_miniere_factory }
+				multiply_temp_variable = { union_miniere_factory = -1 }
+				add_offsite_building = { type = industrial_complex level = union_miniere_factory } #?
+				clear_variable = COG_union_miniere_factory
+				
+				send_embargo = ROOT #?
+				custom_effect_tooltip = embargo_relation_tt
+			}
+			FROM = {
+				add_extra_state_shared_building_slots = union_miniere_factory_FROM
+				add_building_construction = {
+					type = industrial_complex
+					level = union_miniere_factory_FROM
+					instant_build = yes
+				}
+			}
+			
+			if = {
+				limit = { has_idea = COG_increased_salaries_of_workers_1 }
+				if = {
+					limit = { has_government = trozkism }
+					swap_ideas = {
+						remove_idea = COG_increased_salaries_of_workers_1
+						add_idea = COG_increased_salaries_of_workers_troz_2
+					}
+				}
+				else = {
+					swap_ideas = {
+						remove_idea = COG_increased_salaries_of_workers_1
+						add_idea = COG_increased_salaries_of_workers_comm_2
+					}
+				}
+			}
+			
+			set_global_flag = COG_nationalise_katanga_industries_flag
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+#
+
+COG_mechanization_of_mines = {
+	COG_mechanization_of_mines_first = {
+		# icon = GFX_decision_COG_mechanization_of_mines_first
+
+		available = {
+			has_tech = improved_machine_tools #? !
+			has_tech = excavation2
+		}
+		
+		cost = 50
+		days_remove = 180
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_mechanization_of_mines_first"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_mechanization_of_mines_second = {
+		# icon = COG_mechanization_of_mines_second
+
+		available = {
+			has_tech = advanced_machine_tools #?
+			has_tech = excavation3
+		}
+		
+		cost = 50
+		days_remove = 90
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_mechanization_of_mines_second"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_mechanization_of_mines_third = {
+		# icon = COG_mechanization_of_mines_third
+
+		available = {
+			has_tech = assembly_line_production #?
+			has_tech = excavation4
+		}
+		
+		cost = 50
+		days_remove = 90
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_mechanization_of_mines_third"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	COG_mechanization_of_mines_fourth = {
+		# icon = COG_mechanization_of_mines_fourth
+
+		available = {
+			OR = { #?
+				has_tech = flexible_line
+				has_tech = streamlined_line
+			}
+			has_tech = excavation5
+		}
+		
+		cost = 50
+		days_remove = 180
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_mechanization_of_mines_fourth"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+economy_decisions = { # COG_construction_of_dams
+
+	COG_build_inga_dam = { #?
+		icon = generic_nationalism
+		
+		allowed = {
+			original_tag = COG
+		}
+		available = {
+			controls_state = 295
+			# OR = {
+				AND = {
+					custom_trigger_tooltip = { #?? !
+						tooltip = COG_evolues_hs_more_than_99
+						check_variable = { COG_evolues_count_@token:high_skilled > 99 }
+					}
+					custom_trigger_tooltip = { #?
+						tooltip = COG_evolues_ms_more_than_399
+						check_variable = { COG_evolues_count_@token:medium_skilled > 399 }
+					}
+					custom_trigger_tooltip = { #?
+						tooltip = COG_evolues_ls_more_than_999
+						check_variable = { COG_evolues_count_@token:low_skilled > 999 }
+					}
+				}
+			# }
+		}
+		visible = {
+			has_completed_focus = COG_build_inga_dams
+			NOT = { has_country_flag = COG_build_inga_dam_second_flag }
+		}
+		cancel_trigger = {
+			NOT = { controls_state = 295 }
+		}
+		
+		cost = 50
+		days_remove = COG_build_inga_dam_var
+		fire_only_once = no
+		
+		highlight_states = {
+	 		highlight_state_targets = { state = 295 } 
+		}
+		on_map_mode = decision_view_only
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_build_inga_dam"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_build_inga_dam"
+			if = {
+				limit = { has_country_flag = COG_build_inga_dam_first_flag }
+				295 = {
+					add_building_construction = { #?
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+					if = {
+						limit = { has_dynamic_modifier = { modifier = COG_inga_dam } }
+						custom_effect_tooltip = COG_inga_dam_tooltip
+						add_to_variable = { COG_inga_dam_var = 0.25 tooltip = local_building_slots_factor_tooltip }
+					}
+				}
+				set_country_flag = COG_build_inga_dam_second_flag
+			}
+			else = {
+				295 = {
+					add_building_construction = { #?
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+					add_dynamic_modifier = { modifier = COG_inga_dam }
+					add_to_variable = { COG_inga_dam_var = 0.25 tooltip = local_building_slots_factor_tooltip }
+				}
+				set_country_flag = COG_build_inga_dam_first_flag
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_build_power_plant_on_inga_dam = { #?
+		icon = generic_nationalism
+		
+		allowed = {
+			original_tag = COG
+		}
+		available = {
+			controls_state = 295
+			has_country_flag = COG_build_inga_dam_first_flag
+			if = {
+				limit = { has_country_flag = COG_build_power_plant_on_inga_dam_first_flag }
+				has_country_flag = COG_build_inga_dam_second_flag
+			}
+			AND = {
+				custom_trigger_tooltip = { #?? !
+					tooltip = COG_evolues_hs_more_than_99
+					check_variable = { COG_evolues_count_@token:high_skilled > 99 }
+				}
+				custom_trigger_tooltip = { #?
+					tooltip = COG_evolues_ms_more_than_399
+					check_variable = { COG_evolues_count_@token:medium_skilled > 399 }
+				}
+				custom_trigger_tooltip = { #?
+					tooltip = COG_evolues_ls_more_than_999
+					check_variable = { COG_evolues_count_@token:low_skilled > 999 }
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = COG_build_of_hpps
+			NOT = { has_country_flag = COG_build_power_plant_on_inga_dam_second_flag }
+		}
+		
+		cost = COG_build_power_plant_on_inga_dam_var
+		days_remove = 300
+		fire_only_once = no
+		
+		highlight_states = {
+	 		highlight_state_targets = { state = 295 } 
+		}
+		on_map_mode = decision_view_only
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_build_power_plant_on_inga_dam"
+			if = {
+				limit = { has_country_flag = COG_build_power_plant_on_inga_dam_first_flag }
+				295 = {
+					add_extra_state_shared_building_slots = ROOT.COG_bppid_industrial_complex_level #??
+					add_building_construction = {
+						type = industrial_complex
+						level = ROOT.COG_bppid_industrial_complex_level
+						instant_build = yes
+					}
+				}
+				set_country_flag = COG_build_power_plant_on_inga_dam_second_flag
+			}
+			else = {
+				295 = {
+					add_extra_state_shared_building_slots = ROOT.COG_bppid_industrial_complex_level #??
+					add_building_construction = {
+						type = industrial_complex
+						level = ROOT.COG_bppid_industrial_complex_level
+						instant_build = yes
+					}
+				}
+				set_country_flag = COG_build_power_plant_on_inga_dam_first_flag
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_state_urbanization_decision = {
+		icon = eng_install_government
+		
+		allowed = { always = no }
+		
+		available = {
+			NOT = { controls_state = FROM }
+			# OR = {
+				# set_temp_variable = { last = COG_state_urbanization_current_state^num }
+				# subtract_from_temp_variable = { last = 1 } 
+				# if = {
+					# limit = { check_variable = { COG_state_urbanization_current_state^last = FROM } }
+					# # num_of_civilian_factories_available_for_projects < 5 ?
+					# hidden_trigger = { always = no }
+				# }
+				# else = { hidden_trigger = { always = no } }
+				# NOT = { controls_state = FROM }
+			# }
+			AND = {
+				custom_trigger_tooltip = { #?
+					tooltip = COG_evolues_hs_more_than_49
+					check_variable = { COG_evolues_count_@token:high_skilled > 49 }
+				}
+				custom_trigger_tooltip = { #?
+					tooltip = COG_evolues_ms_more_than_199
+					check_variable = { COG_evolues_count_@token:medium_skilled > 199 }
+				}
+				custom_trigger_tooltip = { #?
+					tooltip = COG_evolues_ls_more_than_999
+					check_variable = { COG_evolues_count_@token:low_skilled > 999 }
+				}
+			}
+		}
+		activation = { always = no }
+		
+		is_good = yes
+		days_mission_timeout = COG_state_urbanization_days_remove_var
+		selectable_mission = no
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_state_urbanization_decision"
+			remove_from_array = { COG_state_urbanization_current_state = FROM }
+			FROM = { 
+				set_state_flag = { flag = state_urbanization_flag days = 14 value = 1 }
+			}
+			subtract_from_variable = { COG_su_civilian_factory_use = 5 }
+			force_update_dynamic_modifier = yes
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_state_urbanization_decision"
+			remove_from_array = { COG_state_urbanization_current_state = FROM }
+			FROM = {
+				up_state_category = yes
+				if = {
+					limit = { has_dynamic_modifier = { modifier = COG_tribal_system } NOT = { has_state_flag = COG_state_urbanization } }
+					custom_effect_tooltip = COG_tribal_system_tooltip
+					add_to_variable = { COG_ts_recruitable_population_factor = 0.15 tooltip = recruitable_population_factor_tooltip }
+				}
+				set_state_flag = { flag = state_urbanization_flag days = 14 value = 1 }
+				set_state_flag = COG_state_urbanization
+				
+				if = {
+					limit = { has_completed_focus = COG_stop_ethnic_struggle }
+					custom_effect_tooltip = COG_stop_ethnic_struggle_days_remove_tt
+				}			
+				divide_variable = { COG_ses_days_remove = 1.5 }
+				clamp_variable = { var = COG_ses_days_remove min = 180 }
+			}
+			
+			custom_effect_tooltip = empty_line_tooltip
+			set_temp_variable = { state = FROM.id }
+			set_temp_variable = { add_evolues_gain = 3 }
+			COG_add_evolues_gain_in_state = yes
+			
+			subtract_from_variable = { COG_su_civilian_factory_use = 5 }
+			force_update_dynamic_modifier = yes
+		}
+	}
+}
+
+COG_restoration_of_administration_category = {
+	COG_surveillance_of_tribes_leaders = {
+		# icon = COG_surveillance_of_tribes_leaders
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_evolues_var_more_than_2000
+				check_variable = { COG_evolues_var > 1999 }
+			}
+		}
+
+		days_remove = 130
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_surveillance_of_tribes_leaders"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_surveillance_of_tribes_leaders"
+			COG_destroyed_administrative_institutions_update = yes
+			set_country_flag = COG_surveillance_of_tribes_leaders_flag
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	COG_restore_administrations_in_regions = {
+		# icon = COG_restore_administrations_in_regions
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_evolues_var_more_than_2000
+				check_variable = { COG_evolues_var > 1999 }
+			}
+			has_country_flag = COG_surveillance_of_tribes_leaders_flag
+		}
+
+		days_remove = 200
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_restore_administrations_in_regions"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_restore_administrations_in_regions"
+			COG_destroyed_administrative_institutions_update = yes
+			set_country_flag = COG_restore_administrations_in_regions_flag
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	COG_restore_bureaucratic_apparatus = {
+		# icon = COG_restore_bureaucratic_apparatus
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_evolues_var_more_than_2000
+				check_variable = { COG_evolues_var > 1999 }
+			}
+			has_country_flag = COG_restore_administrations_in_regions_flag
+			# controls ?
+		}
+
+		days_remove = 300
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_restore_bureaucratic_apparatus"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_restore_bureaucratic_apparatus"
+			COG_destroyed_administrative_institutions_update = yes
+			COG_city_rename_effect = yes
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+COG_generic_irregular_army_category = {
+
+	COG_army_irregular = {
+		icon = generic_military
+		
+		available = {
+			has_war = yes
+			num_of_controlled_states > 0
+			NOT = { has_country_flag = summon_peoples_militia_flag }
+		}
+
+		cost = 20
+		days_remove = 2
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_generic_irregular_army_category"
+			set_country_flag = summon_peoples_militia_flag
+			hidden_effect = {
+				division_template = {
+					name = "Militia Unit"
+					is_locked = yes
+					force_allow_recruiting = no #?
+					# division_cap = 12
+
+					# Note: Represents militia units
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+					}
+				}
+				division_template = {
+					name = "Militia Division"
+					is_locked = yes
+					force_allow_recruiting = no #?
+					# division_cap = 12
+
+					# Note: Represents militia units
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+						militia = { x = 1 y = 0 }
+						militia = { x = 1 y = 1 }
+						militia = { x = 1 y = 2 }
+					}
+				}
+				
+				295 = {
+					COG_army_irregular_effect = yes
+				}
+				886 = { 
+					COG_army_irregular_effect = yes
+				}
+				1065 = { 
+					COG_army_irregular_effect = yes
+				}
+				538 = { 
+					COG_army_irregular_effect = yes
+				}
+				718 = { 
+					COG_army_irregular_effect = yes
+				}
+				915 = { 
+					COG_army_irregular_effect = yes
+				}
+			}
+			custom_effect_tooltip = COG_irregular_1_tt
+			#custom_effect_tooltip = YEM_irregular_1_tt #??
+			custom_effect_tooltip = YEM_irregular_3_tt #?
+			custom_effect_tooltip = BHU_summon_peoples_militia_tt3
+		}
+	
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+}
+
+COG_african_pannationalism = {
+	
+	COG_form_africa = {
+		icon = generic_form_nation
+		
+		available = {
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = form_africa_available
 				all_of_scopes = {
-					array = ROOT.core_states
+					array = global.africa
 					is_controlled_by = ROOT
 				}
 			}
-			has_country_flag = took_three_months_flag
 		}
-		visible = {
-			has_country_flag = autonomists_cog_flag
-			has_war_with = BEL
-		}
-		cost = 15
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_offer_belgium_world"
-			BEL = { country_event = { id = cog.23 days = 1 } }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_mid_congo = {
-		icon = generic_decision
-		available = {
-			539 = { is_owned_by = ROOT }
-			1005 = { is_owned_by = ROOT }
-		}
-		visible = {
-			539 = {
-				NOT = { is_core_of = ROOT }
-			}
-			1005 = {
-				NOT = { is_core_of = ROOT }
-			}
-		}
-		cost = 150
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_mid_congo"
-			539 = { add_core_of = ROOT }
-			1005 = {
-				add_core_of = ROOT
-				add_extra_state_shared_building_slots = 1
-			}
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_uganda = {
-		icon = generic_decision
-		available = {
-			548 = { is_owned_by = ROOT }
-		}
-		visible = {
-			548 = {
-				NOT = { is_core_of = ROOT }
-			}
-		}
-		cost = 100
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_uganda"
-			548 = {
-				add_core_of = ROOT
-				add_extra_state_shared_building_slots = 1
-			}
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-}
 
-COG_integrate_category = {
-	COG_integrate_275 = {
-		highlight_states = { highlight_state_targets = { state = 275 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 275
-		}
 		visible = {
-			275 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
+			NOT = { has_global_flag = form_africa_flag }
 		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_275"
-			275 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_541 = {
-		highlight_states = { highlight_state_targets = { state = 541 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 541
-		}
-		visible = {
-			541 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_541"
-			541 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_681 = {
-		highlight_states = { highlight_state_targets = { state = 681 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 681
-		}
-		visible = {
-			681 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_681"
-			681 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_719 = {
-		highlight_states = { highlight_state_targets = { state = 719 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 719
-		}
-		visible = {
-			719 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_719"
-			719 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1113 = {
-		highlight_states = { highlight_state_targets = { state = 1113 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1113
-		}
-		visible = {
-			1113 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1113"
-			1113 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1105 = {
-		highlight_states = { highlight_state_targets = { state = 1105 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1105
-		}
-		visible = {
-			1105 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1105"
-			1105 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1106 = {
-		highlight_states = { highlight_state_targets = { state = 1106 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1106
-		}
-		visible = {
-			1106 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1106"
-			1106 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_542 = {
-		highlight_states = { highlight_state_targets = { state = 542 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 542
-		}
-		visible = {
-			542 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_542"
-			542 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1112 = {
-		highlight_states = { highlight_state_targets = { state = 1112 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1112
-		}
-		visible = {
-			1112 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1112"
-			1112 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1114 = {
-		highlight_states = { highlight_state_targets = { state = 1114 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1114
-		}
-		visible = {
-			1114 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1114"
-			1114 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1107 = {
-		highlight_states = { highlight_state_targets = { state = 1107 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1107
-		}
-		visible = {
-			1107 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1107"
-			1107 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1108 = {
-		highlight_states = { highlight_state_targets = { state = 1108 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1108
-		}
-		visible = {
-			1108 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1108"
-			1108 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	COG_integrate_1109 = {
-		highlight_states = { highlight_state_targets = { state = 1109 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1109
-		}
-		visible = {
-			1109 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_saving_south_africa_from_apartheid
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1109"
-			1109 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	
-	
-	### COG_negroes_of_equatorial_sahara
-	
-	COG_integrate_297 = {
-		highlight_states = { highlight_state_targets = { state = 297 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 297
-		}
-		visible = {
-			297 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_negroes_of_equatorial_sahara
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_297"
-			297 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_660 = {
-		highlight_states = { highlight_state_targets = { state = 660 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 660
-		}
-		visible = {
-			660 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_negroes_of_equatorial_sahara
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_660"
-			660 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_1006 = {
-		highlight_states = { highlight_state_targets = { state = 1006 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1006
-		}
-		visible = {
-			1006 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_negroes_of_equatorial_sahara
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1006"
-			1006 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	
-	COG_integrate_1019 = {
-		highlight_states = { highlight_state_targets = { state = 1019 } }
-		icon = generic_decision
-		available = {
-			has_full_control_of_state = 1019
-		}
-		visible = {
-			1019 = { NOT = { is_core_of = ROOT } }
-			has_completed_focus = COG_negroes_of_equatorial_sahara
-		}
-		cost = 75
-		fire_only_once = yes
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_1019"
-			1019 = { add_core_of = ROOT }
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-}
 
-COG_burning_out_white_heresy_category = {
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_form_africa"
+			set_cosmetic_tag = AFRICA
+			# custom_effect_tooltip = form_africa_effect
+			# hidden_effect = {
+				# every_state = {
+					# limit = {
+						# is_on_continent = africa
+						# NOT = { is_core_of = ROOT }
+					# }
+					# add_core_of = ROOT
+				# }
+			# }
+			hidden_effect = {
+				set_global_flag = form_africa_flag
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
 	
-	COG_burning_out_white_heresy = {
-		name = COG_burning_out_white_heresy_dec
-		icon = generic_nationalism
+	COG_integrate_african_state = { # ??
+		icon = generic_form_nation
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_is_fully_controlled_by
+				# просто подсказка
+			}
+		}
+		target_trigger = {
+			any_of_scopes = {
+				array = FROM.core_states
+				NOT = { is_core_of = ROOT }
+			}
+			all_of_scopes = {
+				array = FROM.core_states
+				is_controlled_by = ROOT
+				# controls_or_subject_of = yes
+			}
+		}
 		
 		highlight_states = {
 			highlight_states_trigger = {
-				is_controlled_by = FROM
-				is_capital = yes
+				is_core_of = FROM
+				#is_capital = yes
 			}
 		}
+		
+		on_map_mode = map_and_decisions_view
+		
+		target_array = global.country_in_africa
+		target_non_existing = yes
+
+		fire_only_once = no #?
+		cost = 100
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_african_state (From [FROM.GetTag])"
+			FROM = {
+				every_core_state = {
+					add_core_of = ROOT
+				}
+			}
+			add_to_variable = { global.troz_threat_var = 0.1 tooltip = troz_threat_tt }
+			set_var_for_troz_threat_dyn = yes
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+COG_formation_of_african_international = {
+
+	COG_invite_african_state = {
+		icon = generic_form_nation
 		
 		available = {
 			FROM = {
-				has_war_with = ROOT
-			}
-		}
-		
-		visible = {
-			FROM = {
-				exists = yes
-				has_war_with = ROOT
-				has_capitulated = no
-				capital_scope = {
-					NOT = { is_on_continent = africa }
+				is_in_faction = no
+				NOT = {
+					has_war_with = ROOT
 				}
 			}
-			has_capitulated = no
 		}
-		
-		cancel_trigger = {
-			FROM = {
-				NOT = { has_war_with = ROOT }
-			}
-			NOT = { has_government = fascism }
-			has_capitulated = yes
-		}
-		
-		target_array = enemies
-		
-		target_root_trigger = {
-			has_government = fascism
-			has_completed_focus = COG_burning_out_white_heresy
-			has_capitulated = no
-		}
-		
 		target_trigger = {
 			FROM = {
-				has_war_with = ROOT
-				has_capitulated = no
-				capital_scope = {
-					NOT = { is_on_continent = africa }
-				}
+				has_government = communism
+				is_subject = no
+				# NOT = { is_in_faction_with = ROOT }
 			}
 		}
-		
-		cost = 15
-		days_remove = 100
-		
-		targeted_modifier = {
-			tag = FROM
-			attack_bonus_against = 0.15
-			defense_bonus_against = 0.05
+		target_root_trigger = {
+			is_faction_leader = yes
 		}
 		
+		# on_map_mode = map_and_decisions_view
+
+		target_array = global.country_in_africa #?
+
+		cost = 10
+		fire_only_once = yes #?
+
 		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_burning_out_white_heresy (From [From.GetName] [From.GetTag])"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_invite_african_state (From [FROM.GetTag])"
+			FROM = {
+				country_event = generic.5
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+COG_five_year_plan = {
+
+	COG_five_year_plan_ending = {
+		name = ALB_five_year_plan_ending
+		icon = generic_gre_paying_ifc_debt
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = COG_five_year_plan_ending_tt
+				check_variable = { COG_five_year_plan_civ_factory_built > COG_five_year_plan_civ_factory }
+				check_variable = { COG_five_year_plan_arms_factory_built > COG_five_year_plan_arms_factory }
+				check_variable = { COG_five_year_plan_dockyard_built > COG_five_year_plan_dockyard }
+			}
+		}
+		activation = { always = no }
+
+		is_good = no
+		days_mission_timeout = 1835
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_five_year_plan_ending"
+			custom_effect_tooltip = COG_five_year_plan_tooltip
+			add_political_power = 200
+			add_stability = 0.1
+			
+			set_variable = { COG_five_year_plan_civ_factory = num_of_civilian_factories } # !!
+			clamp_variable = { var = COG_five_year_plan_civ_factory min = 0 }
+			
+			set_variable = { COG_five_year_plan_arms_factory = num_of_military_factories }
+			clamp_variable = { var = COG_five_year_plan_arms_factory min = 0 }
+			
+			set_variable = { COG_five_year_plan_dockyard = num_of_naval_factories }
+			clamp_variable = { var = COG_five_year_plan_dockyard min = 0 }
+			activate_mission = COG_five_year_plan_ending
+		}
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_five_year_plan_ending"
+			add_political_power = -200
+			add_stability = -0.1
+			
+			set_variable = { COG_five_year_plan_civ_factory = num_of_civilian_factories }
+			clamp_variable = { var = COG_five_year_plan_civ_factory min = 0 }
+			
+			set_variable = { COG_five_year_plan_arms_factory = num_of_military_factories }
+			clamp_variable = { var = COG_five_year_plan_arms_factory min = 0 }
+			
+			set_variable = { COG_five_year_plan_dockyard = num_of_naval_factories }
+			clamp_variable = { var = COG_five_year_plan_dockyard min = 0 }
+			activate_mission = COG_five_year_plan_ending
+		}
+	}
+}
+
+COG_interaction_with_belgium = {
+
+	COG_expand_trade_with_metropolis = {
+		# icon = COG_expand_trade_with_metropolis
+
+		cost = 75
+		days_remove = 15
+		days_re_enable = 90
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_expand_trade_with_metropolis"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_expand_trade_with_metropolis"
+			# +5% текущей эффективности производства
+			# Бельгия получит +15 торгового влияния на Конго ??
+			# add_to_variable = { COG_relationship_with_belgium = 1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = -0.2
+				tooltip_side = COG_belgian_subject_side
+			}
 		}
 		
 		ai_will_do = {
-			factor = 100
+			factor = 10
 			modifier = {
-				factor = 0
-				FROM = { has_capitulated = yes }
+				factor = 0.1
+				has_completed_focus = COG_pierre_VIII_du_kongo
 			}
-			modifier = {
-				factor = 0
-				FROM = { num_divisions < 10 }
+		}
+	}
+	
+	COG_reduce_trade_with_metropolis = {
+		# icon = COG_reduce_trade_with_metropolis
+
+		cost = 75
+		days_remove = 15
+		days_re_enable = 90
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_reduce_trade_with_metropolis"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_reduce_trade_with_metropolis"
+			# -5% текущей эффективности производства
+			# Бельгия получит -15 торгового влияния на Конго ??
+			# add_to_variable = { COG_relationship_with_belgium = -1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = 0.2
+				tooltip_side = COG_independent_state_side
 			}
+		}
+		
+		ai_will_do = {
+			factor = 10
 			modifier = {
-				factor = 0
-				NOT = { is_neighbor_of = FROM }
+				factor = 0.1
+				has_completed_focus = COG_create_a_congo_republic
 			}
+		}
+	}
+	
+	COG_diamond_smuggling_to_germany = {
+		# icon = COG_diamond_smuggling_to_germany
+		
+		available = {
+			NOT = { has_decision = COG_sale_of_diamonds_of_metropolis }
+		}
+		
+		cost = 100
+		days_remove = 90
+		#days_re_enable = 90
+		
+		modifier = {
+			consumer_goods_factor = -0.35
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_diamond_smuggling_to_germany"
+			# add_to_variable = { COG_relationship_with_belgium = -1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = 0.1
+				tooltip_side = COG_independent_state_side
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_diamond_smuggling_to_germany"
+		}
+		
+		ai_will_do = {
+			factor = 10
 			modifier = {
-				factor = 0
-				political_power_daily < 0.15
+				factor = 0.1
+				has_completed_focus = COG_create_a_congo_republic
+			}
+		}
+	}
+	
+	COG_sale_of_diamonds_of_metropolis = {
+		# icon = COG_sale_of_diamonds_of_metropolis
+		
+		available = {
+			NOT = { has_decision = COG_diamond_smuggling_to_germany }
+		}
+		
+		cost = 50
+		days_remove = 90
+		#days_re_enable = 90
+		
+		modifier = {
+			consumer_goods_factor = -0.25
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_sale_of_diamonds_of_metropolis"
+			# add_to_variable = { COG_relationship_with_belgium = 1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = -0.15
+				tooltip_side = COG_belgian_subject_side
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_sale_of_diamonds_of_metropolis"
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0.1
+				has_completed_focus = COG_pierre_VIII_du_kongo
+			}
+		}
+	}
+	
+	COG_conduct_joint_military_exercises = {
+		# icon = COG_conduct_joint_military_exercises
+		
+		cost = 50
+		days_remove = 30
+		days_re_enable = 90
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_conduct_joint_military_exercises"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_conduct_joint_military_exercises"
+			# add_to_variable = { COG_relationship_with_belgium = 1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = -0.1
+				tooltip_side = COG_belgian_subject_side
+			}
+			army_experience = 15
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0.1
+				has_completed_focus = COG_pierre_VIII_du_kongo
+			}
+		}
+	}
+	
+	COG_deport_belgian_bureaucrats = {
+		# icon = COG_deport_belgian_bureaucrats ? !
+		
+		cost = 50
+		days_remove = 14
+		days_re_enable = 90
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_deport_belgian_bureaucrats"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_deport_belgian_bureaucrats"
+			random_controlled_state = {
+				limit = { is_core_of = ROOT } #?
+				add_manpower = -15
+			}
+			# add_to_variable = { COG_relationship_with_belgium = -1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = 0.15
+				tooltip_side = COG_belgian_subject_side
+			}
+			add_political_power = 50
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0.1
+				has_completed_focus = COG_create_a_congo_republic
+			}
+		}
+	}
+	
+	COG_city_rename = {
+		icon = generic_nationalism
+		
+		cost = 25
+		days_remove = 14
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_city_rename"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_city_rename"
+			# add_to_variable = { COG_relationship_with_belgium = -1 tooltip = COG_relationship_with_belgium_tooltip }
+			add_power_balance_value = {
+				id = COG_power_balance
+				value = 0.15
+				tooltip_side = COG_belgian_subject_side
+			}
+			add_stability = 0.05
+			COG_city_rename_effect = yes
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0.5
+				has_completed_focus = COG_create_a_congo_republic
 			}
 		}
 	}
 }
 
-COG_state_urbanization_category = {
+COG_integration_of_african_kingdoms = {
 
-	COG_state_urbanization_1 = {
-		icon = eng_install_government
+	COG_integrate_kingdom_mission = {
+	
+	    icon = generic_civil_support
+		
+		allowed = { always = no }
+		
 		available = {
-			controls_state = event_target:state_urbanization_1
-			num_of_civilian_factories_available_for_projects > 5
-		}
-		visible = {
-			has_country_flag = state_urbanization_1
-		}
-		cancel_trigger = {
-			OR = {
-				NOT = { controls_state = event_target:state_urbanization_1 }
-				NOT = { has_country_flag = state_urbanization_1 }
-			}
-		}
-		cost = 0
-		days_remove = var_days_remove_state_urbanization_1
-		modifier = {
-			civilian_factory_use = 5
-		}
-		remove_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_state_urbanization_1"
-			event_target:state_urbanization_1 = {
-				up_state_category = yes
-				clr_state_flag = state_urbanization
-			}
-			hidden_effect = {
-				set_variable = { var_days_remove_state_urbanization_1 = 0 }
-				clr_country_flag = state_urbanization_1
-				clear_global_event_target = state_urbanization_1
-			}
-		}
-		cancel_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_state_urbanization_1"
-			hidden_effect = {
-				event_target:state_urbanization_1 = {
-					clr_state_flag = state_urbanization
+			set_temp_variable = { current_scope = FROM.id }
+			if = {
+				limit = { check_variable = { current_scope = 1044.id } }
+				1044 = {
+					compliance > 70
+					resistance < 20
 				}
-				set_variable = { var_days_remove_state_urbanization_1 = 0 }
-				clr_country_flag = state_urbanization_1
-				clear_global_event_target = state_urbanization_1
+				1045 = {
+					compliance > 70
+					resistance < 20
+				}
 			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1005.id } }
+				1005 = { 
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1001.id } }
+				1001 = { 
+					compliance > 70
+					resistance < 20
+				}
+				977 = { 
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1002.id } }
+				1002 = { 
+					compliance > 70
+					resistance < 20
+				}
+				1102 = { 
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 931.id } }
+				931 = { 
+					compliance > 70
+					resistance < 20
+				}
+				922 = { 
+					compliance > 70
+					resistance < 20
+				}
+				1004 = { 
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 871.id } }
+				871 = {
+					compliance > 70
+					resistance < 20
+				}
+			}
+		}
+		state_target = yes #?
+		
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					FROM = { has_state_flag = COG_integrate_kingdom_decision_end }
+				
+					set_temp_variable = { current_scope = FROM.id }
+					if = {
+						limit = { check_variable = { current_scope = 1044.id } }
+						NOT = {
+							AND = {
+								controls_state = 1044
+								controls_state = 1045
+							}
+						}
+					}
+					else_if = {
+						limit = { check_variable = { current_scope = 1005.id } }
+						NOT = {
+							controls_state = 1005
+						}
+					}
+					else_if = {
+						limit = { check_variable = { current_scope = 1001.id } }
+						NOT = {
+							AND = {
+								controls_state = 1001
+								controls_state = 977
+							}
+						}
+					}
+					else_if = {
+						limit = { check_variable = { current_scope = 1002.id } }
+						NOT = {
+							AND = {
+								controls_state = 1002
+								controls_state = 1102
+							}
+						}
+					}
+					else_if = {
+						limit = { check_variable = { current_scope = 931.id } }
+						NOT = {
+							AND = {
+								controls_state = 931
+								controls_state = 922
+								controls_state = 1004
+							}
+						}
+					}
+					else_if = {
+						limit = { check_variable = { current_scope = 871.id } }
+						NOT = {
+							controls_state = 871
+						}
+					}
+				}
+			}
+		}
+		
+		activation = { always = no }
+		
+		days_mission_timeout = 30
+		is_good = no
+		selectable_mission = no
+		fixed_random_seed = no
+		fire_only_once = yes
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_integrate_kingdom_mission ([FROM.GetID] [FROM.GetName])"
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_kingdom_mission ([FROM.GetID] [FROM.GetName])"
+			FROM = { save_event_target_as = state_scope state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller } }
+			#hidden_effect = {
+				#remove_targeted_decision = { target = FROM decision = COG_integrate_kingdom_mission }
+				#activate_targeted_decision = { target = FROM decision = COG_integrate_kingdom_mission }
+			#}
+		}
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_integrate_kingdom_mission ([FROM.GetID] [FROM.GetName])"
+			FROM = { save_event_target_as = state_scope state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller } }
+			#set_temp_variable = { current_scope = FROM.id }
+			random_list = {
+				1 = { country_event = congo.49 }
+				1 = { country_event = congo.50 }
+				1 = { country_event = congo.51 }
+				1 = { country_event = congo.52 }
+				1 = { country_event = congo.53 }
+			}
+			#hidden_effect = {
+				#remove_targeted_decision = { target = FROM decision = COG_integrate_kingdom_mission }
+				#activate_targeted_decision = { target = FROM decision = COG_integrate_kingdom_mission }
+			#}
 		}
 	}
 	
-	COG_state_urbanization_2 = {
-		icon = eng_install_government
-		available = {
-			controls_state = event_target:state_urbanization_2
-			num_of_civilian_factories_available_for_projects > 5
-		}
-		visible = {
-			has_country_flag = state_urbanization_2
-		}
-		cancel_trigger = {
-			OR = {
-				NOT = { controls_state = event_target:state_urbanization_2 }
-				NOT = { has_country_flag = state_urbanization_2 }
+	COG_integrate_kingdom_decision = {
+		icon = generic_nationalism
+		allowed = { always = no }
+		
+		available = { #cancel ?? (пусть будет фичей!)
+			set_temp_variable = { current_scope = FROM.id }
+			if = {
+				limit = { check_variable = { current_scope = 1044.id } }
+				1044 = {
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+				1045 = {
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1005.id } }
+				1005 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1001.id } }
+				1001 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+				977 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1002.id } }
+				1002 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+				1102 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 931.id } }
+				931 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+				922 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+				1004 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 871.id } }
+				871 = { 
+					is_controlled_by = ROOT
+					compliance > 70
+					resistance < 20
+				}
 			}
 		}
-		cost = 0
-		days_remove = var_days_remove_state_urbanization_2
-		modifier = {
-			civilian_factory_use = 5
+		state_target = yes
+
+		cost = 75
+		days_remove = 50
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_integrate_kingdom_decision"
 		}
 		remove_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_state_urbanization_2"
-			event_target:state_urbanization_2 = {
-				up_state_category = yes
-				clr_state_flag = state_urbanization
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_integrate_kingdom_decision"
+			set_temp_variable = { current_scope = FROM.id }
+			if = {
+				limit = { check_variable = { current_scope = 1044.id } }
+				add_state_core = 1044
+				add_state_core = 1045
+				if = {
+					limit = { 1005 = { is_core_of = COG } } #?
+					country_event = congo.54
+				}
 			}
-			hidden_effect = {
-				set_variable = { var_days_remove_state_urbanization_2 = 0 }
-				clr_country_flag = state_urbanization_2
-				clear_global_event_target = state_urbanization_2
+			else_if = {
+				limit = { check_variable = { current_scope = 1005.id } }
+				add_state_core = 1005
+				if = {
+					limit = { 1044 = { is_core_of = COG } 1045 = { is_core_of = COG } } #?
+					country_event = congo.54
+				}
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1001.id } }
+				add_state_core = 1001
+				add_state_core = 977
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 1002.id } }
+				add_state_core = 1002
+				add_state_core = 1102
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 931.id } }
+				add_state_core = 931
+				add_state_core = 922
+				add_state_core = 1004
+			}
+			else_if = {
+				limit = { check_variable = { current_scope = 871.id } }
+				add_state_core = 871
+			}
+			FROM = { set_state_flag = COG_integrate_kingdom_decision_end }
+			add_to_variable = { COG_integrate_kingdom_decision_end = 1 }
+			if = {
+				limit = { check_variable = { COG_integrate_kingdom_decision_end = 6 } }
+				country_event = congo.55
 			}
 		}
-		cancel_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_state_urbanization_2"
-			hidden_effect = {
-				event_target:state_urbanization_2 = {
-					clr_state_flag = state_urbanization
-				}
-				set_variable = { var_days_remove_state_urbanization_2 = 0 }
-				clr_country_flag = state_urbanization_2
-				clear_global_event_target = state_urbanization_2
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+COG_influence_in_africa_category = {
+
+	COG_influence_the_country = {
+		icon = generic_form_nation
+		
+		available = {
+			NOT = {
+				has_war_with = FROM 
+				has_idea = closed_economy
 			}
+			custom_trigger_tooltip = { #есть?
+				tooltip = COG_num_of_factories_tt
+				check_variable = { num_of_factories > FROM.num_of_factories }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				capital_scope = { is_on_continent = africa }
+				is_subject = no
+			}
+		}
+		
+		# on_map_mode = map_and_decisions_view
+
+		target_array = global.country_in_africa
+
+		cost = 10
+		fire_only_once = yes #?
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_influence_the_country (From [FROM.GetTag])"
+			# add_opinion_modifier = {
+				# target = FROM
+				# modifier = COG_influence_on_trade
+			# }
+			reverse_add_opinion_modifier = {
+				target = FROM
+				modifier = COG_influence_on_trade
+			}
+			#еще что-то ? !!
+		}
+
+		ai_will_do = {
+			factor = 100
 		}
 	}
 	
-	COG_state_urbanization_3 = {
-		icon = eng_install_government
+	COG_ask_to_join_faction = {
+		icon = generic_form_nation
+		
 		available = {
-			controls_state = event_target:state_urbanization_3
-			num_of_civilian_factories_available_for_projects > 5
+			is_in_faction = no
+			NOT = { has_war_with = FROM }
+		}
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = COG_establish_relationship_with_africa
+				has_completed_focus = COG_establish_relationship_with_europe
+			}
+		}
+		target_trigger = {
+			if = {
+				limit = { has_completed_focus = COG_establish_relationship_with_africa }
+				FROM = {
+					capital_scope = { is_on_continent = africa }
+					is_subject = no
+					is_faction_leader = yes
+					is_left_ideology = no
+				}
+			}
+			else_if = {
+				limit = { has_completed_focus = COG_establish_relationship_with_europe }
+				FROM = {
+					capital_scope = { is_on_continent = europe }
+					NOT = { tag = BEL tag = POR }
+					is_subject = no
+					is_faction_leader = yes
+					is_left_ideology = no
+				}
+			}
+		}
+		
+		# on_map_mode = map_and_decisions_view
+
+		target_array = global.countries #?
+
+		cost = 10
+		fire_only_once = yes #?
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_ask_to_join_faction (From [FROM.GetTag])"
+			# Будут получены улучшения отношений, вы вступите в альянс этой страны !!
+			FROM = {
+				country_event = generic.2
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+COG_faith_in_the_prophet_simon_kimbangu = {
+	
+	COG_predict_rains = {
+		# icon = COG_predict_rains
+		
+		available = {
+			meta_trigger = {
+				text = {
+					date > [YEAR].9.1
+				}
+				YEAR = "[?global.year]"
+			}
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 1000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_re_enable = 120 #?
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_predict_rains"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -1000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+			add_stability = 0.01
+			add_timed_idea = { idea = COG_rains_predicted_by_the_prophet days = 90 }
+			if = { #?
+				limit = { check_variable = { COG_faith_in_the_prophet > 30000 } }
+				custom_effect_tooltip = COG_simon_kimbangu_goodness_tooltip
+				add_to_variable = { COG_fitp_goodness = 1 }
+				
+				set_temp_variable = { goodness = 1 }
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_start_kibangili = {
+		# icon = COG_start_kibangili
+		
+		available = {
 		}
 		visible = {
-			has_country_flag = state_urbanization_3
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 1000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 30
+		days_re_enable = 90
+		
+		fixed_random_seed = no
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_start_kibangili"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -1000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+			add_stability = -0.01
+			random_owned_controlled_state = { #?
+				set_temp_variable_to_random = { var = evolues min = -200 max = -50 integer = yes }
+				add_manpower = evolues
+				if = {
+					limit = { 
+						OR = {
+							check_variable = { COG_evolues_count_@token:high_skilled > 0 }
+							check_variable = { COG_evolues_count_@token:medium_skilled > 0 }
+						}
+					}
+					custom_effect_tooltip = COG_evolues_minus_hs_ms_tt
+					add_to_temp_array = { skills_lvl = token:high_skilled }
+					add_to_temp_array = { skills_lvl = token:medium_skilled }
+					COG_evolues_skill_counts_update = yes
+					
+					set_temp_variable = { evolues = 0 } # ?? !!
+					COG_evolues_get_difference_in_count = yes
+					add_to_variable = { 
+						var = COG_evolues_var
+						value = evolues
+					}
+					add_to_variable = { 
+						var = ROOT.COG_evolues_var
+						value = evolues
+					}
+					COG_evolues_political_counts_update = yes
+					
+					COG_evolues_interface_update = yes
+					ROOT = {
+						COG_evolues_growth_update = yes
+						add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+					}
+				}
+			}
+			# если в стране был вражеский шпион, то он будет пойман !
+				# capture_operative = {
+					# captured_by = ROOT
+					# ignore_death_chance = yes
+				# }
+				# kill_operative = { killed_by = ROOT }
+			if = { #?
+				limit = { check_variable = { COG_faith_in_the_prophet > 30000 } }
+				custom_effect_tooltip = COG_simon_kimbangu_aggressiveness_tooltip
+				add_to_variable = { COG_fitp_aggressiveness = 1 }
+				
+				set_temp_variable = { aggressiveness = 1 }
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_predict_fire_from_heaven = {
+		# icon = COG_predict_fire_from_heaven
+		
+		available = {
+		}
+		visible = {
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 10000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_re_enable = 120 #?
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_predict_fire_from_heaven"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -10000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+			activate_mission = COG_predict_fire_from_heaven_mission
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_predict_fire_from_heaven_mission = {
+	
+	    icon = generic_civil_support
+		
+		allowed = { always = no }
+		
+		available = { 
+			any_owned_state = {
+				days_since_last_strategic_bombing < 3 #?
+			}
+		}
+		
+		activation = { always = no }
+		
+		days_mission_timeout = 30 # ??
+		is_good = no
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_predict_fire_from_heaven_mission"
+			country_event = congo.66
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision COG_predict_fire_from_heaven_mission"
+			country_event = congo.67
+		}
+		
+		ai_will_do = {
+			factor = 10 #?
+		}
+	}
+	
+	COG_appeal_to_power_of_congolese_spirit = {
+		icon = COG_proclaim_self_sacrifice_as_a_based
+		
+		available = {
+			has_war = yes
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 5000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 90
+		
+		modifier = {
+			army_core_attack_factor = 0.25
+			army_core_defence_factor = 0.25
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_appeal_to_power_of_congolese_spirit"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -5000 tooltip = COG_faith_in_the_prophet_tooltip }
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_appeal_to_african_brothers = {
+		icon = COG_proclaim_self_sacrifice_as_a_based
+		
+		available = {
+		}
+		visible = {
+			has_completed_focus = COG_create_black_international_mission
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 5000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 45
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_appeal_to_power_of_congolese_spirit"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -5000 tooltip = COG_faith_in_the_prophet_tooltip }
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_appeal_to_african_brothers"
+			every_other_country = {
+				limit = { 
+					capital_scope = { is_on_continent = africa } NOT = { has_war_with = ROOT } 
+					if = {
+						limit = { original_tag = LIB }
+						NOT = { has_government = fascism }
+					}
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = COG_appeal_to_african_brothers_modifiers
+				}
+				reverse_add_opinion_modifier = { #?
+					target = ROOT
+					modifier = COG_appeal_to_african_brothers_modifiers
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = COG_appeal_to_african_brothers_trade_modifiers
+				}
+				reverse_add_opinion_modifier = {
+					target = ROOT
+					modifier = COG_appeal_to_african_brothers_trade_modifiers
+				}
+				add_ai_strategy = { # больше стратегий !!
+					type = befriend
+					id = ROOT
+					value = 25
+				}
+				
+				set_temp_variable = { COG_bj_faith_in_the_prophet_gain = 25 }
+				custom_effect_tooltip = COG_appeal_to_african_brothers_tt
+				add_to_variable = { ROOT.COG_bj_faith_in_the_prophet_gain = 25 }
+			}
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_start_of_holy_crusade = {
+		icon = COG_proclaim_self_sacrifice_as_a_based
+		
+		available = {
+			has_war = yes
+			any_enemy_country = { capital_scope = { is_on_continent = europe } }
+		}
+		visible = {
+			# Воинственность ?
 		}
 		cancel_trigger = {
-			OR = {
-				NOT = { controls_state = event_target:state_urbanization_3 }
-				NOT = { has_country_flag = state_urbanization_3 }
+			has_war = no
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 25000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		modifier = { #?
+			army_attack_factor = 0.15
+			army_defence_factor = 0.25
+			army_morale_factor = 0.35
+			org_loss_when_moving = 0.2
+		}
+		
+		fire_only_once = yes #? TODO: указать, что одиночное решение
+		
+		days_remove = -1
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_appeal_to_power_of_congolese_spirit"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -25000 tooltip = COG_faith_in_the_prophet_tooltip }
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
 			}
 		}
-		cost = 0
-		days_remove = var_days_remove_state_urbanization_3
-		modifier = {
-			civilian_factory_use = 5
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	COG_proclaim_self_sacrifice_as_a_based = {
+		# icon = COG_proclaim_self_sacrifice_as_a_based
+		
+		available = {
+		}
+		visible = {
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 100000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_proclaim_self_sacrifice_as_a_based"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -100000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+			add_ideas = COG_self_sacrifice
+		}
+		
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	COG_allow_commercial_business = {
+		# icon = COG_proclaim_self_sacrifice_as_a_based
+		
+		available = {
+		}
+		visible = {
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 100000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_allow_commercial_business"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -100000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+			add_stability = -0.07
+			set_country_flag = COG_kimbangu_capitalism_allowed
+			add_ideas = civilian_economy
+			if = {
+				limit = { has_idea = closed_economy }
+				add_ideas = export_focus
+			}
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	COG_sermonts_among_lost_souls_decision = {
+		icon = generic_form_nation
+		
+		available = {
+			NOT = { has_country_flag = COG_sermonts_among_lost_souls_flag }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 50 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
+		
+		on_map_mode = map_only # map_and_decisions_view
+
+		target_array = controlled_states #?
+		target_root_trigger = {
+			has_completed_focus = COG_sermonts_among_lost_souls
+		}
+		target_trigger = {
+			FROM = {
+				NOT = { is_core_of = ROOT }
+			}
+		}
+		state_target = yes
+
+		days_remove = 30
+		# fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_influence_the_country (From [FROM.GetTag])"
+			hidden_effect = {
+				add_command_power = -50
+				set_country_flag = COG_sermonts_among_lost_souls_flag
+			}
 		}
 		remove_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_state_urbanization_3"
-			event_target:state_urbanization_3 = {
-				up_state_category = yes
-				clr_state_flag = state_urbanization
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_influence_the_country (From [FROM.GetTag])"
+			clr_country_flag = COG_sermonts_among_lost_souls_flag
+			FROM = {
+				add_compliance = 15
+				add_resistance = -15
 			}
+			add_to_variable = { COG_faith_in_the_prophet = 1000 tooltip = COG_faith_in_the_prophet_tooltip } # ? !
+			COG_kimbangu_isolation_modifier_update = yes
+			if = { #?
+				limit = { check_variable = { COG_faith_in_the_prophet > 30000 } }
+				custom_effect_tooltip = COG_simon_kimbangu_diplomaticness_tooltip
+				add_to_variable = { COG_fitp_diplomaticness = 1 }
+				
+				set_temp_variable = { diplomaticness = 1 }
+			}
+			COG_simon_kimbangu_superpowers_update = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+COG_building_christian_state = {
+
+	COG_consecrate_country = {
+		# icon = COG_consecrate_country
+		
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 5000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 100
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_consecrate_country"
 			hidden_effect = {
-				set_variable = { var_days_remove_state_urbanization_3 = 0 }
-				clr_country_flag = state_urbanization_3
-				clear_global_event_target = state_urbanization_3
+				add_to_variable = { COG_faith_in_the_prophet = -5000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip? TODO: можно упороться в мирный прирост верый !!
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
 			}
 		}
-		cancel_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision COG_state_urbanization_3"
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_consecrate_country"
+			COG_destroyed_administrative_institutions_update = yes
+			set_country_flag = COG_consecrate_country_flag
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	COG_pastors_of_prophets_church = {
+		# icon = COG_pastors_of_prophets_church
+		
+		available = {
+			has_completed_focus = COG_the_twelve_apostles_of_the_prophet_kimbangu
+			has_country_flag = COG_consecrate_country_flag
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 5000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 150
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_pastors_of_prophets_church"
 			hidden_effect = {
-				event_target:state_urbanization_3 = {
-					clr_state_flag = state_urbanization
-				}
-				set_variable = { var_days_remove_state_urbanization_3 = 0 }
-				clr_country_flag = state_urbanization_3
-				clear_global_event_target = state_urbanization_3
+				add_to_variable = { COG_faith_in_the_prophet = -5000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
 			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_pastors_of_prophets_church"
+			add_ideas = COG_pastors_of_prophets_church
+			COG_destroyed_administrative_institutions_update = yes
+			set_country_flag = COG_pastors_of_prophets_church_flag
+		}
+		
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	COG_unite_church_and_state = {
+		# icon = COG_unite_church_and_state
+		
+		available = {
+			has_country_flag = COG_pastors_of_prophets_church_flag
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { faith_cost = 25000 }
+			check_variable = { var = COG_faith_in_the_prophet value = faith_cost }
+		}
+		custom_cost_text = COG_FAITH_COST
+		
+		days_remove = 200
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision COG_unite_church_and_state"
+			hidden_effect = {
+				add_to_variable = { COG_faith_in_the_prophet = -25000 tooltip = COG_faith_in_the_prophet_tooltip } #tooltip?
+				COG_kimbangu_isolation_modifier_update = yes
+				COG_simon_kimbangu_superpowers_update = yes
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision COG_unite_church_and_state"
+			COG_destroyed_administrative_institutions_update = yes
+			set_cosmetic_tag = COG_christian_state
+			COG_city_rename_effect = yes
+		}
+		
+		ai_will_do = {
+			factor = 100
 		}
 	}
 }

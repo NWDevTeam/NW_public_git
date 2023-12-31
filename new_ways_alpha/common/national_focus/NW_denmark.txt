@@ -6005,9 +6005,18 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_anarchist_revolution"
 			set_country_flag = anarchism_left_flag
-			set_temp_variable = { anarchism_unity_add_var = 15 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 15 tooltip = anarchism_unity_add_effect }
+			if = {
+				limit = {
+					NOT = {
+						has_idea = peoples_squads
+						has_idea = peoples_police
+						has_idea = peoples_militia
+						has_active_mission = generic_anarchism_manpower_decision
+					}
+				}
+				activate_mission = generic_anarchism_manpower_decision
+			}
 		}
 	}
 	
@@ -6124,9 +6133,7 @@
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_amts_focus"
 			add_political_power = 120
-			set_temp_variable = { anarchism_unity_add_var = 10 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 10 tooltip = anarchism_unity_add_effect }
 		}
 	}
 	
@@ -6164,9 +6171,7 @@
 						instant_build = yes
 					}
 			}
-			set_temp_variable = { anarchism_unity_add_var = 5 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 5 tooltip = anarchism_unity_add_effect }
 		}
 	}
 	
@@ -6309,9 +6314,7 @@
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_expand_danish_trade_union_confederation"
-			set_temp_variable = { anarchism_unity_add_var = 10 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 10 tooltip = anarchism_unity_add_effect }
 			add_ideas = DEN_expand_danish_trade_union_confederation_idea
 		}
 	}
@@ -7343,30 +7346,26 @@
 	
 	
 	### ARMY BRANCH
-	
+
 	focus = {
-		id = DEN_make_the_military_budget_bigger
-		icon = GFX_goal_generic_position_armies
-		prerequisite = {}
-		mutually_exclusive = { focus = DEN_army_for_defence }
+		id = DEN_sign_forsvarsforliget
+		icon = GFX_focus_generic_treaty
 		x = 13
 		y = 0
 		cost = 5
 		
 		relative_position_id = DEN_social_reforms_1
-		
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				date > 1938.1.1
-				factor = 1
-			}
+		available = {
 		}
-
-		available_if_capitulated = yes
-
+	
+		ai_will_do = {
+		}
+	
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MILITARY_CHARACTER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_HISTORICAL }
+	
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_make_the_military_budget_bigger"
+			add_political_power = 50
+			add_war_support = 0.05
 			add_timed_idea = { 
 				idea = DEN_making_the_military_budget_bigger_idea
 				days = 720 
@@ -7377,1231 +7376,2595 @@
 				}
 				hidden_effect = { country_event = { id = apdenmark.5 hours = 3 } }
 			}
+
+			add_offsite_building = { type = arms_factory level = 1 }
+
+			add_to_variable = { DEN_neglected_military_mobilization_speed = 0.1 }
+			add_to_variable = { DEN_neglected_military_surrender_limit = 0.1 }
+			custom_effect_tooltip = DEN_new_forsvarsforlig_modifier_tt
+
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = DEN_william_wain_prior
 		}
 	}
-	
+
 	focus = {
-		id = DEN_base_in_greenland
-		icon = GFX_z_goal_generic_naval
-		prerequisite = { focus = DEN_make_the_military_budget_bigger }
-		x = -5
+		id = DEN_stockpile_oil
+		icon = GFX_focus_generic_stockpile_fuel
+		prerequisite = { focus = DEN_sign_forsvarsforliget }
+
+		relative_position_id = DEN_sign_forsvarsforliget
+		x = -2
 		y = 1
-		relative_position_id = DEN_make_the_military_budget_bigger
-		
-		cost = 5
-		
+
+		cost = 10
+
 		available = {
-			controls_state = 101
-		}
-		
-		ai_will_do = {
-			factor = 10
+			any_core_state = { is_owned_and_controlled_by = ROOT }
 		}
 
-		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_HISTORICAL }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_base_in_greenland"
-			101 = {
-				add_building_construction = {
-					type = naval_base
-					province = 10245
-					level = 3
-					instant_build = yes
+			add_to_variable = { DEN_neglected_military_surrender_limit = 0.1 }
+			custom_effect_tooltip = DEN_stockpile_oil_modifier_neglected_military_tt
+
+			if = {
+				limit = {
+					NOT = { 
+						has_dynamic_modifier = { modifier = DEN_war_preparations_dynamic_modifier } 
+					}
 				}
-				add_building_construction = {
-					type = air_base
-					level = 1
-					instant_build = yes
+				add_dynamic_modifier = { modifier = DEN_war_preparations_dynamic_modifier }
+				add_to_variable = { DEN_war_preparations_fuel_gain = 0.1 }
+				add_to_variable = { DEN_war_preparations_max_fuel = 0.15 }
+				add_to_variable = { DEN_war_preparations_fuel_silo_speed = 0.25 }
+				custom_effect_tooltip = DEN_stockpile_oil_add_modifier_war_preparations_tt
+			}
+			else = {
+				add_to_variable = { DEN_war_preparations_fuel_gain = 0.1 }
+				add_to_variable = { DEN_war_preparations_max_fuel = 0.15 }
+				add_to_variable = { DEN_war_preparations_fuel_silo_speed = 0.25 }
+				custom_effect_tooltip = DEN_stockpile_oil_modifier_war_preparations_tt
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						has_tech = fuel_silos
+					}
 				}
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_base_in_faroe_islands
-		icon = GFX_goal_generic_amphibious_assault
-		prerequisite = { focus = DEN_make_the_military_budget_bigger }
-		x = -3
-		y = 1
-		relative_position_id = DEN_make_the_military_budget_bigger
-		
-		cost = 5
-		
-		available = {
-			controls_state = 337
-		}
-		
-		ai_will_do = {
-			factor = 10
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_base_in_faroe_islands"
-			337 = {
-				add_building_construction = {
-					type = naval_base
-					province = 13003
-					level = 3
-					instant_build = yes
+				add_tech_bonus = {
+					name = DEN_stockpile_oil
+					bonus = 1
+					uses = 1
+					category = synth_resources
 				}
-				add_building_construction = {
-					type = air_base
-					level = 1
-					instant_build = yes
-				}
+				custom_effect_tooltip = DEN_potential_fuel_silos_tt
 			}
-		}
-	}
-	
-	focus = {
-		id = DEN_base_in_bornholm
-		icon = GFX_goal_generic_build_navy
-		prerequisite = { focus = DEN_make_the_military_budget_bigger }
-		x = -1
-		y = 1
-		relative_position_id = DEN_make_the_military_budget_bigger
-		
-		cost = 5
-		
-		available = {
-			controls_state = 765
-		}
-		
-		ai_will_do = {
-			factor = 10
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_base_in_faroe_islands"
-			765 = {
-				add_building_construction = {
-					type = naval_base
-					province = 6361
-					level = 3
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = air_base
-					level = 1
-					instant_build = yes
-				}
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_army_for_defence
-		icon = GFX_goal_generic_defence
-		x = 8
-		y = 0
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {}
-		mutually_exclusive = { focus = DEN_make_the_military_budget_bigger }
-		relative_position_id = DEN_make_the_military_budget_bigger
-		cost = 5
-		
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				date > 1938.1.1
-				factor = 1
-			}
-			modifier = {
-				has_completed_focus = DEN_social_reforms_2
-				factor = 2
-			}
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_army_for_defence"
-			add_ideas = DEN_army_for_defence
-		}
-	}
-	
-	focus = {
-		id = DEN_reform_royal_army
-		icon = GFX_z_goal_DEN_reform_royal_army
-		x = 1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_army_for_defence
-			focus = DEN_make_the_military_budget_bigger
-		}
-		relative_position_id = DEN_make_the_military_budget_bigger
-		cost = 5
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_reform_royal_army"
-			army_experience = 10
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = land_doctrine
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_infantry_1
-		icon = GFX_goal_generic_allies_build_infantry
-		x = -1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_reform_royal_army
-		}
-		relative_position_id = DEN_reform_royal_army
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_infantry_1"
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				bonus = 1.0
-				uses = 1
-				category = infantry_weapons
-				category = artillery
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_infantry_2
-		icon = GFX_goal_generic_army_artillery
-		x = 1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_infantry_1
-		}
-		relative_position_id = DEN_infantry_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_infantry_2"
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				bonus = 1.0
-				uses = 1
-				category = infantry_weapons
-				category = artillery
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_artillery
-		icon = GFX_goal_generic_army_artillery2
-		x = -1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_infantry_1
-		}
-		relative_position_id = DEN_infantry_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_artillery"
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				bonus = 2.0
-				uses = 1
-				category = artillery
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_marine
-		icon = GFX_goal_generic_special_forces
-		x = 0
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_infantry_2
-		}
-		prerequisite = {
-			focus = DEN_artillery
-		}
-		relative_position_id = DEN_infantry_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_marine"
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				bonus = 2.0
-				uses = 2
-				category = marine_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_military_doctrine_1
-		icon = GFX_goal_generic_small_arms
-		x = 0
-		y = 3
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_marine
-		}
-		relative_position_id = DEN_infantry_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_military_doctrine_1"
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = land_doctrine
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_mechanization_1
-		icon = GFX_goal_generic_cavalry
-		x = 2
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_reform_royal_army
-		}
-		relative_position_id = DEN_reform_royal_army
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_mechanization_1"
-			add_tech_bonus = {
-				name = motorized_bonus
-				bonus = 3.0
-				technology = motorised_infantry
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_mechanization_2
-		icon = GFX_goal_generic_army_motorized
-		x = 0
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_mechanization_1
-		}
-		relative_position_id = DEN_mechanization_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_mechanization_2"
-			add_tech_bonus = {
-				name = motorized_bonus
-				ahead_reduction = 2
-				uses = 1
-				category = motorized_equipment
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_tanks
-		icon = GFX_goal_generic_army_tanks
-		x = 0
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_mechanization_2
-		}
-		relative_position_id = DEN_mechanization_1
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_tanks"
-			add_tech_bonus = {
-				name = armor_bonus
-				bonus = 1.0
-				uses = 2
-				category = armor
-			}
-		}
-	}
-	
-	
-	### NAVY BRANCH
-	
-	focus = {
-		id = DEN_zealand_ports
-		icon = GFX_goal_generic_construct_naval_dockyard
-		x = -6
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		available = {
-			DEN = { controls_state = 37 }
-		}
-		prerequisite = {
-			focus = DEN_reform_royal_army
-		}
-		relative_position_id = DEN_reform_royal_army
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_zealand_ports"
-			navy_experience = 30
-			37 = {
-				add_extra_state_shared_building_slots = 3
-				add_building_construction = {
-					type = dockyard
-					level = 3
-					instant_build = yes
-				}
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_atlantic_war
-		icon = GFX_goal_generic_navy_doctrines_tactics
-		x = -1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_zealand_ports
-		}
-		mutually_exclusive = { focus = DEN_baltic_war }
-		relative_position_id = DEN_zealand_ports
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_atlantic_war"
-			add_doctrine_cost_reduction = {
-				name = DEN_atlantic_war
-				cost_reduction = 0.5
-				uses = 2
-				category = fleet_in_being_tree
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_big_fleet_1
-		icon = GFX_focus_generic_navy_battleship2
-		x = 0
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_atlantic_war
-		}
-		relative_position_id = DEN_atlantic_war
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_big_fleet_1"
-			add_tech_bonus = {
-				name = cr_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 1
-				category = cl_tech
-				category = ca_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_big_fleet_2
-		icon = GFX_goal_generic_navy_carrier
-		x = 0
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_big_fleet_1
-		}
-		relative_position_id = DEN_atlantic_war
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_big_fleet_2"
-			add_tech_bonus = {
-				name = cr_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 2
-				category = cl_tech
-				category = ca_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_aurhus_ports
-		icon = GFX_goal_generic_construct_naval_dockyard
-		x = -3
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		available = {
-			DEN = { controls_state = 99 }
-		}
-		prerequisite = {
-			focus = DEN_zealand_ports
-		}
-		relative_position_id = DEN_zealand_ports
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_aurhus_ports"
-			99 = {
-				add_extra_state_shared_building_slots = 3
+			else = {
+				random_core_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = fuel_silo
+							size > 0
+							include_locked = yes
+						}
+					}
+					prioritize = { 99 911 912 37 } 
+					add_extra_state_shared_building_slots = 1
 					add_building_construction = {
-						type = dockyard
-						level = 3
+						type = fuel_silo
+						level = 1
 						instant_build = yes
 					}
+				}
+				random_core_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = fuel_silo
+							size > 0
+							include_locked = yes
+						}
+					}
+					prioritize = { 911 99 912 37 } 
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = fuel_silo
+						level = 1
+						instant_build = yes
+					}
+				}
 			}
 		}
 	}
-	
+
+
 	focus = {
-		id = DEN_baltic_war
-		icon = GFX_goal_generic_navy_submarine
-		x = 1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_zealand_ports
-		}
-		mutually_exclusive = { focus = DEN_atlantic_war }
-		relative_position_id = DEN_zealand_ports
-		cost = 10
+		id = DEN_sikkerhedspolitiet
+		icon = GFX_goal_generic_intelligence_exchange
+		prerequisite = { focus = DEN_sign_forsvarsforliget }
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_baltic_war"
-			add_doctrine_cost_reduction = {
-				name = DEN_baltic_war
-				cost_reduction = 0.5
-				uses = 2
-				category = trade_interdiction_tree
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_small_fleet_1
-		icon = GFX_goal_generic_navy_anti_submarine
-		x = 0
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_baltic_war
-		}
-		relative_position_id = DEN_baltic_war
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_small_fleet_1"
-			add_tech_bonus = {
-				name = ss_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 1
-				category = ss_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_small_fleet_2
-		icon = GFX_goal_generic_navy_battleship
-		x = 0
-		y = 3
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_small_fleet_1
-		}
-		relative_position_id = DEN_baltic_war
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_small_fleet_2"
-			add_tech_bonus = {
-				name = dd_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 1
-				category = dd_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_expirience_of_the_great_war
-		icon = GFX_goal_generic_navy_cruiser
+		relative_position_id = DEN_sign_forsvarsforliget
 		x = 2
 		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_zealand_ports
-		}
-		relative_position_id = DEN_baltic_war
-		cost = 5
 
-		available_if_capitulated = yes
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_POLITICAL_CHARACTER FOCUS_FILTER_POLITICAL FOCUS_FILTER_HISTORICAL }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_expirience_of_the_great_war"
-			navy_experience = 10
-			add_tech_bonus = {
-				name = ss_bonus
-				bonus = 2.0
-				ahead_reduction = 2
-				uses = 2
-				category = naval_mines
+			if = {
+				limit = {
+					has_dlc = "La Resistance"
+				}
+				custom_effect_tooltip = available_political_advisor
+				show_ideas_tooltip = DEN_emil_strobech
+				if = {
+					limit = {
+						has_intelligence_agency = no
+					}
+					create_intelligence_agency = yes
+				}
+				create_operative_leader = {
+					name = "Hans Lunding"
+					GFX = GFX_portrait_DEN_hans_lunding
+					traits = { operative_safe_cracker } #TODO_DANNE
+					bypass_recruitment = no
+					available_to_spy_master = yes
+					nationalities = { DEN }
+				}
+				add_to_variable = {
+					DEN_political_edicts_operative_slot = 1
+					tooltip = operative_slot_tt
+				}
 			}
+			else = {
+				add_tech_bonus = {
+					name = DEN_sikkerhedspolitiet
+					bonus = 0.25
+					uses = 2
+					category = encryption_tech
+					category = decryption_tech
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_expand_vaernepligten
+		icon = GFX_focus_generic_little_entente
+		prerequisite = { focus = DEN_sign_forsvarsforliget }
+
+		relative_position_id = DEN_sign_forsvarsforliget
+		x = 0
+		y = 1
+
+		cost = 5
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MANPOWER FOCUS_FILTER_HISTORICAL }
+
+		completion_reward = {
+			add_war_support = 0.05
+			add_manpower = 5000
+
+			add_to_variable = { DEN_neglected_military_mobilization_speed = 0.1 }
+			custom_effect_tooltip = DEN_expand_vaernepligten_modifier_tt
+			if = {
+				limit = { 
+					check_variable = { DEN_neglected_military_mobilization_speed = 0 }
+					check_variable = { DEN_neglected_military_surrender_limit = 0 }
+					check_variable = { DEN_neglected_military_planning_speed = 0 }
+				}
+				clear_variable = DEN_neglected_military_dynamic_modifier
+			}
+
+			if = {
+				limit = { 
+					has_idea = disarmed_nation
+				}
+				add_ideas = volunteer_only
+			}
+			else_if = {
+				limit = { 
+					has_idea = volunteer_only
+				}
+			add_ideas = limited_conscription
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_haeren_reorganization
+		icon = GFX_focus_DEN_haeren_reorganization
+		prerequisite = { focus = DEN_expand_vaernepligten }
+
+		relative_position_id = DEN_expand_vaernepligten
+		x = -6
+		y = 1
+
+		cost = 5
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+			add_command_power = 25
+			army_experience = 25
+
+			add_to_variable = { DEN_neglected_military_planning_speed = 0.1 }
+			custom_effect_tooltip = DEN_haeren_reorganization_modifier_neglected_military_tt
+
 			add_doctrine_cost_reduction = {
-				name = ss_bonus
+				name = DEN_haeren_reorganization
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+ 
+			every_unit_leader = {
+				limit = {
+					is_army_leader = yes
+				}
+				gain_xp = 100
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_expand_haerens_tekniske_korps
+		icon = GFX_focus_DEN_expand_haerens_tekniske_korps
+		prerequisite = { focus = DEN_haeren_reorganization }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = -2
+		y = 1
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			mio:DEN_haerens_tekniske_korps_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.35
+				add_mio_research_bonus = 0.05
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_big_guns
+			}
+
+			add_tech_bonus = {
+				name = DEN_expand_haerens_tekniske_korps
+				bonus = 0.25
+				uses = 2
+				category = artillery
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_hjemmevaernet
+		icon = GFX_focus_DEN_Hjemmevaernet
+		prerequisite = { focus = DEN_haeren_reorganization }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = 0
+		y = 1
+
+		cost = 5
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_MANPOWER FOCUS_FILTER_ARMY_XP }
+
+		completion_reward = {
+
+			add_war_support = 0.05
+			add_manpower = 5000
+			army_experience = 15
+
+			DEN_improve_haeren_NS = yes
+			add_to_variable = { 
+				DEN_haeren_army_core_defence = 0.05
+				tooltip = army_core_defence_factor_tt
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_expand_dansk_industri_syndikat
+		icon = GFX_focus_DEN_expand_dansk_industri_syndikat
+		prerequisite = { focus = DEN_haeren_reorganization }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = 2
+		y = 1
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			mio:DEN_DISA_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.35
+				add_mio_research_bonus = 0.05
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_weibel_development
+				unlock_mio_trait_tooltip = DEN_mio_trait_madsen_heavy_machine_gun
+			}
+
+			mio:DEN_haerens_tekniske_korps_organization = {
+				unlock_mio_trait_tooltip = DEN_mio_trait_madsen_20_mm
+			}
+
+			add_tech_bonus = {
+				name = DEN_expand_dansk_industri_syndikat
+				bonus = 0.5
+				uses = 2
+				category = infantry_weapons
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_new_artillery_tactics
+		icon = GFX_goal_generic_army_artillery2
+		prerequisite = { focus = DEN_expand_haerens_tekniske_korps }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = -1
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+
+			mio:DEN_haerens_tekniske_korps_organization = {
+				add_mio_size = 1
+			}
+
+			add_tech_bonus = {
+				name = DEN_new_artillery_tactics
+				bonus = 0.25
+				uses = 2
+				category = artillery
+			}
+
+			DEN_improve_haeren_NS = yes
+			add_to_variable = { 
+				DEN_haeren_army_artillery_defence = 0.1
+				tooltip = army_artillery_defence_factor_tt
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_convert_automobile_production
+		icon = GFX_goal_generic_army_motorized
+		prerequisite = { focus = DEN_expand_dansk_industri_syndikat focus = DEN_expand_haerens_tekniske_korps }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = 1
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			mio:DEN_triangel_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.35
+				add_mio_research_bonus = 0.05
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_truck_mass_production
+			}
+
+			if = {
+				limit = {
+					has_dlc = "La Resistance"
+				}
+				add_tech_bonus = {
+					name = DEN_convert_automobile_production
+					bonus = 0.5
+					uses = 2
+					category = cat_armored_cars
+					category = motorized_equipment
+				}
+			}
+			else = {
+				add_tech_bonus = {
+					name = DEN_convert_automobile_production
+					bonus = 0.5
+					uses = 1
+					category = motorized_equipment
+					category = cat_mechanized_equipment
+				}
+			}
+
+			DEN_improve_haeren_NS = yes
+			add_to_variable = { 
+				DEN_haeren_army_speed = 0.05
+				tooltip = army_attack_speed_factor_tt
+			}
+			add_to_variable = { 
+				DEN_haeren_org_loss_when_moving = -0.05
+				tooltip = org_loss_when_moving_tt
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_slaedepatruljen_sirius
+		icon = GFX_focus_DEN_sirius_patrol
+		prerequisite = { focus = DEN_new_artillery_tactics focus = DEN_convert_automobile_production }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = -2
+		y = 3
+
+		cost = 5
+
+		available = {
+			101 = { is_fully_controlled_by = ROOT }
+		}
+
+		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			add_command_power = 50
+			army_experience = 25
+
+			custom_effect_tooltip = FIN_winter_warfare_battalion_tt
+
+			hidden_effect = {
+				set_technology = {
+					winter_logistics_support_tech = 1
+					popup = no
+				}
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_slaedepatruljen_sirius
+				cost_reduction = 0.25
+				uses = 2
+				category = cat_mountaineers_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_generalkommandoen
+		icon = GFX_focus_DEN_generalkommandoen
+		prerequisite = { focus = DEN_new_artillery_tactics focus = DEN_convert_automobile_production }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = 0
+		y = 3
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+			add_command_power = 50
+			army_experience = 50
+
+			mio:DEN_DISA_organization = {
+				add_mio_size = 1
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_generalkommandoen
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+
+			DEN_improve_haeren_NS = yes
+			
+			add_to_variable = { 
+				DEN_haeren_army_speed = 0.05
+				tooltip = army_attack_speed_factor_tt
+			}
+			add_to_variable = { 
+				DEN_haeren_org_loss_when_moving = -0.05
+				tooltip = org_loss_when_moving_tt
+			}
+			add_to_variable = {
+				DEN_haeren_army_core_attack = 0.05
+				tooltip = army_core_attack_factor_tt
+			}
+			
+			every_unit_leader = {
+				limit = {
+					is_army_leader = yes
+				}
+				random_select_amount = 3
+				add_skill_level = 1
+				add_attack = 1
+				add_defense = 1
+				add_logistics = 1
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_establish_domestic_tank_manufacturing
+		icon = GFX_goal_generic_army_tanks
+		prerequisite = { focus = DEN_convert_automobile_production }
+
+		relative_position_id = DEN_haeren_reorganization
+		x = 2
+		y = 3
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			mio:generic_tank_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.35
+				add_mio_research_bonus = 0.05
+			}
+
+
+			DEN_improve_haeren_NS = yes
+			#add_to_variable = { 
+			#	DEN_haeren_army_armor_attack = 0.05 
+			#	tooltip = army_armor_attack_factor_tt
+			#}
+			add_to_variable = { 
+				DEN_haeren_army_armor_defence = 0.1 
+				tooltip = army_armor_defence_factor_tt
+			} 
+
+			add_tech_bonus = {
+				name = DEN_establish_domestic_tank_manufacturing
+				bonus = 0.5
+				uses = 2
+				category = armor
+				category = cat_mechanized_equipment
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+#### NAVY ####
+
+	focus = {
+		id = DEN_expand_ubadsvabnet
+		icon = GFX_goal_generic_navy_submarine
+		prerequisite = { focus = DEN_expand_vaernepligten }
+
+		relative_position_id = DEN_expand_vaernepligten
+		x = 0
+		y = 1
+
+		cost = 5
+
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_NAVY_XP FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_HISTORICAL }
+
+		completion_reward = {
+			add_manpower = 1500
+			add_command_power = 25
+			navy_experience = 25
+
+			mio:DEN_orlogsvaerftet_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.2
+				add_mio_research_bonus = 0.05
+			}
+
+			#######
+			# MTG #
+			#######
+			if = {
+				limit = { 
+					has_dlc = "Man the Guns"
+				}
+				create_equipment_variant = {
+					name = "Havmanden Class"				
+					type = ship_hull_submarine_1
+					name_group = DEN_SS_HISTORICAL
+					parent_version = 0
+					modules = {
+						fixed_ship_torpedo_slot = ship_torpedo_sub_1
+						fixed_ship_engine_slot = sub_ship_engine_2
+						rear_1_custom_slot = empty
+					}
+					design_team = mio:DEN_orlogsvaerftet_organization
+				}
+				add_equipment_production = {
+					equipment = {
+						type = ship_hull_submarine_1
+						creator = "DEN"
+						version_name = "Havmanden Class"
+					}
+					name = "Havmanden"
+					requested_factories = 1
+					progress = 0.30
+					amount = 2
+					industrial_manufacturer = mio:DEN_orlogsvaerftet_organization
+				}
+				add_equipment_production = {
+					equipment = {
+						type = ship_hull_submarine_1
+						creator = "DEN"
+						version_name = "Havmanden Class"
+					}
+					name = "Havkalen"
+					requested_factories = 1
+					progress = 0.20
+					amount = 2
+					industrial_manufacturer = mio:DEN_orlogsvaerftet_organization
+				}
+				add_tech_bonus = {
+					name = DEN_expand_ubadsvabnet
+					bonus = 0.5
+					uses = 1
+					category = ss_tech
+				}
+			}
+			##########
+			# NO MTG #
+			##########
+			else = {
+				if = {
+					limit = {
+						NOT = { has_tech = basic_submarine }
+					}
+					hidden_effect = {
+						set_technology = { basic_submarine = 1 }
+					}
+					custom_effect_tooltip = DEN_add_basic_submarine_tech_tt
+				}
+			}
+
+			random_controlled_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				prioritize = { 911 99 37 912 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_refit_civilian_ships
+		icon = GFX_focus_generic_refit_civilian_ships
+		prerequisite = { focus = DEN_expand_ubadsvabnet }
+		mutually_exclusive = { focus = DEN_modernize_the_navy }
+
+		relative_position_id = DEN_expand_ubadsvabnet
+		x = -1
+		y = 1
+
+		cost = 10
+
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+			add_manpower = 1500
+
+			mio:DEN_burmeister_wain_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.1
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_refit_civilian_ships
+			}
+			
+			custom_effect_tooltip = DEN_refit_civilian_ships_decision_tt
+			set_country_flag = refit_convoy_ships_flag
+
+			custom_effect_tooltip = ETH_purchase_obsolete_ships_tt
+			set_country_flag = generic_purchase_old_ships_flag
+
+			#######
+			# MTG #
+			#######
+			if = {
+				limit = { 
+					has_dlc = "Man the Guns"
+				}
+				add_tech_bonus = {
+					name = DEN_refit_civilian_ships
+					bonus = 0.25
+					uses = 4
+					category = ship_modules_tech
+				}
+				#Re-instate the Olfert Fischer Coastal Defence Ship
+				create_ship = {
+					type = ship_hull_cruiser_coastal_defense_ship
+					equipment_variant = "Herluf Trolle Class"
+					creator = DEN
+					name = "HDMS Olfert Fischer"
+				}
+			}
+			##########
+			# NO MTG #
+			##########
+			else = {
+				add_tech_bonus = {
+					name = DEN_refit_civilian_ships
+					bonus = 0.75
+					uses = 2
+					category = naval_equipment
+				}
+				#Re-instate the Olfert Fischer Coastal Defence Ship
+				create_ship = {
+					type = heavy_cruiser_1
+					equipment_variant = "Herluf Trolle Class"
+					creator = DEN
+					name = "HDMS Olfert Fischer"
+				}
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				prioritize = { 911 99 37 912 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				prioritize = { 99 911 37 912 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_modernize_the_navy
+		icon = GFX_goal_generic_navy_battleship
+		prerequisite = { focus = DEN_expand_ubadsvabnet }
+		mutually_exclusive = { focus = DEN_refit_civilian_ships }
+
+		relative_position_id = DEN_expand_ubadsvabnet
+		x = 1
+		y = 1
+
+		cost = 10
+
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+			add_manpower = 1500
+			
+			mio:DEN_orlogsvaerftet_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.1
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_burmeister_wain_engines
+			}
+
+			DEN_improve_sovaernet_NS = yes
+			add_to_variable = {
+				DEN_sovaernet_naval_detection = 0.1
+				tooltip = naval_detection_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_naval_accidents = -0.1
+				tooltip = naval_accidents_chance_tt
+			}
+
+			#######
+			# MTG #
+			#######
+			if = {
+				limit = { 
+					has_dlc = "Man the Guns"
+				}
+				if = {
+					limit = { 
+						NOT = {
+							has_tech = basic_ship_hull_cruiser
+						}
+					}
+					create_equipment_variant = {
+						name = "Peter Raben Class"				
+						type = ship_hull_cruiser_coastal_defense_ship
+						name_group = DEN_CA_HISTORICAL
+						parent_version = 0
+						modules = {
+							fixed_ship_battery_slot = ship_heavy_battery_1
+							fixed_ship_anti_air_slot = ship_anti_air_1
+							fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+							fixed_ship_radar_slot = empty
+							fixed_ship_engine_slot = cruiser_ship_engine_2
+							fixed_ship_armor_slot = ship_armor_cruiser_2
+							fixed_ship_secondaries_slot = ship_secondaries_1
+							mid_1_custom_slot = ship_secondaries_1
+							mid_2_custom_slot = empty
+							rear_1_custom_slot = ship_medium_battery_1
+						}
+						obsolete = yes
+						design_team = mio:DEN_burmeister_wain_organization
+					}
+					add_equipment_production = {
+						equipment = {
+							type = ship_hull_cruiser_coastal_defense_ship
+							creator = "DEN"
+							version_name = "Peter Raben Class"
+						}
+						name = "Peter Raben"
+						requested_factories = 1
+						progress = 0.25
+						amount = 1
+						industrial_manufacturer = mio:DEN_burmeister_wain_organization
+					}
+				}
+				else = {
+					create_equipment_variant = {
+						name = "Peter Raben Class"				
+						type = ship_hull_cruiser_2
+						name_group = DEN_CL_HISTORICAL
+						parent_version = 0
+						modules = {
+							fixed_ship_battery_slot = ship_light_medium_battery_1
+							fixed_ship_anti_air_slot = ship_anti_air_2
+							fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+							fixed_ship_radar_slot = empty
+							fixed_ship_engine_slot = cruiser_ship_engine_2
+							fixed_ship_armor_slot = ship_armor_cruiser_2
+							fixed_ship_secondaries_slot = dp_ship_secondaries_1
+							mid_1_custom_slot = ship_torpedo_1
+							mid_2_custom_slot = ship_torpedo_1
+							rear_1_custom_slot = ship_light_medium_battery_1
+						}
+						design_team = mio:DEN_orlogsvaerftet_organization
+					}
+					add_equipment_production = {
+						equipment = {
+							type = ship_hull_cruiser_2
+							creator = "DEN"
+							version_name = "Peter Raben Class"
+						}
+						name = "Peter Raben"
+						requested_factories = 1
+						progress = 0.25
+						amount = 1
+						industrial_manufacturer = mio:DEN_orlogsvaerftet_organization
+					}
+				}
+				if = {
+					limit = { 
+						NOT = {
+							has_tech = basic_ship_hull_light
+						}
+					}
+					create_equipment_variant = {
+						name = "Delfinen Class" 
+						type = ship_hull_light_1
+						name_group = DEN_DD_HISTORICAL
+						parent_version = 0
+						modules = {
+							fixed_ship_battery_slot = ship_light_battery_1
+							fixed_ship_anti_air_slot = empty
+							fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+							fixed_ship_radar_slot = empty
+							fixed_ship_engine_slot = light_ship_engine_1
+							fixed_ship_torpedo_slot = ship_torpedo_1
+							mid_1_custom_slot = empty
+							rear_1_custom_slot = empty
+						}
+						obsolete = yes
+						design_team = mio:DEN_orlogsvaerftet_organization
+					}
+					add_equipment_production = {
+						equipment = {
+							type = ship_hull_light_1
+							creator = "DEN"
+							version_name = "Delfinen Class"
+						}
+						name = "Delfinen"
+						requested_factories = 1
+						progress = 0.25
+						amount = 1
+						industrial_manufacturer = mio:DEN_orlogsvaerftet_organization
+					}
+				}
+				else = {
+					create_equipment_variant = {
+						name = "Delfinen Class" 
+						type = ship_hull_light_2
+						name_group = DEN_DD_HISTORICAL
+						parent_version = 0
+						modules = {
+							fixed_ship_battery_slot = ship_light_battery_1
+							fixed_ship_anti_air_slot = ship_anti_air_1
+							fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+							fixed_ship_radar_slot = empty
+							fixed_ship_engine_slot = light_ship_engine_1
+							fixed_ship_torpedo_slot = ship_torpedo_1
+							mid_1_custom_slot = ship_light_battery_1
+							rear_1_custom_slot = empty
+						}
+						design_team = mio:DEN_orlogsvaerftet_organization
+					}
+					add_equipment_production = {
+						equipment = {
+							type = ship_hull_light_1
+							creator = "DEN"
+							version_name = "Delfinen Class"
+						}
+						name = "Delfinen"
+						requested_factories = 1
+						progress = 0.25
+						amount = 1
+						industrial_manufacturer = mio:DEN_orlogsvaerftet_organization
+					}
+				}
+				add_tech_bonus = {
+					name = DEN_modernize_the_navy
+					bonus = 0.5
+					uses = 2
+					category = cl_tech
+					category = dd_tech
+				}
+			}
+			##########
+			# NO MTG #
+			##########
+			else = {
+				add_tech_bonus = {
+					name = DEN_modernize_the_navy
+					bonus = 0.75
+					uses = 2
+					category = cl_tech
+					category = dd_tech
+				}
+			}
+			
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				prioritize = { 911 99 37 912 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				prioritize = { 99 911 37 912 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_sovaernets_operative_kommando
+		icon = GFX_focus_DEN_sovaernets_operative_kommando
+		prerequisite = { focus = DEN_refit_civilian_ships focus = DEN_modernize_the_navy }
+
+		relative_position_id = DEN_expand_ubadsvabnet
+		x = -2
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_NAVY_XP FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+
+			add_command_power = 15
+			navy_experience = 15
+
+			DEN_improve_sovaernet_NS = yes
+			add_to_variable = {
+				DEN_sovaernet_naval_coordination = 0.05
+				tooltip = naval_coordination_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_navy_org = 0.05
+				tooltip = navy_org_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_naval_morale = 0.05
+				tooltip = naval_morale_factor_tt
+			}
+			add_to_variable = { 
+				DEN_sovaernet_naval_critical_score_chance = 0.05
+				tooltip = naval_critical_score_chance_factor_tt
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_sovaernets_operative_kommando
+				cost_reduction = 0.25
+				uses = 2
+				category = naval_doctrine
+			}
+
+			every_unit_leader = {
+				limit = {
+					is_navy_leader = yes
+				}
+				random_select_amount = 3
+				add_skill_level = 1
+				add_attack = 1
+				add_defense = 1
+				add_maneuver = 1
+				add_coordination = 1
+			}
+			
+		}
+	}
+
+	focus = {
+		id = DEN_restructuring_sovaernet 
+		icon = GFX_focus_DEN_reorganize_sovaernet
+		prerequisite = { focus = DEN_refit_civilian_ships focus = DEN_modernize_the_navy }
+
+		relative_position_id = DEN_expand_ubadsvabnet
+		x = 2
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_NAVY_XP FOCUS_FILTER_RESEARCH FOCUS_FILTER_MILITARY_CHARACTER }
+
+		completion_reward = {
+
+			add_command_power = 15
+			navy_experience = 15
+
+			DEN_improve_sovaernet_NS = yes
+			add_to_variable = {
+				DEN_sovaernet_naval_coordination = 0.05
+				tooltip = naval_coordination_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_navy_org = 0.05
+				tooltip = navy_org_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_naval_morale = 0.05
+				tooltip = naval_morale_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_naval_critical_score_chance = 0.05
+				tooltip = naval_critical_score_chance_factor_tt
+			}
+			
+			add_doctrine_cost_reduction = {
+				name = DEN_restructuring_sovaernet
 				cost_reduction = 0.5
 				uses = 1
 				category = naval_doctrine
 			}
-		}
-	}
-	
-	focus = {
-		id = DEN_submarines
-		icon = GFX_goal_generic_navy_anti_submarine
-		x = 1
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_small_fleet_1
-		}
-		prerequisite = {
-			focus = DEN_expirience_of_the_great_war
-		}
-		relative_position_id = DEN_baltic_war
-		cost = 5
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_submarines"
-			add_tech_bonus = {
-				name = ss_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 1
-				category = ss_tech
-			}
-		}
-	}
-	
-	
-	### AIR BRANCH
-	
-	focus = {
-		id = DEN_airbase_of_kobenhavn
-		icon = GFX_goal_generic_air_production
-		x = 5
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_reform_royal_army
-		}
-		relative_position_id = DEN_reform_royal_army
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_airbase_of_kobenhavn"
-			air_experience = 25
-			if = {
+			every_unit_leader = {
 				limit = {
-					capital_scope = {
-						NOT = {
-							free_building_slots = {
-								building = air_base
-								size > 1
-							}
-						}
-					}
+					is_navy_leader = yes
 				}
-				random_owned_controlled_state = {
-					limit = {
-						free_building_slots = {
-							building = air_base
-							size > 1
-						}
-					}
-					add_building_construction = {
-						type = air_base
-						level = 2
-						instant_build = yes
-					}
-					ROOT = { set_country_flag = aviation_effort_AB }
-				}
-			}
-			if = {
-				limit = {
-					capital_scope = {
-						free_building_slots = {
-							building = air_base
-							size > 1
-						}
-					}
-				}
-				capital_scope = {
-					add_building_construction = {
-						type = air_base
-						level = 2
-						instant_build = yes
-					}
-					ROOT = { set_country_flag = aviation_effort_AB }
-				}
-			}
-			add_doctrine_cost_reduction = {
-				name = air_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = air_doctrine
+				gain_xp = 100
+				#add_random_trait = { old_guard brilliant_strategist inflexible_strategist }
 			}
 		}
 	}
-	
+
 	focus = {
-		id = DEN_air_doctrine_1
-		icon = GFX_goal_generic_air_doctrine
+		id = DEN_appropriate_odense_staalskibsvaerft
+		icon = GFX_focus_POL_develop_polish_shipbuilding
+		prerequisite = { focus = DEN_refit_civilian_ships focus = DEN_modernize_the_navy }
+
+		relative_position_id = DEN_expand_ubadsvabnet
 		x = 0
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_airbase_of_kobenhavn
-		}
-		relative_position_id = DEN_airbase_of_kobenhavn
-		cost = 10
+		y = 2
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_air_doctrine_1"
-			add_doctrine_cost_reduction = {
-				name = air_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = air_doctrine
-			}
-		}
-	}
-	
-	focus = {
-		id = DEN_naval_aviation_1
-		icon = GFX_goal_generic_air_naval_bomber
-		x = 2
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_airbase_of_kobenhavn
-		}
-		relative_position_id = DEN_airbase_of_kobenhavn
 		cost = 5
 
-		available_if_capitulated = yes
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_naval_aviation_1"
-			add_tech_bonus = {
-				name = nav_bomber_bonus
-				bonus = 1.0
-				uses = 1
-				category = naval_bomber
+			mio:DEN_burmeister_wain_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.2
+				add_mio_research_bonus = 0.05
+			}
+
+			mio:DEN_orlogsvaerftet_organization = {
+				unlock_mio_trait_tooltip = DEN_mio_trait_ship_production
+			}
+
+			custom_effect_tooltip = DEN_appropriate_odense_staalskibsvaerft_modifier_tt
+
+			#######
+			# MTG #
+			#######
+			if = {
+				limit = { 
+					has_dlc = "Man the Guns"
+				}
+				add_tech_bonus = {
+					name = DEN_appropriate_odense_staalskibsvaerft
+					bonus = 0.25
+					uses = 2
+					category = ship_modules_tech
+				}
+			}
+			##########
+			# NO MTG #
+			##########
+			else = {
+				add_tech_bonus = {
+					name = DEN_appropriate_odense_staalskibsvaerft
+					bonus = 0.25
+					uses = 2
+					category = naval_equipment
+				}
+			}
+			
+			add_equipment_to_stockpile = { 
+				type = convoy_1
+				amount = 20 
+				producer = DEN
+			}
+
+			if = {
+				limit = {
+					911 = { #Fyn
+						is_fully_controlled_by = ROOT
+					}
+				}
+				911 = { 
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else = {
+				random_controlled_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						is_coastal = yes
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+					}
+					prioritize = { 99 37 912 } 
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
 			}
 		}
 	}
-	
-	focus = {
-		id = DEN_fighter
-		icon = GFX_goal_generic_air_fighter
-		x = -1
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_air_doctrine_1
-		}
-		mutually_exclusive = { focus = DEN_bomber }
-		relative_position_id = DEN_airbase_of_kobenhavn
-		cost = 10
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_fighter"
-			add_tech_bonus = {
-				name = fighter_bonus
-				bonus = 1.0
-				uses = 2
-				technology = early_fighter
-				technology = fighter1
-				technology = fighter2
-				technology = fighter3
-				technology = heavy_fighter1
-				technology = heavy_fighter2
-				technology = heavy_fighter3
-			}
-		}
-	}
-	
 	focus = {
-		id = DEN_CAS
-		icon = GFX_goal_generic_CAS
+		id = DEN_baltic_sea_domination
+		icon = GFX_focus_generic_baltic_sea_fleet
+
+		prerequisite = { focus = DEN_sovaernets_operative_kommando focus = DEN_restructuring_sovaernet focus = DEN_appropriate_odense_staalskibsvaerft }
+
+		mutually_exclusive = { focus = DEN_north_sea_ambitions }
+
+		relative_position_id = DEN_expand_ubadsvabnet
 		x = -1
 		y = 3
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_fighter
-		}
-		relative_position_id = DEN_airbase_of_kobenhavn
+
 		cost = 10
 
-		available_if_capitulated = yes
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_CAS"
+			DEN_improve_sovaernet_NS = yes
+			add_to_variable = {
+				DEN_sovaernet_navy_org = 0.05
+				tooltip = navy_org_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_naval_morale = 0.05
+				tooltip = naval_morale_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_navy_screen_attack = 0.05
+				tooltip = navy_screen_attack_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_navy_screen_defence = 0.05
+				tooltip = navy_screen_defence_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_screening_efficiency = 0.1
+				tooltip = screening_efficiency_tt
+			}
+			
 			add_tech_bonus = {
-				name = CAS_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 1
-				category = cas_bomber
+				name = DEN_baltic_sea_domination
+				bonus = 0.75
+				uses = 3
+				category = dd_tech
+				category = cl_tech
+				category = ca_tech
+			}
+
+			if = { 	#Gotland
+				limit = { 124 = { is_fully_controlled_by = ROOT } }
+				124 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 408
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#BORNHOLM
+				limit = { 910 = { is_fully_controlled_by = ROOT } }
+				910 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 6361
+						instant_build = yes
+					}
+				}
 			}
 		}
 	}
-	
+
 	focus = {
-		id = DEN_bomber
-		icon = GFX_goal_generic_air_bomber
+		id = DEN_north_sea_ambitions
+		icon = GFX_focus_generic_north_atlantic_fleet
+
+		prerequisite = { focus = DEN_sovaernets_operative_kommando focus = DEN_restructuring_sovaernet focus = DEN_appropriate_odense_staalskibsvaerft }
+
+		mutually_exclusive = { focus = DEN_baltic_sea_domination }
+
+		relative_position_id = DEN_expand_ubadsvabnet
 		x = 1
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		mutually_exclusive = { focus = DEN_fighter }
-		prerequisite = {
-			focus = DEN_air_doctrine_1
-		}
-		relative_position_id = DEN_airbase_of_kobenhavn
+		y = 3
+
 		cost = 10
 
-		available_if_capitulated = yes
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_bomber"
+
+			DEN_improve_sovaernet_NS = yes
+			add_to_variable = { 
+				DEN_sovaernet_navy_org = 0.05
+				tooltip = navy_org_factor_tt
+			}
+			add_to_variable = { 
+				DEN_sovaernet_naval_morale = 0.05
+				tooltip = naval_morale_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_navy_anti_air = 0.05
+				tooltip = navy_anti_air_attack_factor_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_capital_ship_defence = 0.05
+				tooltip = navy_capital_ship_defence_tt
+			}
+			add_to_variable = {
+				DEN_sovaernet_positioning = 0.05
+				tooltip = positioning_tt
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = DEN_modernize_the_navy
+						has_completed_focus = DEN_refit_civilian_ships
+					}
+				}
+				custom_effect_tooltip = DEN_with_refit_old_ships_completed_tt
+				effect_tooltip = { 
+					DEN_get_converted_air_carriers = yes 
+				}
+
+				custom_effect_tooltip = DEN_with_modernize_the_navy_completed_tt
+				effect_tooltip = { 
+					DEN_get_proper_air_carriers = yes 
+				}
+
+			}
+			else_if = {
+				limit = {
+					has_completed_focus = DEN_refit_civilian_ships
+				}
+				###########
+				### MTG ###
+				###########
+				DEN_get_converted_air_carriers = yes
+			}
+			else_if = {
+				limit = {
+					has_completed_focus = DEN_modernize_the_navy
+				}
+				DEN_get_proper_air_carriers = yes
+			}
+
+
+
+			if = { 	#FAROE ISLANDS
+				limit = { 337 = { is_fully_controlled_by = ROOT } }
+				337 = {
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 13003
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#ICELAND
+				limit = { 100 = { is_fully_controlled_by = ROOT } }
+				100 = {
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 12674
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#GREENLAND
+				limit = { 101 = { is_fully_controlled_by = ROOT } }
+				101 = {
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 12512
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_naval_power_projection
+		icon = GFX_focus_DEN_naval_power_projection
+		prerequisite = { focus = DEN_baltic_sea_domination focus = DEN_north_sea_ambitions }
+
+		relative_position_id = DEN_expand_ubadsvabnet
+		x = 0
+		y = 4
+
+		cost = 10
+
+		available = {
+			any_core_state = { 
+				is_owned_and_controlled_by = ROOT
+				is_coastal = yes
+			}
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+
+			mio:DEN_orlogsvaerftet_organization = {
+				add_mio_size = 1
+			}
+
+			mio:DEN_burmeister_wain_organization = {
+				add_mio_size = 1
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_naval_power_projection
+				cost_reduction = 0.5
+				uses = 2
+				category = naval_doctrine
+			}
+
+			if = { #Bornholm
+				limit = {
+					910 = { is_fully_controlled_by = ROOT }
+					has_completed_focus = DEN_baltic_sea_domination
+				}
+				910 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = naval_base
+						level = 2
+						province = 6361
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else_if = { 	
+				limit = { 
+					OR = {
+						NOT = { 
+							910 = { is_fully_controlled_by = ROOT }
+							has_completed_focus = DEN_north_sea_ambitions
+						}
+						AND = {
+							910 = { is_fully_controlled_by = ROOT }
+							NOT = { has_completed_focus = DEN_north_sea_ambitions }
+						}
+						AND = {
+							NOT = { 910 = { is_fully_controlled_by = ROOT }}
+							has_completed_focus = DEN_baltic_sea_domination
+						}
+					}
+				}
+				custom_effect_tooltip = DEN_baltic_sea_domination_completed_tt
+				effect_tooltip = {
+					910 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = dockyard
+							level = 1
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = naval_base
+							level = 2
+							province = 6361
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = air_base
+							level = 2
+							instant_build = yes
+						}
+					}
+				}
+			}
+
+			if = {  #Gotland
+				limit = {
+					124 = { is_fully_controlled_by = ROOT }
+					has_completed_focus = DEN_baltic_sea_domination
+				}
+				124 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = naval_base
+						level = 2
+						province = 408
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						NOT = { 
+							124 = { is_fully_controlled_by = ROOT }
+							has_completed_focus = DEN_north_sea_ambitions
+						}
+						AND = {
+							124 = { is_fully_controlled_by = ROOT }
+							NOT = { has_completed_focus = DEN_north_sea_ambitions }
+						}
+						AND = {
+							NOT = { 124 = { is_fully_controlled_by = ROOT }}
+							has_completed_focus = DEN_baltic_sea_domination
+						}
+					}
+				}
+				custom_effect_tooltip = DEN_baltic_sea_domination_completed_tt
+				effect_tooltip = {
+					124 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = dockyard
+							level = 1
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = naval_base
+							level = 2
+							province = 408
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = air_base
+							level = 2
+							instant_build = yes
+						}
+					}
+				}
+			}
+
+			if = { #Faroes
+				limit = {
+					337 = { is_fully_controlled_by = ROOT }
+					has_completed_focus = DEN_north_sea_ambitions
+				}
+				337 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = naval_base
+						level = 2
+						province = 13003
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else_if = { 
+				limit = { 
+					OR = {
+						NOT = { 
+							337 = { is_fully_controlled_by = ROOT }
+							has_completed_focus = DEN_baltic_sea_domination
+						}
+						AND = {
+							337 = { is_fully_controlled_by = ROOT }
+							NOT = { has_completed_focus = DEN_baltic_sea_domination }
+						}
+						AND = {
+							NOT = { 337 = { is_fully_controlled_by = ROOT }}
+							has_completed_focus = DEN_north_sea_ambitions
+						}
+					}
+				}
+				custom_effect_tooltip = DEN_north_sea_ambitions_completed_tt
+				effect_tooltip = {
+					337 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = dockyard
+							level = 1
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = naval_base
+							level = 2
+							province = 13003
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = air_base
+							level = 2
+							instant_build = yes
+						}
+					}
+				}
+			}
+			
+			if = { #Iceland
+				limit = {
+					100 = { is_fully_controlled_by = ROOT }
+					has_completed_focus = DEN_north_sea_ambitions
+				}
+				100 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = naval_base
+						level = 2
+						province = 12674
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else_if = { 
+				limit = { 
+					OR = {
+						NOT = { 
+							100 = { is_fully_controlled_by = ROOT }
+							has_completed_focus = DEN_baltic_sea_domination
+						}
+						AND = {
+							100 = { is_fully_controlled_by = ROOT }
+							NOT = { has_completed_focus = DEN_baltic_sea_domination }
+						}
+						AND = {
+							NOT = { 100 = { is_fully_controlled_by = ROOT }}
+							has_completed_focus = DEN_north_sea_ambitions
+						}
+					}
+				}
+				custom_effect_tooltip = DEN_north_sea_ambitions_completed_tt
+				effect_tooltip = {
+					100 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = dockyard
+							level = 1
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = naval_base
+							level = 2
+							province = 12674
+							instant_build = yes
+						}
+						add_building_construction = {
+							type = air_base
+							level = 2
+							instant_build = yes
+						}
+					}
+				}
+			}
+			if = { 	#SJAELLAND
+				limit = { 37 = { is_fully_controlled_by = ROOT } }
+				37 = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 6287
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#FYN
+				limit = { 911 = { is_fully_controlled_by = ROOT } }
+				911 = {
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 3325
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#NORREJYLLAND
+				limit = { 99 = { is_fully_controlled_by = ROOT } }
+				99 = {
+					add_building_construction = {
+						type = naval_base
+						level = 1
+						province = 394
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_fromandskorpset
+		icon = GFX_focus_DEN_fromandskorpset
+		prerequisite = { focus = DEN_baltic_sea_domination }
+		prerequisite = { focus = DEN_generalkommandoen }
+
+		relative_position_id = DEN_sovaernets_operative_kommando
+		x = -1
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+
+			add_ideas = DEN_fromandskorpset_ns
+
 			add_tech_bonus = {
-				name = bomber_bonus
+				name = DEN_fromandskorpset
 				bonus = 1.0
 				uses = 2
-				technology = strategic_bomber1
-				technology = strategic_bomber2
-				technology = strategic_bomber3
+				category = marine_tech
+				category = tp_tech
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_fromandskorpset
+				cost_reduction = 0.5
+				uses = 2
+				category = cat_marines_doctrine
+			}
+		}
+	}
+
+#### AIR FORCE ####
+
+	focus = {
+		id = DEN_domestic_designs
+		icon = GFX_focus_DEN_domestic_designs
+		prerequisite = { focus = DEN_expand_vaernepligten }
+		mutually_exclusive = { focus = DEN_foreign_designs }
+
+		relative_position_id = DEN_expand_vaernepligten
+		x = 5
+		y = 1
+
+		cost = 10
+
+		available = {
+			any_core_state = { is_owned_and_controlled_by = ROOT }
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+
+		completion_reward = {
+			mio:DEN_flyvemaskinevaerksted_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.1
+			}
+
+			if = {
+				limit = {
+					has_dlc = "By Blood Alone"
+				}
+				create_equipment_variant = { 
+					name = "Marinejager" 
+					type = small_plane_airframe_1
+					allow_without_tech = no
+					modules = {
+						fixed_main_weapon_slot = light_mg_4x
+						engine_type_slot = engine_1_1x
+						special_type_slot_1 = empty
+					}
+					icon = "GFX_DEN_basic_small_fighter_2"
+					model = "DEN_light_plane_1_entity"
+				}
+				create_equipment_variant = {
+					name = "Marinebomber"
+					type = small_plane_cas_airframe_1
+					allow_without_tech = no
+					modules = {
+						fixed_main_weapon_slot = bomb_locks
+						fixed_auxiliary_weapon_slot_1 = light_mg_2x
+						engine_type_slot = engine_1_1x
+						special_type_slot_1 = dive_brakes_small
+						special_type_slot_2 = empty 
+					}
+					icon = "GFX_DEN_basic_small_cas_2"
+					model = "DEN_light_plane_1_var_1_entity"
+				}
+			}
+			else = {
+				create_equipment_variant = {
+					name = "Marinejager"
+					type = fighter_equipment_1
+					allow_without_tech = no
+					upgrades = {
+						plane_gun_upgrade = 1
+					}
+				}
+				create_equipment_variant = {
+					name = "Marinebomber"
+					type = cas_equipment_1
+					allow_without_tech = no
+					upgrades = {
+						plane_cas_upgrade = 1
+					}
+				}
+			}
+
+			add_tech_bonus = {
+				name = DEN_domestic_designs
+				bonus = 0.65
+				uses = 2
+				category = air_equipment
+			}	
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_foreign_designs
+		icon = GFX_focus_generic_copy_plane_designs 
+		prerequisite = { focus = DEN_expand_vaernepligten }
+		mutually_exclusive = { focus = DEN_domestic_designs }
+
+		relative_position_id = DEN_domestic_designs
+		x = 2
+		y = 0
+
+		cost = 10
+
+		available = {
+			any_core_state = { is_owned_and_controlled_by = ROOT }
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INTERNATIONAL_TRADE FOCUS_FILTER_INDUSTRY FOCUS_FILTER_HISTORICAL }
+
+		completion_reward = {
+			mio:DEN_flyvertroppernes_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.1
+			}
+
+			add_tech_bonus = {
+				name = DEN_foreign_designs
+				bonus = 1
+				uses = 1
+				category = air_equipment
+			}
+
+			add_equipment_subsidy = {
+				cic = 1000
+				equipment_type = small_plane_cas_airframe
+				seller_tags = { HOL ENG GER SWE } 
+			}
+			add_equipment_subsidy = {
+				cic = 1000
+				equipment_type = small_plane_airframe
+				seller_tags = { HOL ENG GER SWE } 
+			}
+
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				#prioritize = { 99 911 912 37 } 
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_unify_flyvevabnet
+		icon = GFX_focus_DEN_unify_flyvevabnet
+		prerequisite = { focus = DEN_domestic_designs focus = DEN_foreign_designs }
+
+		relative_position_id = DEN_domestic_designs
+		x = 1
+		y = 1
+
+		cost = 5
+
+		available = {
+			any_core_state = { is_owned_and_controlled_by = ROOT }
+		}
+
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_AIR_XP FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			add_manpower = 1500
+			add_command_power = 25
+			air_experience = 25
+
+			mio:DEN_flyvertroppernes_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.2
+				add_mio_research_bonus = 0.05
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_standardized_production_flyvertroppernes
+			}
+			mio:DEN_flyvemaskinevaerksted_organization = {
+				add_mio_size = 1
+				add_mio_funds_gain_factor = 0.2
+				add_mio_research_bonus = 0.05
+
+				unlock_mio_trait_tooltip = DEN_mio_trait_standardized_production_flyvemaskinevaerksted
+			}
+
+			DEN_improve_flyvevabnet_NS = yes
+			
+			add_to_variable = { 
+				DEN_flyvevabnet_ace_generation_chance = 0.05 
+				tooltip = air_ace_generation_chance_factor_tt
+			}
+			add_to_variable = { 
+				DEN_flyvevabnet_air_accidents = -0.05 
+				tooltip = air_accidents_factor_tt
+			}
+			
+			add_doctrine_cost_reduction = {
+				name = DEN_unify_flyvevabnet
+				cost_reduction = 0.5
+				uses = 2
+				category = air_doctrine
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_unify_flyvevabnet
+				cost_reduction = 0.5
+				uses = 2
+				category = cat_paratroopers_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_flyveskolen
+		icon = GFX_focus_DEN_flyveskolen
+		prerequisite = { focus = DEN_unify_flyvevabnet }
+
+		relative_position_id = DEN_domestic_designs
+		x = 1
+		y = 2
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_AIR_XP FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			air_experience = 25
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {DEN_flyvevabnet_ace_generation_chance = 0.05
+				tooltip = air_ace_generation_chance_factor_tt
+			}
+			add_to_variable = {DEN_flyvevabnet_mission_efficiency = 0.05
+				tooltip = air_mission_efficiency_tt
+			}
+			add_to_variable = {DEN_flyvevabnet_air_agility = 0.05
+				tooltip = air_agility_factor_tt
+			}
+
+			mio:DEN_flyvemaskinevaerksted_organization = {
+				unlock_mio_trait_tooltip = DEN_mio_trait_sub_detection
+				unlock_mio_trait_tooltip = DEN_mio_trait_naval_detection
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_flyveskolen
+				cost_reduction = 0.25
+				uses = 2
+				category = air_doctrine
+			}
+
+		}
+	}
+
+	focus = {
+		id = DEN_flyvertaktisk_kommando
+		icon = GFX_focus_DEN_flyvetaktisk_kommando
+		prerequisite = { focus = DEN_flyveskolen }
+
+		relative_position_id = DEN_domestic_designs
+		x = 0
+		y = 3
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			add_command_power = 25
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = { 
+				DEN_flyvevabnet_air_accidents = -0.05
+				tooltip = air_accidents_factor_tt
+			}
+			add_to_variable = { 
+				DEN_flyvevabnet_air_night_penalty = -0.05
+				tooltip = air_night_penalty_tt
+			}
+			add_to_variable = { 
+				DEN_flyvevabnet_air_weather_penalty = -0.05
+				tooltip = air_weather_penalty_tt
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_flyvertaktisk_kommando
+				cost_reduction = 0.25
+				uses = 2
+				category = air_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_air_force_power_projection
+		icon = GFX_focus_generic_air_bases
+		prerequisite = { focus = DEN_flyveskolen }
+
+		relative_position_id = DEN_domestic_designs
+		x = 2
+		y = 3
+
+		cost = 10
+
+		available = {
+			any_core_state = { is_owned_and_controlled_by = ROOT }
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_MANPOWER }
+
+		completion_reward = {
+			add_manpower = 1500
+
+			add_tech_bonus = {
+				name = DEN_air_force_power_projection
+				bonus = 0.5
+				uses = 2
+				category = radar_tech
+			}
+
+			if = { 	#BORNHOLM
+				limit = { 910 = { is_fully_controlled_by = ROOT } }
+				910 = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#SJAELLAND
+				limit = { 37 = { is_fully_controlled_by = ROOT } }
+				37 = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#NORREJYLLAND
+				limit = { 99 = { is_fully_controlled_by = ROOT } }
+				99 = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#FAROE ISLANDS
+				limit = { 337 = { is_fully_controlled_by = ROOT } }
+				337 = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#ICELAND
+				limit = { 100 = { is_fully_controlled_by = ROOT } }
+				100 = {
+					add_building_construction = {
+						type = air_base
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			if = { 	#GREENLAND
+				limit = { 101 = { is_fully_controlled_by = ROOT } }
+				101 = {
+					add_building_construction = {
+						type = air_base
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_torpedofly
+		icon = GFX_goal_generic_air_naval_bomber
+		prerequisite = { focus = DEN_flyvertaktisk_kommando focus = DEN_air_force_power_projection }
+		prerequisite = { focus = DEN_north_sea_ambitions }
+
+		relative_position_id = DEN_domestic_designs
+		x = -2
+		y = 4
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			air_experience = 25
+
+			mio:DEN_flyvemaskinevaerksted_organization = {
+				add_mio_size = 1
+			}
+
+			add_ideas = DEN_rule_the_north_sea
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {
+				DEN_flyvevabnet_naval_strike_targetting = 0.1
+				tooltip = naval_strike_targetting_factor_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_air_agility = 0.05
+				tooltip = air_agility_factor_tt
+			}
+
+			add_tech_bonus = {
+				name = DEN_torpedofly
+				bonus = 1.0
+				uses = 2
+				category = naval_bomber
+				category = cv_tech
+			}
+
+			add_doctrine_cost_reduction = {
+				name = DEN_torpedofly
+				cost_reduction = 0.5
+				uses = 2
+				category = cat_paratroopers_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_jagerfly
+		icon = GFX_goal_generic_air_fighter
+		prerequisite = { focus = DEN_flyvertaktisk_kommando focus = DEN_air_force_power_projection }
+		mutually_exclusive = { focus = DEN_luftstotte focus = DEN_bombefly }
+
+		relative_position_id = DEN_domestic_designs
+		x = 0
+		y = 4
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_AIR_XP }
+
+		completion_reward = {
+			air_experience = 25
+
+			mio:DEN_flyvemaskinevaerksted_organization = {
+				add_mio_size = 1
+			}
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {
+				DEN_flyvevabnet_escort_efficiency = 0.05
+				tooltip = air_escort_efficiency_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_intercept_efficiency = 0.05
+				tooltip = air_intercept_efficiency_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_air_agility = 0.05
+				tooltip = air_agility_factor_tt
+			}
+			
+			add_tech_bonus = {
+				name = DEN_jagerfly
+				bonus = 1.0
+				uses = 2
+				category = light_fighter
+				category = cat_heavy_fighter
+			}
+		}
+	}
+
+	focus = {
+		id = DEN_luftstotte
+		icon =  GFX_focus_generic_cas_aircraft
+		prerequisite = { focus = DEN_flyvertaktisk_kommando focus = DEN_air_force_power_projection }
+		mutually_exclusive = { focus = DEN_jagerfly focus = DEN_bombefly }
+
+		relative_position_id = DEN_domestic_designs
+		x = 2
+		y = 4
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_AIR_XP FOCUS_FILTER_RESEARCH }
+
+		completion_reward = {
+			air_experience = 25
+
+			mio:DEN_flyvertroppernes_organization = {
+				add_mio_size = 1
+			}
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {
+				DEN_flyvevabnet_cas_efficiency = 0.05
+				tooltip = air_cas_efficiency_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_air_agility = 0.05
+				tooltip = air_agility_factor_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_ground_attack = 0.05
+				tooltip = ground_attack_factor_tt
+			}
+
+			add_tech_bonus = {
+				name = DEN_luftstotte
+				bonus = 1.0
+				uses = 2
+				category = cas_bomber
 				category = tactical_bomber
 			}
 		}
 	}
-	
-	focus = {
-		id = DEN_naval_aviation_2
-		icon = GFX_focus_generic_air_defense
-		x = 2
-		y = 3
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_bomber
-		}
-		prerequisite = {
-			focus = DEN_naval_aviation_1
-		}
-		relative_position_id = DEN_airbase_of_kobenhavn
-		cost = 5
 
-		available_if_capitulated = yes
+	focus = {
+		id = DEN_bombefly
+		icon = GFX_focus_generic_long_range_aircraft
+		prerequisite = { focus = DEN_flyvertaktisk_kommando focus = DEN_air_force_power_projection }
+		mutually_exclusive = { focus = DEN_jagerfly focus = DEN_luftstotte }
+
+		relative_position_id = DEN_domestic_designs
+		x = 4
+		y = 4
+
+		cost = 10
+
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_AIR_XP }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_naval_aviation_2"
+			air_experience = 25
+
+			mio:DEN_flyvertroppernes_organization = {
+				add_mio_size = 1
+			}
+
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {
+				DEN_flyvevabnet_air_bombing_targetting = 0.05
+				tooltip = air_bombing_targetting_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_strategic_bomber = 0.05
+				tooltip = air_strategic_bomber_bombing_factor_tt
+			}
+			add_to_variable = {
+				DEN_flyvevabnet_air_agility = 0.05
+				tooltip = air_agility_factor_tt
+			}
+
 			add_tech_bonus = {
-				name = nav_bomber_bonus
-				bonus = 2.0
-				ahead_reduction = 2
-				uses = 1
-				category = naval_bomber
+				name = DEN_bombefly
+				bonus = 1.0
+				uses = 2
+				category = tactical_bomber
+				category = cat_strategic_bomber
 			}
 		}
 	}
-	
-	
-	### BUNKERS BRANCH
-	
-	focus = {
-		id = DEN_bunkers_schlezwig
-		icon = GFX_goal_generic_fortify_city
-		x = -1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_army_for_defence
-		}
-		available = {
-			DEN = { controls_state = 99 }
-		}
-		relative_position_id = DEN_army_for_defence
-		cost = 10
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_bunkers_schlezwig"
-			99 = {
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 11251
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 332
-					instant_build = yes
-				}
-			}
-		}
-	}
-	
 	focus = {
-		id = DEN_bunkers_odense
-		icon = GFX_goal_generic_fortify_city
+		id = DEN_advanced_flight
+		icon = GFX_focus_rocketry
+		prerequisite = { focus = DEN_jagerfly focus = DEN_luftstotte focus = DEN_bombefly }
+
+		relative_position_id = DEN_domestic_designs
 		x = 1
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_army_for_defence
-		}
-		available = {
-			DEN = { controls_state = 37 }
-		}
-		relative_position_id = DEN_army_for_defence
+		y = 5
+
 		cost = 10
 
-		available_if_capitulated = yes
+		available = {
+		}
+
+		search_filters = { FOCUS_FILTER_AIR_XP FOCUS_FILTER_RESEARCH }
 
 		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_bunkers_odense"
-			37 = {
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3325
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3374
-					instant_build = yes
-				}
+			air_experience = 25
+			
+			DEN_improve_flyvevabnet_NS = yes
+			add_to_variable = {
+				DEN_flyvevabnet_mission_efficiency = 0.05
+				tooltip = air_mission_efficiency_tt
 			}
-		}
-	}
-	
-	focus = {
-		id = DEN_naval_bunkers_zealand
-		icon = GFX_focus_generic_coastal_fort
-		x = 3
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_army_for_defence
-		}
-		available = {
-			DEN = { controls_state = 37 }
-		}
-		relative_position_id = DEN_army_for_defence
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_naval_bunkers_zealand"
-			37 = {
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 6287
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 3305
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 3260
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 6393
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 3325
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 2
-					province = 3374
-					instant_build = yes
-				}
+			add_to_variable = {
+				DEN_flyvevabnet_air_night_penalty = -0.05
+				tooltip = air_night_penalty_tt
 			}
-		}
-	}
-	
-	focus = {
-		id = DEN_bunkers_zealand_1
-		icon = GFX_goal_generic_fortify_city
-		x = 5
-		y = 1
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_army_for_defence
-		}
-		available = {
-			DEN = { controls_state = 37 }
-		}
-		relative_position_id = DEN_army_for_defence
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_bunkers_zealand_1"
-			37 = {
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 6287
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 3
-					province = 6287
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3260
-					instant_build = yes
-				}
+			add_to_variable = {
+				DEN_flyvevabnet_air_weather_penalty = -0.05
+				tooltip = air_weather_penalty_tt
 			}
-		}
-	}
-	
-	focus = {
-		id = DEN_bunkers_zealand_2
-		icon = GFX_goal_generic_construct_military
-		x = 3
-		y = 2
-		offset = {
-			x = 0
-			y = 0
-		}
-		prerequisite = {
-			focus = DEN_bunkers_odense
-		}
-		prerequisite = {
-			focus = DEN_bunkers_zealand_1
-		}
-		prerequisite = {
-			focus = DEN_naval_bunkers_zealand
-		}
-		available = {
-			DEN = { controls_state = 37 }
-		}
-		relative_position_id = DEN_army_for_defence
-		cost = 10
 
-		available_if_capitulated = yes
-
-		completion_reward = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus DEN_bunkers_zealand_2"
-			37 = {
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 6287
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3260
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3325
-					instant_build = yes
-				}
-				add_building_construction = {
-					type = bunker
-					level = 3
-					province = 3374
-					instant_build = yes
-				}
+			add_tech_bonus = {
+				name = DEN_advanced_flight
+				bonus = 1
+				uses = 1
+				category = rocketry
+			}
+			add_tech_bonus = {
+				name = DEN_advanced_flight
+				bonus = 1
+				uses = 1
+				category = jet_technology
 			}
 		}
 	}

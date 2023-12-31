@@ -142,19 +142,6 @@ on_actions = {
 				TUR = { country_event = { id = NWturkey.21 days = 1 } }
 			}
 			
-			#Капитуляция Турка2 // Убирание корок
-			if = {
-				limit = { ROOT = { tag = TRK } }
-				every_state = {
-					limit = {
-						OR = {
-							is_core_of = ROOT
-							is_core_of = TUR
-						}
-					}
-					remove_core_of = ROOT
-				}
-			}
 			#Капитуляция Финов от СССР
 			if = {
 				limit = {
@@ -408,6 +395,7 @@ on_actions = {
 		}
 	}
 	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
 	on_state_control_changed = {
 		effect = {
 			#Капитуляция Британии и раздача заморских террок + конференции
@@ -444,6 +432,147 @@ on_actions = {
 #				FROM = { save_event_target_as = jap_civ_loser }
 #				MAN = { country_event = { id = wtt_japan.121 days = 1 } }
 #			}
+		}
+		
+# разгрузка activation миссий FRA/FRF
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_syria_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { OR = { state = 680 state = 677 state = 554 state = 553 } }
+					NOT = {
+						country_exists = SYR
+						country_exists = LEB
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_syria_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_indochina_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 671 state = 1194 state = 286 state = 670
+							state = 1180 state = 1181 state = 741 state = 1179
+						}
+					}
+					NOT = {
+						country_exists = CAM
+						country_exists = LAO
+						country_exists = VIN
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_indochina_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_madagascar_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { state = 543 }
+					NOT = {
+						country_exists = MAD
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_madagascar_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_north_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 461 state = 462 state = 459 state = 513
+							state = 460 state = 458 state = 665 state = 1067
+						}
+					}
+					NOT = {
+						country_exists = MOR
+						country_exists = ALG
+						country_exists = TUN
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_north_africa_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_west_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 557 state = 272 state = 556 state = 1008
+							state = 1011 state = 1012 state = 1013 state = 1068
+						}
+					}
+					NOT = {
+						country_exists = NGR
+						country_exists = DAH
+						country_exists = TOG
+						country_exists = VOL
+						country_exists = IVO
+						country_exists = MLI
+						country_exists = GNA
+						country_exists = SEN
+						country_exists = MRT
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_west_africa_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_central_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { OR = { state = 660 state = 1005 state = 1006 state = 1019 state = 539 } }
+					NOT = {
+						country_exists = RCG
+						country_exists = GAB
+						country_exists = CAR
+						country_exists = CMR
+						country_exists = CHA
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_central_africa_mission }
+			}
+		}
+### Сауд		
+		effect = {
+			if = {
+				limit = {
+					ROOT = { original_tag = SAU has_variable = concession_owner }
+					FROM.FROM = { state = 1115 }
+				}
+				if = {
+					limit = {
+						FROM.FROM = { NOT = { has_state_flag = nejd_oil_developed } }
+					}
+					if = {
+						limit = { ROOT = { check_variable = { USA = var:concession_owner } } }
+						ROOT = { activate_mission = SAU_Development_of_Al_hasa_deposits_USA }
+					}
+					else = {
+						ROOT = { activate_mission = SAU_Development_of_Al_hasa_deposits1 }
+					}
+				}
+				else_if = {
+					limit = {
+						FROM.FROM = { has_state_flag = { flag = nejd_oil_developed value = 1 } }
+					}
+					ROOT = { activate_mission = SAU_Development_of_Al_hasa_deposits2 }
+				}
+			}
 		}
 	}
 	

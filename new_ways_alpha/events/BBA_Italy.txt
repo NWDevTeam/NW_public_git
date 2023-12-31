@@ -120,6 +120,9 @@ unit_leader_event = {
 	option = {
 		name = BBA_italy_missiolinis.11.a
 		activate_mission = ITA_missiolini_conquer_ethiopia
+		hidden_effect = {
+			ETH = { activate_mission = ETH_hold_addis_ababa_mission }
+		}
 	}
 }
 
@@ -1935,15 +1938,21 @@ country_event = {
 			}
 			modifier = {
 				factor = 0.8
-				any_other_country = {
-					OR = {
-						is_major = yes
-						tag = YUG
+				OR = {
+					YUG = {
+						NOT = { tag = FROM }
+						OR = {
+							has_guaranteed = ROOT
+							is_in_faction_with = ROOT
+						}
 					}
-					NOT = { tag = FROM }
-					OR = {
-						has_guaranteed = ROOT
-						is_in_faction_with = ROOT
+					any_of_scopes = {
+						array = global.majors
+						NOT = { tag = FROM }
+						OR = {
+							has_guaranteed = ROOT
+							is_in_faction_with = ROOT
+						}
 					}
 				}
 			}
@@ -2150,14 +2159,11 @@ country_event = {
 	option = { 
 		name = BBA_italy_interaction_events.41.a 
 
-		ai_chance = { 
+		ai_chance = {
 			base = 70
 			modifier = {
 				factor = 0
-				OR = {
-					has_government = communism
-					tag = SPC
-				}
+				is_left_ideology = yes
 			}
 		}
 
@@ -2198,8 +2204,16 @@ country_event = {
 	option = { 
 		name = BBA_italy_interaction_events.41.b
 
-		ai_chance = { 
+		ai_chance = {
 			base = 30
+			modifier = {
+				factor = 20
+				has_war = yes
+			}
+			modifier = {
+				factor = 0.01
+				has_capitulated = yes
+			}
 		}
 
 		FROM = {
@@ -2224,9 +2238,12 @@ country_event = {
 
 	# Niceu
 	option = { 
-		name = BBA_italy_interaction_events.42.a 
-
-		puppet = FROM
+		name = BBA_italy_interaction_events.42.a
+		puppet = {
+			target = FROM
+			end_wars = no
+			end_civil_wars = no
+		}
 	}
 }
 
@@ -3580,87 +3597,6 @@ unit_leader_event = {
 			base = 0
 		}
 
-		if = {
-			limit = {
-				271 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			ORO = {
-				transfer_state = 271 #SHEWA
-			}
-		}
-		if = {
-			limit = {
-				1084 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			ORO = {
-				transfer_state = 1084 #SIDAMO
-			}
-		}
-		puppet = ORO
-		if = {
-			limit = {
-				country_exists = ETH
-			}
-			ETH = {
-				ETH_haile_selassie_gugsa = {
-					if = {
-						limit = {
-							is_advisor = yes
-						}
-						remove_any_country_role_from_character = yes
-					}
-					add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-						country_leader = {
-							ideology = despotism 
-							expire = "1965.1.1.1"
-							traits = { crowned_adder }
-							id = -1
-						}
-					}
-					set_nationality = ORO
-				}
-			}
-		}
-		else = {
-			for_each_scope_loop = {
-				array = global.countries
-
-				if = {
-					limit = {
-						original_tag = ETH
-						has_character = ETH_haile_selassie_gugsa
-					}
-					ETH_haile_selassie_gugsa = {
-						if = {
-							limit = {
-								is_advisor = yes
-							}
-							remove_any_country_role_from_character = yes
-						}
-						add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-							country_leader = {
-								ideology = despotism 
-								expire = "1965.1.1.1"
-								traits = { crowned_adder }
-								id = -1
-							}
-						}
-						set_nationality = ORO
-					}
-				}
-			}
-			ORO = {
-				promote_character = { character = ETH_haile_selassie_gugsa ideology = despotism }
-				promote_character = { character = ETH_haile_selassie_gugsa ideology = fascism_ideology }
-			}
-		}
-
 		#Send next event
 		hidden_effect = {
 			if = {
@@ -3945,105 +3881,6 @@ unit_leader_event = {
 			base = 0
 		}
 
-		if = {
-			limit = {
-				1138 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			GBA = {
-				transfer_state = 1138 #ILLUBABOR-KAFFA
-			}
-		}
-		if = {
-			limit = {
-				1083 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			GBA = {
-				transfer_state = 1083 #WELEGA
-			}
-			1083 = { add_core_of = GBA }
-		}
-		puppet = GBA
-		GBA = { set_cosmetic_tag = jimma }
-		if = {
-			limit = {
-				country_exists = ETH
-			}
-			ETH = {
-				ETH_abba_jofir = {
-					add_country_leader_role = {
-						country_leader = {
-							ideology = fascism_ideology 
-							expire = "1965.1.1.1"
-							traits = { inexperienced_sultan }
-							id = -1
-						}
-					}
-					add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-						country_leader = {
-							ideology = despotism 
-							expire = "1965.1.1.1"
-							traits = { inexperienced_sultan }
-							id = -1
-						}
-					}
-					if = {
-						limit = {
-							is_advisor = yes
-						}
-						remove_any_country_role_from_character = yes
-					}
-					set_nationality = GBA
-				}
-			}
-		}
-		else = {
-			for_each_scope_loop = {
-				array = global.countries
-
-				if = {
-					limit = {
-						original_tag = ETH
-						has_character = ETH_abba_jofir
-					}
-					ETH_abba_jofir = {
-						add_country_leader_role = {
-							country_leader = {
-								ideology = fascism_ideology 
-								expire = "1965.1.1.1"
-								traits = { inexperienced_sultan }
-								id = -1
-							}
-						}
-						add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-							country_leader = {
-								ideology = despotism 
-								expire = "1965.1.1.1"
-								traits = { inexperienced_sultan }
-								id = -1
-							}
-						}
-						if = {
-							limit = {
-								is_advisor = yes
-							}
-							remove_any_country_role_from_character = yes
-						}
-						set_nationality = GBA
-					}
-				}
-			}
-			GBA = {
-				promote_character = { character = ETH_abba_jofir ideology = despotism }
-				promote_character = { character = ETH_abba_jofir ideology = fascism_ideology }
-			}
-		}
-
 		#Send next event
 		hidden_effect = {
 			if = {
@@ -4288,105 +4125,6 @@ unit_leader_event = {
 		name = BBA_italy_local_rulers.3.b
 		ai_chance = {
 			base = 0
-		}
-
-		if = {
-			limit = {
-				840 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			BEG = {
-				transfer_state = 840 #GOJJAM
-			}
-		}
-		if = {
-			limit = {
-				841 = {
-					is_fully_controlled_by = ITA
-					has_resistance = yes
-				}
-			}
-			BEG = {
-				transfer_state = 841 #BEGEMDER
-			}
-			841 = {add_core_of = BEG}
-		}
-		puppet = BEG
-		BEG = { set_cosmetic_tag = gojjam }
-		if = {
-			limit = {
-				country_exists = ETH
-			}
-			ETH = {
-				ETH_hailu_tekle_haymanot = {
-					add_country_leader_role = {
-						country_leader = {
-							ideology = fascism_ideology 
-							expire = "1965.1.1.1"
-							traits = { tainted_ras }
-							id = -1
-						}
-					}
-					add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-						country_leader = {
-							ideology = despotism 
-							expire = "1965.1.1.1"
-							traits = { tainted_ras }
-							id = -1
-						}
-					}
-					if = {
-						limit = {
-							is_advisor = yes
-						}
-						remove_any_country_role_from_character = yes
-					}
-					set_nationality = BEG
-				}
-			}
-		}
-		else = {
-			for_each_scope_loop = {
-				array = global.countries
-
-				if = {
-					limit = {
-						original_tag = ETH
-						has_character = ETH_hailu_tekle_haymanot
-					}
-					ETH_hailu_tekle_haymanot = {
-						add_country_leader_role = {
-							country_leader = {
-								ideology = fascism_ideology 
-								expire = "1965.1.1.1"
-								traits = { tainted_ras }
-								id = -1
-							}
-						}
-						add_country_leader_role = { #Add non-aligned role in case Italy changes to monarchy
-							country_leader = {
-								ideology = despotism 
-								expire = "1965.1.1.1"
-								traits = { tainted_ras }
-								id = -1
-							}
-						}
-						if = {
-							limit = {
-								is_advisor = yes
-							}
-							remove_any_country_role_from_character = yes
-						}
-						set_nationality = BEG
-					}
-				}
-			}
-			BEG = {
-				promote_character = { character = ETH_hailu_tekle_haymanot ideology = despotism }
-				promote_character = { character = ETH_hailu_tekle_haymanot ideology = fascism_ideology }
-			}
 		}
 
 		#Send next event

@@ -8,7 +8,7 @@ focus_tree = {
 		
 		modifier = {
 			add = 10
-			tag = DOM
+			original_tag = DOM 
 		}
 	}
 	
@@ -22,10 +22,11 @@ focus_tree = {
 		icon = GFX_z_goal_cult_truhilio 
 		mutually_exclusive = { focus = DOM_death_Truhilio }
 		available = {
-		DOM = {
-			has_government = fascism
-			owns_state = 319
+			DOM = {
+				has_government = fascism
+				owns_state = 319
 			}
+			has_global_flag = parsley_massacre_happened
 		}
 		x = 9
 		y = 0
@@ -101,7 +102,7 @@ focus_tree = {
 		icon = GFX_goal_support_fascism 
 		prerequisite = { focus = DOM_statue_truhilio }
 		prerequisite = { focus = DOM_truhilio_god }
-		x = 7
+		x = 6
 		y = 3
 		cost = 10
 		completion_reward = {
@@ -115,7 +116,7 @@ focus_tree = {
 		id = DOM_general_truhilio
 		icon = GFX_goal_generic_army_doctrines 
 		prerequisite = { focus = DOM_era_truhilio }
-		x = 7
+		x = 6
 		y = 4
 		cost = 10
 		completion_reward = {
@@ -132,39 +133,10 @@ focus_tree = {
 	}
 	
 	focus = {
-		id = DOM_claim_haiti
-		icon = GFX_goal_generic_political_pressure 
-		prerequisite = { focus = DOM_cult_Truhilio }
-		x = 10
-		y = 1
-		cost = 10
-		completion_reward = {
-			add_war_support = 0.05
-			318 = {
-				add_claim_by = DOM
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_petrushka_rezna
-		icon = GFX_goal_generic_forceful_treaty 
-		prerequisite = { focus = DOM_claim_haiti }
-		x = 10
-		y = 2
-		cost = 10
-		completion_reward = {
-			country_event = {
-				id = dominican.1
-			}
-		}
-	}
-	
-	focus = {
 		id = DOM_anti_haiti
 		icon = GFX_goal_generic_propaganda 
-		prerequisite = { focus = DOM_claim_haiti }
-		x = 12
+		prerequisite = { focus = DOM_cult_Truhilio }
+		x = 13
 		y = 2
 		cost = 10
 		completion_reward = {
@@ -185,7 +157,7 @@ focus_tree = {
 		ai_will_do = {
 			factor = 40
 			modifier = {
-				factor = 0
+				factor = -40
 				is_historical_focus_on = yes
 			}
 		}
@@ -200,8 +172,14 @@ focus_tree = {
 		icon = GFX_goal_generic_improve_relations 
 		prerequisite = { focus = DOM_anti_haiti focus = DOM_investition }
 		mutually_exclusive = { focus = DOM_agressive_politic} 
-		mutually_exclusive = { focus = DOM_alliance_democratic}
-		x = 13
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 20
+				is_historical_focus_on = yes
+			}
+		}
+		x = 15
 		y = 3
 		cost = 10
 		ai_will_do = {
@@ -216,7 +194,6 @@ focus_tree = {
 		id = DOM_unite_island
 		icon = GFX_goal_dom_Haiti 
 		prerequisite = { focus = DOM_agressive_politic }
-		prerequisite = { focus = DOM_petrushka_rezna }
 		available = {
 			AND = {
 				country_exists = HAI
@@ -241,6 +218,91 @@ focus_tree = {
 		}
 	}
 	
+	focus = { 
+		id = DOM_friend_germans
+		icon = {
+			trigger = {
+				country_exists = GFA
+			}
+			value = GFX_z_goal_nazi_germany
+		}
+		icon = {
+			trigger = {
+				NOT = { country_exists = GFA }
+			}
+			value = GFX_z_goal_germany
+		}
+		dynamic = yes
+		prerequisite = { focus = DOM_agressive_politic }
+		available = {
+			country_exists = GER
+			NOT = { has_war_with = GER }
+			GER = { has_government = fascism }
+		}
+		x = 8
+		y = 4
+		cost = 5
+		completion_reward = {
+			GER = { add_opinion_modifier = { target = ROOT modifier = USA_special_relationship } }
+			 add_opinion_modifier = { target = GER modifier = USA_special_relationship }
+		}
+	}
+	
+	focus = { 
+		id = DOM_ally_germans
+		icon = GFX_z_goal_clearing_with_germany
+		prerequisite = { focus = DOM_friend_germans }
+		mutually_exclusive = { focus = DOM_locked_by_enemies }
+		available = {
+			country_exists = GER
+			NOT = { has_war_with = GER }
+			GER = { has_government = fascism }
+		}
+		x = 8
+		y = 5
+		cost = 10
+		completion_reward = { 
+			GER = { country_event = { id = generic.2 days = 3 } }
+		}
+	}
+	
+	focus = { 
+		id = DOM_locked_by_enemies
+		icon = GFX_z_goal_generic_military_lobby
+		prerequisite = { focus = DOM_friend_germans }
+		mutually_exclusive = { focus = DOM_ally_germans }
+		available = {
+		}
+		x = 6
+		y = 5
+		cost = 10
+		completion_reward = {
+			add_ideas = primacy_of_nation
+		}
+	}
+	
+	focus = { 
+		id = DOM_defend_capital
+		icon = GFX_z_goal_irragitional_building
+		prerequisite = { focus = DOM_locked_by_enemies focus = DOM_ally_germans }
+		available = {
+			319 = { is_fully_controlled_by = DOM }
+		}
+		x = 7
+		y = 6
+		cost = 10
+		completion_reward = {
+			319 = {
+				add_building_construction = {
+					type = coastal_bunker
+					level = 3
+					instant_build = yes
+					province = 7660
+				}
+			}
+		}
+	}
+	
 	focus = {
 		id = DOM_american_support
 		icon = GFX_focus_chi_mission_to_the_us
@@ -259,12 +321,7 @@ focus_tree = {
 		prerequisite = { focus = DOM_american_support }
 		available = {
 			threat > 0.50
-			country_exists = GER
-			GER = { has_war_with = USA }
-			OR = {
-				is_in_faction_with = USA
-				is_in_faction = no
-			}
+			USA = { has_war = yes }
 		}
 		ai_will_do = {
 			factor = 1
@@ -284,10 +341,15 @@ focus_tree = {
 				limit = { has_idea = neutrality_idea }
 				remove_ideas = neutrality_idea
 			}	
-			DOM = { 
-				declare_war_on = {
-					target = GER
-					type = annex_everything
+			every_country = {
+				limit = {
+					has_war_with = USA
+				}
+				DOM = { 
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
 				}
 			}
 		}
@@ -316,34 +378,7 @@ focus_tree = {
 		completion_reward = {
 			319 = { add_manpower = 100000 }
 			add_popularity = { ideology = communism popularity = 0.05 }
-		}
-	}
-	
-	focus = {
-		id = DOM_vensan_remove
-		icon = GFX_goal_generic_dangerous_deal 
-		prerequisite = { focus = DOM_spanish_bezentsy }
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-			}
-		}
-		available = {
-			AND = {
-				country_exists = HAI
-			}
-		}
-		x = 12
-		y = 5
-		cost = 10
-		completion_reward = {
-			random_list = {
-				30 = { HAI = { country_event = { id = dominican.5 } } }
-				30 = { HAI = { country_event = { id = dominican.4 } } }
-				40 = { }
-			}
+			add_stability = -0.05
 		}
 	}
 	
@@ -351,7 +386,7 @@ focus_tree = {
 		id = DOM_ugroza_cuba
 		icon = GFX_goal_generic_political_pressure 
 		prerequisite = { focus = DOM_unite_island }
-		x = 10
+		x = 12
 		y = 5
 		cost = 10
 		completion_reward = {
@@ -366,7 +401,7 @@ focus_tree = {
 		id = DOM_white_haiti
 		icon = GFX_goal_generic_secret_weapon 
 		prerequisite = { focus = DOM_unite_island }
-		x = 8
+		x = 10
 		y = 5
 		cost = 10
 		available = { 
@@ -407,7 +442,7 @@ focus_tree = {
 				has_war_with = CUB 
 			}  
 		}
-		x = 9
+		x = 11
 		y = 6
 		cost = 10
 		completion_reward = {
@@ -427,7 +462,9 @@ focus_tree = {
 		x = 20
 		y = 0
 		cost = 10
-		
+		available = {
+			has_global_flag = parsley_massacre_happened
+		}
 		ai_will_do = {
 			factor = 40
 			modifier = {
@@ -443,7 +480,7 @@ focus_tree = {
 					has_country_flag = NW_DOM_AI_DEMOCRATIC
 					has_country_flag = NW_DOM_AI_COMMUNIST
 				}
-			}
+			} 
 		}
 		
 		completion_reward = {
@@ -451,9 +488,9 @@ focus_tree = {
 			if = {
 				limit = { has_country_leader = { id = 801 } }
 				retire_character = DOM_rafael_trujillo
-			}
+			} 
 			add_country_leader_role = {
-				character = DOM_héctor_trujillo
+				character = DOM_hector_trujillo
 				promote_leader = yes
 				country_leader = {
 					ideology = nationalism_ideology
@@ -463,10 +500,14 @@ focus_tree = {
 					}
 				}
 			}
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.3
+			}
 			add_ideas = DOM_fight_for_vlast
 			hidden_effect = {
 				news_event = { id = mex_news.14 }
-				country_event = { id = dominican.7 }
+				#country_event = { id = dominican.7 }
 			}
 		}
 	}
@@ -490,6 +531,13 @@ focus_tree = {
 
 		completion_reward = {
 			add_ideas = democratic_influence
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			hidden_effect = {
+				country_event = { id = dominican.8 days = 30 } 
+			}
 		}
 	}
 	
@@ -512,8 +560,16 @@ focus_tree = {
 
 		completion_reward = {
 			add_ideas = communist_influence
+			add_popularity = {
+				ideology = communism
+				popularity = 0.05
+			}
+			hidden_effect = {
+				country_event = { id = dominican.8 days = 30 } 
+			}
 		}
 	}
+	
 	
 	focus = {
 		id = DOM_stability
@@ -522,7 +578,13 @@ focus_tree = {
 		x = 20
 		y = 2
 		cost = 10
-
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+				has_government = trozkism
+			}
+		}
 		ai_will_do = {
 			factor = 30
 		}
@@ -538,10 +600,13 @@ focus_tree = {
 		id = DOM_investition
 		icon = GFX_goal_generic_intelligence_exchange
 		prerequisite = { focus = DOM_liberty_ethos }
+		
 		x = 18
 		y = 2
 		cost = 10
-
+		available = {
+			has_government = democratic
+		}
 		ai_will_do = {
 			factor = 30
 		}
@@ -558,7 +623,9 @@ focus_tree = {
 		x = 22
 		y = 2
 		cost = 10
-
+		available = {
+			has_government = communism
+		}
 		ai_will_do = {
 			factor = 30
 		}
@@ -580,83 +647,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = {
-		id = DOM_alliance_democratic
-		icon = GFX_goal_tripartite_pact
-		prerequisite = { focus = DOM_investition }
-		mutually_exclusive = { focus = DOM_pro_american	 }
-		available = {
-		
-			NOT = { has_war_with = HAI has_war_with = CUB }
-			
-			DOM = {
-				has_government = democratic
-				is_in_faction = no
-				is_puppet = no
-			}
-			HAI = {
-				has_government = democratic
-				is_in_faction = no
-				is_puppet = no
-			}
-			CUB = {
-				has_government = democratic
-				is_in_faction = no
-				is_puppet = no
-			}
-					}
-		cancel = {
-			is_in_faction = yes
-		}
-		x = 16
-		y = 3
-		cost = 10
 
-		ai_will_do = {
-			factor = 30
-		}
-
-		completion_reward = {
-			add_political_power = 100
-			create_faction = "DOM_caribean_faction"
-			CUB = { country_event = { id = dominican.11 } }
-			HAI = { country_event = { id = dominican.14 } }
-		}
-	}
-	
-	focus = {
-		id = DOM_alliance_training
-		icon = GFX_goal_generic_military_sphere
-		prerequisite = { focus = DOM_alliance_democratic }
-		x = 16
-		y = 4
-		cost = 10
-		ai_will_do = {
-			factor = 20
-		}	
-		completion_reward = {
-		army_experience = 25
-		HAI = { army_experience = 25 }
-		CUB = { army_experience = 25 }
-		}
-	}
-	
-	focus = {
-		id = DOM_anticommunism
-		icon = GFX_goal_anti_comintern_pact
-		prerequisite = { focus = DOM_liberty_ethos }
-		available = { has_government = democratic }
-		x = 16
-		y = 2
-		cost = 10
-		ai_will_do = {
-			factor = 20
-		}	
-		completion_reward = {
-		add_ideas = DOM_anticommunism_focus
-		}
-	}
-	
 	focus = {
 		id = DOM_liberty_word
 		icon = GFX_goal_support_democracy
@@ -679,7 +670,7 @@ focus_tree = {
 		id = DOM_liberty_info
 		icon = GFX_z_goal_big_news
 		prerequisite = { focus = DOM_liberty_word }
-		x = 18
+		x = 20
 		y = 4
 		cost = 10
 
@@ -903,9 +894,18 @@ focus_tree = {
 	focus = {
 		id = DOM_Jamaika_liberty
 		icon = GFX_goal_generic_improve_relations
-		prerequisite = { focus = DOM_alliance_training focus = DOM_liberty_info }
-		x = 17
-		y = 5
+		prerequisite = { focus = DOM_liberty_word }
+		prerequisite = { focus = DOM_pro_american }
+		mutually_exclusive = { focus = DOM_befriend_ENG }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		x = 18
+		y = 4
 		cost = 10
 		ai_will_do = {
 			factor = 0
@@ -914,30 +914,68 @@ focus_tree = {
 			ENG = { country_event = {  hours = 6 id = dominican.23 } }
 		}
 	}
-	
+
 	focus = {
-		id = DOM_jamaica_ally
-		icon = GFX_goal_generic_dangerous_deal 
-		prerequisite = { focus = DOM_Jamaika_liberty }
-		available = { is_faction_leader = yes }
-		x = 17
-		y = 6
+		id = DOM_befriend_ENG
+		icon = GFX_z_goal_ally_with_eng
+		prerequisite = { focus = DOM_liberty_word }
+		prerequisite = { focus = DOM_pro_american }
+		mutually_exclusive = { focus = DOM_Jamaika_liberty }
+		available = {
+			ENG = { has_government = democratic }
+		}
+		x = 16
+		y = 4
 		cost = 10
 		ai_will_do = {
 			factor = 0
 		}
-		completion_reward = {		
-			JAM = { country_event = {  hours = 6 id = dominican.24 } }
+		completion_reward = {
+			ENG = { add_opinion_modifier = { target = DOM modifier = USA_special_relationship }}
+			DOM = { add_opinion_modifier = { target = ENG modifier = USA_special_relationship }}
 		}
 	}
 
+	focus = {
+		id = DOM_ally_ENG
+		icon = GFX_z_goal_generic_treaty_with_england
+		prerequisite = { focus = DOM_befriend_ENG }
 
+		x = 16
+		y = 5
+		cost = 5
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			ENG = {	country_event = { id = generic.2 days = 1 } }
+		}
+	}
+	
+
+	focus = {
+		id = DOM_alliance_democratic
+		icon = GFX_z_goal_diplomacy_1
+		prerequisite = { focus = DOM_Jamaika_liberty }
+
+		x = 18
+		y = 5
+		cost = 10
+		ai_will_do = {
+			factor = 20
+		}
+		completion_reward = {
+			create_faction = DOM_democratic_faction
+			HAI = {	country_event = { id = generic.5 days = 1 } }
+			CUB = {	country_event = { id = generic.5 days = 1 } }
+		}
+	}
 	
 ############################################
 ###################INDUSTRY##################
 ############################################
 
-focus = {
+	focus = {
 		id = DOM_industrial_effort
 		icon = GFX_goal_generic_construct_civ_factory
 		x = 1
@@ -949,51 +987,17 @@ focus = {
 			factor = 10
 		}
 
-		bypass = {
-			custom_trigger_tooltip = {
-				tooltip = construction_effort_tt
-				all_owned_state = {
-					free_building_slots = {
-						building = industrial_complex
-						size < 1
-						include_locked = yes
-					}					
-				}
-			}
-		}
-
-		complete_tooltip = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = {
-				type = industrial_complex
-				level = 1
-				instant_build = yes
-			}			
+		available = {
 		}
 
 		completion_reward = {
-			random_owned_state = {
+			random_owned_controlled_state = {
 				limit = {
 					free_building_slots = {
 						building = industrial_complex
-						size > 0
-						include_locked = yes
+						size > 1
 					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = industrial_complex
-										size > 0
-										include_locked = yes
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
-					}
+					is_core_of = ROOT
 				}
 				add_extra_state_shared_building_slots = 1
 				add_building_construction = {
@@ -1005,9 +1009,9 @@ focus = {
 		}
 	}
 	
-focus = {
+	focus = {
 		id = DOM_national_park
-		icon = GFX_goal_generic_consumer_goods
+		icon = GFX_goal_agrarian
 		prerequisite = {  }
 		x = 3
 		y = 0
@@ -1018,20 +1022,20 @@ focus = {
 		}
 	}
 	
-focus = {
+	focus = {
 		id = DOM_delo_farm
-		icon = GFX_goal_generic_consumer_goods
+		icon = GFX_z_goal_agrarian_reform
 		prerequisite = { focus = DOM_national_park }
 		x = 3
 		y = 1
 		cost = 7.2
 		completion_reward = {
 		add_political_power = 25
-		add_ideas = DOM_delo_farm_focus
+			add_ideas = DOM_delo_farm_focus
 		}
 	}
 	
-focus = {
+	focus = {
 		id = DOM_industrial_effort2
 		icon = GFX_goal_generic_construct_civ_factory
 		prerequisite = { focus = DOM_industrial_effort }
@@ -1039,34 +1043,18 @@ focus = {
 		y = 1
 		cost = 7.2
 
-		
 		ai_will_do = {
 			factor = 10
 		}
 
 		completion_reward = {
-			random_owned_state = {
+			random_owned_controlled_state = {
 				limit = {
 					free_building_slots = {
 						building = industrial_complex
-						size > 0
-						include_locked = yes
+						size > 1
 					}
-					OR = {
-						is_in_home_area = yes
-						NOT = {
-							owner = {
-								any_owned_state = {
-									free_building_slots = {
-										building = industrial_complex
-										size > 0
-										include_locked = yes
-									}
-									is_in_home_area = yes
-								}
-							}
-						}
-					}
+					is_core_of = ROOT
 				}
 				add_extra_state_shared_building_slots = 2
 				add_building_construction = {
@@ -1078,7 +1066,7 @@ focus = {
 		}
 	}
 	
-focus = {
+	focus = {
 		id = DOM_industrial_effort3
 		icon = GFX_goal_generic_construct_civ_factory
 		prerequisite = { focus = DOM_industrial_effort2 }
@@ -1409,33 +1397,50 @@ focus = {
 		}
 	}
 	
-
-	
 ############################################
 ###################ARMY#####################
 ############################################
 
-	focus = {
+	focus = { 
 		id = DOM_doctrine_effort_usa
-		icon = GFX_goal_generic_army_doctrines
+		icon = GFX_goal_DOM_army
 		prerequisite = {  }
-		x = 31
+		x = 40
 		y = 0
 		cost = 7.2
+		ai_will_do = {
+			factor = 40
+		}
 		completion_reward = {
-			army_experience = 10
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = land_doctrine
+			add_war_support = 0.035
+		}
+	} 
+	
+	focus = { 
+		id = DOM_equal_rights_for_navy_and_army
+		icon = GFX_z_goal_generic_military_lobby
+		prerequisite = { focus = DOM_doctrine_effort_usa }
+		x = 36
+		y = 1
+		cost = 7.2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 40
+				date > 1937.05.01
+				is_historical_focus_on = yes
 			}
+		}
+		completion_reward = {
+			add_command_power = 50
+			remove_ideas = DOM_army_naval_split
+
 		}
 	} 
 
 	focus = {
 		id = DOM_defend_island
-		icon = GFX_goal_DOM_ministerstvo_defence
+		icon = GFX_z_goal_DOM_defend_island
 		prerequisite = { focus = DOM_doctrine_effort_usa }
 		x = 30
 		y = 1
@@ -1553,7 +1558,7 @@ focus = {
 	
 	focus = {
 		id = DOM_defence_haiti
-		icon = GFX_goal_generic_fortify_city
+		icon = GFX_z_goal_DOM_haiti_border
 		prerequisite = { focus = DOM_defend_island }
 		x = 29
 		y = 2
@@ -1603,7 +1608,7 @@ focus = {
 	
 	focus = {
 		id = DOM_doctrine_effort_army
-		icon = GFX_goal_generic_army_doctrines
+		icon = GFX_z_goal_DOM_military_plans
 		prerequisite = { focus = DOM_defend_island}
 		x = 27
 		y = 2
@@ -1617,11 +1622,11 @@ focus = {
 				category = land_doctrine
 			}
 		}
-	}
+	}  
 	
 	focus = {
 		id = DOM_equipment_effort
-		icon = GFX_goal_generic_small_arms
+		icon = GFX_z_goal_DOM_weapons_effort
 		prerequisite = { focus = DOM_doctrine_effort_usa }
 		x = 31
 		y = 2
@@ -1639,7 +1644,7 @@ focus = {
 
 	focus = {
 		id = DOM_motorization_effort
-		icon = GFX_goal_generic_army_motorized
+		icon = GFX_z_goal_DOM_military_trucks_effort
 		prerequisite = { focus = DOM_support_army_ammunition }
 		bypass = { has_tech = motorised_infantry }
 		x = 33
@@ -1656,7 +1661,7 @@ focus = {
 
 	focus = {
 		id = DOM_armor_effort
-		icon = GFX_goal_generic_army_tanks
+		icon = GFX_z_goal_DOM_military_tanks_effort
 		prerequisite = { focus = DOM_support_army_ammunition }
 		x = 35
 		y = 2
@@ -1673,7 +1678,7 @@ focus = {
 	
 	focus = {
 		id = DOM_national_gvardia
-		icon = GFX_goal_generic_special_forces
+		icon = GFX_z_goal_DOM_national_guards
 		prerequisite = { focus = DOM_equipment_effort }
 		x = 31
 		y = 3
@@ -1698,7 +1703,7 @@ focus = {
 	
 	focus = {
 		id = DOM_national_gvardia_army
-		icon = GFX_focus_chi_army_reform
+		icon = GFX_z_goal_DOM_national_guards2
 		prerequisite = { focus = DOM_national_gvardia }
 		prerequisite = { focus = DOM_defend_island }
 		x = 30
@@ -1737,7 +1742,7 @@ focus = {
 	
 	focus = {
 		id = DOM_army_strong_caribean
-		icon = GFX_goal_generic_military_sphere
+		icon = GFX_z_goal_DOM_strongest_army
 		prerequisite = { focus = DOM_national_gvardia }
 		prerequisite = { focus = DOM_support_army_ammunition }
 		x = 32
@@ -1762,12 +1767,14 @@ focus = {
 	focus = {
 		id = DOM_air_school
 		icon = GFX_goal_generic_build_airforce
-		
+		prerequisite = {
+			focus = DOM_vvs
+		}
 		bypass = {
 
 		}
-		x = 40
-		y = 0
+		x = 39
+		y = 2
 		cost = 7.2
 
 		available_if_capitulated = yes
@@ -1780,128 +1787,32 @@ focus = {
 				uses = 1
 				category = air_doctrine
 			}
-		}
-	}
-	
-	focus = {
-		id = DOM_light_fighters
-		icon = GFX_goal_generic_air_fighter
-		prerequisite = { focus = DOM_air_school }
-		x = 37
-		y = 1
-		cost = 7.2
-		
-		ai_will_do = {
-			factor = 5
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = cze_import_fighter
-				bonus = 1.0
-				uses = 1
-				category = light_fighter
+			if = {
+				limit = {
+					has_idea = DOM_no_aviation
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_0
+					remove_idea = DOM_no_aviation
+				}
 			}
-		}
-	}
-	
-	focus = {
-		id = DOM_CAS_effort
-		icon = GFX_goal_generic_CAS
-		prerequisite = { focus = DOM_air_school }
-		x = 39
-		y = 1
-		cost = 7.2
-		ai_will_do = {
-			factor = 5
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = CAS_bonus
-				bonus = 1.0
-				uses = 1
-				category = cas_bomber
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_0
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_1
+					remove_idea = DOM_aviation_0
+				}
 			}
-		}
-	}
-	
-	focus = {
-		id = DOM_tactical_bombers
-		icon = GFX_goal_generic_air_bomber
-		prerequisite = { focus = DOM_air_school }
-		x = 41
-		y = 1
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		available = {
-
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-		completion_reward = {
-			add_tech_bonus = {
-				name = cze_import_bomber
-				bonus = 1.0
-				uses = 1
-				category = tactical_bomber
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_strategic_bombers
-		icon = GFX_goal_generic_air_bomber
-		prerequisite = { focus = DOM_air_school }
-		x = 43
-		y = 1
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		available = {
-
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-		completion_reward = {
-			add_tech_bonus = {
-				name = cze_import_bomber
-				bonus = 1.0
-				uses = 1
-				category = cat_strategic_bomber
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_1
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_2
+					remove_idea = DOM_aviation_1
+				}
 			}
 		}
 	}
@@ -1909,11 +1820,8 @@ focus = {
 	focus = {
 		id = DOM_aviation_effort
 		icon = GFX_goal_generic_build_airforce
-		prerequisite = { focus = DOM_light_fighters }
-		prerequisite = { focus = DOM_CAS_effort }
-		prerequisite = { focus = DOM_tactical_bombers }
-		prerequisite = { focus = DOM_strategic_bombers }
-		x = 40
+		prerequisite = { focus = DOM_vvs }
+		x = 41
 		y = 2
 		cost = 7.2
 
@@ -1928,12 +1836,65 @@ focus = {
 					level = 3
 					instant_build = yes
 				}
-			}			
+			}	
+			if = {
+				limit = {
+					has_idea = DOM_no_aviation
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_0
+					remove_idea = DOM_no_aviation
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_0
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_1
+					remove_idea = DOM_aviation_0
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_1
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_2
+					remove_idea = DOM_aviation_1
+				}
+			}
 		}
 
 		completion_reward = {
 			air_experience = 25
-
+			if = {
+				limit = {
+					has_idea = DOM_no_aviation
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_0
+					remove_idea = DOM_no_aviation
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_0
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_1
+					remove_idea = DOM_aviation_0
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = DOM_aviation_1
+				}
+				swap_ideas = {
+					add_idea = DOM_aviation_2
+					remove_idea = DOM_aviation_1
+				}
+			}
 			if = {
 				limit = {
 					capital_scope = {
@@ -1984,9 +1945,9 @@ focus = {
 	focus = {
 		id = DOM_vvs
 		icon = GFX_z_goal_Dominikano_air_force
-		prerequisite = { focus = DOM_aviation_effort }
+		prerequisite = { focus = DOM_doctrine_effort_usa}
 		x = 40
-		y = 3
+		y = 1
 
 		cost = 7.2
 
@@ -2011,219 +1972,12 @@ focus = {
 		}
 		completion_reward = {
 			air_experience = 25
-			add_equipment_to_stockpile = { type = fighter_equipment_0 amount = 40 producer = DOM }
-			add_doctrine_cost_reduction = {
-				name = air_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = air_doctrine
+			swap_ideas = {
+				add_idea = DOM_aviation_0
+				remove_idea = DOM_no_aviation
 			}
 		}
 	}
-	
-	focus = {
-		id = DOM_stavka_fighters
-		icon = GFX_goal_generic_air_fighter
-		prerequisite = { focus = DOM_vvs }
-		mutually_exclusive = { focus = DOM_stavka_bombers focus = DOM_air_litsenzia }
-		x = 39
-		y = 4
-		cost = 7.2
-		
-		ai_will_do = {
-			factor = 5
-		}
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			
-		add_tech_bonus = {
-				name = cze_import_fighter
-				bonus = 1.0
-				uses = 2
-				category = light_fighter
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_stavka_bombers
-		icon = GFX_goal_generic_air_bomber
-		prerequisite = { focus = DOM_vvs }
-		mutually_exclusive = { focus = DOM_stavka_fighters focus = DOM_air_litsenzia }
-		x = 41
-		y = 4
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		available = {
-
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-		completion_reward = {
-			add_tech_bonus = {
-				name = cze_import_bomber
-				bonus = 1.0
-				uses = 2
-				category = tactical_bomber
-				category = cat_strategic_bomber
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_rocket_effort
-		icon = GFX_focus_rocketry
-		prerequisite = { focus = DOM_stavka_fighters focus = DOM_stavka_bombers }
-		x = 40
-		y = 5
-		cost = 7.2
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = jet_rocket_bonus
-				ahead_reduction = 0.5
-				uses = 1
-				category = rocketry
-				category = jet_technology
-			}
-		}
-
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				factor = 0.25
-				always = yes
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_air_litsenzia
-		icon = GFX_focus_generic_license_production
-		prerequisite = { focus = DOM_vvs }
-		mutually_exclusive = { focus = DOM_stavka_bombers focus = DOM_stavka_fighters }
-		x = 43
-		y = 4
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		available = {
-
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			add_ideas = DOM_license_production
-		}
-	}
-	
-	focus = {
-		id = DOM_flying_fortress_litsenzia
-		icon = GFX_focus_generic_license_production
-		prerequisite = { focus = DOM_air_litsenzia }
-		x = 43
-		y = 5
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		available = {
-		NOT = { has_war_with = USA }
-		USA = {
-				has_tech = strategic_bomber3
-			}
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			USA = { country_event = dominican.3 }
-		}
-	}
-	
-	focus = {
-		id = DOM_mustang_litsenzia
-		icon = GFX_focus_generic_license_production
-		prerequisite = { focus = DOM_flying_fortress_litsenzia }
-		x = 43
-		y = 6
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-		available = {
-			NOT = { has_war_with = USA }
-			USA = {
-				has_tech = fighter3
-			}
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			USA = { country_event = dominican.2 }
-		}
-	}
-
 
 	
 ############################################
@@ -2234,7 +1988,157 @@ focus = {
 		id = DOM_naval_effort
 		icon = GFX_z_goal_Dominikano_navy
 		x = 47
-		y = 0
+		y = 1
+		cost = 7.2
+		prerequisite = { focus = DOM_doctrine_effort_usa }
+		available_if_capitulated = no
+
+		available = {
+			any_controlled_state = {
+				is_coastal = yes
+			}
+		}
+		
+		completion_reward = {
+			navy_experience = 25
+			swap_ideas = {
+				add_idea = DOM_navy_level_1
+				remove_idea = DOM_navy_level_0
+			}
+		}
+	}
+	
+	focus = {
+		id = DOM_small_navy
+		icon = GFX_goal_generic_navy_cruiser
+		prerequisite = { focus = DOM_naval_effort }
+		x = 45
+		y = 2
+
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		available = {
+
+		}
+
+		bypass = {
+
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		complete_tooltip = {
+
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1.0
+				uses = 1
+				category = cl_tech
+				category = dd_tech
+				category = ss_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = DOM_modern_destroyers
+		icon = GFX_goal_generic_navy_anti_submarine
+		prerequisite = { focus = DOM_small_navy  }
+		mutually_exclusive = { focus = DOM_modern_cruisers }
+		x = 44
+		y = 3
+
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		complete_tooltip = {
+
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = ROM_torpedo_bombers
+				bonus = 1.0
+				uses = 1
+				category = dd_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = DOM_modern_cruisers
+		icon = GFX_goal_generic_navy_cruiser
+		prerequisite = { focus = DOM_small_navy  }
+		mutually_exclusive = { focus = DOM_modern_destroyers }
+		x = 46
+		y = 3
+
+		cost = 7.2
+
+		ai_will_do = {
+			factor = 5
+		}
+
+		cancel_if_invalid = yes
+		continue_if_invalid = no
+		available_if_capitulated = no
+
+		complete_tooltip = {
+
+		}
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = ROM_torpedo_bombers
+				bonus = 1.0
+				uses = 1
+				category = cl_tech
+			}
+		}
+	}
+	
+	focus = {
+		id = DOM_naval_doctrine
+		icon = GFX_goal_generic_navy_doctrines_tactics
+	 	prerequisite = { focus = DOM_modern_destroyers focus = DOM_modern_cruisers }
+		x = 45
+		y = 4
+		cost = 7.2
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			navy_experience = 25
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.5
+				uses = 1
+				category = naval_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = DOM_naval_effort2
+		icon = GFX_goal_dom_nay
+		prerequisite = { focus = DOM_naval_effort }
+		x = 49
+		y = 2
 		cost = 7.2
 
 		available_if_capitulated = yes
@@ -2312,7 +2216,7 @@ focus = {
 							include_locked = yes
 						}
 					}
-					add_extra_state_shared_building_slots = 1
+					add_extra_state_shared_building_slots = 2
 					add_building_construction = {
 						type = dockyard
 						level = 1
@@ -2353,254 +2257,55 @@ focus = {
 			}			
 		}
 	}
-	
 	focus = {
-		id = DOM_small_navy
-		icon = GFX_goal_generic_navy_cruiser
-		prerequisite = { focus = DOM_naval_effort }
-		x = 47
-		y = 1
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 10
-		}
-
-		available = {
-
-		}
-
-		bypass = {
-
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			add_tech_bonus = {
-				bonus = 1.0
-				uses = 1
-				category = cl_tech
-				category = dd_tech
-				category = ss_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_modern_destroyers
-		icon = GFX_goal_generic_navy_anti_submarine
-		prerequisite = { focus = DOM_small_navy  }
-		mutually_exclusive = { focus = DOM_modern_cruisers }
-		x = 46
-		y = 2
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = ROM_torpedo_bombers
-				bonus = 1.0
-				uses = 1
-				category = dd_tech
-			}
-		}
-	}
-	
-	focus = {
-		id = DOM_modern_cruisers
-		icon = GFX_goal_generic_navy_cruiser
-		prerequisite = { focus = DOM_small_navy  }
-		mutually_exclusive = { focus = DOM_modern_destroyers }
-		x = 48
-		y = 2
-
-		cost = 7.2
-
-		ai_will_do = {
-			factor = 5
-		}
-
-		cancel_if_invalid = yes
-		continue_if_invalid = no
-		available_if_capitulated = no
-
-		complete_tooltip = {
-
-		}
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = ROM_torpedo_bombers
-				bonus = 1.0
-				uses = 1
-				category = cl_tech
-			}
-		}
-	}
-	
-		focus = {
-		id = DOM_naval_doctrine
-		icon = GFX_goal_generic_navy_doctrines_tactics
-	 	prerequisite = { focus = DOM_modern_destroyers focus = DOM_modern_cruisers }
-		x = 47
+		id = DOM_naval_fr_with_USA
+		icon = GFX_z_goal_usa
+	 	prerequisite = { focus = DOM_naval_effort2 }
+		x = 49
 		y = 3
 		cost = 7.2
-
-		available_if_capitulated = yes
+		available = {
+			OR = {
+				is_in_faction = no
+				is_in_faction_with = USA
+			}
+			
+			NOT = {
+				has_war_with = USA
+				has_country_flag = DOM_USA_declined_naval
+			}
+		}
+		available_if_capitulated = no
 
 		completion_reward = {
-			navy_experience = 25
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = naval_doctrine
+			USA = { country_event = { id = dominican.35 days = 1 } }
+			custom_effect_tooltip = DOM_effect_maybe
+			effect_tooltip = {
+				navy_experience = 25
+				swap_ideas = {
+					add_idea = DOM_navy_level_2
+					remove_idea = DOM_navy_level_1
+				}
 			}
 		}
 	}
-
 	focus = {
-		id = DOM_naval_effort2
-		icon = GFX_goal_dom_nay
-		prerequisite = { focus = DOM_naval_doctrine }
-		x = 47
+		id = DOM_own_navy_school
+		icon = GFX_z_goal_increase_in_budget_of_navy
+	 	prerequisite = { focus = DOM_naval_fr_with_USA }
+		x = 49
 		y = 4
 		cost = 7.2
-
-		available_if_capitulated = yes
-
 		available = {
-			any_controlled_state = {
-				is_coastal = yes
-			}
 		}
+		available_if_capitulated = no
 
-		complete_tooltip = {
-			navy_experience = 25
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = {
-				type = dockyard
-				level = 2
-				instant_build = yes
-			}
-		}
-		
 		completion_reward = {
 			navy_experience = 25
-			if = {
-				limit = {
-					NOT = {
-						any_owned_state = {
-							dockyard > 0
-							free_building_slots = {
-								building = dockyard
-								size > 2
-								include_locked = yes
-							}
-						}
-					}
-					any_owned_state = {
-						is_coastal = yes
-					}
-				}
-				random_owned_controlled_state = {
-					limit = {
-						is_coastal = yes
-						free_building_slots = {
-							building = dockyard
-							size > 2
-							include_locked = yes
-						}
-					}
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = {
-						type = dockyard
-						level = 2
-						instant_build = yes
-					}
-				}
-				set_country_flag = naval_effort_built
+			swap_ideas = {
+				add_idea = DOM_navy_level_3
+				remove_idea = DOM_navy_level_2
 			}
-			if = {
-				limit = {
-					NOT = { has_country_flag = naval_effort_built }
-					any_owned_state = {
-						dockyard > 0
-						free_building_slots = {
-							building = dockyard
-							size > 2
-							include_locked = yes
-						}
-					}
-				}
-				random_owned_controlled_state = {
-					limit = {
-						dockyard > 0
-						free_building_slots = {
-							building = dockyard
-							size > 2
-							include_locked = yes
-						}
-					}
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = {
-						type = dockyard
-						level = 2
-						instant_build = yes
-					}
-				}
-				set_country_flag = naval_effort_built
-			}
-			if = {
-				limit = {
-					NOT = { has_country_flag = naval_effort_built }
-					NOT = {
-						any_owned_state = {
-							free_building_slots = {
-								building = dockyard
-								size > 2
-								include_locked = yes
-							}
-						}
-					}
-				}
-				random_state = {
-					limit = {
-						controller = { tag = ROOT }
-						free_building_slots = {
-							building = dockyard
-							size > 2
-							include_locked = yes
-						}
-					}
-					add_extra_state_shared_building_slots = 2
-					add_building_construction = {
-						type = dockyard
-						level = 2
-						instant_build = yes
-					}
-				}
-			}			
 		}
 	}
 }	

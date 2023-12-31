@@ -1,0 +1,298 @@
+scripted_gui = {
+	
+	generic_democratic_opener_menu = {
+		context_type = player_context
+		window_name = "generic_democratic_opener_container"
+		parent_window_token = politics_tab
+		
+		visible = {
+			has_government = democratic
+		}
+
+		ai_enabled = {
+			always = no
+		}
+		
+		triggers = {
+			generic_democratic_open_click_enabled = {
+				has_government = democratic
+				compare_autonomy_state > autonomy_colony
+			}
+		}
+		effects = {
+			generic_democratic_open_click = {
+				if = {
+					limit = { NOT = { has_country_flag = generic_democratic_open_flag } }
+					set_country_flag = generic_democratic_open_flag
+				}
+				else = { clr_country_flag = generic_democratic_open_flag }
+				if = {
+					limit = { NOT = { has_variable = generic_democratic_international_authority_icon_frame } }
+					set_variable = { generic_democratic_international_authority_icon_frame = 1 }
+				}
+				if = {
+					limit = { NOT = { has_variable = generic_democratic_efficiency_state_apparatus_icon_frame } }
+					set_variable = { generic_democratic_efficiency_state_apparatus_icon_frame = 1 }
+				}
+			}
+		}
+	}
+	
+	generic_democratic_ui = {
+		context_type = player_context
+		window_name = "generic_democratic_ui_window"
+		
+		ai_enabled = {
+			always = no
+		}
+		visible = {
+			has_government = democratic
+			has_country_flag = generic_democratic_open_flag
+		}
+
+		properties = {
+			generic_democratic_international_authority_icon = {
+				image = GFX_generic_democratic_international_authority_strip
+				frame = generic_democratic_international_authority_icon_frame
+			}
+			generic_democratic_efficiency_state_apparatus_icon = {
+				image = GFX_generic_democratic_efficiency_state_apparatus_strip
+				frame = generic_democratic_efficiency_state_apparatus_icon_frame
+			}
+		}
+		
+		triggers = {
+		
+	# АВТОРИТЕТ
+			generic_democratic_international_authority_button_click_enabled = {
+				has_political_power > 25
+				check_variable = { generic_democratic_international_authority_var < 100 }
+			}
+			generic_democratic_international_authority_limited_intervention_button_click_enabled = {
+				has_political_power > 100
+				check_variable = { modifier@lend_lease_tension > 0.0 }
+				set_temp_variable = { temp1 = 25 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_international_authority_trigger_tt
+					check_variable = { generic_democratic_international_authority_var > temp1 }
+				}
+			}
+			generic_democratic_international_authority_active_intervention_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 50 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_international_authority_trigger_tt
+					check_variable = { generic_democratic_international_authority_var > temp1 }
+				}
+				NOT = { has_idea = neutrality_idea }
+				hidden_trigger = { NOT = { has_idea = generic_democratic_international_authority_active_intervention_idea } }
+			}
+			generic_democratic_international_authority_political_mimicry_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 75 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_international_authority_trigger_tt
+					check_variable = { generic_democratic_international_authority_var > temp1 }
+				}
+				OR = {
+					has_country_leader_ideology = national_conservatism
+					has_country_leader_ideology = national_etatism
+					has_country_leader_ideology = tridemism
+					has_country_leader_ideology = social_conservatism
+					has_country_leader_ideology = socialism
+					has_country_leader_ideology = democratic_communism
+					has_country_leader_ideology = democratic_socialism
+				}
+			}
+			generic_democratic_international_authority_expand_intervention_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 99.9 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_international_authority_trigger_tt
+					check_variable = { generic_democratic_international_authority_var > temp1 }
+				}
+				NOT = { has_idea = neutrality_idea }
+				hidden_trigger = { NOT = { has_idea = generic_democratic_international_authority_expand_intervention_idea } }
+			}
+			
+			
+	# ГОСАППАРАТ
+			generic_democratic_efficiency_state_apparatus_button_click_enabled = {
+				has_political_power > 25
+				check_variable = { generic_democratic_efficiency_state_apparatus_var < 100 }
+			}
+			generic_democratic_efficiency_flexible_cabinet_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 25 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_efficiency_state_apparatus_trigger_tt
+					check_variable = { generic_democratic_efficiency_state_apparatus_var > temp1 }
+				}
+				hidden_trigger = { NOT = { has_idea = generic_democratic_efficiency_flexible_cabinet_idea } }
+			}
+			generic_democratic_efficiency_expand_cabinet_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 50 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_efficiency_state_apparatus_trigger_tt
+					check_variable = { generic_democratic_efficiency_state_apparatus_var > temp1 }
+				}
+				hidden_trigger = { has_any_generic_political_advisor_blocked = yes }
+			}
+			
+			generic_democratic_efficiency_reorganization_apparatus_button_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 50 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_efficiency_state_apparatus_trigger_tt
+					check_variable = { generic_democratic_efficiency_state_apparatus_var > temp1 }
+				}
+				hidden_trigger = { NOT = { has_idea = generic_democratic_efficiency_reorganization_apparatus_idea } }
+			}
+			generic_democratic_efficiency_expand_cabinet_button_2_click_enabled = {
+				has_political_power > 100
+				set_temp_variable = { temp1 = 99.9 }
+				custom_trigger_tooltip = {
+					tooltip = generic_democratic_efficiency_state_apparatus_trigger_tt
+					check_variable = { generic_democratic_efficiency_state_apparatus_var > temp1 }
+				}
+				hidden_trigger = { has_any_generic_political_advisor_blocked = yes }
+			}
+		}
+		
+		effects = {
+			
+			generic_democratic_close_click = {
+				clr_country_flag = generic_democratic_open_flag
+			}
+		
+	# АВТОРИТЕТ
+			generic_democratic_international_authority_button_click = {
+				add_political_power = -25
+				add_to_variable = { generic_democratic_international_authority_var = 10 tooltip = generic_democratic_international_authority_effect_tt }
+				generic_democratic_international_authority_effect = yes
+				custom_effect_tooltip = generic_democratic_international_authority_effect_tt1
+			}
+			generic_democratic_international_authority_limited_intervention_button_click = {
+				add_political_power = -100
+				add_to_variable = { generic_democratic_international_authority_lend_lease_tension = -1 tooltip = lend_lease_tension_tooltip }
+				force_update_dynamic_modifier = yes
+			}
+			generic_democratic_international_authority_active_intervention_button_click = {
+				add_political_power = -100
+				if = {
+					limit = { NOT = { has_idea = generic_democratic_international_authority_active_intervention_idea } }
+					add_ideas = generic_democratic_international_authority_active_intervention_idea
+				}
+				else = {
+					custom_effect_tooltip = CURRENT_EFFECT_TT
+					show_ideas_tooltip = generic_democratic_international_authority_active_intervention_idea
+				}
+			}
+			generic_democratic_international_authority_political_mimicry_button_click = {
+				add_political_power = -100
+				hidden_effect = { add_ideas = generic_democratic_international_authority_political_mimicry_idea }
+				effect_tooltip = {
+					if = {
+						limit = {
+							OR = {
+								has_country_leader_ideology = national_conservatism
+								has_country_leader_ideology = national_etatism
+								has_country_leader_ideology = tridemism
+							}
+						}
+						every_other_country = {
+							limit = {
+								OR = {
+									has_government = fascism
+									has_government = neutrality
+								}
+							}
+							add_opinion_modifier = { target = ROOT modifier = generic_democratic_international_authority_political_mimicry_op }
+							ROOT = { add_opinion_modifier = { target = PREV modifier = generic_democratic_international_authority_political_mimicry_op } }
+						}
+					}
+					else_if = {
+						limit = {
+							OR = {
+								has_country_leader_ideology = social_conservatism
+								has_country_leader_ideology = socialism
+								has_country_leader_ideology = democratic_communism
+								has_country_leader_ideology = democratic_socialism
+							}
+						}
+						every_other_country = {
+							limit = {
+								OR = {
+									has_government = communism
+									has_government = trozkism
+								}
+							}
+							add_opinion_modifier = { target = ROOT modifier = generic_democratic_international_authority_political_mimicry_op }
+							ROOT = { add_opinion_modifier = { target = PREV modifier = generic_democratic_international_authority_political_mimicry_op } }
+						}
+					}
+				}
+				custom_effect_tooltip = generic_democratic_international_authority_political_mimicry_TT
+			}
+			generic_democratic_international_authority_expand_intervention_button_click = {
+				add_political_power = -100
+				if = {
+					limit = { NOT = { has_idea = generic_democratic_international_authority_expand_intervention_idea } }
+					add_ideas = generic_democratic_international_authority_expand_intervention_idea
+				}
+				else = {
+					custom_effect_tooltip = CURRENT_EFFECT_TT
+					show_ideas_tooltip = generic_democratic_international_authority_expand_intervention_idea
+				}
+			}
+			
+	# ГОСАППАРАТ
+			generic_democratic_efficiency_state_apparatus_button_click = {
+				add_political_power = -25
+				add_to_variable = { generic_democratic_efficiency_state_apparatus_var = 10 tooltip = generic_democratic_efficiency_state_apparatus_effect_tt }
+				generic_democratic_efficiency_state_apparatus_effect = yes
+				custom_effect_tooltip = generic_democratic_efficiency_state_apparatus_effect_tt1
+			}
+			generic_democratic_efficiency_flexible_cabinet_button_click = {
+				add_political_power = -100
+				if = {
+					limit = { NOT = { has_idea = generic_democratic_efficiency_flexible_cabinet_idea } }
+					add_ideas = generic_democratic_efficiency_flexible_cabinet_idea
+				}
+				else = {
+					custom_effect_tooltip = CURRENT_EFFECT_TT
+					show_ideas_tooltip = generic_democratic_efficiency_flexible_cabinet_idea
+				}
+			}
+			generic_democratic_efficiency_expand_cabinet_button_click = {
+				add_political_power = -100
+				custom_effect_tooltip = slot_of_political_minister_unlock_effect_tt
+				hidden_effect = {
+					set_country_flag = generic_political_advisor_blocked_1_political_advisor_flag
+					deactivate_generic_political_advisor_blocked = yes
+				}
+			}
+			
+			generic_democratic_efficiency_reorganization_apparatus_button_click = {
+				add_political_power = -100
+				if = {
+					limit = { NOT = { has_idea = generic_democratic_efficiency_reorganization_apparatus_idea } }
+					add_ideas = generic_democratic_efficiency_reorganization_apparatus_idea
+				}
+				else = {
+					custom_effect_tooltip = CURRENT_EFFECT_TT
+					show_ideas_tooltip = generic_democratic_efficiency_reorganization_apparatus_idea
+				}
+			}
+			generic_democratic_efficiency_expand_cabinet_button_2_click = {
+				add_political_power = -100
+				custom_effect_tooltip = slot_of_political_minister_unlock_effect_tt
+				hidden_effect = {
+					set_country_flag = generic_political_advisor_blocked_2_political_advisor_flag
+					deactivate_generic_political_advisor_blocked = yes
+				}
+			}
+		}
+	}
+}

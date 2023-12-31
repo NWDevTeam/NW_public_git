@@ -1132,11 +1132,6 @@ GER_unification_of_germans_category = {
 				847 = { add_core_of = ROOT }
 				847 = { add_claim_by = ROOT }
 			}
-			if = {
-				limit = { 152 = { is_owned_by = ROOT } }
-				848 = { add_core_of = ROOT }
-				848 = { add_claim_by = ROOT }
-			}
 			if = { 
 				limit = {
 					NOT = { CZE = { controls_state = 69 } }
@@ -1285,8 +1280,11 @@ GER_unification_of_germans_category = {
 
 GER_austrian_referendum_category = {
 	GER_days_before_referendum = {
+		allowed = {
+			always = no
+		}
 		activation = {
-			has_country_flag = GER_austrian_referendum_category_flag
+			always = no
 		}
 		available = {
 			always = no
@@ -1340,8 +1338,11 @@ GER_austrian_referendum_category = {
 GER_cze_referendum_category = {
 	GER_cze_days_before_referendum = {
 		name = GER_days_before_referendum
+		allowed = {
+			always = no
+		}
 		activation = {
-			has_country_flag = GER_cze_referendum_category_flag
+			always = no
 		}
 		available = {
 			always = no
@@ -1714,9 +1715,9 @@ GER_civil_war_category = {
 		
 		target_trigger = {
 			FROM = {
+				original_tag = GER
 				has_war_with = ROOT
 				has_capitulated = no
-				original_tag = GER
 			}
 		}
 		
@@ -1843,6 +1844,235 @@ GER_reorganization_of_germany_category = {
 
 		ai_will_do = {
 			factor = 0
+		}
+	}
+}
+
+GER_form_strafbats = {
+	GER_division_999 = {
+		icon = generic_arrest
+
+		available = {
+			any_enemy_country = {
+				any_controlled_state = {
+					is_on_continent = africa
+				}
+			}
+        }
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision GER_division_999"
+			custom_effect_tooltip = GER_unique_straf_division_tt
+			hidden_effect = {
+				64 = {
+					create_unit = {
+						division = "name = \"999. leichte Afrika-Division\" division_template = \"Sonderabteilungen\" start_experience_factor = 0.1"
+						owner = GER
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	GER_division_36_ss = {
+		icon = generic_arrest
+		
+		available = {
+			has_war = yes
+			NOT = { has_completed_focus = GER_eliminate_ss }
+        }
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision GER_division_36_ss"
+			custom_effect_tooltip = GER_unique_straf_division_tt
+			hidden_effect = { load_oob = "GER_strafbat_unique_dirlewanger" }
+		}
+
+		ai_will_do = {
+			factor = 10
+		}  
+	}
+	GER_division_500 = {
+		icon = generic_arrest
+
+		
+		available = {
+			has_war = yes
+        }
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision GER_division_500"
+			custom_effect_tooltip = GER_unique_straf_division_tt
+			hidden_effect = { 
+				64 = {
+					create_unit = {
+						division = "name = \"Strafdivision 500\" division_template = \"Sonderabteilungen\" start_experience_factor = 0.1"
+						owner = GER
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+GER_balance_of_power_category = {
+	GER_send_more_conscripts_to_ss = {
+		icon = generic_military
+		available = {
+			NOT = { has_country_flag = { flag = GER_send_more_conscripts_to_ss_flag value > 0 } }
+			NOT = { has_country_flag = { flag = GER_send_more_conscripts_to_wehrmacht_flag value > 0 } }
+		}
+		visible = {
+		}
+		cost = 50
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions GER_send_more_conscripts_to_ss"
+			set_country_flag = { flag = GER_send_more_conscripts_to_ss_flag days = 180 value = 1 }
+			add_power_balance_value = {
+				id = GER_power_balance
+				value = -0.05
+				tooltip_side = GER_waffen_ss_side
+			}
+		}
+	}
+	GER_send_more_conscripts_to_wehrmacht = {
+		icon = eng_blackshirt_march
+		available = {
+			NOT = { has_country_flag = { flag = GER_send_more_conscripts_to_ss_flag value > 0 } }
+			NOT = { has_country_flag = { flag = GER_send_more_conscripts_to_wehrmacht_flag value > 0 } }
+		}
+		visible = {
+		}
+		cost = 50
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 10
+				has_completed_focus = GER_stop_party_radicals
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions GER_send_more_conscripts_to_wehrmacht"
+			set_country_flag = { flag = GER_send_more_conscripts_to_wehrmacht_flag days = 180 value = 1 }
+			add_power_balance_value = {
+				id = GER_power_balance
+				value = 0.05
+				tooltip_side = GER_wehrmacht_side
+			}
+		}
+	}
+	GER_promote_ss_officers = {
+		icon = generic_police_action
+		available = {
+			NOT = { has_country_flag = { flag = GER_promote_ss_officers_flag value > 0 } }
+			NOT = { has_country_flag = { flag = GER_promote_wehrmacht_officers_flag value > 0 } }
+		}
+		visible = {
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { command_power_temp_cost = 15 }
+			set_temp_variable = { custom_cost_pp = 40 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		ai_will_do = {
+			factor = 10
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions GER_promote_ss_officers"
+			set_country_flag = { flag = GER_promote_ss_officers_flag days = 150 value = 1 }
+			hidden_effect = { add_political_power = -40 add_command_power = -15 }
+			add_power_balance_value = {
+				id = GER_power_balance
+				value = -0.1
+				tooltip_side = GER_waffen_ss_side
+			}
+			random_unit_leader = { limit = { has_trait = GER_ss_leader } gain_xp = 150 }
+		}
+	}
+	GER_promote_wehrmacht_officers = {
+		icon = SWE_set_army_budget
+		available = {
+			NOT = { has_country_flag = { flag = GER_promote_ss_officers_flag value > 0 } }
+			NOT = { has_country_flag = { flag = GER_promote_wehrmacht_officers_flag value > 0 } }
+		}
+		visible = {
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { command_power_temp_cost = 10 }
+			set_temp_variable = { custom_cost_pp = 20 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 10
+				has_completed_focus = GER_stop_party_radicals
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions GER_promote_wehrmacht_officers"
+			set_country_flag = { flag = GER_promote_wehrmacht_officers_flag days = 150 value = 1 }
+			hidden_effect = { add_political_power = -20 add_command_power = -10 }
+			add_power_balance_value = {
+				id = GER_power_balance
+				value = 0.1
+				tooltip_side = GER_wehrmacht_side
+			}
+			random_unit_leader = { limit = { NOT = { has_trait = GER_ss_leader } } gain_xp = 150 }
+		}
+	}
+	GER_restore_professional_officers = {
+		icon = generic_army_support
+		fire_only_once = yes
+		available = {
+			has_country_flag = NWgermany_35_flag
+		}
+		visible = {
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { command_power_temp_cost = 50 }
+			set_temp_variable = { custom_cost_pp = 150 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 10
+				has_completed_focus = GER_stop_party_radicals
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decisions GER_restore_professional_officers"
+			hidden_effect = { add_political_power = -150 add_command_power = -50 }
+			add_power_balance_value = {
+				id = GER_power_balance
+				value = 0.2
+				tooltip_side = GER_wehrmacht_side
+			}
+			custom_effect_tooltip = GER_restore_professional_officers_tt
+			clr_country_flag = NWgermany_35_flag
 		}
 	}
 }

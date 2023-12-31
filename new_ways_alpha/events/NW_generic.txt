@@ -1126,31 +1126,31 @@ country_event = {
 			modifier = {
 				add = 20
 				FROM = { original_tag = ETH }
-				has_country_flag = anarchism_neutrality_flag
+				is_neutrality_anarchist = yes
 			}
 			modifier = {
 				factor = 10
 				FROM = {
 					NOT = { original_tag = ETH }
-					has_country_flag = anarchism_neutrality_flag
+					is_neutrality_anarchist = yes
 				}
-				has_country_flag = anarchism_neutrality_flag
+				is_neutrality_anarchist = yes
 			}
 			modifier = {
 				factor = 10
 				FROM = {
 					NOT = { original_tag = ETH }
-					has_country_flag = anarchism_left_flag
+					is_left_anarchist = yes
 				}
-				has_country_flag = anarchism_left_flag
+				is_left_anarchist = yes
 			}
 			modifier = {
 				factor = 10
 				FROM = {
 					NOT = { original_tag = ETH }
-					has_country_flag = anarchism_right_flag
+					is_right_anarchist = yes
 				}
-				has_country_flag = anarchism_right_flag
+				is_right_anarchist = yes
 			}
 		}
 		FROM = {
@@ -1166,23 +1166,23 @@ country_event = {
 			modifier = {
 				add = -20
 				FROM = { original_tag = ETH }
-				has_country_flag = anarchism_neutrality_flag
+				is_neutrality_anarchist = yes
 			}
 		}
 		FROM = { country_event = { id = generic.7 hours = 6 } }
 	}
 }
 
-#Первомайская демонстрация пульсар
+# Первомайская демонстрация пульсар // SAI
 country_event = {
 	id = NWgeneric.15
 	is_triggered_only = yes
 	hidden = yes
 	
 	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.15" }
-
-	option = {
-		every_country = {
+	immediate = {
+		country_event = { id = NWgeneric.15 days = 365 }
+		every_other_country = {
 			limit = {
 				has_war = no
 				OR = {
@@ -1191,19 +1191,43 @@ country_event = {
 					has_government = anarchism
 				}
 			}
-			country_event = { id = NWgeneric.16 }
-		}
-		random_country = {
-			country_event = { id = NWgeneric.15 days = 365 }
+			country_event = NWgeneric.16
 		}
 	}
 }
 
-#Первомайская демонстрация
+# Первомайская демонстрация / День борьбы пролетариата
 country_event = {
 	id = NWgeneric.16
-	title = NWgeneric.16.t
-	desc = NWgeneric.16.desc
+	title = {
+		text = NWgeneric.16.t1
+		trigger = {
+			NOT = { has_government = anarchism }
+		}
+	}
+	title = {
+		text = NWgeneric.16.t_anarchism				# for all anarchists
+		trigger = {
+			has_government = anarchism
+		}
+	}
+	
+	desc = {
+		text = NWgeneric.16.desc1
+		trigger = {
+			NOT = {
+				original_tag = POR
+				has_government = anarchism
+			}
+		}
+	}
+	desc = {
+		text = NWgeneric.16.desc_POR_anarchism		# for POR anarchists
+		trigger = {
+			original_tag = POR
+			has_government = anarchism
+		}
+	}
 	picture = GFX_report_event_generic_rally2
 	is_triggered_only = yes
 	
@@ -1211,15 +1235,21 @@ country_event = {
 
 	option = {
 		name = NWgeneric.16.a
+		trigger = {
+			NOT = {
+				AND = {
+					original_tag = POR
+					has_government = anarchism
+				}
+			}
+		}
 		ai_chance = {
 			factor = 1
 		}
 		add_stability = 0.02
 		if = {
 			limit = { has_government = anarchism }
-			set_temp_variable = { anarchism_unity_add_var = 2 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 2 tooltip = anarchism_unity_add_effect }
 		}
 		add_popularity = {
 			ideology = var:current_party_ideology_group
@@ -1229,6 +1259,14 @@ country_event = {
 	
 	option = {
 		name = NWgeneric.16.b
+		trigger = {
+			NOT = {
+				AND = {
+					original_tag = POR
+					has_government = anarchism
+				}
+			}
+		}
 		ai_chance = {
 			factor = 99
 			modifier = {
@@ -1240,13 +1278,28 @@ country_event = {
 		add_political_power = -15
 		if = {
 			limit = { has_government = anarchism }
-			set_temp_variable = { anarchism_unity_add_var = 3.5 }
-			add_to_variable = { anarchism_unity_var = anarchism_unity_add_var }
-			custom_effect_tooltip = anarchism_unity_add_effect
+			add_to_variable = { anarchism_unity_var = 3.5 tooltip = anarchism_unity_add_effect }
 		}
 		add_popularity = {
 			ideology = var:current_party_ideology_group
 			popularity = 0.025
+		}
+	}
+	
+	option = {
+		name = NWgeneric.16.por
+		trigger = {
+			original_tag = POR
+			has_government = anarchism
+		}
+		ai_chance = {
+			factor = 1
+		}
+		add_war_support = 0.01
+		add_to_variable = { anarchism_unity_var = 2 tooltip = anarchism_unity_add_effect }
+		add_popularity = {
+			ideology = var:current_party_ideology_group
+			popularity = 0.01
 		}
 	}
 }
@@ -1358,6 +1411,16 @@ country_event = {
 					original_tag = ITA
 					original_tag = RSI
 				}
+			}
+			modifier = {
+				factor = 0
+				original_tag = ENG
+				FROM = { original_tag = CYP }
+			}
+			modifier = {
+				factor = 0
+				original_tag = CAN
+				FROM = { original_tag = NFL }
 			}
 		}
 		every_state = {
@@ -4670,6 +4733,17 @@ country_event = {
 		}
 		set_country_flag = anarchism_left_flag
 		effect_tooltip = { unlock_national_focus = social_anarchism_focus }
+		if = {
+			limit = {
+				NOT = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+					has_active_mission = generic_anarchism_manpower_decision
+				}
+			}
+			activate_mission = generic_anarchism_manpower_decision
+		}
 	}
 	option = {
 		name = NWgeneric.107.b
@@ -4685,6 +4759,17 @@ country_event = {
 		}
 		set_country_flag = anarchism_right_flag
 		effect_tooltip = { unlock_national_focus = anarcho_individualism_focus }
+		if = {
+			limit = {
+				NOT = {
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+					has_active_mission = generic_anarchism_manpower_decision
+				}
+			}
+			activate_mission = generic_anarchism_manpower_decision
+		}
 	}
 	option = {
 		name = NWgeneric.107.c
@@ -4705,6 +4790,20 @@ country_event = {
 		}
 		set_country_flag = anarchism_neutrality_flag
 		effect_tooltip = { unlock_national_focus = anarchism_without_adjectives_focus }
+		if = {
+			limit = {
+				NOT = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+					has_active_mission = generic_anarchism_manpower_decision
+				}
+			}
+			activate_mission = generic_anarchism_manpower_decision
+		}
 	}
 	option = {
 		name = NWgeneric.107.d
@@ -4782,14 +4881,50 @@ country_event = {
 			50 = {
 				set_country_flag = anarchism_left_flag
 				effect_tooltip = { unlock_national_focus = social_anarchism_focus }
+				if = {
+					limit = {
+						NOT = {
+							has_idea = peoples_squads
+							has_idea = peoples_police
+							has_idea = peoples_militia
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 			50 = {
 				set_country_flag = anarchism_right_flag
 				effect_tooltip = { unlock_national_focus = anarcho_individualism_focus }
+				if = {
+					limit = {
+						NOT = {
+							has_idea = mercenary_soldiers
+							has_idea = monopolized_private_armies
+							has_idea = thriving_private_army_market
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 			50 = {
 				set_country_flag = anarchism_neutrality_flag
 				effect_tooltip = { unlock_national_focus = anarchism_without_adjectives_focus }
+				if = {
+					limit = {
+						NOT = {
+							has_idea = peoples_squads
+							has_idea = peoples_police
+							has_idea = peoples_militia
+							has_idea = mercenary_soldiers
+							has_idea = monopolized_private_armies
+							has_idea = thriving_private_army_market
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 			#50 = {
 			#	set_country_leader_ideology = anarcho_monarchism
@@ -4858,8 +4993,7 @@ country_event = {
 		set_country_flag = NWgeneric_110_b
 		custom_effect_tooltip = NWgeneric_110_b_tt
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 3 }
-		custom_effect_tooltip = anarchism_unity_add_effect
+		effect_tooltip = { add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect } }
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 3 }
 	}
@@ -4879,9 +5013,10 @@ country_event = {
 		custom_effect_tooltip = administrative_efficiency_effect
 		
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 2 }
-		custom_effect_tooltip = anarchism_unity_add_effect
-		effect_tooltip = { add_war_support = 0.03 }
+		effect_tooltip = {
+			add_to_variable = { anarchism_unity_var = 2 tooltip = anarchism_unity_add_effect }
+			add_war_support = 0.03
+		}
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 2 }
 		add_to_variable = { add_war_support_dec_var = 0.03 }
@@ -4913,9 +5048,10 @@ country_event = {
 		custom_effect_tooltip = administrative_efficiency_effect
 		
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 3 }
-		custom_effect_tooltip = anarchism_unity_add_effect
-		effect_tooltip = { add_war_support = 0.06 }
+		effect_tooltip = {
+			add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect }
+			add_war_support = 0.06
+		}
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 3 }
 		add_to_variable = { add_war_support_dec_var = 0.06 }
@@ -4929,8 +5065,7 @@ country_event = {
 		add_to_variable = { middle_solution_var = 1 }
 		set_country_flag = NWgeneric_111_b
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 4 }
-		custom_effect_tooltip = anarchism_unity_add_effect
+		effect_tooltip = { add_to_variable = { anarchism_unity_var = 4 tooltip = anarchism_unity_add_effect } }
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 4 }
 	}
@@ -4979,8 +5114,7 @@ country_event = {
 		add_to_variable = { middle_solution_var = 1 }
 		set_country_flag = NWgeneric_112_b
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 5 }
-		custom_effect_tooltip = anarchism_unity_add_effect
+		effect_tooltip = { add_to_variable = { anarchism_unity_var = 5 tooltip = anarchism_unity_add_effect } }
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 5 }
 	}
@@ -5000,9 +5134,10 @@ country_event = {
 		custom_effect_tooltip = administrative_efficiency_effect
 		
 		custom_effect_tooltip = changing_intended_effect_tt
-		set_temp_variable = { anarchism_unity_add_var = 3 }
-		custom_effect_tooltip = anarchism_unity_add_effect
-		effect_tooltip = { add_war_support = 0.05 }
+		effect_tooltip = {
+			add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect }
+			add_war_support = 0.05
+		}
 		
 		add_to_variable = { anarchism_unity_add_dec_var = 3 }
 		add_to_variable = { add_war_support_dec_var = 0.05 }
@@ -6904,7 +7039,8 @@ country_event = {
 						include_locked = no
 					}
 				}
-				add_extra_state_shared_building_slots = -1
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
 			}
 			random_controlled_state = {
 				limit = {
@@ -6914,7 +7050,8 @@ country_event = {
 						include_locked = no
 					}
 				}
-				add_extra_state_shared_building_slots = -1
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
 			}
 			random_controlled_state = {
 				limit = {
@@ -6924,7 +7061,8 @@ country_event = {
 						include_locked = no
 					}
 				}
-				add_extra_state_shared_building_slots = -1
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
 			}
 			random_controlled_state = {
 				limit = {
@@ -6934,7 +7072,8 @@ country_event = {
 						include_locked = no
 					}
 				}
-				add_extra_state_shared_building_slots = -1
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
 			}
 		}
 		else = {
@@ -7452,16 +7591,8 @@ country_event = {
 						tag = CLF
 						tag = USA
 						tag = MDA
-						tag = OAL
-						tag = ADY
 						tag = ABK
-						tag = KCH
-						tag = KBA
-						tag = ING
-						tag = ICH
 						tag = GEO
-						tag = DAG
-						tag = ADJ
 					}
 				}
 				random_owned_state = {
@@ -7604,34 +7735,39 @@ country_event = {
 		}
 		hidden_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): chosen NWgeneric.9999b"
-			random_country = {
-				limit = { num_of_controlled_states > 1 }
-				set_country_flag = NWgeneric_9999_flag
-				log = "[GetDateText]: [This.GetName] ([This.GetTag]): СТРАНА SAI"
-				random_owned_state = {
-					log = "[GetDateText]: [This.GetName] ([This.GetID]): СТЕЙТ SAI"
-					SAI = { transfer_state = PREV }
-				}
-			}
 			every_country = {
+				destroy_ships = {
+					type = ship_hull_light
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_cruiser
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_heavy
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_carrier 
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_submarine
+					count = all
+				}
+				every_state = {
+					PREV = {
+						delete_unit = { state = PREV disband = yes }
+					}
+				}
 				transfer_units_fraction = {
 					target = SAI
-					size = 1
-					stockpile_ratio = 0
-					army_ratio = 1
-					navy_ratio = 1
-					air_ratio = 1
-				}
-				transfer_navy = {
-					target = SAI
-				}
-			}
-			random_country = {
-				limit = { has_country_flag = NWgeneric_9999_flag }
-				clr_country_flag = NWgeneric_9999_flag
-				annex_country = {
-					target = SAI
-					transfer_troops = no
+					size = 0.0
+					stockpile_ratio = 0.0
+					army_ratio = 0.0
+					navy_ratio = 0.0
+					air_ratio = 1.0
 				}
 			}
 			country_event = { id = NWgeneric.9998 hours = 8 }
@@ -7645,32 +7781,39 @@ country_event = {
 		}
 		hidden_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): chosen NWgeneric.9999c"
-			random_country = {
-				limit = { num_of_controlled_states > 1 }
-				set_country_flag = NWgeneric_9999_flag
-				random_owned_state = {
-					SAI = { transfer_state = PREV }
-				}
-			}
 			every_country = {
+				destroy_ships = {
+					type = ship_hull_light
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_cruiser
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_heavy
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_carrier 
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_submarine
+					count = all
+				}
+				every_state = {
+					PREV = {
+						delete_unit = { state = PREV disband = no }
+					}
+				}
 				transfer_units_fraction = {
 					target = SAI
-					size = 1
-					stockpile_ratio = 1
-					army_ratio = 1
-					navy_ratio = 1
-					air_ratio = 1
-				}
-				transfer_navy = {
-					target = SAI
-				}
-			}
-			random_country = {
-				limit = { has_country_flag = NWgeneric_9999_flag }
-				clr_country_flag = NWgeneric_9999_flag
-				annex_country = {
-					target = SAI
-					transfer_troops = no
+					size = 0.0
+					stockpile_ratio = 0.0
+					army_ratio = 0.0
+					navy_ratio = 0.0
+					air_ratio = 1.0
 				}
 			}
 			country_event = { id = NWgeneric.9998 hours = 8 }
@@ -7684,44 +7827,40 @@ country_event = {
 		}
 		hidden_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): chosen NWgeneric.9999d"
-			random_country = {
-				limit = { num_of_controlled_states > 1 }
-				set_country_flag = NWgeneric_9999_flag
-				random_owned_state = {
-					SAI = { transfer_state = PREV }
-				}
-			}
 			every_country = {
+				destroy_ships = {
+					type = ship_hull_light
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_cruiser
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_heavy
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_carrier 
+					count = all
+				}
+				destroy_ships = {
+					type = ship_hull_submarine
+					count = all
+				}
+				every_state = {
+					PREV = {
+						delete_unit = { state = PREV disband = no }
+					}
+				}
 				transfer_units_fraction = {
 					target = SAI
-					size = 1
-					stockpile_ratio = 1
-					army_ratio = 1
-					navy_ratio = 1
-					air_ratio = 1
+					size = 0.0
+					stockpile_ratio = 0.0
+					army_ratio = 0.0
+					navy_ratio = 0.0
+					air_ratio = 1.0
 				}
-				transfer_navy = {
-					target = SAI
-				}
-			}
-			#SAI = {
-			#	random_owned_state = {
-			#		random_country = {
-			#			limit = { has_country_flag = NWgeneric_9999_flag }
-			#			clr_country_flag = NWgeneric_9999_flag
-			#			transfer_state = PREV
-			#		}
-			#	}
-			#}
-			random_country = {
-				limit = { has_country_flag = NWgeneric_9999_flag }
-				clr_country_flag = NWgeneric_9999_flag
-				annex_country = {
-					target = SAI
-					transfer_troops = no
-				}
-			}
-			every_country = {
 				capital_scope = {
 					create_unit = {
 						division = "division_template = \"National Guards\"	start_experience_factor = 0	start_equipment_factor = 1"
@@ -8073,31 +8212,6 @@ country_event = {
 
 
 
-
-#Сброс на генерик в безумных сценариях
-country_event = {
-	id = NWgeneric.998
-	hidden = yes
-	
-	trigger = {
-		OR = {
-			has_global_flag = WORLD_OF_SPLIT_FLAG
-			has_global_flag = THE_MOTHER_OF_ORDER_FLAG
-		}
-		NOT = {
-			has_focus_tree = generic_focus
-			has_focus_tree = generic_focus_zero
-			has_focus_tree = generic_anarchism_focus
-		}
-	}
-	
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWgeneric.998" }
-	immediate = { load_focus_tree = { tree = generic_focus keep_completed = no } }
-	
-	mean_time_to_happen = { days = 7 }
-}
-
-
 #TEST
 country_event = {
 	id = NWgeneric.999
@@ -8109,32 +8223,32 @@ country_event = {
 	option = {
 		name = "5 factions"
 		random_country = {
-			limit = { has_country_flag = anarchism_left_flag }
+			limit = { is_left_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Анархический Левый Интернационал"
 			set_country_flag = anarchism_left_leader_flag
 			every_other_country = {
-				limit = { has_country_flag = anarchism_left_flag }
+				limit = { is_left_anarchist = yes }
 				PREV = { add_to_faction = PREV }
 			}
 		}
 		random_country = {
-			limit = { has_country_flag = anarchism_right_flag }
+			limit = { is_right_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Правая Анархическая Коалиция"
 			set_country_flag = anarchism_right_leader_flag
 			every_other_country = {
-				limit = { has_country_flag = anarchism_right_flag }
+				limit = { is_right_anarchist = yes }
 				PREV = { add_to_faction = PREV }
 			}
 		}
 		random_country = {
-			limit = { has_country_flag = anarchism_neutrality_flag }
+			limit = { is_neutrality_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Анархический Синтез"
 			set_country_flag = anarchism_neutrality_leader_flag
 			every_other_country = {
-				limit = { has_country_flag = anarchism_neutrality_flag }
+				limit = { is_neutrality_anarchist = yes }
 				PREV = { add_to_faction = PREV }
 			}
 		}
@@ -8173,34 +8287,34 @@ country_event = {
 	option = {
 		name = "3 factions"
 		random_country = {
-			limit = { has_country_flag = anarchism_left_flag }
+			limit = { is_left_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Анархический Левый Интернационал"
 			set_country_flag = anarchism_left_leader_flag
 			every_other_country = {
-				limit = { has_country_flag = anarchism_left_flag }
+				limit = { is_left_anarchist = yes }
 				PREV = { add_to_faction = PREV }
 			}
 		}
 		random_country = {
-			limit = { has_country_flag = anarchism_right_flag }
+			limit = { is_right_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Правая Анархическая Коалиция"
 			set_country_flag = anarchism_right_leader_flag
 			every_other_country = {
-				limit = { has_country_flag = anarchism_right_flag }
+				limit = { is_right_anarchist = yes }
 				PREV = { add_to_faction = PREV }
 			}
 		}
 		random_country = {
-			limit = { has_country_flag = anarchism_neutrality_flag }
+			limit = { is_neutrality_anarchist = yes }
 			set_rule = { can_create_factions = yes }
 			create_faction = "Анархический Синтез"
 			set_country_flag = anarchism_neutrality_leader_flag
 			every_other_country = {
 				limit = {
 					OR = {
-						has_country_flag = anarchism_neutrality_flag
+						is_neutrality_anarchist = yes
 						has_country_flag = anarchism_monarchism_flag
 						has_country_flag = anarchism_nationalism_flag
 						has_country_flag = anarchism_transgumanism_flag
@@ -8367,12 +8481,48 @@ country_event = {
 		random_list = {
 			50 = {
 				set_country_flag = anarchism_left_flag
+				if = {
+					limit = {
+						NOT = {
+							has_idea = peoples_squads
+							has_idea = peoples_police
+							has_idea = peoples_militia
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 			50 = {
 				set_country_flag = anarchism_right_flag
+				if = {
+					limit = {
+						NOT = {
+							has_idea = mercenary_soldiers
+							has_idea = monopolized_private_armies
+							has_idea = thriving_private_army_market
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 			50 = {
 				set_country_flag = anarchism_neutrality_flag
+				if = {
+					limit = {
+						NOT = {
+							has_idea = peoples_squads
+							has_idea = peoples_police
+							has_idea = peoples_militia
+							has_idea = mercenary_soldiers
+							has_idea = monopolized_private_armies
+							has_idea = thriving_private_army_market
+							has_active_mission = generic_anarchism_manpower_decision
+						}
+					}
+					activate_mission = generic_anarchism_manpower_decision
+				}
 			}
 		}
 	}

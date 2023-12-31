@@ -1,0 +1,75 @@
+scripted_diplomatic_actions = {
+	
+	peace_talks = {
+		icon = 1
+		allowed = {		# The country making the diplomatic request
+			always = yes
+		}
+		visible = {		# The target country  # for effects/triggers/variables, ROOT - отправитель, а THIS - получатель
+			THIS = {
+				NOT = { original_tag = ROOT }
+				has_war_with = ROOT
+				is_subject = no
+				has_country_flag = peace_talks_@ROOT_flag
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		selectable = {
+			THIS = {
+				has_war_with = ROOT
+				is_subject = no
+			}
+		}
+		requires_acceptance = no
+		show_acceptance_on_action_button = yes
+		cost = 5
+		
+		
+		# только при отправке // не работает при необходимости подтверждения
+		on_sent_effect = { }
+		# только при отправке и принятии
+		complete_effect = {
+			clr_country_flag = peace_talks_@ROOT_flag
+			country_event = { id = TRpolitical.300 hours = 3 }
+		}
+		# только при отправке и отклонении
+		reject_effect = { }
+		
+		
+		ai_desire = {
+			base = 0
+			modifier = {
+				add = 150
+				is_ai = no
+			}
+			modifier = {
+				add = -500
+				ROOT = {
+					OR = {
+						has_government = communism
+						has_government = trozkism
+						has_government = fascism
+					}
+				}
+				OR = {
+					has_government = communism
+					has_government = trozkism
+					has_government = fascism
+				}
+				NOT = { has_government = ROOT }
+				
+			}
+			modifier = {
+				add = -999
+				is_in_faction = yes
+				is_faction_leader = no
+			}
+			modifier = {
+				add = -999
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}

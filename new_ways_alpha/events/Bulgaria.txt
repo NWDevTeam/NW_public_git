@@ -165,8 +165,13 @@ country_event = {
 
 	option = {
 		name = bulgaria.6.b
-		ai_chance = { factor = 10 }
-		
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
 	}
 }
 
@@ -884,25 +889,19 @@ country_event = {
 	option = {
 		name = bulgaria.29.a
 		ai_chance = { factor = 90 }
-		BUL = { 
+		set_global_flag = BUL_antiromanian_faction_flag
+		FROM = {
 			set_rule = { can_create_factions = yes }
 			create_faction = "BUL_antiromanian_faction"
 			add_to_faction = ROOT
-		}
-		HUN = { create_wargoal = {
-			type = take_state_focus
-			target = ROM
-			generator = { 76 }
-				}
-			}
-		hidden_effect = {
-			BUL = {
+		
+			hidden_effect = {
 				country_event = { id = bulgaria.30 hours = 6 }
 			}
 		}
 		add_ai_strategy = {
 			type = alliance
-			id = "BUL"
+			id = FROM
 			value = 200
 		}
 	}
@@ -910,9 +909,7 @@ country_event = {
 	option = {
 		name = bulgaria.29.b
 		ai_chance = { factor = 10 }
-		hidden_effect = {
-			BUL = { country_event = bulgaria.31 }
-		}
+		FROM = { country_event = bulgaria.31 }
 	}
 }
 
@@ -982,15 +979,17 @@ country_event = {
 	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event bulgaria.33"}
 	
 	trigger = {
-		tag = BUL
+		OR = {
+			tag = BUL
+			tag = HUN
+		}
 		is_faction_leader = yes
-		is_in_faction_with = HUN
-		ROM = { has_country_flag = BUL_HUN_win }
+		has_global_flag = BUL_antiromanian_faction_flag
 		OR = {
 			NOT = { country_exists = ROM }
-			ROM = { is_puppet = yes }
+			ROM = { is_subject = yes }
 			BUL = { owns_state = 77 }
-			BUL = { owns_state = 76 }
+			HUN = { owns_state = 76 }
 		}
 	}
 	
@@ -998,6 +997,7 @@ country_event = {
 
 	option = {
 		name = bulgaria.33.a
+		clr_global_flag = BUL_antiromanian_faction_flag
 		dismantle_faction = yes
 	}
 }

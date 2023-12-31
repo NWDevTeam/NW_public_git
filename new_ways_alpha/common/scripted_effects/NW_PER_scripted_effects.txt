@@ -73,37 +73,57 @@ remove_all_catastrophic_disintegration_of_army_ideas = {
 }
 
 up_level_catastrophic_disintegration_of_army = {
-	remove_all_catastrophic_disintegration_of_army_ideas = yes
+	set_temp_variable = { check_PER_army_reform_var_temp = PER_army_reform_var_temp }
+	add_to_temp_variable = { check_PER_army_reform_var_temp = PER_army_reform_var }
+	clamp_temp_variable = { var = check_PER_army_reform_var_temp min = 0 max = 100 }
+	
 	if = {
-		limit = { check_variable = { PER_army_reform_var > 99.99 } }
-		if = {
-			limit = { has_idea = PER_problems_with_discipline_in_army }
-			effect_tooltip = { remove_ideas = PER_problems_with_discipline_in_army }
+		limit = { check_variable = { check_PER_army_reform_var_temp > 99.99 } }
+		meta_effect = {
+			text = {
+				remove_ideas = [CURRENT_PER_ARMY_IDEA]
+			}
+			CURRENT_PER_ARMY_IDEA = "[?PER_current_army_idea_var.GetTokenKey]"
 		}
 	}
 	else_if = {
-		limit = { check_variable = { PER_army_reform_var > 84.99 } }
-		add_ideas = PER_problems_with_discipline_in_army
-	}
-	else_if = {
-		limit = { check_variable = { PER_army_reform_var > 69.99 } }
-		add_ideas = PER_problems_with_organization_in_army
-	}
-	else_if = {
-		limit = { check_variable = { PER_army_reform_var > 49.99 } }
-		add_ideas = PER_serious_disintegration_of_army
-	}
-	else_if = {
-		limit = { check_variable = { PER_army_reform_var > 29.99 } }
-		add_ideas = PER_largescale_disintegration_of_army
-	}
-	else_if = {
-		limit = { check_variable = { PER_army_reform_var > 14.999 } }
-		add_ideas = PER_appalling_disintegration_of_army
-	}
-	else_if = {
-		limit = { check_variable = { PER_army_reform_var < 15.000 } }
-		add_ideas = PER_catastrophic_disintegration_of_army
+		if = {
+			limit = { check_variable = { check_PER_army_reform_var_temp > 84.99 } }
+			set_temp_variable = { PER_new_army_idea_var = token:PER_problems_with_discipline_in_army }
+		}
+		else_if = {
+			limit = { check_variable = { check_PER_army_reform_var_temp > 69.99 } }
+			set_temp_variable = { PER_new_army_idea_var = token:PER_problems_with_organization_in_army }
+		}
+		else_if = {
+			limit = { check_variable = { check_PER_army_reform_var_temp > 49.99 } }
+			set_temp_variable = { PER_new_army_idea_var = token:PER_serious_disintegration_of_army }
+		}
+		else_if = {
+			limit = { check_variable = { check_PER_army_reform_var_temp > 29.99 } }
+			set_temp_variable = { PER_new_army_idea_var = token:PER_largescale_disintegration_of_army }
+		}
+		else_if = {
+			limit = { check_variable = { check_PER_army_reform_var_temp > 14.99 } }
+			set_temp_variable = { PER_new_army_idea_var = token:PER_appalling_disintegration_of_army }
+		}
+		else = {
+			set_temp_variable = { PER_new_army_idea_var = token:PER_catastrophic_disintegration_of_army }
+		}
+		if = {
+			limit = { NOT = { check_variable = { PER_new_army_idea_var = PER_current_army_idea_var } } }
+			meta_effect = {
+				text = {
+					swap_ideas = {
+						remove_idea = [CURRENT_PER_ARMY_IDEA]
+						add_idea = [NEW_PER_ARMY_IDEA]
+					}
+				}
+				CURRENT_PER_ARMY_IDEA = "[?PER_current_army_idea_var.GetTokenKey]"
+				NEW_PER_ARMY_IDEA = "[?PER_new_army_idea_var.GetTokenKey]"
+			}
+			set_variable = { PER_current_army_idea_var = PER_new_army_idea_var }
+		}
 	}
 }
 
@@ -269,30 +289,33 @@ set_influence_clergy_Value = {
 
 check_end_events_of_ernest_perron = {
 	hidden_effect = {
-		clamp_variable = { var = level_confidence_of_father min = -3 max = 3 }
-		clamp_variable = { var = level_tension_of_heir min = 0 max = 3 }
 		if = {
-			limit = {
-				check_variable = { level_confidence_of_father = 3 }
-				check_variable = { level_tension_of_heir < 3 }
+			limit = { NOT = { has_country_flag = NWpersian_223_flag } }
+			clamp_variable = { var = level_confidence_of_father min = -3 max = 3 }
+			clamp_variable = { var = level_tension_of_heir min = 0 max = 3 }
+			if = {
+				limit = {
+					check_variable = { level_confidence_of_father = 3 }
+					check_variable = { level_tension_of_heir < 3 }
+				}
+				clr_country_flag = PER_surveillance_of_mohammed_flag
+				country_event = { id = NWpersian.217 }
 			}
-			clr_country_flag = PER_surveillance_of_mohammed_flag
-			country_event = { id = NWpersian.217 }
-		}
-		if = {
-			limit = {
-				check_variable = { level_confidence_of_father = -3 }
-				check_variable = { level_tension_of_heir < 3 }
+			if = {
+				limit = {
+					check_variable = { level_confidence_of_father = -3 }
+					check_variable = { level_tension_of_heir < 3 }
+				}
+				clr_country_flag = PER_surveillance_of_mohammed_flag
+				country_event = { id = NWpersian.218 }
 			}
-			clr_country_flag = PER_surveillance_of_mohammed_flag
-			country_event = { id = NWpersian.218 }
-		}
-		if = {
-			limit = {
-				check_variable = { level_tension_of_heir = 3 }
+			if = {
+				limit = {
+					check_variable = { level_tension_of_heir = 3 }
+				}
+				clr_country_flag = PER_surveillance_of_mohammed_flag
+				country_event = { id = NWpersian.220 }
 			}
-			clr_country_flag = PER_surveillance_of_mohammed_flag
-			country_event = { id = NWpersian.220 }
 		}
 	}
 }

@@ -253,99 +253,235 @@ country_event = {
 	}
 }
 
+#country_event = {
+#	id = plus.5
+#	title = { text = plus.5.t}
+#	desc = { text = plus.5.d }
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event plus.5"}
+#	is_triggered_only = yes
+#	
+#	immediate = {
+#		hidden_effect = { 
+#			add_var_manpower = yes
+#			add_to_variable = { var = rebel_manpower@ROOT value = var_statistic@ROOT }
+#		}
+#	}
+#	
+#	option = {
+#        name = plus.5.a #
+#		add_to_variable = { var = num_division_trained_2@ROOT value = 4 }
+#		add_to_variable = { var = num_all_division@ROOT value = 4 }
+#	}
+#	
+#	option = {
+#        name = plus.5.b # Delete
+#		
+#		set_variable = { var = rebel_manpower@ROOT value = 0 }
+#	}
+#}
+
+#### Суэцкий канал
+#country_event = {
+#	id = chanel.1
+#	
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.1"}
+#	hidden = yes mean_time_to_happen = { days = 7 }
+#	
+#	trigger = {
+#		has_full_control_of_state = 1064
+#		NOT = { has_country_flag = suez_profit }
+#	}
+#	
+#	option = {
+#		set_country_flag = suez_profit
+#		add_offsite_building = { type = industrial_complex level = 2 }
+#	}
+#}
+
+#country_event = {
+#	id = chanel.2
+#	
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.2"}
+#	hidden = yes mean_time_to_happen = { days = 7 }
+#	
+#	trigger = {
+#		NOT = { has_full_control_of_state = 1064 }
+#		has_country_flag = suez_profit
+#	}
+#	
+#	option = {
+#		clr_country_flag = suez_profit
+#		add_offsite_building = { type = industrial_complex level = -2 }
+#	}
+#}
+
+#### Панамский канал
+#country_event = {
+#	id = chanel.3
+#	
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.3"}
+#	hidden = yes mean_time_to_happen = { days = 7 }
+#	
+#	trigger = {
+#		has_full_control_of_state = 685
+#		NOT = { has_country_flag = panama_profit }
+#	}
+#	
+#	option = {
+#		set_country_flag = panama_profit
+#		add_offsite_building = { type = industrial_complex level = 2 }
+#	}
+#}
+
+#country_event = {
+#	id = chanel.4
+#	
+#	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.4"}
+#	hidden = yes mean_time_to_happen = { days = 7 }
+#	
+#	trigger = {
+#		NOT = { has_full_control_of_state = 685 }
+#		has_country_flag = panama_profit
+#	}
+#	
+#	option = {
+#		clr_country_flag = panama_profit
+#		add_offsite_building = { type = industrial_complex level = -2 }
+#	}
+#}
+
+
+
 country_event = {
-	id = plus.5
-	title = { text = plus.5.t}
-	desc = { text = plus.5.d }
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event plus.5"}
+	id = chanel.999
+	hidden = yes
 	is_triggered_only = yes
 	
 	immediate = {
-		hidden_effect = { 
-			add_var_manpower = yes
-			add_to_variable = { var = rebel_manpower@ROOT value = var_statistic@ROOT }
+		random_other_country = {
+			limit = { any_military_industrial_organization = { has_mio_equipment_type = mio_cat_eq_build check_variable = { funds > 10 } } }
+			save_event_target_as = event_target_mio
+		}
+	}
+
+	option = {
+		SOV = {
+			every_military_industrial_organization = {
+				limit = {
+					OR = {
+						has_mio_equipment_type = mio_cat_eq_build
+						has_mio_equipment_type = mio_cat_eq_all_medium_tank
+					}
+					is_mio_available = yes OR = { check_variable = { funds > 0 } check_variable = { size > 0 } }
+				}
+				set_temp_variable = { temp0 = size }
+				while_loop_effect = {
+					limit = { check_variable = { temp0 > 0 } }
+					add_to_temp_variable = { temp_funds = global.total_mio_funds_array^temp0 }
+					add_to_temp_variable = { temp0 = -1 }
+				}
+				add_to_temp_variable = { temp_funds = funds }
+				
+#				if = {
+#					limit = { check_variable = { size > looser_max_size } }
+#					set_temp_variable = { looser_max_size = size }
+#				}
+
+				add_to_temp_array = { looser_temp_mio_size_array = size }
+				
+
+#				if = {
+#					limit = {
+#						PREV = {
+#							NOT = {
+#								any_military_industrial_organization = {
+#									OR = {
+#										has_mio_equipment_type = mio_cat_eq_build
+#										has_mio_equipment_type = mio_cat_eq_all_medium_tank
+#									}
+#									check_variable = { size > PREV.PREV.size }
+#								}
+#							}
+#						}
+#					}
+#					set_temp_variable = { looser_max_size = THIS.size }
+#				}
+				log = "[This.GetName] ([This.GetTag]): add_total_looser_funds = [?funds]"
+			}
+			find_highest_in_array = { array = looser_temp_mio_size_array value = looser_max_size }
+			log = "[This.GetName] ([This.GetTag]): looser_temp_mio_size_array^0 = [?looser_temp_mio_size_array^0]"
+			log = "[This.GetName] ([This.GetTag]): looser_temp_mio_size_array^1 = [?looser_temp_mio_size_array^1]"
+			log = "[This.GetName] ([This.GetTag]): looser_temp_mio_size_array^2 = [?looser_temp_mio_size_array^2]"
+			log = "[This.GetName] ([This.GetTag]): looser_max_size = [?looser_max_size]"
+			clear_array = looser_temp_mio_size_array
+		}
+		log = "[This.GetName] ([This.GetTag]): total_looser_funds = [?temp_funds]"
+		log = "[This.GetName] ([This.GetTag]): looser_max_size = [?looser_max_size]"
+		ROOT = {
+			every_military_industrial_organization = {
+				limit = {
+					OR = {
+						has_mio_equipment_type = mio_cat_eq_build
+						has_mio_equipment_type = mio_cat_eq_all_medium_tank
+					}
+					is_mio_available = yes
+					OR = {
+						check_variable = { funds > 0 }
+						check_variable = { size > 0 }
+					}
+				}
+				add_to_temp_array = { winner_temp_mio_size_array = size }
+			}
+			find_highest_in_array = { array = winner_temp_mio_size_array value = winner_max_size }
+			log = "[This.GetName] ([This.GetTag]): winner_temp_mio_size_array^0 = [?winner_temp_mio_size_array^0]"
+			log = "[This.GetName] ([This.GetTag]): winner_temp_mio_size_array^1 = [?winner_temp_mio_size_array^1]"
+			log = "[This.GetName] ([This.GetTag]): winner_temp_mio_size_array^2 = [?winner_temp_mio_size_array^2]"
+			log = "[This.GetName] ([This.GetTag]): winner_max_size = [?winner_max_size]"
+			clear_array = winner_temp_mio_size_array
+	
+			random_military_industrial_organization = {
+				limit = {
+					OR = {
+						has_mio_equipment_type = mio_cat_eq_build
+						has_mio_equipment_type = mio_cat_eq_all_medium_tank
+					}
+					is_mio_available = yes
+					check_variable = { size = winner_max_size }
+				}
+				if = {
+					limit = { check_variable = { looser_max_size > winner_max_size } }
+					set_temp_variable = { mio_funds_stolen_total_temp = looser_max_size }
+					subtract_from_temp_variable = { mio_funds_stolen_total_temp = winner_max_size }
+					multiply_temp_variable = { mio_funds_stolen_total_temp = ROOT.modifier@mio_funds_stolen_bonus_modifier }
+					add_to_temp_variable = { mio_funds_stolen_total_temp = ROOT.modifier@mio_funds_stolen_base_modifier }
+					clamp_temp_variable = { var = mio_funds_stolen_total_temp	min = mio_funds_stolen_base_modifier	max = 1 }
+					multiply_temp_variable = { temp_funds = mio_funds_stolen_total_temp }
+					add_mio_funds = temp_funds
+				}
+				else = {
+					multiply_temp_variable = { temp_funds = ROOT.modifier@mio_funds_stolen_base_modifier }
+					add_mio_funds = temp_funds
+				}
+				log = "[Prev.GetTag] ([This.GetName]): total_add_mio_funds = [?temp_funds]"
+			}
 		}
 	}
 	
 	option = {
-        name = plus.5.a #
-		add_to_variable = { var = num_division_trained_2@ROOT value = 4 }
-		add_to_variable = { var = num_all_division@ROOT value = 4 }
+		random_military_industrial_organization = {
+			limit = {
+				has_mio_equipment_type = mio_cat_eq_build
+			}
+			add_mio_size = 1
+		}
 	}
-	
 	option = {
-        name = plus.5.b # Delete
-		
-		set_variable = { var = rebel_manpower@ROOT value = 0 }
-	}
-}
-
-### Суэцкий канал
-country_event = {
-	id = chanel.1
-	
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.1"}
-	hidden = yes mean_time_to_happen = { days = 7 }
-	
-	trigger = {
-		has_full_control_of_state = 1064
-		NOT = { has_country_flag = suez_profit }
-	}
-	
-	option = {
-		set_country_flag = suez_profit
-		add_offsite_building = { type = industrial_complex level = 2 }
-	}
-}
-
-country_event = {
-	id = chanel.2
-	
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.2"}
-	hidden = yes mean_time_to_happen = { days = 7 }
-	
-	trigger = {
-		NOT = { has_full_control_of_state = 1064 }
-		has_country_flag = suez_profit
-	}
-	
-	option = {
-		clr_country_flag = suez_profit
-		add_offsite_building = { type = industrial_complex level = -2 }
-	}
-}
-
-### Панамский канал
-country_event = {
-	id = chanel.3
-	
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.3"}
-	hidden = yes mean_time_to_happen = { days = 7 }
-	
-	trigger = {
-		has_full_control_of_state = 685
-		NOT = { has_country_flag = panama_profit }
-	}
-	
-	option = {
-		set_country_flag = panama_profit
-		add_offsite_building = { type = industrial_complex level = 2 }
-	}
-}
-
-country_event = {
-	id = chanel.4
-	
-	immediate = {log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event chanel.4"}
-	hidden = yes mean_time_to_happen = { days = 7 }
-	
-	trigger = {
-		NOT = { has_full_control_of_state = 685 }
-		has_country_flag = panama_profit
-	}
-	
-	option = {
-		clr_country_flag = panama_profit
-		add_offsite_building = { type = industrial_complex level = -2 }
+		random_military_industrial_organization = {
+			limit = {
+				has_mio_equipment_type = mio_cat_eq_all_medium_tank
+			}
+			add_mio_funds = 10000
+			custom_effect_tooltip = "temp_funds = [?funds]"
+		}
 	}
 }

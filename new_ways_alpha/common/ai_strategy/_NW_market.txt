@@ -1,0 +1,286 @@
+#####################
+###### РЫНОЧЕК ######
+#####################
+
+default_market_stockpile_management = {
+	allowed = { NOT = { tag = SAI } }
+	enable = {
+		always = yes
+	}
+	abort_when_not_enabled = yes
+
+	# Hold your trains there, partner
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = train
+		value = 20  # only start considering selling trains if surplus more than 20
+	}
+	ai_strategy = {
+		type = equipment_market_min_for_sale
+		id = train
+		value = 5  # only put up for sale in chunks of 5
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_factor
+		id = train
+		value = -50  # put fewer trains up for sale
+	}
+
+	# Better not put all your boats up for sail
+	# ai_strategy = {  # Commented because handled dynamically in code through the EQUIPMENT_MARKET_WANTED_CONVOY_USAGE_RATIO define
+	# 	type = equipment_market_for_sale_threshold
+	# 	id = convoy
+	# 	value = 100  # only start considering selling convoys if surplus more than 100
+	# }
+	ai_strategy = {
+		type = equipment_market_min_for_sale
+		id = convoy
+		value = 20  # only put up for sale in chunks of 20
+	}
+
+	# Don't let all your planes just fly out the window.
+	# Only sell planes if we have more than one airwing in surplus.
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = fighter
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = cas
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = cv_fighter
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = cv_cas
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = tactical_bomber
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = strategic_bomber
+		value = 100
+	}
+}
+
+default_market_stockpile_management_major = {
+	allowed = {
+		OR = {
+			tag = SOV
+			tag = ITA
+			tag = USA
+			tag = ENG
+			tag = FRA
+			tag = FRC
+			tag = FRR
+			tag = JAP
+			
+			tag = HUN
+			tag = AUS
+			tag = CZE
+		}
+	}
+	enable = {
+		is_major = yes
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = infantry
+		value = 10000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = support
+		value = 1500
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = artillery
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = anti_air
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = anti_tank
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = armor
+		value = 500
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = motorized
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = train
+		value = 50
+	}
+}
+
+default_market_stockpile_management_if_at_war = {
+	allowed = { NOT = { tag = SAI } }
+	enable = {
+		has_war = yes
+	}
+	abort_when_not_enabled = yes
+
+	# Don't sell stuff that we need for the war
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = infantry
+		value = 20000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = support
+		value = 6000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = artillery
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = fighter
+		value = 200
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = motorized
+		value = 1000
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = train
+		value = 50
+	}
+	ai_strategy = {
+		type = equipment_market_for_sale_threshold
+		id = convoy
+		value = 50
+	}
+	ai_strategy = {
+		type = equipment_market_buying_threshold
+		id = elephant_equipment
+		value = 99999
+	}
+}
+
+default_market_convoy_purchases = {
+	allowed = { NOT = { tag = SAI } }
+	enable = {
+		naval_base > 0  # not land-locked
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_market_buying_threshold
+		id = convoy
+		value = 30  # Consider buying if we have too few (less than 30) convoys. Also interacts with the EQUIPMENT_MARKET_WANTED_CONVOY_USAGE_RATIO define.
+	}
+}
+
+majors_make_less_purchases_in_the_early_game = {
+	allowed = {
+		OR = {
+			tag = GER
+			tag = SOV
+			tag = ITA
+			tag = USA
+			tag = ENG
+			tag = FRA
+			tag = FRC
+			tag = FRR
+			tag = JAP
+			
+			tag = HUN
+			tag = AUS
+			tag = CZE
+		}
+	}
+	enable = {
+		date < 1939.1.1
+		is_major = yes
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+
+#	ai_strategy = {
+#		type = equipment_market_spend_factories
+#		value = 100 #+100% factories
+#	}
+	ai_strategy = {
+		type = equipment_market_spend_factories
+		value = -80 #80% less factories
+	}
+	ai_strategy = {
+		type = equipment_market_buying_threshold
+		id = infantry_equipment
+		value = -20000 #absolute number of units
+	}
+}
+
+majors_make_less_purchases = {
+	allowed = {
+		OR = {
+			tag = GER
+			tag = SOV
+			tag = ITA
+			tag = USA
+			tag = ENG
+			tag = FRA
+			tag = FRC
+			tag = FRR
+			tag = JAP
+			
+			tag = HUN
+			tag = AUS
+			tag = CZE
+		}
+	}
+	enable = {
+		date > 1939.1.1
+		is_major = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_market_spend_factories
+		value = -50 #50% less factories
+	}
+}
+
+less_rifles_to_market_if_large_army = {
+	allowed = { NOT = { tag = SAI } }
+	enable = {
+		has_army_manpower = { size > 700000 } #GER/SOV/China
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_market_for_sale_factor
+		id = infantry
+		value = -50
+	}
+}

@@ -2907,3 +2907,130 @@ SOV_replace_stuff_based_on_ideology_effect = {
 		}
 	}
 }
+
+SOV_pick_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_left_poster_to_age = SOV_poster_left_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.101 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_left_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_center_poster_to_age = SOV_poster_center_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.102 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_center_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+			}
+			set_variable = { SOV_poster_right_icon_frame = SOV_new_propaganda_campaign }
+			#Ageing posters
+			set_variable = { SOV_propaganda_right_poster_to_age = SOV_poster_right_icon_frame } #This is used to prevent the system to break if a propaganda campaign is cancelled
+			hidden_effect = {
+				country_event = { id = NSB_soviet_propaganda_capmaign_events.103 days = SOV_default_propaganda_campaign_old_days }
+				#set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = SOV_default_propaganda_campaign_duration } #Surprise! This doesnät work with vars :D  Maybe in the future
+				if = { #Debug -> Faster time
+					limit = {
+						has_country_flag = SOV_debug_fast_propaganda_campaigns_flag
+					}
+					set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = 5 }
+				}
+				else = { #Regular time
+					set_country_flag = { flag = SOV_propaganda_right_days_remaining_flag days = 180 } #Need code support to use a var here
+				}
+			}
+		}
+		set_variable = { SOV_new_propaganda_campaign = 0 } # Reset var
+		add_to_variable = { SOV_propaganda_campaigns_taken = 1 } #Update propaganda campaigns counter
+	}
+}
+
+SOV_reset_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_left_poster_to_age
+			clr_country_flag = SOV_propaganda_left_slot_is_old_flag
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_center_poster_to_age
+			clr_country_flag = SOV_propaganda_center_slot_is_old_flag
+		}
+		else_if = { #This could be turned into an else, but leaving it like this to hopefully make it easier to see
+			limit = {
+				check_variable = { SOV_poster_right_icon_frame = SOV_propaganda_campaign_to_remove }
+			}
+			set_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+			#Clear aged posters
+			clear_variable = SOV_propaganda_right_poster_to_age
+			clr_country_flag = SOV_propaganda_right_slot_is_old_flag
+		}
+		set_variable = { SOV_propaganda_campaign_to_remove = 0 } # Reset var
+	}
+}
+
+SOV_unlock_propaganda_campaign_slot_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { SOV_poster_left_icon_frame = SOV_propaganda_locked_slot_index }
+			}
+			set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+		else_if = {
+			limit = {
+				check_variable = { SOV_poster_center_icon_frame = SOV_propaganda_locked_slot_index }
+			}
+			set_variable = { SOV_poster_center_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+		else = {
+			set_variable = { SOV_poster_right_icon_frame = SOV_propaganda_empty_slot_index }
+		}
+	}
+}
+
+SOV_increase_propaganda_campaign_cost_effect = {
+	multiply_variable = { SOV_propaganda_cost = SOV_propaganda_cost_increase } #Using generic var SOV_propaganda_cost so that we only need to change this operation to tweak all propagandas' cost escalation
+}
