@@ -4536,7 +4536,7 @@ country_event = {
 	}
 }
 
-#Немцы требуют возвращения колоний // ENG
+# Немцы требуют возвращения колоний // ENG
 country_event = {
 	id = NWgermany.82
 	title = NWgermany.82.t
@@ -4552,18 +4552,26 @@ country_event = {
 			factor = 50
 		}
 		FROM = { country_event = { id = NWgermany.84 days = 1 } }
+		event_option_tooltip = NWgermany.84.a
 	}
 	
 	option = {
 		name = NWgermany.82.b
 		ai_chance = {
 			factor = 50
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
 		}
-		FROM = { country_event = { id = NWgermany.83 days = 1 } }
+		FROM = {
+			country_event = { id = NWgermany.83 days = 1 }
+		}
+		event_option_tooltip = NWgermany.83.a
 	}
 }
 
-#Немцы требуют возвращения колоний // GER
+# Британия отказывает по колониальному вопросу // GER
 country_event = {
 	id = NWgermany.83
 	title = NWgermany.83.t
@@ -4575,11 +4583,22 @@ country_event = {
 	
 	option = {
 		name = NWgermany.83.a
-		add_opinion_modifier = { target = FROM modifier = GER_demand_german_colonies }
+		541 = {
+			owner = {
+				ROOT = {
+					create_wargoal = {
+						type = puppet_wargoal_focus
+						target = PREV
+						expire = 0
+					}
+				}
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = GER_demand_german_colonies_op }
 	}
 }
 
-#Британия готова вернуть колонию // GER
+# Британия готова вернуть колонию // GER
 country_event = {
 	id = NWgermany.84
 	title = NWgermany.84.t
@@ -4592,6 +4611,16 @@ country_event = {
 	option = {
 		name = NWgermany.84.a
 		if = {
+			limit = {
+				OR = {
+					541 = { owner = { original_tag = FROM } }
+					1114 = { owner = { original_tag = FROM } }
+				}
+			}
+			transfer_state = 541
+			transfer_state = 1114
+		}
+		else_if = {
 			limit = {
 				541 = {
 					owner = {
@@ -4619,7 +4648,7 @@ country_event = {
 	}
 }
 
-#Лондон требует передать Юго-Западную Африку // 541 owner OVERLORD
+# Лондон требует передать Юго-Западную Африку // 541 owner OVERLORD
 country_event = {
 	id = NWgermany.85
 	title = NWgermany.85.t
@@ -4644,7 +4673,7 @@ country_event = {
 	}
 }
 
-#Юго-Западная Африка вернулась в родную гавань // 541 owner // GER
+# Юго-Западная Африка вернулась в родную гавань // 541 owner // GER
 country_event = {
 	id = NWgermany.86
 	title = NWgermany.86.t
@@ -5579,20 +5608,7 @@ country_event = {
 	
 	option = {
 		name = "1"
-		every_possible_country = {
-			limit = {
-				original_tag = KOR
-				has_government = fascism
-			}
-			KOR = {
-				declare_war_on = {
-					target = PREV
-					type = civil_war
-				}
-				add_civil_war_target = PREV
-				PREV = { add_civil_war_target = PREV }
-			}
-		}
+		ENG = { country_event = { id = NWgermany.82 days = 1 } }
 	}
 	option = {
 		name = "2"

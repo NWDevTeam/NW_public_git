@@ -132,31 +132,27 @@ AFG_fashist_influence_check_effect = {
 AFG_Amanulla_check_effect = {
 	hidden_effect = {
 		if = {
-			limit = { NOT = { has_country_flag = AFG_ulema_flag  has_completed_focus = AFG_dissolve_the_Ulema_Council } }
-			if = {
-				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag1 } check_variable = { AFG_revolutionary > 29 } check_variable = { AFG_revolutionary < 50 } }
-				add_to_variable = { var = AFG_ulema_tension value = 5 }
-				set_country_flag = AFG_up_ulema_tension_flag1
-			}
-			if = {
-				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag2 } check_variable = { AFG_revolutionary > 49 } check_variable = { AFG_revolutionary < 75 } }
-				add_to_variable = { var = AFG_ulema_tension value = 10 }
-				set_country_flag = AFG_up_ulema_tension_flag2
-			}
-			if = {
-				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag3 } check_variable = { AFG_revolutionary > 74 } check_variable = { AFG_revolutionary < 100 } }
-				add_to_variable = { var = AFG_ulema_tension value = 15 }
-				set_country_flag = AFG_up_ulema_tension_flag3
-			}
+			limit = { NOT = { has_country_flag = AFG_ulema_flag has_completed_focus = AFG_dissolve_the_Ulema_Council } }
 			if = {
 				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag4 } check_variable = { AFG_revolutionary > 99 } }
 				add_to_variable = { var = AFG_ulema_tension value = 20 }
 				set_country_flag = AFG_up_ulema_tension_flag4
 			}
 			if = {
-				limit = { check_variable = { AFG_ulema_tension > 99 } }
-				country_event = { id = NW_AFG.29 }
+				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag3 } check_variable = { AFG_revolutionary > 74 } }
+				add_to_variable = { var = AFG_ulema_tension value = 15 }
+				set_country_flag = AFG_up_ulema_tension_flag3
 			}
+			if = {
+				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag2 } check_variable = { AFG_revolutionary > 49 } }
+				add_to_variable = { var = AFG_ulema_tension value = 10 }
+				set_country_flag = AFG_up_ulema_tension_flag2
+			}
+			if = {
+				limit = { NOT = { has_country_flag = AFG_up_ulema_tension_flag1 } check_variable = { AFG_revolutionary > 29 } }
+				add_to_variable = { var = AFG_ulema_tension value = 5 }
+				set_country_flag = AFG_up_ulema_tension_flag1
+			}		
 			if = {
 				limit = {
 					check_variable = { AFG_ulema_tension > 60 } 
@@ -165,6 +161,10 @@ AFG_Amanulla_check_effect = {
 						progress > 0
 					}
 				}
+				country_event = { id = NW_AFG.29 }
+			}
+			if = {
+				limit = { check_variable = { AFG_ulema_tension > 99 } }
 				country_event = { id = NW_AFG.29 }
 			}
 			if = {
@@ -184,10 +184,37 @@ AFG_Amanulla_check_effect = {
 				clr_country_flag = AFG_up_ulema_tension_flag1
 			}
 		}
-		clamp_variable = { var = AFG_ulema_tension min = 0 max = 100 }
+	#ULEMA BLOCK#
+		if = {
+			limit = { has_completed_focus = AFG_dissolve_the_Ulema_Council }
+			clamp_variable = { var = AFG_ulema_tension min = 0 max = 0 }
+		}
+		else = {																	#на всякий случай
+			clamp_variable = { var = AFG_ulema_tension min = 0 max = 100 }
+			set_temp_variable = { AFG_ulema_tension_temp_var = AFG_ulema_tension }
+						
+			set_temp_variable = { var = AFG_stability_temp_var value = -0.005 }
+			set_temp_variable = { var = AFG_war_support_temp_var value = -0.002 }
+			set_temp_variable = { var = AFG_drift_defence_temp_var value = -0.01 }
+			set_temp_variable = { var = AFG_army_org_temp_var value = -0.002 }
+			set_temp_variable = { var = AFG_army_org_regain_temp_var value = -0.002 }
+							
+			multiply_temp_variable = { AFG_stability_temp_var = AFG_ulema_tension_temp_var }
+			set_variable = { var = AFG_stability_var value = AFG_stability_temp_var }
+			multiply_temp_variable = { AFG_war_support_temp_var = AFG_ulema_tension_temp_var }
+			set_variable = { var = AFG_war_support_var value = AFG_war_support_temp_var }
+			multiply_temp_variable = { AFG_drift_defence_temp_var = AFG_ulema_tension_temp_var }
+			set_variable = { var = AFG_drift_defence_var value = AFG_drift_defence_temp_var }
+			multiply_temp_variable = { AFG_army_org_temp_var = AFG_ulema_tension_temp_var }
+			set_variable = { var = AFG_army_org_var value = AFG_army_org_temp_var }
+			multiply_temp_variable = { AFG_army_org_regain_temp_var = AFG_ulema_tension_temp_var }
+			set_variable = { var = AFG_army_org_regain_var value = AFG_army_org_regain_temp_var }
+			force_update_dynamic_modifier = yes
+		}
+	#REVOL BLOCK#
 		clamp_variable = { var = AFG_revolutionary min = 0 max = 100 }	
 		
-		set_temp_variable = { AFG_revolutionary_temp_var = AFG_revolutionary }												#REVOL BLOCK#
+		set_temp_variable = { AFG_revolutionary_temp_var = AFG_revolutionary }
 		divide_temp_variable = { AFG_revolutionary_temp_var = 5 }
 		round_temp_variable = AFG_revolutionary_temp_var
 						
@@ -204,26 +231,6 @@ AFG_Amanulla_check_effect = {
 		set_variable = { var = AFG_political_advisor_cost_var value = AFG_political_advisor_cost_temp_var }
 		multiply_temp_variable = { AFG_experience_gain_army_temp_var = AFG_revolutionary_temp_var }
 		set_variable = { var = AFG_experience_gain_army_var value = AFG_experience_gain_army_temp_var }
-						
-		set_temp_variable = { AFG_ulema_tension_temp_var = AFG_ulema_tension }												#ULEMA BLOCK#
-						
-		set_temp_variable = { var = AFG_stability_temp_var value = -0.005 }
-		set_temp_variable = { var = AFG_war_support_temp_var value = -0.002 }
-		set_temp_variable = { var = AFG_drift_defence_temp_var value = -0.01 }
-		set_temp_variable = { var = AFG_army_org_temp_var value = -0.002 }
-		set_temp_variable = { var = AFG_army_org_regain_temp_var value = -0.002 }
-						
-		multiply_temp_variable = { AFG_stability_temp_var = AFG_ulema_tension_temp_var }
-		set_variable = { var = AFG_stability_var value = AFG_stability_temp_var }
-		multiply_temp_variable = { AFG_war_support_temp_var = AFG_ulema_tension_temp_var }
-		set_variable = { var = AFG_war_support_var value = AFG_war_support_temp_var }
-		multiply_temp_variable = { AFG_drift_defence_temp_var = AFG_ulema_tension_temp_var }
-		set_variable = { var = AFG_drift_defence_var value = AFG_drift_defence_temp_var }
-		multiply_temp_variable = { AFG_army_org_temp_var = AFG_ulema_tension_temp_var }
-		set_variable = { var = AFG_army_org_var value = AFG_army_org_temp_var }
-		multiply_temp_variable = { AFG_army_org_regain_temp_var = AFG_ulema_tension_temp_var }
-		set_variable = { var = AFG_army_org_regain_var value = AFG_army_org_regain_temp_var }
-		force_update_dynamic_modifier = yes
 	}
 }
 
