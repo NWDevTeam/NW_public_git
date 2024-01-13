@@ -1,53 +1,22 @@
-# 	#Создание коалиции:
-# add_to_array = { coalition_array = token:NAME }	#NAME - название идеологии (democratic, communism, fascism, neutrality etc.)
+# 	# Создание коалиции:
+# add_to_array = { coalition_array = token:ideology }	# ideology - название идеологии (democratic, communism, fascism, neutrality...)
 # NW_legitimacy_check = yes
-# 	#в легитимность к правящей партии будет прибавляться указанная партия. И да, в коалицию можно запихнуть хоть все партии
-#   #поставив флаг minus_ruling_party_from_coalition_flag вы уберете правящую партию из легитимности!
-
-#   флаг spain_block_legitimacy_flag - блокировка проверки легитимности
+# 	# в легитимность будет прибавляться указанная партия. В коалицию можно добавить хоть все партии
+#   # флаг spain_block_legitimacy_flag - блокировка проверки легитимности
 
 NW_legitimacy_check = {
-	set_variable = { legitimacy_var = party_popularity_100@ruling_party }
+	set_variable = { legitimacy_var = 0 }
 	
 	### НАЧАЛО ПРОВЕРКИ КОАЛИЦИЙ
-	if = {
-		limit = { is_in_array = { coalition_array = token:democratic } NOT = { has_government = democratic } }
-		add_to_variable = { legitimacy_var = party_popularity_100@democratic }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:communism } NOT = { has_government = communism } }
-		add_to_variable = { legitimacy_var = party_popularity_100@communism }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:fascism } NOT = { has_government = fascism } }
-		add_to_variable = { legitimacy_var = party_popularity_100@fascism }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:neutrality } NOT = { has_government = neutrality } }
-		add_to_variable = { legitimacy_var = party_popularity_100@neutrality }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:technocracy } NOT = { has_government = technocracy } }
-		add_to_variable = { legitimacy_var = party_popularity_100@technocracy }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:trozkism } NOT = { has_government = trozkism } }
-		add_to_variable = { legitimacy_var = party_popularity_100@trozkism }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:monarchy } NOT = { has_government = monarchy } }
-		add_to_variable = { legitimacy_var = party_popularity_100@monarchy }
-	}
-	if = {
-		limit = { is_in_array = { coalition_array = token:anarchism } NOT = { has_government = anarchism } }
-		add_to_variable = { legitimacy_var = party_popularity_100@anarchism }
-	}
-	
-	if = {
-		limit = {
-			has_country_flag = minus_ruling_party_from_coalition_flag
+	for_each_loop = {
+		array = global.ideology_groups
+		value = ideology
+		
+		if = {
+			limit = { is_in_array = { coalition_array = ideology } }
+			add_to_variable = { legitimacy_var = party_popularity_100@var:ideology }
+			log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): [?ideology.GetTokenKey] is in coalition_array"
 		}
-		subtract_from_variable = { legitimacy_var = party_popularity_100@ruling_party }
 	}
 	### КОНЕЦ ПРОВЕРКИ КОАЛИЦИЙ
 	
@@ -325,6 +294,14 @@ NW_legitimacy_check = {
 		else = {
 			NW_startup_set_legitimacy = yes
 		}
+	}
+	
+	if = {
+		limit = { has_country_flag = spain_block_legitimacy_flag }
+		log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): spain_block_legitimacy_flag"
+	}
+	else = {
+		log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): legitimacy_[?current_legitimacy_idea_var.GetTokenKey]"
 	}
 }
 

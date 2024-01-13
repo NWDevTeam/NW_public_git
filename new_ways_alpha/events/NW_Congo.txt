@@ -4,7 +4,7 @@
 
 add_namespace = congo
 
-country_event = { #??
+country_event = { # Удаление временных дивизий
 	id = congo.0
 	hidden = yes
 	
@@ -27,6 +27,8 @@ country_event = { #??
 		#remove_ideas = YEM_special_force_expend
 	}
 }
+
+###
 
 country_event = { #Несостоявшаяся свадьба
 	id = congo.1
@@ -109,7 +111,7 @@ country_event = { #Перебежчики из Армии Спасения
 	}
 }
 
-country_event = { #Территориальные споры племён ?(могут не граничить стейты)
+country_event = { #Территориальные споры племён
 	id = congo.3
 	title = congo.3.t
 	desc = congo.3.d
@@ -334,25 +336,7 @@ country_event = { #Обвал шахты Шинолобве
 				custom_effect_tooltip = COG_evolues_minus_ls_ms_tt
 				add_to_temp_array = { skills_lvl = token:low_skilled }
 				add_to_temp_array = { skills_lvl = token:medium_skilled }
-				COG_evolues_skill_counts_update = yes
-				
-				set_temp_variable = { evolues = 0 } # ?? !!
-				COG_evolues_get_difference_in_count = yes
-				add_to_variable = { 
-					var = COG_evolues_var
-					value = evolues
-				}
-				add_to_variable = { 
-					var = ROOT.COG_evolues_var
-					value = evolues
-				}
-				COG_evolues_political_counts_update = yes
-				
-				COG_evolues_interface_update = yes
-				ROOT = {
-					COG_evolues_growth_update = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
+				COG_add_evolues_in_state = yes
 			}
 		}
 		add_stability = -0.02
@@ -908,7 +892,7 @@ country_event = { #Ситуация с дорогами
 		}
 		custom_effect_tooltip = COG_cotton_roads_1_tt
 		set_country_flag = COG_cotton_roads_flag
-		COG_cotton_roads_lvl_update = yes #?(проблема с тултипом, не та идея может отображ)
+		COG_cotton_roads_lvl_update = yes # TODO: проблема с тултипом, не та идея может отображ
 	}
 }
 
@@ -927,6 +911,7 @@ country_event = { #Жизнь конголезского шахтёра
 		trigger = { is_left_ideology = no }
 		add_stability = -0.01
 		add_political_power = -10
+		unlock_decision_tooltip = COG_redistribution_of_funds_first
 		set_country_flag = COG_management_of_union_miniere_company_flag #?
 	}
 	option = {
@@ -1014,6 +999,7 @@ country_event = { #Войска в Жадовиле
 			modifier = {
 				factor = 0
 				OR = {
+					has_country_flag = NW_COG_AI_NEUTRAL
 					has_country_flag = NW_COG_AI_COMMUNIST
 					has_country_flag = NW_COG_AI_TROZKISM
 				}
@@ -1026,27 +1012,9 @@ country_event = { #Войска в Жадовиле
 				limit = { 
 					check_variable = { COG_evolues_count_@token:low_skilled > 0 }
 				}
-				custom_effect_tooltip = COG_evolues_minus_ls_ms_tt
+				custom_effect_tooltip = COG_evolues_minus_ls_tt
 				add_to_temp_array = { skills_lvl = token:low_skilled }
-				COG_evolues_skill_counts_update = yes
-				
-				set_temp_variable = { evolues = 0 } # ?? !!
-				COG_evolues_get_difference_in_count = yes
-				add_to_variable = { 
-					var = COG_evolues_var
-					value = evolues
-				}
-				add_to_variable = { 
-					var = ROOT.COG_evolues_var
-					value = evolues
-				}
-				COG_evolues_political_counts_update = yes
-				
-				COG_evolues_interface_update = yes
-				ROOT = {
-					COG_evolues_growth_update = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
+				COG_add_evolues_in_state = yes
 			}
 		}
 		custom_effect_tooltip = COG_event_congo21_a
@@ -1073,36 +1041,28 @@ country_event = { #Войска в Жадовиле
 				limit = { 
 					check_variable = { COG_evolues_count_@token:low_skilled > 0 }
 				}
-				custom_effect_tooltip = COG_evolues_minus_ls_ms_tt
+				custom_effect_tooltip = COG_evolues_minus_ls_tt
 				add_to_temp_array = { skills_lvl = token:low_skilled }
-				COG_evolues_skill_counts_update = yes
-				
-				set_temp_variable = { evolues = 0 } # ?? !!
-				COG_evolues_get_difference_in_count = yes
-				add_to_variable = { 
-					var = COG_evolues_var
-					value = evolues
-				}
-				add_to_variable = { 
-					var = ROOT.COG_evolues_var
-					value = evolues
-				}
-				COG_evolues_political_counts_update = yes
-				
-				COG_evolues_interface_update = yes
-				ROOT = {
-					COG_evolues_growth_update = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
+				COG_add_evolues_in_state = yes
 			}
 		}
 		custom_effect_tooltip = COG_event_congo21_b
 		hidden_effect = {
-			country_event = { id = congo.23 days = 1 } #(Исторический вариант) ?
+			country_event = { id = congo.23 days = 1 }
 		}
 	}
 	option = {
 		name = congo.21.c
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = NW_COG_AI_NEUTRAL
+					has_country_flag = NW_COG_AI_FASCIST
+				}
+			}
+		}
 		1065 = {
 			set_temp_variable = { evolues = -15 }
 			add_manpower = evolues
@@ -1110,27 +1070,9 @@ country_event = { #Войска в Жадовиле
 				limit = { 
 					check_variable = { COG_evolues_count_@token:low_skilled > 0 }
 				}
-				custom_effect_tooltip = COG_evolues_minus_ls_ms_tt
+				custom_effect_tooltip = COG_evolues_minus_ls_tt
 				add_to_temp_array = { skills_lvl = token:low_skilled }
-				COG_evolues_skill_counts_update = yes
-				
-				set_temp_variable = { evolues = 0 } # ?? !!
-				COG_evolues_get_difference_in_count = yes
-				add_to_variable = { 
-					var = COG_evolues_var
-					value = evolues
-				}
-				add_to_variable = { 
-					var = ROOT.COG_evolues_var
-					value = evolues
-				}
-				COG_evolues_political_counts_update = yes
-				
-				COG_evolues_interface_update = yes
-				ROOT = {
-					COG_evolues_growth_update = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
+				COG_add_evolues_in_state = yes
 			}
 		}
 		custom_effect_tooltip = COG_event_congo21_c
@@ -1164,6 +1106,7 @@ country_event = { #Трагедия в Элизабетвиле
 	
 	option = {
 		name = congo.23.a
+		retire_character = COG_leonard_mpoyi 
 		1065 = {
 			set_temp_variable = { evolues = -135 }
 			add_manpower = evolues
@@ -1171,27 +1114,9 @@ country_event = { #Трагедия в Элизабетвиле
 				limit = { 
 					check_variable = { COG_evolues_count_@token:low_skilled > 0 }
 				}
-				custom_effect_tooltip = COG_evolues_minus_ls_ms_tt
+				custom_effect_tooltip = COG_evolues_minus_ls_tt
 				add_to_temp_array = { skills_lvl = token:low_skilled }
-				COG_evolues_skill_counts_update = yes
-				
-				set_temp_variable = { evolues = 0 } # ?? !!
-				COG_evolues_get_difference_in_count = yes
-				add_to_variable = { 
-					var = COG_evolues_var
-					value = evolues
-				}
-				add_to_variable = { 
-					var = ROOT.COG_evolues_var
-					value = evolues
-				}
-				COG_evolues_political_counts_update = yes
-				
-				COG_evolues_interface_update = yes
-				ROOT = {
-					COG_evolues_growth_update = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
+				COG_add_evolues_in_state = yes
 			}
 		}
 		remove_ideas = COG_mass_strikes
@@ -1266,7 +1191,7 @@ country_event = { #Беспорядки в Конго - OVERLORD
 		name = congo.27.a
 		if = {
 			limit = { has_war = no }
-			add_ai_strategy = {
+			add_ai_strategy = { # TODO: убрать в стратегию
 				type = area_priority
 				id = africa
 				value = 200
@@ -1295,7 +1220,7 @@ country_event = { #Восстание рабочих в Конго
 			start_civil_war = {
 				ideology = communism
 				size = 1
-				capital = 1065
+				# capital = 1065 ?
 				states = { 1065 }
 				keep_all_characters = yes
 				
@@ -1313,15 +1238,15 @@ country_event = { #Восстание рабочих в Конго
 					#	set_nationality = PREV.PREV
 					#}
 					
-					COG_install_some_stuff_PREVPREV = yes
+					COG_civilwar_install_some_stuff = yes
 					
 					OVERLORD = {
-						save_event_target_as = COG_old_overlord #?
+						save_event_target_as = COG_old_overlord
 					}
 				}
 				set_country_flag = { flag = focus_synchronization days = 7 value = 1 } #?
 				
-				add_popularity = {
+				add_popularity = { #?
 					ideology = democratic
 					popularity = 0.01
 				}
@@ -1383,6 +1308,33 @@ country_event = { #Восстание рабочих в Конго
 				}
 			}
 		}
+		if = {
+			limit = { has_completed_focus = COG_increase_production_in_katanga_mines }
+			event_target:COG_workers_revolt = {
+				custom_effect_tooltip = COG_increase_production_in_katanga_mines_tt_1
+				division_template = {
+					name = "Militia Unit"
+					is_locked = yes
+					template_counter = 69
+					force_allow_recruiting = no
+
+					regiments = {
+						militia = { x = 0 y = 0 }
+						militia = { x = 0 y = 1 }
+						militia = { x = 0 y = 2 }
+						militia = { x = 1 y = 0 }
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"Militia Unit\" division_template = \"Militia Unit\" start_experience_factor = 0.1 start_equipment_factor = 0.6"
+						owner = PREV
+						allow_spawning_on_enemy_provs = yes
+						count = 4
+					}
+				}
+			}
+		}
 	}
 	
 	option = {
@@ -1404,28 +1356,6 @@ country_event = { #Восстание рабочих в Конго
 		random_other_country = { 
 			limit = {
 				original_tag = COG
-			}
-			custom_effect_tooltip = COG_increase_production_in_katanga_mines_tt_1
-			division_template = {
-				name = "Militia Unit"
-				#division_names_group = COG_INF_01 # ?
-				is_locked = yes
-				force_allow_recruiting = no #?
-
-				# Note: Represents militia units
-				regiments = {
-					militia = { x = 0 y = 0 }
-					militia = { x = 0 y = 1 }
-					militia = { x = 0 y = 2 }
-				}
-			}
-			capital_scope = {
-				create_unit = {
-					division = "name = \"Militia Unit\" division_template = \"Militia Unit\" start_experience_factor = 0.1 start_equipment_factor = 0.6"
-					owner = PREV
-					allow_spawning_on_enemy_provs = yes
-					count = 4
-				}
 			}
 			change_tag_from = ROOT
 		}
@@ -1745,7 +1675,10 @@ country_event = { #Реставрация королевства Конго
 	desc = congo.37.d
 	picture = GFX_report_event_cog_37_48
 	is_triggered_only = yes
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.37" }
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.37" 
+		set_country_flag = COG_pierre_VIII_du_kongo_flag
+	}
 	
 	fire_only_once = yes
 	
@@ -1771,7 +1704,26 @@ country_event = { #Коронация Педро VIII
 	desc = congo.38.d
 	picture = GFX_report_event_cog_38_47_49_55
 	is_triggered_only = yes
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.38" }
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.38"
+		ANG = {
+			if = {
+				limit = { has_country_leader = { character = COG_pierre_VIII_du_kongo } }
+				ROOT = { 
+					annex_country = {
+						target = PREV
+						transfer_troops = yes
+					} 
+				}
+			}
+			hidden_effect = {
+				COG_pierre_VIII_du_kongo = { #?
+					set_nationality = ROOT
+					promote_character = yes
+				}
+			}
+		}
+	}
 	
 	option = {
 		name = congo.38.a
@@ -1784,7 +1736,8 @@ country_event = { #Коронация Педро VIII
 			ruling_party = monarchy
 			#elections_allowed = no
 		}
-		set_cosmetic_tag = COG_monarchy
+		# set_cosmetic_tag = COG_monarchy
+		remove_ideas = POR_pedro_8
 	}
 }
 
@@ -1794,7 +1747,10 @@ country_event = { #Создание собственной республики
 	desc = congo.39.d
 	picture = GFX_report_event_cog_39
 	is_triggered_only = yes
-	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.39" }
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.39" 
+		set_country_flag = COG_create_a_congo_republic_flag
+	}
 	
 	fire_only_once = yes
 	
@@ -1804,6 +1760,11 @@ country_event = { #Создание собственной республики
 		complete_national_focus = COG_create_a_congo_republic
 		#set_country_flag = COG_interaction_with_belgium_flag
 		unlock_decision_category_tooltip = COG_interaction_with_belgium
+		
+		if = {
+			limit = { has_idea = POR_pedro_8 }
+			remove_ideas = POR_pedro_8 # TODO: если Пьер 8 правит в Анголе, ивент Конго "Пьер VIII собирает армию", дающий варгол Анголе на Конго
+		}
 		
 		#set_variable = { COG_relationship_with_belgium = 5 }
 		set_power_balance = {
@@ -2499,19 +2460,17 @@ country_event = { # (Слоны еженедельно)
 	is_triggered_only = yes
 	
 	trigger = {
-		check_variable = { COG_elephants_weekly > 0 } #?
-		#has_opinion_modifier = COG_sale_of_ivory #?
+		check_variable = { COG_elephants_weekly > 0 }
 	}
 	
 	immediate = { 
 		if = {
 			limit = {
-				event_target:FROM_scope = {
-					has_equipment = { elephant_equipment > PREV.COG_elephants_weekly } #?
+				event_target:ROOT_scope = {
+					has_equipment = { elephant_equipment > PREV.COG_elephants_weekly }
 				}
 			}
-			event_target:FROM_scope = {
-				#save_event_target_as = FROM_scope
+			event_target:ROOT_scope = {
 				PREV = { country_event = { id = congo.59 days = 7 } }
 				set_temp_variable = { elephants_weekly = PREV.COG_elephants_weekly }
 				multiply_temp_variable = { elephants_weekly = -1 }
@@ -2519,27 +2478,27 @@ country_event = { # (Слоны еженедельно)
 					type = elephant_equipment
 					amount = elephants_weekly
 				}
-				#log = "[GetDateText]: [This.GetName] ([This.GetTag]): (плус [?elephants_weekly] слонов)"
 			}
 			add_equipment_to_stockpile = {
 				type = elephant_equipment
 				amount = COG_elephants_weekly
 			}
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.59 (плус [?COG_elephants_weekly] слонов) from [FROM_scope.GetTag]"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.59 (плус [?COG_elephants_weekly] слонов) from [ROOT_scope.GetTag]"
 		}
 		else = {
-			event_target:FROM_scope = {
+			event_target:ROOT_scope = {
 				remove_opinion_modifier = { #?
 					target = PREV
 					modifier = COG_sale_of_ivory
 				}
+				subtract_from_variable = { COG_si_political_power_gain = 0.05 }
 			}
 			subtract_from_variable = { COG_elephants_weekly = 1 }
-			remove_opinion_modifier = { #торговые отношения тоже !
-				target = event_target:FROM_scope
+			remove_opinion_modifier = {
+				target = event_target:ROOT_scope
 				modifier = COG_sale_of_ivory
 			}
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.59 (else) from [FROM_scope.GetTag]"
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.59 (else) from [ROOT_scope.GetTag]"
 		}
 	}
 	
@@ -2659,10 +2618,10 @@ country_event = { #Восстание кимбангистов
 					#	set_nationality = PREV.PREV
 					#}
 					
-					COG_install_some_stuff_PREVPREV = yes
+					COG_civilwar_install_some_stuff = yes
 					
 					OVERLORD = {
-						save_event_target_as = COG_old_overlord #?
+						save_event_target_as = COG_old_overlord
 					}
 				}
 				set_country_flag = { flag = focus_synchronization days = 7 value = 1 } #?
@@ -2673,7 +2632,7 @@ country_event = { #Восстание кимбангистов
 					COG_kimbangu_isolation
 					closed_economy
 				}
-				set_variable = { COG_ki_industrial_capacity_factory = 0.1 }
+				set_variable = { COG_ki_industrial_capacity_factory = 0.4 }
 				
 				add_popularity = {
 					ideology = democratic
@@ -3125,7 +3084,7 @@ country_event = { # Прибытие Божественного Отца
 	
 	# option = {
 		# name = congo.75.a
-		# # activate_targeted_decision = { target = event_target:FROM_scope decision = COG_stop_ethnic_struggle_mission } !
+		# # activate_targeted_decision = { target = event_target:ROOT_scope decision = COG_stop_ethnic_struggle_mission } !
 	# }
 	# option = {
 		# name = congo.75.b
@@ -3133,7 +3092,7 @@ country_event = { # Прибытие Божественного Отца
 			# text = {
 				# remove_decision = COG_stop_ethnic_struggle_decision_[FROM]
 			# }
-			# FROM = "[event_target:FROM_scope.GetID]"
+			# FROM = "[event_target:ROOT_scope.GetID]"
 		# }
 	# }
 # }
@@ -3284,5 +3243,66 @@ country_event = { # Успехи плановой экономики ??
 		trigger = { check_variable = { var = COG_planned_economy_lvl value = 18 } } # max
 		add_political_power = 100
 		add_stability = 0.05
+	}
+}
+
+country_event = { # [FROM.GetName] запрашивает перемирие
+	id = congo.82
+	title = congo.82.t
+	desc = congo.82.d
+	picture = GFX_report_event_generic_rally_3
+	is_triggered_only = yes
+
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event congo.82" }
+	
+	option = {
+		name = congo.82.a
+		FROM = {
+			if = {
+				limit = { has_global_flag = COG_demand_independence_flag }
+				hidden_effect = { annex_country = { target = COG } }
+				log = "COG_demand_independence"
+			}
+			else_if = {
+				limit = { has_global_flag = COG_white_peace_flag }
+				every_controlled_state = {
+					limit = { 
+						is_owned_by = ROOT
+						is_claimed_by = PREV
+					}
+					transfer_state_to = PREV
+				}
+				effect_tooltip = {
+					set_truce = {
+						target = ROOT
+						days = 365 #?
+					}
+				}
+				hidden_effect = {
+					remove_targeted_decision = { decision = COG_white_peace target = ROOT }
+				}
+				log = "COG_white_peace"
+			}
+			every_enemy_country = {
+				limit = {
+					OR = {
+						is_in_faction_with = ROOT
+						tag = ROOT
+					}
+				} 
+				white_peace = PREV 
+			}
+		}
+		clr_global_flag = COG_demand_independence_flag
+		clr_global_flag = COG_white_peace_flag
+	}
+	
+	option = {
+		name = congo.82.b
+		ai_chance = {
+			factor = 0
+		}
+		clr_global_flag = COG_demand_independence_flag
+		clr_global_flag = COG_white_peace_flag
 	}
 }

@@ -390,61 +390,57 @@ on_actions = {
 				log = "[GetDateText]: [This.GetName] ([This.GetTag]): запрет вступать в альянсы"
 			}
 			
-			if = {
-				limit = {
-					has_game_rule = {
-						rule = trade_weapons
-						option = DEFAULT
-					}
-				}
-				random_country = {
-					limit = { is_ai = no }
-					set_variable = {
-						var = global.total_infantry_weapons
-						value = 0
-					}
-					set_variable = {
-						var = global.total_artillery
-						value = 0
-					}
-					set_variable = {
-						var = global.total_support
-						value = 0
-					}
-					set_variable = {
-						var = global.total_motorized
-						value = 0
-					}
-					set_variable = {
-						var = global.total_mechanized
-						value = 0
-					}
-					set_variable = {
-						var = global.total_armored_car
-						value = 0
-					}
-					set_variable = {
-						var = global.total_light_tanks
-						value = 0
-					}
-					set_variable = {
-						var = global.total_medium_tanks
-						value = 0
-					}
-					set_variable = {
-						var = global.total_air_light_fighter
-						value = 0
-					}
-					set_variable = {
-						var = global.total_air_heavy_fighter
-						value = 0
-					}
-				}
-				#random_country = {
-				#	limit = { is_ai = yes }
-				#	country_event = { id = TRpolitical.35 days = 365 random_days = 30 }
-				#}
-			}
+#			if = {
+#				limit = {
+#					has_game_rule = {
+#						rule = trade_weapons
+#						option = DEFAULT
+#					}
+#				}
+#				random_country = {
+#					limit = { is_ai = no }
+#					set_variable = {
+#						var = global.total_infantry_weapons
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_artillery
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_support
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_motorized
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_mechanized
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_armored_car
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_light_tanks
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_medium_tanks
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_air_light_fighter
+#						value = 0
+#					}
+#					set_variable = {
+#						var = global.total_air_heavy_fighter
+#						value = 0
+#					}
+#				}
+#			}
 			
 			
 			
@@ -4998,6 +4994,59 @@ on_actions = {
 		}
 		
 	} #FROM is war target
+	
+# THIS is country that has just gotten into a war.
+	on_war = {
+		# Крупная война в Европе // PER
+		effect = {
+			if = {
+				limit = {
+					SOV = { has_war = yes }
+					ENG = { has_war = yes }
+					GER = { has_war = yes }
+					NOT = { has_global_flag = NWpersian_28_flag }
+				}
+				set_global_flag = NWpersian_28_flag
+				PER = { country_event = { id = NWpersian.28 days = 1 } }
+			}
+		}
+		# Предложить Советскому Союзу устроить вторжение в Иран // ENG
+		effect = {
+			if = {
+				limit = {
+					ENG = { has_war_with = GER NOT = { has_war_with = SOV } }
+					GER = { has_war_with = SOV }
+					PER = {
+						OR = {
+							has_completed_focus = PER_involvement_german_advisers
+							NOT = { has_idea = neutrality_idea }
+						}
+						OR = {
+							is_in_faction = no
+							is_faction_leader = no
+						}
+						OR = {
+							has_government = monarchy
+							has_government = neutrality
+							has_government = fascism
+							has_government = democratic
+						}
+						NOT = {
+							is_in_faction_with = SOV
+							is_in_faction_with = ENG
+							has_war_with = GER
+							is_subject_of = SOV
+							is_subject_of = ENG
+						}
+					}
+					NOT = { has_global_flag = NWpersian_29_flag }
+				}
+				set_global_flag = NWpersian_29_flag
+				ENG = { country_event = { id = NWpersian.29 days = 1 } }
+			}
+		}
+	} # THIS is country that has just gotten into a war.
+
 
 # ROOT is capitulated country, FROM is winner
 	on_capitulation = {
@@ -7722,28 +7771,28 @@ on_actions = {
 	}
 	
 	
-	on_monthly_FRF = {
-		effect = {
-			if = {
-				limit = {
-					has_game_rule = {
-						rule = trade_weapons
-						option = DEFAULT
-					}
-					check_variable = { global.total_infantry_weapons > 0 }
-					has_idea = FRF_use_global_market_idea
-				}
-				set_temp_variable = { inflation_rifles_for_fra = inflation_rifles }
-				divide_temp_variable = { inflation_rifles_for_fra = 10 }
-				round_temp_variable = inflation_rifles_for_fra
-				add_equipment_to_stockpile = {
-					type = infantry_equipment
-					amount = inflation_rifles_for_fra
-				}
-				log = "[GetDateText]: [This.GetName] ([This.GetTag]): ПОЛУЧИЛ ПЕХОТКИ С ЧЕРНОГО РЫНКА: [?inflation_rifles_for_fra]"
-			}
-		}
-	}
+#	on_monthly_FRF = {
+#		effect = {
+#			if = {
+#				limit = {
+#					has_game_rule = {
+#						rule = trade_weapons
+#						option = DEFAULT
+#					}
+#					check_variable = { global.total_infantry_weapons > 0 }
+#					has_idea = FRF_use_global_market_idea
+#				}
+#				set_temp_variable = { inflation_rifles_for_fra = inflation_rifles }
+#				divide_temp_variable = { inflation_rifles_for_fra = 10 }
+#				round_temp_variable = inflation_rifles_for_fra
+#				add_equipment_to_stockpile = {
+#					type = infantry_equipment
+#					amount = inflation_rifles_for_fra
+#				}
+#				log = "[GetDateText]: [This.GetName] ([This.GetTag]): ПОЛУЧИЛ ПЕХОТКИ С ЧЕРНОГО РЫНКА: [?inflation_rifles_for_fra]"
+#			}
+#		}
+#	}
 
 	#HOL#
 	on_weekly_HOL = {

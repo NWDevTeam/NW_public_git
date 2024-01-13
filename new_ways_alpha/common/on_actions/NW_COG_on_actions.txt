@@ -1,140 +1,145 @@
-on_actions = { # все проверки только в первом сценарии !!
+on_actions = {
 	
 	on_weekly_SAI = {
 		effect = {
-			every_country_with_original_tag = {
-				original_tag_to_check = COG
-				log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]) WEEKLY CHECKS"
-				if = { #?
-					limit = { has_idea = COG_assimilation_of_congolese }
-					COG_evolues_gain_effect = yes
-				}
-				
-				if = {
-					limit = { 
-						has_completed_focus = COG_increase_war_tax
-						has_stability < 0.2
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				every_country_with_original_tag = {
+					original_tag_to_check = COG
+					log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]) WEEKLY CHECKS"
+					if = { #?
+						limit = { has_idea = COG_assimilation_of_congolese }
+						COG_evolues_gain_effect = yes
 					}
-					country_event = congo.18
-				}
-				
-				if = { #? !
-					limit = {
-						has_completed_focus = COG_belgian_dominion
-						has_idea = POR_pedro_8
-						has_dynamic_modifier = { modifier = COG_disloyal_administration_of_tribal_leaders }
+					
+					if = { # перекат в коммунизм
+						limit = { 
+							has_completed_focus = COG_increase_war_tax
+							has_stability < 0.2
+						}
+						country_event = congo.18
 					}
-					country_event = congo.37
-				}
-				else_if = { #? !
-					limit = {
-						has_completed_focus = COG_belgian_dominion
-						# NOT = { has_idea = POR_pedro_8 }
-						has_dynamic_modifier = { modifier = COG_faithful_administration_of_tribal_leaders }
+					
+					if = { # перекат в монархию
+						limit = {
+							has_completed_focus = COG_belgian_dominion
+							has_idea = POR_pedro_8
+							has_dynamic_modifier = { modifier = COG_disloyal_administration_of_tribal_leaders }
+							NOT = { has_country_flag = COG_create_a_congo_republic_flag } #?
+						}
+						country_event = congo.37 # TODO: проверить не появляется ли ивент повторно (не должен)
 					}
-					country_event = congo.39
-				}
-				
-				if = {
-					limit = { has_completed_focus = COG_banish_the_white_man has_war = yes }
-					every_enemy_country = {
-						limit = { capital_scope = { is_on_continent = europe } }
-						set_temp_variable = { COG_casualties_k_loc = COG_casualties_k } #for log
-						if = {
-							limit = { 
-								set_temp_variable = { temp_casualties_k = COG_casualties_k }
-								add_to_temp_variable = { temp_casualties_k = 99.999 }
-								casualties_inflicted_by = {
-									opponent = PREV
-									thousands > var:temp_casualties_k
+					else_if = { # перекат в республику
+						limit = {
+							has_completed_focus = COG_belgian_dominion
+							# NOT = { has_idea = POR_pedro_8 }
+							has_dynamic_modifier = { modifier = COG_faithful_administration_of_tribal_leaders }
+							NOT = { has_country_flag = COG_pierre_VIII_du_kongo_flag } #?
+						}
+						country_event = congo.39
+					}
+					
+					if = { # Вражеские потери на веру в пророка при Кимбангу
+						limit = { has_completed_focus = COG_banish_the_white_man has_war = yes }
+						every_enemy_country = {
+							limit = { capital_scope = { is_on_continent = europe } }
+							set_temp_variable = { COG_casualties_k_loc = COG_casualties_k } #for log
+							if = {
+								limit = { 
+									set_temp_variable = { temp_casualties_k = COG_casualties_k }
+									add_to_temp_variable = { temp_casualties_k = 99.999 }
+									casualties_inflicted_by = {
+										opponent = PREV
+										thousands > var:temp_casualties_k
+									}
 								}
+								add_to_variable = { COG_casualties_k = 100 }
+								add_to_variable = { PREV.COG_faith_in_the_prophet = 100000 }
 							}
-							add_to_variable = { COG_casualties_k = 100 }
-							add_to_variable = { PREV.COG_faith_in_the_prophet = 100000 }
-						}
-						else_if = {
-							limit = { 
-								set_temp_variable = { temp_casualties_k = COG_casualties_k }
-								add_to_temp_variable = { temp_casualties_k = 9.999 }
-								casualties_inflicted_by = {
-									opponent = PREV
-									thousands > var:temp_casualties_k
-								} 
-							}
-							add_to_variable = { COG_casualties_k = 10 }
-							add_to_variable = { PREV.COG_faith_in_the_prophet = 10000 }
-						}
-						else_if = {
-							limit = {
-								set_temp_variable = { temp_casualties_k = COG_casualties_k }
-								add_to_temp_variable = { temp_casualties_k = 0.999 }
-								casualties_inflicted_by = {
-									opponent = PREV
-									thousands > var:temp_casualties_k
+							else_if = {
+								limit = { 
+									set_temp_variable = { temp_casualties_k = COG_casualties_k }
+									add_to_temp_variable = { temp_casualties_k = 9.999 }
+									casualties_inflicted_by = {
+										opponent = PREV
+										thousands > var:temp_casualties_k
+									} 
 								}
+								add_to_variable = { COG_casualties_k = 10 }
+								add_to_variable = { PREV.COG_faith_in_the_prophet = 10000 }
 							}
-							add_to_variable = { COG_casualties_k = 1 }
-							add_to_variable = { PREV.COG_faith_in_the_prophet = 1000 }
+							else_if = {
+								limit = {
+									set_temp_variable = { temp_casualties_k = COG_casualties_k }
+									add_to_temp_variable = { temp_casualties_k = 0.999 }
+									casualties_inflicted_by = {
+										opponent = PREV
+										thousands > var:temp_casualties_k
+									}
+								}
+								add_to_variable = { COG_casualties_k = 1 }
+								add_to_variable = { PREV.COG_faith_in_the_prophet = 1000 }
+							}
+							else = { set_temp_variable = { temp_casualties_k = 0 } }
+							log = "COG_add_faith_from_casualties (THIS: [THIS.GetTag] PREV: [PREV.GetTag]) casualties [?temp_casualties_k] | recorded casualties [?COG_casualties_k_loc]"
+							add_to_temp_variable = { faith_update = 1 }
 						}
-						else = { set_temp_variable = { temp_casualties_k = 0 } }
-						log = "COG_add_faith_from_casualties (THIS: [THIS.GetTag] PREV: [PREV.GetTag]) casualties [?temp_casualties_k] | recorded casualties [?COG_casualties_k_loc]"
+					}
+					if = { # Собственные потери на веру в пророка
+						limit = { has_idea = COG_self_sacrifice has_war = yes }
+						set_temp_variable = { temp_casualties = casualties }
+						subtract_from_temp_variable = { temp_casualties = COG_casualties }
+						log = "COG_add_faith_from_casualties (COG_self_sacrifice) (THIS: [THIS.GetTag]) new casualties [?temp_casualties] | recorded casualties [?COG_casualties] casualties [?casualties_k]"
+						
+						add_to_variable = { COG_casualties = temp_casualties }
+						add_to_variable = { COG_faith_in_the_prophet = temp_casualties }
 						add_to_temp_variable = { faith_update = 1 }
 					}
-				}
-				if = {
-					limit = { has_idea = COG_self_sacrifice has_war = yes }
-					set_temp_variable = { temp_casualties = casualties }
-					subtract_from_temp_variable = { temp_casualties = COG_casualties }
-					log = "COG_add_faith_from_casualties (COG_self_sacrifice) (THIS: [THIS.GetTag]) new casualties [?temp_casualties] | recorded casualties [?COG_casualties] casualties [?casualties_k]"
 					
-					add_to_variable = { COG_casualties = temp_casualties }
-					add_to_variable = { COG_faith_in_the_prophet = temp_casualties }
-					add_to_temp_variable = { faith_update = 1 }
-				}
-				
-				if = {
-					limit = { has_country_leader_with_trait = black_jesus }
-					add_to_variable = { COG_faith_in_the_prophet = COG_bj_faith_in_the_prophet_gain }
-					add_to_temp_variable = { faith_update = 1 }
-				}
-				if = {
-					limit = { 295 = { has_dynamic_modifier = { modifier = COG_holy_city } } }
-					add_to_variable = { COG_faith_in_the_prophet = 100 }
-					add_to_temp_variable = { faith_update = 1 }
-				}
-				
-				if = {
-					limit = { check_variable = { faith_update > 0 } }
-					COG_kimbangu_isolation_modifier_update = yes
-					COG_simon_kimbangu_superpowers_update = yes
-					# clear_variable = faith_update
-				}
-				
-				if = {
-					limit = { has_idea = COG_help_from_comintern }
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 35
+					if = {
+						limit = { has_country_leader_with_trait = black_jesus }
+						add_to_variable = { COG_faith_in_the_prophet = COG_bj_faith_in_the_prophet_gain }
+						add_to_temp_variable = { faith_update = 1 }
 					}
-				}
-				if = {
-					limit = { has_idea = COG_help_from_SAF_trade_unions }
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 35
+					if = {
+						limit = { 295 = { has_dynamic_modifier = { modifier = COG_holy_city } } }
+						add_to_variable = { COG_faith_in_the_prophet = 100 }
+						add_to_temp_variable = { faith_update = 1 }
 					}
-				}
-				
-				if = {
-					limit = { has_active_mission = COG_five_year_plan_ending }
-					set_variable = { COG_five_year_plan_civ_factory_built = num_of_civilian_factories }
-					subtract_from_variable = { COG_five_year_plan_civ_factory_built = COG_five_year_plan_civ_factory }
 					
-					set_variable = { COG_five_year_plan_arms_factory = num_of_military_factories }
-					subtract_from_variable = { COG_five_year_plan_arms_factory = COG_five_year_plan_civ_factory }
+					if = { # Обновление мех Кимбангу, если есть изменение кол-ва веры в пророка
+						limit = { check_variable = { faith_update > 0 } }
+						COG_kimbangu_isolation_modifier_update = yes
+						COG_simon_kimbangu_superpowers_update = yes
+						# clear_variable = faith_update
+					}
 					
-					set_variable = { COG_five_year_plan_dockyard = num_of_naval_factories }
-					subtract_from_variable = { COG_five_year_plan_dockyard = COG_five_year_plan_civ_factory }
+					if = {
+						limit = { has_idea = COG_help_from_comintern }
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 35
+						}
+					}
+					if = {
+						limit = { has_idea = COG_help_from_SAF_trade_unions }
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 35
+						}
+					}
+					
+					if = { # Обновление количества построенных зданий при миссии COG_five_year_plan_ending
+						limit = { has_active_mission = COG_five_year_plan_ending }
+						set_variable = { COG_five_year_plan_civ_factory_built = num_of_civilian_factories }
+						subtract_from_variable = { COG_five_year_plan_civ_factory_built = COG_five_year_plan_civ_factory }
+						
+						set_variable = { COG_five_year_plan_arms_factory_built = num_of_military_factories }
+						subtract_from_variable = { COG_five_year_plan_arms_factory_built = COG_five_year_plan_civ_factory }
+						
+						set_variable = { COG_five_year_plan_dockyard_built = num_of_naval_factories }
+						subtract_from_variable = { COG_five_year_plan_dockyard_built = COG_five_year_plan_civ_factory }
+					}
 				}
 			}
 		}
@@ -142,23 +147,25 @@ on_actions = { # все проверки только в первом сцена
 	
 	on_monthly_SAI = {
 		effect = {
-			every_country_with_original_tag = { #?
-				original_tag_to_check = COG
-				if = {
-					limit = { has_country_flag = COG_cotton_roads_flag }
-					COG_cotton_roads_lvl_update = yes
-					#log ?
-				}
-				
-				if = {
-					limit = { 
-						has_completed_focus = COG_reclaim_mbanza_congo
-						controls_state = 540
-						controls_state = 1065
-						controls_state = 1044
-						controls_state = 1056 #?
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				every_country_with_original_tag = {
+					original_tag_to_check = COG
+					if = {
+						limit = { has_country_flag = COG_cotton_roads_flag }
+						COG_cotton_roads_lvl_update = yes
 					}
-					country_event = congo.47
+					
+					if = {
+						limit = { 
+							has_completed_focus = COG_reclaim_mbanza_congo
+							controls_state = 540
+							controls_state = 1065
+							controls_state = 1044
+							controls_state = 1056 #?
+						}
+						country_event = congo.47
+					}
 				}
 			}
 		}
@@ -176,168 +183,175 @@ on_actions = { # все проверки только в первом сцена
 	on_civil_war_end = {
 		effect = {
 			if = {
-				limit = { FROM = { original_tag = COG } } #? ROOT = { original_tag = COG }
+				limit = { 
+					has_start_date < 1936.01.02
+					FROM = { original_tag = COG } 
+					# ROOT = { original_tag = COG }
+				}
 				FROM = {
 					every_character = { ## FROM characters return to ROOT ##
-						#limit = { NOT = { is_character = MAN_zhang_jinghui } }
 						set_nationality = ROOT
 						log = "[GetDateText]: [THIS.GetName]: character set_nationality = [Root.GetTag]"
 					}
-					#every_core_state = { # решение - (если захотим создать марионетку MAN ?)
-					#	remove_core_of = PREV
-					#}
+					every_core_state = {
+						remove_core_of = PREV
+					}
 				}
 				if = {
-					limit = { ROOT = { is_left_ideology = no } FROM = { is_left_ideology = yes } } #?
-					news_event = congo.31 #?
+					limit = { ROOT = { is_left_ideology = no } } # FROM = { is_left_ideology = yes }
+					news_event = congo.31
 				}
 				else_if = {
-					limit = { ROOT = { is_left_ideology = yes } FROM = { is_left_ideology = no } } #?
-					news_event = congo.32 #?
+					limit = { ROOT = { is_left_ideology = yes } } # FROM = { is_left_ideology = no }
+					news_event = congo.32
 					ROOT = { country_event = { id = congo.33 days = 20 } }
 				}
 				else_if = {
-					limit = { FROM = { has_government = fascism } } #?
-					news_event = congo.63 #?
+					limit = { FROM = { has_country_leader = { character = COG_simon_kimbangu } } }
+					news_event = congo.63
 				}
 				else_if = {
-					limit = { ROOT = { has_government = fascism } } #?
-					news_event = congo.64 #?
+					limit = { ROOT = { has_country_leader = { character = COG_simon_kimbangu } } }
+					news_event = congo.64
 					ROOT = { country_event = { id = congo.65 days = 20 } }
 				}
 			}
 		}
 	}
 	
-	on_state_control_changed = { #??
+	on_state_control_changed = {
 		effect = {
 			if = {
-				limit = { 
-					FROM.FROM = { has_dynamic_modifier = { modifier = COG_tribal_system } } # is_original_congo_state = yes
-					NOT = { ROOT = { has_focus_tree = nw_COG_focus } } # original_tag = COG
+				limit = { has_start_date < 1936.01.02 }
+				
+				if = { # Убираем региональный днд COG_tribal_system, если регион контролирует не COG
+					limit = { 
+						FROM.FROM = { has_dynamic_modifier = { modifier = COG_tribal_system } } # is_original_congo_state = yes
+						NOT = { ROOT = { has_focus_tree = nw_COG_focus } } # original_tag = COG
+					}
+					FROM.FROM = {
+						remove_dynamic_modifier = { modifier = COG_tribal_system }
+					}
 				}
-				FROM.FROM = {
-					remove_dynamic_modifier = { modifier = COG_tribal_system }
+				else_if = {
+					limit = { 
+						FROM.FROM = { is_original_congo_state = yes NOT = { has_dynamic_modifier = { modifier = COG_tribal_system } has_state_flag = COG_tribal_system_block } }
+						ROOT = { has_focus_tree = nw_COG_focus } # original_tag = COG
+					}
+					FROM.FROM = {
+						add_dynamic_modifier = { modifier = COG_tribal_system }
+					}
 				}
-			}
-			else_if = {
-				limit = { 
-					FROM.FROM = { is_original_congo_state = yes NOT = { has_dynamic_modifier = { modifier = COG_tribal_system } has_state_flag = COG_tribal_system_block } }
-					ROOT = { has_focus_tree = nw_COG_focus } # original_tag = COG
+				
+				if = { # Уменьшение популярности правящей партии при захвате нового региона
+					limit = { 
+						FROM.FROM = { is_original_congo_state = yes } 
+						ROOT = { original_tag = COG }
+						FROM = { original_tag = COG }
+					}
+					ROOT = {
+						if = {
+							limit = { NOT = { tag = COG } FROM.FROM = { NOT = { has_state_flag = COG_minus_party_popularity@ROOT } } }
+							add_popularity = {
+								ideology = var:current_party_ideology_group
+								popularity = -0.12
+							}
+							NW_legitimacy_check = yes
+							FROM.FROM = {
+								set_state_flag = COG_minus_party_popularity@ROOT
+							}
+						}
+						COG_update_administration_of_tribal_leaders_idea = yes #?
+					}
+					FROM = {
+						COG_update_administration_of_tribal_leaders_idea = yes
+					}
 				}
-				FROM.FROM = {
-					add_dynamic_modifier = { modifier = COG_tribal_system }
+				else_if = { #?
+					limit = { FROM.FROM = { is_original_congo_state = yes } }
+					COG = {
+						COG_update_administration_of_tribal_leaders_idea = yes
+						add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
+					}
 				}
-			}
-			
-			if = {
-				limit = { 
-					FROM.FROM = { is_original_congo_state = yes } 
-					ROOT = { original_tag = COG }
-					FROM = { original_tag = COG }
-				}
-				ROOT = {
+				
+				if = { # Активация миссии COG_integrate_kingdom_mission в интегрируемых регионах монархического COG
+					limit = { 
+						ROOT = { original_tag = COG has_completed_focus = COG_restore_the_federal_kingdom check_variable = { COG_integrate_kingdom_decision_end < 6 } }
+						is_in_array = { global.africa = FROM.FROM }
+					}
 					if = {
-						limit = { NOT = { tag = COG } FROM.FROM = { NOT = { has_state_flag = COG_minus_party_popularity@ROOT } } }
-						add_popularity = {
-							ideology = var:current_party_ideology_group
-							popularity = -0.1
+						limit = { 
+							FROM.FROM = { OR = { state = 1044 state = 1045 } } 
+							ROOT = { controls_state = 1044 controls_state = 1045 } 
+							1044 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
 						}
-						NW_legitimacy_check = yes
-						FROM.FROM = {
-							set_state_flag = COG_minus_party_popularity@ROOT
+						1044 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
 						}
+						#ROOT = { activate_targeted_decision = { target = 1044 decision = COG_integrate_kingdom_mission } }
 					}
-					COG_update_administration_of_tribal_leaders_idea = yes #?
-				}
-				FROM = {
-					COG_update_administration_of_tribal_leaders_idea = yes
-				}
-			}
-			else_if = { #?
-				limit = { FROM.FROM = { is_original_congo_state = yes } }
-				COG = {
-					COG_update_administration_of_tribal_leaders_idea = yes
-					add_to_variable = { nw_CongoGoogleMapsEvolues_update = 1 }
-				}
-			}
-			
-			if = {
-				limit = { 
-					ROOT = { original_tag = COG has_completed_focus = COG_restore_the_federal_kingdom check_variable = { COG_integrate_kingdom_decision_end < 6 } }
-					is_in_array = { global.africa = FROM.FROM }
-				}
-				if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 1044 state = 1045 } } 
-						ROOT = { controls_state = 1044 controls_state = 1045 } 
-						1044 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+					else_if = {
+						limit = { 
+							FROM.FROM = { OR = { state = 1005 } } 
+							ROOT = { controls_state = 1005 } 
+							1005 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+						}
+						1005 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+						}
+						#ROOT = { activate_targeted_decision = { target = 1005 decision = COG_integrate_kingdom_mission } }
 					}
-					1044 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+					else_if = {
+						limit = { 
+							FROM.FROM = { OR = { state = 1001 state = 977 } } 
+							ROOT = { controls_state = 1001 controls_state = 977 } 
+							1001 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+						}
+						1001 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+						}
+						#ROOT = { activate_targeted_decision = { target = 1001 decision = COG_integrate_kingdom_mission } }
 					}
-					#ROOT = { activate_targeted_decision = { target = 1044 decision = COG_integrate_kingdom_mission } }
-				}
-				else_if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 1005 } } 
-						ROOT = { controls_state = 1005 } 
-						1005 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+					else_if = {
+						limit = { 
+							FROM.FROM = { OR = { state = 1002 state = 1102 } } 
+							ROOT = { controls_state = 1002 controls_state = 1102 } 
+							1002 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+						}
+						1002 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+						}
+						#ROOT = { activate_targeted_decision = { target = 1002 decision = COG_integrate_kingdom_mission } }
 					}
-					1005 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+					else_if = {
+						limit = { 
+							FROM.FROM = { OR = { state = 931 state = 922 state = 1004 } } 
+							ROOT = { controls_state = 931 controls_state = 922 controls_state = 1004 } 
+							931 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+						}
+						931 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+						}
+						#ROOT = { activate_targeted_decision = { target = 931 decision = COG_integrate_kingdom_mission } }
 					}
-					#ROOT = { activate_targeted_decision = { target = 1005 decision = COG_integrate_kingdom_mission } }
-				}
-				else_if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 1001 state = 977 } } 
-						ROOT = { controls_state = 1001 controls_state = 977 } 
-						1001 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+					else_if = {
+						limit = { 
+							FROM.FROM = { OR = { state = 871 } } 
+							ROOT = { controls_state = 871 } 
+							871 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
+						}
+						871 = {
+							save_event_target_as = state_scope
+							state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
+						}
+						#ROOT = { activate_targeted_decision = { target = 871 decision = COG_integrate_kingdom_mission } }
 					}
-					1001 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
-					}
-					#ROOT = { activate_targeted_decision = { target = 1001 decision = COG_integrate_kingdom_mission } }
-				}
-				else_if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 1002 state = 1102 } } 
-						ROOT = { controls_state = 1002 controls_state = 1102 } 
-						1002 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
-					}
-					1002 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
-					}
-					#ROOT = { activate_targeted_decision = { target = 1002 decision = COG_integrate_kingdom_mission } }
-				}
-				else_if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 931 state = 922 state = 1004 } } 
-						ROOT = { controls_state = 931 controls_state = 922 controls_state = 1004 } 
-						931 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
-					}
-					931 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
-					}
-					#ROOT = { activate_targeted_decision = { target = 931 decision = COG_integrate_kingdom_mission } }
-				}
-				else_if = {
-					limit = { 
-						FROM.FROM = { OR = { state = 871 } } 
-						ROOT = { controls_state = 871 } 
-						871 = { NOT = { has_state_flag = COG_integrate_kingdom_decision_end } } 
-					}
-					871 = {
-						save_event_target_as = state_scope
-						state_event = { id = congo.56 days = 13 hours = 1 trigger_for = controller }
-					}
-					#ROOT = { activate_targeted_decision = { target = 871 decision = COG_integrate_kingdom_mission } }
 				}
 			}
 		}
