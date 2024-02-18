@@ -1,9 +1,11 @@
 -- Spot Optimizations
 --NDefines.NGame.LAG_DAYS_FOR_LOWER_SPEED = 100								-- Days of client lag for decrease of gamespeed
 --NDefines.NGame.LAG_DAYS_FOR_PAUSE = 60									-- Days of client lag for pause of gamespeed.
+NDefines.NGame.EVENT_TIMEOUT_DEFAULT = 7									-- Default days before an event times out if not scripted
+NDefines.NGame.MISSION_REMOVE_FROM_INTERFACE_DEFAULT = 3					-- Default days before a mission is removed from the interface after having failed or completed
 
 -- Politics
-NDefines.NPolitics.BASE_POLITICAL_POWER_INCREASE = 2.5						-- Weekly ?? (DAYLY!!) increase of PP.
+NDefines.NPolitics.BASE_POLITICAL_POWER_INCREASE = 2.0						-- Weekly ?? (DAYLY!!) increase of PP.
 
 -- Focuses
 NDefines.NFocus.MAX_SAVED_FOCUS_PROGRESS = 5								-- This much progress can be saved while not having a focus selected

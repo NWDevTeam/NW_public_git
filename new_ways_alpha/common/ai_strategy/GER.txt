@@ -4099,14 +4099,50 @@ NW_GER_garrison_atlantic_wall = {
 			23
 			19
 			31
+#			1050
+#			1043
+#			22
+#			1035
+#			21
+			1032
+			821
+			1165
+		}
+		subtract_invasions_from_need = yes
+		subtract_fronts_from_need = yes
+	}
+}
+
+NW_GER_garrison_atlantic_wall_2 = {
+	allowed = { tag = GER }
+	enable = {
+		controls_state = 21
+		controls_state = 1035
+		controls_state = 22
+		controls_state = 1050
+		controls_state = 1043
+		any_enemy_country = {
+			OR = {
+				is_ai = no
+				AND = {
+					OR = { tag = ENG tag = FRA tag = USA }
+					is_major = yes
+				}
+				naval_strength_ratio = { tag = GER ratio > 1.0 }
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = put_unit_buffers
+		ratio = 0.03
+		states = {
 			1050
 			1043
 			22
 			1035
 			21
-			1032
-			821
-			1165
 		}
 		subtract_invasions_from_need = yes
 		subtract_fronts_from_need = yes
@@ -4208,7 +4244,7 @@ NW_GER_wardec_YUG = {
 		}
 	}
 	abort = {
-		YUG = { has_capitulated = yes }
+		YUG = { OR = { has_capitulated = yes exists = no } }
 	}
 
 	ai_strategy = { type = consider_weak id = "YUG" value = 1000 }
@@ -4227,6 +4263,7 @@ GER_want_to_invade_YUG_with_axis = {
 		YUG = {	has_capitulated = no }
 	}
 	abort_when_not_enabled = yes
+	
 	ai_strategy = {
 		type = dont_join_wars_with
 		id = ITA
@@ -4273,16 +4310,20 @@ NW_GER_wardec_GRE = {
 	enable = {
 		OR = {
 			YUG = {	has_capitulated = yes }
-			focus_progress = { focus = GER_second_ljubljana_award progress > 0 }
-			focus_progress = { focus = GER_war_with_greece progress > 0 }
+			focus_progress = { focus = GER_second_ljubljana_award	progress > 0 }
+			focus_progress = { focus = GER_war_with_greece			progress > 0 }
+			AND = {
+				has_war_with = GRE
+				GRE = {	has_capitulated = no }
+			}
 		}
 	}
 	abort_when_not_enabled = yes
 
-	ai_strategy = { type = consider_weak id = "GRE" value = 1000 }
-	ai_strategy = { type = conquer id = "GRE" value = 500 }
-	ai_strategy = { type = declare_war id = "GRE" value = 500 }
-	ai_strategy = { type = prepare_for_war id = "GRE" value = 100 }
+	ai_strategy = { type = consider_weak	id = "GRE" value = 1000 }
+	ai_strategy = { type = conquer			id = "GRE" value = 500 }
+	ai_strategy = { type = declare_war		id = "GRE" value = 500 }
+	ai_strategy = { type = prepare_for_war	id = "GRE" value = 100 }
 }
 
 GER_want_to_invade_GRE_with_axis = {
@@ -4295,6 +4336,7 @@ GER_want_to_invade_GRE_with_axis = {
 		GRE = {	has_capitulated = no }
 	}
 	abort_when_not_enabled = yes
+	
 	ai_strategy = {
 		type = dont_join_wars_with
 		id = ITA
@@ -4325,10 +4367,28 @@ GER_want_to_invade_GRE_with_axis = {
 		target_country = GRE
 		value = -500
 	}
+	
+	ai_strategy = {
+		type = front_control
+		country_trigger = {
+			OR = { original_tag = GRE is_subject_of = GRE }
+		}
+		ordertype = front
+		priority = 250
+		execution_type = rush
+		execute_order = yes
+	}
+	ai_strategy = { type = invade	id = "GRE"	value = 500	}
+	ai_strategy = {
+		type = front_control
+		strategic_region = 25	# Греция
+		ordertype = invasion
+		execute_order = yes
+	}
 	ai_strategy = {
 		type = front_unit_request
 		country_trigger = {
-			OR = { tag = GRE is_subject_of = GRE }
+			OR = { original_tag = GRE is_subject_of = GRE }
 		}
 		value = 200
 	}
@@ -4345,6 +4405,54 @@ NW_GER_area_priority_SOV = {
 		OR = {
 			focus_progress = { focus = GER_ussr_war_goal progress > 0.01 }
 			has_war_with = SOV
+		}
+		event_target:NW_france_scope = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
+		}
+		ITA = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
+		}
+		POL = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
+		}
+		AUS = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
+		}
+		BEL = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
+		}
+		HOL = {
+			OR = {
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+				exists = no
+				has_capitulated = yes
+			}
 		}
 	}
 	abort = {
@@ -4369,14 +4477,14 @@ NW_GER_area_priority_SOV = {
 	ai_strategy = {
 		type = front_armor_score
 		id = "SOV"
-		value = 300
+		value = 100
 	}
 	ai_strategy = {
 		type = front_unit_request
 		country_trigger = {
 			original_tag = SOV
 		}
-		value = 700
+		value = 200
 	}
 	ai_strategy = {
 		type = front_unit_request
@@ -4585,16 +4693,16 @@ GER_share_borders_with_ITA_against_SOV = {
 		id = "SER"
 		value = 100
 	}
-	ai_strategy = {
-		type = dont_defend_ally_borders
-		id = "ROM"
-		value = 100
-	}
-	ai_strategy = {
-		type = dont_defend_ally_borders
-		id = "HUN"
-		value = 100
-	}
+#	ai_strategy = {
+#		type = dont_defend_ally_borders
+#		id = "ROM"
+#		value = 100
+#	}
+#	ai_strategy = {
+#		type = dont_defend_ally_borders
+#		id = "HUN"
+#		value = 100
+#	}
 	ai_strategy = {
 		type = dont_defend_ally_borders
 		id = "SLO"
@@ -5209,7 +5317,7 @@ GER_trade_with_sweden = {
 	enable = {
 		# if we're not communist and they're not communist
 		NOT = { has_government = communism }
-		NOT = { SWE = { has_government = communism } }
+		NOT = { SWE = { has_government = communism has_war_with = ROOT } }
 	}
 	abort_when_not_enabled = yes
 
@@ -5226,7 +5334,7 @@ GER_trade_with_italy = {
 	}
 	enable = {
 		has_government = fascism
-		ITA = { has_government = fascism }
+		ITA = { has_government = fascism NOT = { has_war_with = ROOT } }
 	}
 	abort_when_not_enabled = yes
 

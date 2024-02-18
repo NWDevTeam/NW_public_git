@@ -103,6 +103,7 @@ focus_tree = {
 				ideology = var:current_party_ideology_group
 				popularity = -0.05
 			}
+			add_timed_idea = { idea = TUR_varlik_vergisi days = 730 }
 			49 = {
 				if = {
 					limit = {
@@ -120,7 +121,6 @@ focus_tree = {
 					}
 				}
 			}
-			add_ideas = TUR_varlik_vergisi
 		}
 	}
 	
@@ -153,7 +153,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_construction_labour_camps"
-			add_stability = -0.05
+			add_stability = -0.1
 			add_popularity = {
 				ideology = var:current_party_ideology_group
 				popularity = -0.05
@@ -213,7 +213,6 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_mobilization_eastern_regions"
-			add_stability = -0.05
 			add_popularity = {
 				ideology = var:current_party_ideology_group
 				popularity = -0.05
@@ -1957,15 +1956,18 @@ focus_tree = {
 		
 		available = {
 			is_subject = no
-			BUL = { is_subject = no }
-			NOT = { has_war_with = BUL }
+			BUL = {
+				is_subject = no
+				is_in_faction = no
+				NOT = { has_war_with = ROOT }
+			}
 			NOT = { has_country_flag = troz_focus_block_flag }
 		}
 
 		bypass = {
 			BUL = {
 				OR = {
-					is_in_faction_with = ROOT
+					is_in_faction = yes
 					is_subject_of = ROOT
 					exists = no
 					has_capitulated = yes
@@ -1997,8 +1999,11 @@ focus_tree = {
 		
 		available = {
 			is_subject = no
-			GRE = { is_subject = no }
-			NOT = { has_war_with = GRE }
+			GRE = {
+				is_subject = no
+				is_in_faction = no
+				NOT = { has_war_with = ROOT }
+			}
 			NOT = { has_country_flag = troz_focus_block_flag }
 		}
 
@@ -2090,12 +2095,23 @@ focus_tree = {
 		}
 
 		bypass = {
-			POR = {
-				OR = {
-					is_in_faction_with = ROOT
-					is_subject_of = ROOT
-					exists = no
-					has_capitulated = yes
+			OR = {
+				POR = {
+					OR = {
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+						exists = no
+						has_capitulated = yes
+						
+					}
+				}
+				AND = {
+					is_left_ideology = yes
+					POR = { is_left_ideology = no }
+				}
+				AND = {
+					is_left_ideology = no
+					POR = { is_left_ideology = yes }
 				}
 			}
 		}
@@ -4199,8 +4215,14 @@ focus_tree = {
 			if = {
 				limit = {
 					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
 				}
-				remove_ideas = TUR_great_depression
+				effect_tooltip = {
+					set_variable = { timer = 180 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 180 }
 			}
 			if = {
 				limit = {
@@ -5402,17 +5424,17 @@ focus_tree = {
 							size > 1
 							include_locked = yes
 						}
-						infrastructure < 4
+						infrastructure < 5
 					}
-					add_extra_state_shared_building_slots = 2
+					add_extra_state_shared_building_slots = 1
 					add_building_construction = {
 						type = industrial_complex
-						level = 2
+						level = 1
 						instant_build = yes
 					}
 					add_building_construction = {
 						type = infrastructure
-						level = 2
+						level = 1
 						instant_build = yes
 					}
 				}
@@ -6119,9 +6141,12 @@ focus_tree = {
 			factor = 20
 		}
 		available = {
-			all_country_with_original_tag = {
-				original_tag_to_check = ROOT
-				NOT = { has_country_leader = { name = "Şükrü Kaya" ruling_only = yes } }
+			NOT = {
+				any_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					NOT = { tag = ROOT }
+					has_country_leader = { name = "Şükrü Kaya" ruling_only = yes }
+				}
 			}
 			OR = {
 				has_country_flag = TUR_power_of_special_services_flag
@@ -6198,9 +6223,12 @@ focus_tree = {
 			factor = 20
 		}
 		available = {
-			all_country_with_original_tag = {
-				original_tag_to_check = ROOT
-				NOT = { has_country_leader = { name = "Mehmet Recep Peker" ruling_only = yes } }
+			NOT = {
+				any_country_with_original_tag = {
+					original_tag_to_check = ROOT
+					NOT = { tag = ROOT }
+					has_country_leader = { name = "Mehmet Recep Peker" ruling_only = yes }
+				}
 			}
 			OR = {
 				has_country_flag = TUR_recep_peker_flag
@@ -6218,7 +6246,7 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_recep_peker"
-			custom_effect_tooltip = TUR_focus_autocomplete_tt
+#			custom_effect_tooltip = TUR_focus_autocomplete_tt
 			add_popularity = {
 				ideology = fascism
 				popularity = 0.15
@@ -7550,8 +7578,16 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_sign_contracts"
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 180 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 180 }
 			}
 			add_ideas = TUR_sign_contracts_idea
 			capital_scope = {
@@ -8737,8 +8773,16 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_militarization_economy"
 			add_stability = -0.1
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 90 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 90 }
 			}
 			if = {
 				limit = {
@@ -8750,7 +8794,7 @@ focus_tree = {
 				}
 				add_ideas = war_economy
 			}
-			add_ideas = TUR_militarization_economy
+			add_timed_idea = { idea = TUR_militarization_economy days = 365 }
 		}
 	}
 	
@@ -9237,59 +9281,18 @@ focus_tree = {
 				}
 				ENG = { country_event = { id = NWturkey.16 days = 1 } }
 			}
-			if = {
-				limit = {
-					183 = { NOT = { is_fully_controlled_by = ENG } }
-					772 = { NOT = { is_fully_controlled_by = ENG } }
-					1153 = { NOT = { is_fully_controlled_by = ENG } }
-				}
-				183 = { add_claim_by = ROOT }
-				772 = { add_claim_by = ROOT }
-				1153 = { add_claim_by = ROOT }
-				183 = {
-					controller = {
-						ROOT = {
-							create_wargoal = {
-								type = take_state_focus
-								target = PREV
-								generator = { 183 772 1153 }
-							}
-							add_ai_strategy = {
-								type = antagonize
-								id = PREV
-								value = 500
-							}
-							add_ai_strategy = {
-								type = conquer
-								id = PREV
-								value = 500
-							}
+			else = {
+				every_state = {
+					limit = {
+						controller = { NOT = { tag = ROOT is_in_faction_with = ROOT is_subject_of = ROOT } }
+						OR = {
+							state = 183
+							state = 772
+							state = 1153
 						}
 					}
-				}
-				772 = {
-					controller = {
-						ROOT = {
-							create_wargoal = {
-								type = take_state_focus
-								target = PREV
-								generator = { 183 772 1153 }
-							}
-							add_ai_strategy = {
-								type = antagonize
-								id = PREV
-								value = 500
-							}
-							add_ai_strategy = {
-								type = conquer
-								id = PREV
-								value = 500
-							}
-						}
-					}
-				}
-				1153 = {
-					controller = {
+					add_claim_by = ROOT
+					owner = {
 						ROOT = {
 							create_wargoal = {
 								type = take_state_focus
@@ -9521,9 +9524,15 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_liberate_greek_turks"
-			1026 = { add_claim_by = ROOT }
-			187 = { add_claim_by = ROOT }
-			187 = {
+			every_state = {
+				limit = {
+					controller = { NOT = { tag = ROOT is_in_faction_with = ROOT is_subject_of = ROOT } }
+					OR = {
+						state = 1026
+						state = 187
+					}
+				}
+				add_claim_by = ROOT
 				owner = {
 					ROOT = {
 						create_wargoal = {
@@ -9574,10 +9583,16 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_liberate_bulgarian_turks"
-			211 = { add_claim_by = ROOT }
-			212 = { add_claim_by = ROOT }
-			892 = { add_claim_by = ROOT }
-			211 = {
+			every_state = {
+				limit = {
+					controller = { NOT = { tag = ROOT is_in_faction_with = ROOT is_subject_of = ROOT } }
+					OR = {
+						state = 211
+						state = 212
+						state = 892
+					}
+				}
+				add_claim_by = ROOT
 				owner = {
 					ROOT = {
 						create_wargoal = {
@@ -9636,11 +9651,17 @@ focus_tree = {
 
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_liberate_romanian_turks"
-			77 = { add_claim_by = ROOT }
-			781 = { add_claim_by = ROOT }
-			780 = { add_claim_by = ROOT }
-			78 = { add_claim_by = ROOT }
-			77 = {
+			every_state = {
+				limit = {
+					controller = { NOT = { tag = ROOT is_in_faction_with = ROOT is_subject_of = ROOT } }
+					OR = {
+						state = 77
+						state = 781
+						state = 780
+						state = 78
+					}
+				}
+				add_claim_by = ROOT
 				owner = {
 					ROOT = {
 						create_wargoal = {
@@ -9852,8 +9873,16 @@ focus_tree = {
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_liberalize_the_economy"
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 180 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 180 }
 			}
 			add_ideas = TUR_liberalize_the_economy_idea
 		}
@@ -10332,7 +10361,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_democratization_iraq
-		icon = GFX_focus_generic_strike_at_democracy2
+		icon = GFX_z_goal_release_iraq
 		prerequisite = { focus = TUR_concessions_islamists }
 		mutually_exclusive = { focus = TUR_support_iraqs_democrats }
 		x = -2
@@ -10383,7 +10412,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_democratization_saudis
-		icon = GFX_focus_generic_strike_at_democracy2
+		icon = GFX_z_goal_be_friends_with_the_saudis
 		prerequisite = { focus = TUR_democratization_iraq }
 		#mutually_exclusive = { focus = TUR_support_iraq_economy }
 		x = 0
@@ -10434,7 +10463,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_democratization_oman
-		icon = GFX_focus_generic_strike_at_democracy2
+		icon = GFX_z_goal_association_of_muscat_and_oman
 		prerequisite = { focus = TUR_democratization_saudis }
 		#mutually_exclusive = { focus = TUR_economic_integration_iraq }
 		x = 0
@@ -10813,7 +10842,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_liberate_syrian_kurds
-		icon = GFX_z_goal_give_democracy
+		icon = GFX_z_goal_release_syria
 		prerequisite = { focus = TUR_kurdish_autonomy }
 		mutually_exclusive = { focus = TUR_call_for_creation_of_unified_kurdistan_2 }
 		x = -1
@@ -10900,7 +10929,7 @@ focus_tree = {
 	
 	focus = {
 		id = TUR_liberate_iranian_kurds
-		icon = GFX_z_goal_give_democracy
+		icon = GFX_z_goal_iran_sosaaat
 		prerequisite = { focus = TUR_liberate_syrian_kurds }
 		x = 0
 		y = 1
@@ -10960,7 +10989,7 @@ focus_tree = {
 	focus = {
 		id = TUR_call_for_creation_of_unified_kurdistan_2
 		text = TUR_call_for_creation_of_unified_kurdistan
-		icon = GFX_z_goal_democratic_propaganda
+		icon = GFX_z_goal_kurdish_question
 		prerequisite = { focus = TUR_kurdish_autonomy }
 		mutually_exclusive = { focus = TUR_liberate_syrian_kurds }
 		x = 1
@@ -11498,8 +11527,16 @@ focus_tree = {
 				days = 180
 			}
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 60 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 60 }
 			}
 		}
 	}
@@ -12470,14 +12507,14 @@ focus_tree = {
 					is_core_of = ROOT
 					free_building_slots = {
 						building = industrial_complex
-						size > 2
+						size > 0
 						include_locked = yes
 					}
 				}
-				add_extra_state_shared_building_slots = 3
+				add_extra_state_shared_building_slots = 1
 				add_building_construction = {
 					type = industrial_complex
-					level = 3
+					level = 1
 					instant_build = yes
 				}
 			}
@@ -12486,14 +12523,14 @@ focus_tree = {
 					is_core_of = ROOT
 					free_building_slots = {
 						building = industrial_complex
-						size > 1
+						size > 0
 						include_locked = yes
 					}
 				}
-				add_extra_state_shared_building_slots = 2
+				add_extra_state_shared_building_slots = 1
 				add_building_construction = {
 					type = industrial_complex
-					level = 2
+					level = 1
 					instant_build = yes
 				}
 			}
@@ -12502,14 +12539,30 @@ focus_tree = {
 					is_core_of = ROOT
 					free_building_slots = {
 						building = arms_factory
-						size > 2
+						size > 0
 						include_locked = yes
 					}
 				}
-				add_extra_state_shared_building_slots = 3
+				add_extra_state_shared_building_slots = 1
 				add_building_construction = {
 					type = arms_factory
-					level = 3
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
 					instant_build = yes
 				}
 			}
@@ -13118,8 +13171,16 @@ focus_tree = {
 			add_stability = 0.05
 			add_ideas = TUR_turkish_man_working_man
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 90 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 90 }
 			}
 		}
 	}
@@ -14165,7 +14226,7 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_economic_recovery"
-			add_timed_idea = { idea = TUR_economic_recovery days = 730 }
+			add_timed_idea = { idea = TUR_economic_recovery days = 365 }
 		}
 	}
 	
@@ -14378,13 +14439,13 @@ focus_tree = {
 		}
 		
 		available = {
-			num_of_factories > 50
+			num_of_factories > 74
 		}
 
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_forced_tank_production"
-			add_ideas = TUR_forced_tank_production
+			add_timed_idea = { idea = TUR_forced_tank_production days = 365 }
 			add_tech_bonus = {
 				name = TUR_forced_tank_production
 				bonus = 1.0
@@ -15174,8 +15235,16 @@ focus_tree = {
 				days = 180
 			}
 			if = {
-				limit = { has_idea = TUR_great_depression }
-				remove_ideas = TUR_great_depression
+				limit = {
+					has_idea = TUR_great_depression
+					NOT = { has_country_flag = TUR_great_depression_control_flag }
+				}
+				effect_tooltip = {
+					set_variable = { timer = 180 tooltip = timer_tootip }
+					remove_ideas = TUR_great_depression
+				}
+				set_country_flag = TUR_great_depression_control_flag
+				set_country_flag = { flag = TUR_great_depression_timer_flag value = 1 days = 180 }
 			}
 		}
 	}
@@ -18703,6 +18772,9 @@ focus_tree = {
 	}
 	
 	
+	
+	
+	
 	############################
 	#### INDUSTRIAL SECTION ####	DISABLED
 	############################
@@ -20072,11 +20144,20 @@ focus_tree = {
 		
 		completion_reward = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_purchases_of_modern_aircraft"
-			add_tech_bonus = {
-				name = TUR_purchases_of_modern_aircraft
-				bonus = 1.0
-				uses = 1
-				category = light_fighter
+			add_equipment_subsidy = {
+				cic = 750
+				equipment_type = small_plane_airframe
+				seller_trigger = is_allied_seller_trigger
+			}
+			add_equipment_subsidy = {
+				cic = 750
+				equipment_type = small_plane_cas_airframe
+				seller_trigger = is_allied_seller_trigger
+			}
+			add_equipment_subsidy = {
+				cic = 750
+				equipment_type = medium_plane_airframe
+				seller_trigger = is_allied_seller_trigger
 			}
 		}
 	}
@@ -20580,7 +20661,7 @@ focus_tree = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus TUR_create_command_of_turkish_navy"
 			navy_experience = 25
 			custom_effect_tooltip = available_chief_of_navy
-			show_ideas_tooltip = TUR_mehmet_ali_ungen
+			show_ideas_tooltip = TUR_mehmet_ali_ulgen
 			show_ideas_tooltip = TUR_sukru_okan
 		}
 	}
