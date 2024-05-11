@@ -51,7 +51,6 @@ tags={
 	"Technologies"
 }
 picture="thumbnail.png"
-name="New Ways alpha"
-supported_version="1.13.*"
+name="New Ways Alpha"
+supported_version="1.14.*"
 path="mod/new_ways_alpha"
-remote_file_id="2197593000"
