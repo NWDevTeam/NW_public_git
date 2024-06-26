@@ -1,0 +1,86 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			log = "======================LEGITIMACY START======================"
+			every_possible_country = {
+				add_to_array = { coalition_array = current_party_ideology_group }
+				NW_legitimacy_check = yes
+			}
+			log = "=======================LEGITIMACY END======================="
+			
+			log = "======================MIGRATION START======================"
+			every_possible_country = {
+				NW_migration_check = yes
+			}
+			log = "=======================MIGRATION END======================="
+		}
+	}
+	
+	on_weekly = {
+		effect = {
+			if = {
+				limit = { is_ai = no }
+				NW_legitimacy_check = yes
+				NW_migration_check = yes
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): NW_legitimacy_check, NW_migration_check (on_weekly)"
+			}
+		}
+	}
+	
+	on_monthly = {
+		effect = {
+			if = {
+				limit = {
+					is_ai = yes
+					NOT = { has_country_flag = cooldown_flag }
+					if = {
+						limit = { has_global_flag = clr_check_count_var }
+						always = no
+					}
+				}
+				NW_legitimacy_check = yes
+				NW_migration_check = yes
+				set_country_flag = { flag = cooldown_flag days = 90 value = 1 }
+				add_to_variable = { global.check_count_var = 1 }
+				add_to_variable = { check_count_in_country_var = 1 } # for log
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): NW_legitimacy_check, NW_migration_check: num [?global.check_count_var], count in country [?check_count_in_country_var] (on_monthly)"
+				if = {
+					limit = { check_variable = { global.check_count_var = 36 } } #32
+					set_global_flag = { flag = clr_check_count_var days = 2 value = 1 }
+					set_variable = { global.check_count_var = 0 }
+				}
+			}
+		}
+	}
+	
+	on_ruling_party_change = {
+		effect = {
+			if = { 
+				limit = { 
+					NOT = { is_in_array = { coalition_array = current_party_ideology_group } }
+				}
+				clear_array = coalition_array
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): clear coalition_array (on_ruling_party_change)"
+				add_to_array = { coalition_array = current_party_ideology_group }
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): add_to_array coalition_array = [?current_party_ideology_group.GetTokenKey] (on_ruling_party_change)"
+			}
+			# NW_legitimacy_check = yes
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			if = { 
+				limit = { 
+					NOT = { is_in_array = { coalition_array = current_party_ideology_group } }
+				}
+				clear_array = coalition_array
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): clear coalition_array (on_government_change)"
+				add_to_array = { coalition_array = current_party_ideology_group }
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): add_to_array coalition_array = [?current_party_ideology_group.GetTokenKey] (on_government_change)"
+			}
+			# NW_legitimacy_check = yes
+		}
+	}
+}
