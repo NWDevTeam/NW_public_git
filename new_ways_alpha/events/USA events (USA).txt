@@ -1,0 +1,291 @@
+add_namespace = NW_USA_news
+add_namespace = NW_USA
+
+# США разрывают торговое соглашение с Японией
+news_event = {
+	id = NW_USA_news.0
+	title = NW_USA_news.0.t
+	desc = NW_USA_news.0.d
+	picture = GFX_news_event_NW_USA_news.0
+	major = yes	
+	is_triggered_only = yes	
+	option = {
+		name = NW_USA_news.0.a
+	}
+}
+
+# JAP Прибытие католических священников
+country_event = {
+	id = NW_USA.0
+	title = NW_USA.0.t
+	desc = NW_USA.0.d
+	picture = GFX_report_event_NW_USA.0
+	is_triggered_only = yes
+	trigger = { NOT = { has_war_with = FROM } }
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.0" }
+	option = {
+		name = NW_USA.0.a
+		FROM = {
+			if = {
+				limit = { has_country_leader = { character = USA_franklin_delano_roosevelt ruling_only = yes } }
+				country_event = { id = NW_USA.1 days = 45 }
+			}
+		}
+	}
+	option = {
+		name = NW_USA.0.b
+	}
+}
+
+# Частная дипломатия с Японией
+country_event = {
+	id = NW_USA.1
+	title = NW_USA.1.t
+	desc = NW_USA.1.d
+	picture = GFX_report_event_NW_USA.0
+	is_triggered_only = yes
+	trigger = { has_country_leader = { character = USA_franklin_delano_roosevelt ruling_only = yes } }
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.1" }
+	option = {
+		name = NW_USA.1.a
+		if = {
+			limit = {
+				FROM = {
+					has_completed_focus = JAP_cyclone_matsuoka
+					NOT = {
+						has_completed_focus = JAP_restore_the_Contract_Fraction
+						has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_country_flag
+					}
+					check_variable = { JAP_the_level_of_insubordination_var > 0 }
+				}
+			}
+			hidden_effect = { country_event = { id = NW_USA.2 days = 30 } }
+		}
+		else = {
+			FROM = {
+				add_opinion_modifier = {
+					modifier = USA_private_diplomacy_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					target = ROOT
+					modifier = USA_private_diplomacy_op
+				}
+			}
+		}
+	}
+	option = {
+		name = NW_USA.1.b
+	}
+}
+
+# Предложения о взаимопонимании
+country_event = {
+	id = NW_USA.2
+	title = NW_USA.2.t
+	desc = {
+		text = NW_USA.2.d.a
+		trigger = {
+			JAP = {
+				JAP_Yosuke_Matsuoka = {
+					is_political_advisor = no
+					NOT = { is_character_slot = political_advisor }
+				}
+			}
+		}
+	}
+	desc = {
+		text = NW_USA.2.d.b
+		trigger = {
+			JAP = {
+				JAP_Yosuke_Matsuoka = {
+					OR = {
+						is_political_advisor = yes
+						is_character_slot = political_advisor
+					}
+				}
+			}
+		}
+	}
+	picture = GFX_report_event_NW_USA.2
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.2" }
+	option = {
+		name = NW_USA.2.a
+		hidden_effect = { JAP = { country_event = { id = NW_USA.3 days = 30 } } }
+	}
+	option = {
+		name = NW_USA.2.b
+	}
+}
+
+# JAP Отправная точка для обсуждения
+country_event = {
+	id = NW_USA.3
+	title = NW_USA.3.t
+	desc = NW_USA.3.desc
+	picture = GFX_report_event_NW_USA.3
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.3" }
+	option = {
+		name = NW_USA.3.a
+		trigger = {
+			JAP_Yosuke_Matsuoka = {
+				OR = {
+					is_political_advisor = yes
+					is_character_slot = political_advisor
+				}
+			}
+		}
+		hidden_effect = { country_event = { id = NW_USA.6 days = 10 } }
+	}
+	option = {
+		name = NW_USA.3.b
+		if = {
+			limit = { has_active_mission = JAP_discontent_of_the_military_mission }
+			add_days_mission_timeout = { mission = JAP_discontent_of_the_military_mission days = -100 }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		FROM = {
+			country_event = { id = NW_USA.8 days = 1 }
+			add_opinion_modifier = {
+				modifier = USA_abandoning_the_project_op
+				target = ROOT
+			}
+		}
+	}
+	option = {
+		name = NW_USA.3.c
+		if = {
+			limit = { has_active_mission = JAP_discontent_of_the_military_mission }
+			add_days_mission_timeout = { mission = JAP_discontent_of_the_military_mission days = -75 }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		FROM = { country_event = { id = NW_USA.4 days = 1 } }
+	}
+	option = {
+		name = NW_USA.3.d
+		trigger = {
+			JAP_Yosuke_Matsuoka = {
+				is_political_advisor = no
+				NOT = { is_character_slot = political_advisor }
+			}
+		}
+		country_event = { id = NW_JAP.102 days = 1 }
+	}
+}
+
+# Предложение пакта о нейтралитете
+country_event = {
+	id = NW_USA.4
+	title = NW_USA.4.t
+	desc = NW_USA.4.d
+	picture = GFX_report_event_hol_59
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.4" }
+	option = {
+		name = NW_USA.4.a
+		FROM = {
+			country_event = { id = NW_JAP.5 days = 1 }
+			custom_effect_tooltip = empty_line_tooltip
+			effect_tooltip = {
+				add_opinion_modifier = {
+					modifier = USA_americans_reject_the_neutrality_pact_op
+					target = ROOT
+				}
+			}
+		}
+	}
+}
+
+# JAP Американцы отклоняют пакт о нейтралитете
+country_event = {
+	id = NW_USA.5
+	title = NW_USA.5.t
+	desc = NW_USA.5.d
+	picture = GFX_report_event_hol_59
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.5" }
+	option = {
+		name = NW_USA.5.a
+		add_opinion_modifier = {
+			modifier = USA_americans_reject_the_neutrality_pact_op
+			target = FROM
+		}
+	}
+}
+
+# JAP Заговор против Мацуоки?
+country_event = {
+	id = NW_USA.6
+	title = NW_USA.6.t
+	desc = NW_USA.6.d
+	picture = GFX_report_event_NW_USA.6
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.6" }
+	option = {
+		name = NW_USA.6.a
+		trigger = {
+			any_enemy_country = { is_literally_china = yes }
+			NOT = { has_completed_focus = JAP_withdraw_troops_from_china }
+		}
+		add_political_power = -30
+		custom_effect_tooltip = empty_line_tooltip
+		if = {
+			limit = { has_active_mission = JAP_discontent_of_the_military_mission }
+			add_days_mission_timeout = { mission = JAP_discontent_of_the_military_mission days = 50 }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		USA = { country_event = { id = NW_USA.7 days = 1 } }
+	}
+	option = {
+		name = NW_USA.6.b
+		if = {
+			limit = { has_active_mission = JAP_discontent_of_the_military_mission }
+			add_days_mission_timeout = { mission = JAP_discontent_of_the_military_mission days = -100 }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		USA = {
+			country_event = { id = NW_USA.8 days = 1 }
+			add_opinion_modifier = {
+				modifier = USA_abandoning_the_project_op
+				target = ROOT
+			}
+		}
+	}
+	option = {
+		name = NW_USA.6.c
+		if = {
+			limit = { has_active_mission = JAP_discontent_of_the_military_mission }
+			add_days_mission_timeout = { mission = JAP_discontent_of_the_military_mission days = -75 }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		USA = { country_event = { id = NW_USA.4 days = 1 } }
+	}
+}
+
+# Японская инициатива в Китае
+country_event = {
+	id = NW_USA.7
+	title = NW_USA.7.t
+	desc = NW_USA.7.d
+	picture = GFX_report_event_hol_59
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.7" }
+	option = {
+		name = NW_USA.7.a
+	}
+}
+
+# Японская инициатива в Китае
+country_event = {
+	id = NW_USA.8
+	title = NW_USA.8.t
+	desc = NW_USA.8.d
+	picture = GFX_report_event_hol_59
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_USA.8" }
+	option = {
+		name = NW_USA.8.a
+	}
+}

@@ -1,0 +1,495 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### FRA стартпак
+				FRA = { country_event = { id = NWfrance.51 months = 22 days = 16 hours = 13 } } # Попытка фашистского государственного переворота
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			# Передача власти Петену // 16 state
+			if = {
+				limit = {
+					FROM.FROM = { state = 16 }
+					FROM = {
+						original_tag = FRA
+						FRA_philippe_petain = { is_country_leader = no }
+						is_subject = no
+						OR = {
+							has_government = democratic
+							has_government = neutrality
+						}
+						NOT = { has_war_with = FRC }
+					}
+					ROOT = {
+						OR = {
+							original_tag = GER
+							original_tag = ITA
+						}
+					}
+					OR = {
+						AND = {
+							has_war_with = GER
+							GER = { has_government = fascism }
+							NOT = { has_war_with = ITA }
+						}
+						AND = {
+							has_war_with = ITA
+							ITA = { has_government = fascism }
+							NOT = { has_war_with = GER }
+						}
+						AND = {
+							GER = {
+								has_war_with = FRA
+								has_government = fascism
+							}
+							ITA = {
+								has_war_with = FRA
+								is_in_faction_with = GER
+								has_government = fascism
+							}
+						}
+					}
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+				}
+				ENG = { remove_resource_rights = FROM.FROM }
+			}
+		}
+		
+# разгрузка activation миссий FRA/FRF
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_syria_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { OR = { state = 680 state = 677 state = 554 state = 553 } }
+					NOT = {
+						country_exists = SYR
+						country_exists = LEB
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_syria_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_indochina_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 671 state = 1194 state = 286 state = 670
+							state = 1180 state = 1181 state = 741 state = 1179
+						}
+					}
+					NOT = {
+						country_exists = CAM
+						country_exists = LAO
+						country_exists = VIN
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_indochina_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_madagascar_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { state = 543 }
+					NOT = {
+						country_exists = MAD
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_madagascar_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_north_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 461 state = 462 state = 459 state = 513
+							state = 460 state = 458 state = 665 state = 1067
+						}
+					}
+					NOT = {
+						country_exists = MOR
+						country_exists = ALG
+						country_exists = TUN
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_north_africa_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_west_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = {
+						OR = {
+							state = 557 state = 272 state = 556 state = 1008
+							state = 1011 state = 1012 state = 1013 state = 1068
+						}
+					}
+					NOT = {
+						country_exists = NGR
+						country_exists = DAH
+						country_exists = TOG
+						country_exists = VOL
+						country_exists = IVO
+						country_exists = MLI
+						country_exists = GNA
+						country_exists = SEN
+						country_exists = MRT
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_west_africa_mission }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						has_country_flag = FRA_central_africa_promised_independence
+						has_war = no
+					}
+					FROM.FROM = { OR = { state = 660 state = 1005 state = 1006 state = 1019 state = 539 } }
+					NOT = {
+						country_exists = RCG
+						country_exists = GAB
+						country_exists = CAR
+						country_exists = CMR
+						country_exists = CHA
+					}
+				}
+				ROOT = { activate_mission = FRA_independence_for_central_africa_mission }
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			#Фокус «Умиротворение Германии» // Автовыполнение у event_target:NW_france_scope
+			if = {
+				limit = {
+					tag = GER
+					has_government = democratic
+				}
+				if = {
+					limit = {
+						country_exists = FRA
+						FRA = { NOT = { has_completed_focus = FRA_appeasement_of_germany } }
+					}
+					FRA = { complete_national_focus = FRA_appeasement_of_germany }
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			#Сброс нац. духов ТроФранка
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = ITA
+							tag = ENG
+							tag = SPR
+							tag = SIA
+							tag = INS
+							tag = RAJ
+						}
+						has_idea = trozkism_influence6
+					}
+					ROOT = {
+						tag = event_target:NW_france_scope
+						has_government = trozkism
+					}
+				}
+				FROM = {
+					remove_ideas = trozkism_influence6
+				}
+			}
+			
+			#FRA // Фокус "Укрепление Сопротивления в Северной Франции"
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							FROM = {
+								OR = {
+									tag = ITA
+									tag = GER
+								}
+							}
+							ROOT = {
+								tag = FRA
+								has_country_flag = FRA_strengthening_resistance_in_northern_france_flag
+							}
+						}
+						AND = {
+							FROM = {
+								tag = FRA
+								has_country_flag = FRA_strengthening_resistance_in_northern_france_flag
+							}
+							ROOT = {
+								OR = {
+									tag = ITA
+									tag = GER
+								}
+							}
+						}
+					}
+				}
+				FRA = {
+					clr_country_flag = FRA_strengthening_resistance_in_northern_france_flag
+				}
+				every_state = {
+					limit = {
+						is_core_of = FRA
+						controller = {
+							OR = {
+								tag = ITA
+								tag = GER
+								is_in_faction_with = ITA
+								is_in_faction_with = GER
+								is_subject_of = GER
+								is_subject_of = ITA
+							}
+						}
+					}
+					FRA = { transfer_state = PREV }
+				}
+			}
+			#Франко ГВ
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = FRA
+							original_tag = FRC
+							original_tag = FRF
+						}
+					}
+					ROOT = {
+						OR = {
+							original_tag = FRA
+							original_tag = FRC
+							original_tag = FRF
+						}
+					}
+				}
+				FROM = { add_ideas = FRA_civil_war }
+				ROOT = { add_ideas = FRA_civil_war }
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			# ГВ-Франция
+            if = {
+				limit = {
+					FROM = { tag = FRA }
+					ROOT = { tag = FRC }
+				}
+				FRC = { transfer_navy = { target = FRA } }
+			}
+            if = {
+				limit = {
+					FROM = { tag = FRC }
+					ROOT = { tag = FRA }
+				}
+				FRA = { transfer_navy = { target = FRC } }
+			}			
+			if = {
+				limit = {
+					FROM = { tag = FRA }
+					ROOT = { tag = FRF }
+				}
+				FRF = { transfer_navy = { target = FRA } }
+			}
+            if = {
+				limit = {
+					FROM = { tag = FRF }
+					ROOT = { tag = FRA }
+				}
+				FRA = { transfer_navy = { target = FRF } }
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			#France
+			if = {
+				limit = {
+					FROM = { tag = FRA }
+					ROOT = { tag = FRC }
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+				every_enemy_country = {
+					limit = {
+						NOT = { original_tag = ROOT }
+						NOT = { original_tag = FROM }
+						is_subject = no
+						OR = { is_faction_leader = yes is_in_faction = no }
+					}
+					ROOT = { white_peace = PREV }
+				}
+				ROOT = {
+					remove_ideas = FRA_civil_war
+					news_event = { id = trworldnews.80 hours = 6 }
+					clear_global_event_target = NW_france_scope
+					save_global_event_target_as = NW_france_scope
+				}
+			}
+			
+			if = {
+				limit = {
+					FROM = { tag = FRC }
+					ROOT = { tag = FRA }
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+				ROOT = {
+					remove_ideas = FRA_civil_war
+					news_event = { id = trworldnews.81 hours = 6 }
+					clear_global_event_target = NW_france_scope
+					save_global_event_target_as = NW_france_scope
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						original_tag = FRC
+						NOT = { tag = FRC }
+						OR = { tag = D01 tag = D02 tag = D03 tag = D04 tag = D05 tag = D06 tag = D07 tag = D08 tag = D09 tag = D10 tag = D11 tag = D12 tag = D13 tag = D14 tag = D15 tag = D16 tag = D17 tag = D18 tag = D19 tag = D20 tag = D21 tag = D22 tag = D23 tag = D24 tag = D25 tag = D26 tag = D27 tag = D28 tag = D29 tag = D30 tag = D31 tag = D32 tag = D33 tag = D34 tag = D35 tag = D36 tag = D37 tag = D38 tag = D39 tag = D40 tag = D41 tag = D42 tag = D43 tag = D44 tag = D45 tag = D46 tag = D47 tag = D48 tag = D49 tag = D50 }
+						#has_government = communism
+					}
+					ROOT = { OR = { tag = FRA tag = FRC } }
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+				ROOT = {
+					annex_country = {
+						target = FROM
+						transfer_troops = no
+					}
+				}
+			}
+			
+			#Кагуляры // FRF
+			if = {
+				limit = {
+					FROM = { tag = FRA }
+					ROOT = { tag = FRF }
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+				ROOT = {
+					remove_ideas = FRA_civil_war
+					news_event = { id = trworldnews.88 hours = 6 }
+					clear_global_event_target = NW_france_scope
+					save_global_event_target_as = NW_france_scope
+				}
+			}
+			if = {
+				limit = {
+					FROM = { tag = FRF }
+					ROOT = { tag = FRA }
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+				every_enemy_country = {
+					limit = {
+						NOT = { original_tag = ROOT }
+						NOT = { original_tag = FROM }
+						is_subject = no
+						OR = { is_faction_leader = yes is_in_faction = no }
+					}
+					ROOT = { white_peace = PREV }
+				}
+				ROOT = {
+					remove_ideas = FRA_civil_war
+					news_event = { id = trworldnews.80 hours = 6 }
+					clear_global_event_target = NW_france_scope
+					save_global_event_target_as = NW_france_scope
+				}
+			}
+		}
+	}
+	
+	# called when a country send volunteers to another
+	# ROOT is sender, FROM is receiver
+	on_send_volunteers = {
+		effect = {
+			#Чек FRF добровольцев в Испании
+			if = {
+				limit = {
+					SPR_scw_in_progress = yes
+					ROOT = {
+						tag = FRF
+						NOT = { has_country_flag = FRF_demand_balearic_islands_flag }
+					}
+					FROM = {
+						OR = {
+							tag = SPA
+							tag = SPR
+						}
+					}
+				}
+				set_country_flag = FRF_demand_balearic_islands_flag
+			}
+		}
+	}
+}

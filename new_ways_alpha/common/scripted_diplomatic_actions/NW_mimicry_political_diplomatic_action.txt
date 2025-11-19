@@ -12,29 +12,17 @@ scripted_diplomatic_actions = {
 			}
 			OR = {
 				AND = {
-					ROOT = {
-						OR = {
-							has_country_leader_ideology = national_conservatism
-							has_country_leader_ideology = national_etatism
-							has_country_leader_ideology = tridemism
-						}
-					}
+					ROOT = { mimicry_can_cooperate_with_rights = yes }
 					OR = {
 						has_government = fascism
 						has_government = neutrality
 					}
 				}
 				AND = {
-					ROOT = {
-						OR = {
-							has_country_leader_ideology = national_conservatism
-							has_country_leader_ideology = national_etatism
-							has_country_leader_ideology = tridemism
-						}
-					}
+					ROOT = { mimicry_can_cooperate_with_lefts = yes }
 					OR = {
-						has_government = fascism
-						has_government = neutrality
+						has_government = communism
+						has_government = trozkism
 					}
 				}
 			}
@@ -45,6 +33,14 @@ scripted_diplomatic_actions = {
 				NOT = { has_war_with = ROOT }
 				is_in_faction = no
 				is_subject = no
+			}
+			ROOT = {
+				NOT = {
+					has_relation_modifier = {
+						target = PREV
+						modifier = unrecognized_state_static_modifier
+					}
+				}
 			}
 			custom_trigger_tooltip = {
 				tooltip = create_compromise_alliance_trigger_tt
@@ -63,6 +59,7 @@ scripted_diplomatic_actions = {
 			ROOT = { add_to_faction = PREV scoped_sound_effect = "join_faction_soundeffect" }
 			hidden_effect = { set_country_flag = { flag = create_compromise_alliance_with_@ROOT_timer_flag days = 30 value = 1 } }
 			scoped_sound_effect = "join_faction_soundeffect"
+			# TODO ии стратегию, чтобы они оставались в альянсе
 		}
 		# только при отправке и отклонении
 		reject_effect = {
@@ -87,14 +84,31 @@ scripted_diplomatic_actions = {
 		reject_title = create_compromise_alliance_REJECTED_TITLE
 		reject_description = create_compromise_alliance_REJECTED_DESC
 		
-		
+		ai_desire = {
+			base = 100
+		}
 		
 		ai_acceptance = {
-			base_desire = {
-				base = 100
+			ai_reason_base_reluctance = {
+				base = -20
+				modifier = {
+					add = -999
+					has_relation_modifier = {
+						target = ROOT
+						modifier = unrecognized_state_static_modifier
+					}
+				}
+			}
+			ai_reason_opinion = {
+				base = 0
+				modifier = {
+					add = FROM.opinion@ROOT
+				}
+				modifier = {
+					factor = 0.5
+				}
 			}
 		}
-		ai_desire = { }
 	}
 	
 	invite_in_compromise_alliance = {
@@ -103,34 +117,24 @@ scripted_diplomatic_actions = {
 			always = yes
 		}
 		visible = {		# The target country  # for effects/triggers/variables, ROOT - отправитель, а THIS - получатель
-			ROOT = { has_idea = generic_democratic_international_authority_political_mimicry_idea }
+			ROOT = { 
+				is_in_faction = no 
+				has_idea = generic_democratic_international_authority_political_mimicry_idea 
+			}
 			is_faction_leader = yes
-			is_in_faction = no
 			OR = {
 				AND = {
-					ROOT = {
-						OR = {
-							has_country_leader_ideology = national_conservatism
-							has_country_leader_ideology = national_etatism
-							has_country_leader_ideology = tridemism
-						}
-					}
+					ROOT = { mimicry_can_cooperate_with_rights = yes }
 					OR = {
 						has_government = fascism
 						has_government = neutrality
 					}
 				}
 				AND = {
-					ROOT = {
-						OR = {
-							has_country_leader_ideology = national_conservatism
-							has_country_leader_ideology = national_etatism
-							has_country_leader_ideology = tridemism
-						}
-					}
+					ROOT = { mimicry_can_cooperate_with_lefts = yes }
 					OR = {
-						has_government = fascism
-						has_government = neutrality
+						has_government = communism
+						has_government = trozkism
 					}
 				}
 			}
@@ -140,7 +144,15 @@ scripted_diplomatic_actions = {
 				NOT = { has_war_with = ROOT }
 				is_faction_leader = yes
 			}
-			ROOT = { is_subject = no }
+			ROOT = { 
+				is_subject = no 
+				NOT = {
+					has_relation_modifier = {
+						target = PREV
+						modifier = unrecognized_state_static_modifier
+					}
+				}
+			}
 			custom_trigger_tooltip = {
 				tooltip = create_compromise_alliance_trigger_tt
 				NOT = { has_country_flag = invite_in_compromise_alliance_with_@ROOT_timer_flag }
@@ -182,13 +194,30 @@ scripted_diplomatic_actions = {
         reject_title = create_compromise_alliance_REJECTED_TITLE
         reject_description = invite_in_compromise_alliance_REJECTED_DESC
 		
-		
+		ai_desire = {
+			base = 100
+		}
 		
 		ai_acceptance = {
-			base_desire = {
-				base = 100
+			ai_reason_base_reluctance = {
+				base = -20
+				modifier = {
+					add = -999
+					has_relation_modifier = {
+						target = ROOT
+						modifier = unrecognized_state_static_modifier
+					}
+				}
+			}
+			ai_reason_opinion = {
+				base = 0
+				modifier = {
+					add = FROM.opinion@ROOT
+				}
+				modifier = {
+					factor = 0.5
+				}
 			}
 		}
-		ai_desire = { }
 	}
 }

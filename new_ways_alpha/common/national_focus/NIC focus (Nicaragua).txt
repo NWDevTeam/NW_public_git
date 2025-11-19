@@ -1,0 +1,4524 @@
+focus_tree = {
+	
+	id = NW_NIC_FOCUS
+	country = {
+		factor = 0	
+		modifier = {
+			add = 10
+			tag = NIC
+		}
+	}
+	default = no	
+	continuous_focus_position = { x = 0 y = 550 }
+	
+	###   ##  #   ### ### ###  ##   ##  #       ### ###  ### ### 
+	#  # #  # #    #   #   #  #  # #  # #        #  #  # #   #   
+	###  #  # #    #   #   #  #    #### #        #  ###  ##  ##  
+	#    #  # #    #   #   #  #  # #  # #        #  #  # #   #   
+	#     ##  ### ###  #  ###  ##  #  # ###      #  #  # ### ###
+	
+	focus = {
+		id = NIC_form_an_air_corps
+		icon = GFX_z_goal_NIC_form_an_air_corps
+		x = 4
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_AIR_XP }
+		available = {  }
+		bypass = {  }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_form_an_air_corps"
+			add_tech_bonus = {
+				name = NIC_form_an_air_corps
+				bonus = 1
+				uses = 1
+				category = para_tech
+			}
+			custom_effect_tooltip = NIC_limited_army_tt
+			add_to_variable = { NIC_experience_gain_air_factor_var = 0.5 tooltip = experience_gain_air_factor_tooltip }
+			force_update_dynamic_modifier = yes
+		}
+	}
+	
+	focus = {
+		id = NIC_air_force_transformation
+		icon = GFX_z_goal_NIC_air_force_transformation
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_form_an_air_corps }
+		relative_position_id = NIC_form_an_air_corps
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_air_force_transformation"
+			air_experience = 20
+		}
+	}
+	
+	focus = {
+		id = NIC_construction_of_Las_Mercedes_Airport
+		icon = GFX_z_goal_airfield
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_air_force_transformation }
+		relative_position_id = NIC_air_force_transformation
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_construction_of_Las_Mercedes_Airport"
+			capital_scope = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_airline_lanica
+		icon = GFX_z_goal_NIC_airline_lanica
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_construction_of_Las_Mercedes_Airport }
+		relative_position_id = NIC_construction_of_Las_Mercedes_Airport
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_airline_lanica"
+			capital_scope = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = air_base
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			add_equipment_to_stockpile = {
+				type = transport_plane_equipment
+				amount = 20
+				producer = ROOT
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_military_aviation_school
+		icon = GFX_z_goal_aviation_school
+		x = -2
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_form_an_air_corps }
+		relative_position_id = NIC_form_an_air_corps
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_military_aviation_school"
+			custom_effect_tooltip = NIC_limited_army_tt
+			add_to_variable = { NIC_experience_gain_air_factor_var = 0.5 tooltip = experience_gain_air_factor_tooltip }
+			force_update_dynamic_modifier = yes
+			add_ideas = NIC_military_aviation_school_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_buy_planes_from_the_USA
+		icon = GFX_z_goal_generic_air_dominations
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		available = { NOT = { has_war_with = USA } }
+		bypass = {  }
+		prerequisite = { focus = NIC_military_aviation_school }
+		relative_position_id = NIC_military_aviation_school
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_buy_planes_from_the_USA"
+			air_experience = 10
+			if = {
+				limit = { has_dlc = "By Blood Alone" }
+				add_equipment_to_stockpile = {
+					type = small_plane_airframe
+					amount = 20
+					variant_name = "P-6"
+					producer = USA
+				}
+			}
+			else = {
+				add_equipment_to_stockpile = {
+					type = small_plane_airframe
+					amount = 20
+					producer = USA
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_us_aviation_mission
+		icon = GFX_focus_generic_cas_aircraft
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		available = {
+			USA = {
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+			if = {
+				limit = { has_dlc = "By Blood Alone" }
+				USA = { has_tech = improved_small_airframe }
+				date > 1938.01.01
+			}
+			else = {
+				USA = { has_tech = fighter2 }
+				date > 1939.01.01
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_buy_planes_from_the_USA }
+		relative_position_id = NIC_buy_planes_from_the_USA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_us_aviation_mission"
+			air_experience = 10
+			if = {
+				limit = { has_dlc = "By Blood Alone" }
+				if = {
+					limit = { NOT = { has_tech = improved_small_airframe } }
+					set_technology = { improved_small_airframe = 1 }
+				}
+			}
+			else = {
+				if = {
+					limit = { NOT = { has_tech = fighter2 } }
+					set_technology = { fighter2 = 1 }
+				}
+			}
+			add_equipment_to_stockpile = {
+				type = small_plane_airframe
+				amount = 20
+				producer = USA
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_Nicaraguan_Navy
+		icon = GFX_z_goal_NIC_nicaraguan_navy
+		x = 2
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		available = {  }
+		bypass = {  }
+		relative_position_id = NIC_form_an_air_corps
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Nicaraguan_Navy"
+			custom_effect_tooltip = NIC_limited_army_tt
+			add_to_variable = { NIC_experience_gain_navy_factor_var = 1 tooltip = experience_gain_navy_factor_tooltip }
+			force_update_dynamic_modifier = yes
+		}
+	}
+	
+	focus = {
+		id = NIC_pacific_coast_naval_base
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_full_control_of_state = 317 }
+		bypass = {  }
+		prerequisite = { focus = NIC_Nicaraguan_Navy }
+		relative_position_id = NIC_Nicaraguan_Navy
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_pacific_coast_naval_base"
+			317 = {
+				add_building_construction = {
+					type = naval_base
+					level = 1
+					instant_build = yes
+					province = 14463
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					level = 2
+					instant_build = yes
+					province = 14463
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_atlantic_coast_naval_base
+		icon = GFX_goal_generic_construct_naval_dockyard
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_full_control_of_state = 317 }
+		bypass = {  }
+		prerequisite = { focus = NIC_pacific_coast_naval_base }
+		relative_position_id = NIC_pacific_coast_naval_base
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_atlantic_coast_naval_base"
+			317 = {
+				add_building_construction = {
+					type = naval_base
+					level = 1
+					instant_build = yes
+					province = 2075
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					level = 2
+					instant_build = yes
+					province = 2075
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_national_guard
+		icon = GFX_z_goal_NIC_national_guard
+		x = 3
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER, FOCUS_FILTER_HISTORICAL }
+		available = { has_country_leader = { character = NIC_Anastasio_Somoza_Garcia ruling_only = yes } }
+		bypass = {  }
+		relative_position_id = NIC_Nicaraguan_Navy
+		mutually_exclusive = { focus = NIC_reorganize_the_national_guard }
+		allow_branch = {
+			NOT = {
+				has_completed_focus = NIC_escape_of_the_President
+				has_completed_focus = NIC_the_Sandinista_Revolution
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_national_guard"
+			add_ideas = NIC_national_guard_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_reorganize_the_national_guard
+		icon = GFX_z_goal_NIC_reorganize_the_national_guard
+		x = 2
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = { has_completed_focus = NIC_Government_of_Consent }
+		bypass = {  }
+		relative_position_id = NIC_national_guard
+		mutually_exclusive = { focus = NIC_national_guard }
+		allow_branch = {
+			NOT = {
+				has_completed_focus = NIC_escape_of_the_President
+				has_completed_focus = NIC_the_Sandinista_Revolution
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_reorganize_the_national_guard"
+			add_ideas = NIC_reorganize_the_national_guard_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_nicaraguan_military_academy
+		icon = GFX_goal_generic_army_doctrines
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			OR = {
+				has_idea = NIC_national_guard_idea
+				has_idea = NIC_reorganize_the_national_guard_idea
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_reorganize_the_national_guard focus = NIC_national_guard }
+		relative_position_id = NIC_national_guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_nicaraguan_military_academy"
+			if = {
+				limit = { has_idea = NIC_national_guard_idea }
+				swap_ideas = {
+					remove_idea = NIC_national_guard_idea
+					add_idea = NIC_national_guard_idea_1
+				}
+			}
+			else_if = {
+				limit = { has_idea = NIC_reorganize_the_national_guard_idea }
+				swap_ideas = {
+					remove_idea = NIC_reorganize_the_national_guard_idea
+					add_idea = NIC_reorganize_the_national_guard_idea_1
+				}
+			}
+			else = {
+				custom_effect_tooltip = NIC_reorganize_the_national_guard_tt
+				swap_ideas = {
+					remove_idea = NIC_national_guard_idea
+					add_idea = NIC_national_guard_idea_1
+				}
+				swap_ideas = {
+					remove_idea = NIC_reorganize_the_national_guard_idea
+					add_idea = NIC_reorganize_the_national_guard_idea_1
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_purchase_of_Czechoslovak_rifles
+		icon = GFX_z_goal_supply_of_weapons
+		x = 0
+		y = 3
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			country_exists = CZE
+			CZE = {
+				has_equipment = { infantry_equipment > 999 }
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_national_guard focus = NIC_reorganize_the_national_guard }
+		relative_position_id = NIC_national_guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_purchase_of_Czechoslovak_rifles"
+			CZE = { country_event = NW_NIC.21 }
+			custom_effect_tooltip = NIC_purchase_of_Czechoslovak_rifles_tt
+			effect_tooltip = { CZE = { send_equipment = { equipment = infantry_equipment amount = 1000 target = ROOT } } }
+		}
+	}
+	
+	focus = {
+		id = NIC_cooperation_with_Italy
+		icon = GFX_z_goal_wheeled_tracked_tanks
+		x = 0
+		y = 3
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			country_exists = ITA
+			ITA = {
+				has_equipment = { light_tank_chassis_1 > 1 }
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_national_guard focus = NIC_reorganize_the_national_guard }
+		relative_position_id = NIC_reorganize_the_national_guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_cooperation_with_Italy"
+			CZE = { country_event = NW_NIC.21 }
+			custom_effect_tooltip = NIC_cooperation_with_Italy_tt
+			effect_tooltip = {
+				add_equipment_to_stockpile = {
+					type = light_tank_chassis_1
+					amount = 2
+					variant_name = "L3/35"
+					producer = ITA
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_increase_imports_from_Germany
+		icon = GFX_z_goal_attract_german_investors
+		x = 3
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = {
+			GER = {
+				has_civil_war = no
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+		}
+		bypass = {
+			OR = {
+				NOT = { country_exists = GER }
+				has_war_with = GER
+			}
+		}
+		relative_position_id = NIC_reorganize_the_national_guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_increase_imports_from_Germany"
+			add_ideas = NIC_increase_imports_from_Germany_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_stabilization_of_the_course_of_Cordoba
+		icon = GFX_z_goal_NIC_stabilization_of_the_course_of_cordoba
+		x = 2
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		relative_position_id = NIC_increase_imports_from_Germany
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_stabilization_of_the_course_of_Cordoba"
+			swap_ideas = {
+				remove_idea = NIC_foreign_debt_to_the_United_States
+				add_idea = NIC_foreign_debt_to_the_United_States_1
+			}
+			unlock_decision_category_tooltip = NIC_stabilization_of_the_course_of_Cordoba_category
+			activate_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+		}
+	}
+	
+	focus = {
+		id = NIC_american_investments_in_industry
+		icon = GFX_z_goal_USA_trade
+		x = 2
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_full_control_of_state = 317
+			USA = {
+				has_civil_war = no
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+		}
+		bypass = {
+			OR = {
+				NOT = { country_exists = USA }
+				has_war_with = USA
+			}
+		}
+		relative_position_id = NIC_stabilization_of_the_course_of_Cordoba
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_american_investments_in_industry"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			317 = {
+				add_building_construction = {
+					type = naval_base
+					level = 1
+					instant_build = yes
+					province = 2075
+				}
+			}
+			build_railway = {
+				level = 1
+				build_only_on_allied = yes
+				fallback = yes
+				start_province = 12738
+				target_province = 2075
+			}
+			build_railway = {
+				level = 1
+				build_only_on_allied = yes
+				fallback = yes
+				start_province = 12738
+				target_province = 14463
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_gold_mining_companies
+		icon = GFX_z_goal_gold_mines
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_american_investments_in_industry }
+		prerequisite = { focus = NIC_stabilization_of_the_course_of_Cordoba }
+		relative_position_id = NIC_stabilization_of_the_course_of_Cordoba
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_gold_mining_companies"
+			add_ideas = NIC_gold_mining_companies_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_banana_plantations
+		icon = GFX_z_goal_plantation
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_american_investments_in_industry }
+		relative_position_id = NIC_american_investments_in_industry
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_banana_plantations"
+			add_ideas = NIC_banana_plantations_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_construction_of_a_cement_factory
+		icon = GFX_z_goal_cement_factory
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_banana_plantations }
+		prerequisite = { focus = NIC_gold_mining_companies }
+		relative_position_id = NIC_gold_mining_companies
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_construction_of_a_cement_factory"
+			add_ideas = NIC_construction_of_a_cement_factory_idea
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_increase_coffee_exports
+		icon = GFX_z_goal_timor_coffee_exports
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_increase_imports_from_Germany }
+		prerequisite = { focus = NIC_stabilization_of_the_course_of_Cordoba }
+		relative_position_id = NIC_increase_imports_from_Germany
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_increase_coffee_exports"
+			add_ideas = NIC_increase_coffee_exports_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_German_investments_in_agriculture
+		icon = GFX_z_goal_stimulating_development_of_farms
+		x = -1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			GER = {
+				has_civil_war = no
+				has_opinion = {
+					target = ROOT
+					value > 24
+				}
+			}
+		}
+		bypass = {
+			OR = {
+				NOT = { country_exists = GER }
+				has_war_with = GER
+			}
+		}
+		prerequisite = { focus = NIC_increase_imports_from_Germany }
+		relative_position_id = NIC_increase_imports_from_Germany
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_German_investments_in_agriculture"
+			random_owned_controlled_state = {
+				limit = { is_core_of = ROOT }
+				add_extra_state_shared_building_slots = -1
+			}
+			add_ideas = NIC_German_investments_in_agriculture_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_International_University_of_Agriculture_and_Animal_Husbandry
+		icon = GFX_focus_research
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { num_of_factories > 4 }
+		bypass = {  }
+		prerequisite = { focus = NIC_German_investments_in_agriculture }
+		prerequisite = { focus = NIC_increase_coffee_exports }
+		relative_position_id = NIC_German_investments_in_agriculture
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_International_University_of_Agriculture_and_Animal_Husbandry"
+			add_research_slot = 1
+			add_ideas = NIC_International_University_of_Agriculture_and_Animal_Husbandry_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_International_University_of_Latin_American_Integration
+		icon = GFX_focus_research2
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { has_country_flag = NIC_form_united_central_america_flag }
+		bypass = {  }
+		prerequisite = { focus = NIC_International_University_of_Agriculture_and_Animal_Husbandry }
+		relative_position_id = NIC_International_University_of_Agriculture_and_Animal_Husbandry
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_International_University_of_Latin_American_Integration"
+			add_research_slot = 1
+		}
+	}
+	
+	focus = {
+		id = NIC_increase_the_cultivation_of_cattle
+		icon = GFX_z_goal_develop_breeding_logistics
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_German_investments_in_agriculture }
+		relative_position_id = NIC_increase_coffee_exports
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_increase_the_cultivation_of_cattle"
+			add_ideas = NIC_increase_the_cultivation_of_cattle_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_dairy_plant
+		icon = GFX_z_goal_luxlait
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_increase_the_cultivation_of_cattle }
+		relative_position_id = NIC_increase_the_cultivation_of_cattle
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_dairy_plant"
+			swap_ideas = {
+				remove_idea = NIC_increase_the_cultivation_of_cattle_idea
+				add_idea = NIC_increase_the_cultivation_of_cattle_idea_1
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_expand_the_production_of_cotton_clothing
+		icon = GFX_z_goal_cotton_plantation2
+		x = 2
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_increase_the_cultivation_of_cattle }
+		relative_position_id = NIC_increase_the_cultivation_of_cattle
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_expand_the_production_of_cotton_clothing"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_build_a_tannery
+		icon = GFX_goal_generic_construct_civ_factory
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_increase_the_cultivation_of_cattle }
+		relative_position_id = NIC_dairy_plant
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_build_a_tannery"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_San_Vicente_Hospital_in_Leon
+		icon = GFX_z_goal_construction_hospitals
+		x = -1
+		y = 2
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		relative_position_id = NIC_purchase_of_Czechoslovak_rifles
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_San_Vicente_Hospital_in_Leon"
+			random_owned_controlled_state = {
+				prioritize = { 317 }
+				limit = {
+					is_core_of = ROOT
+					hospital < 4
+				}
+				add_building_construction = {
+					type = hospital
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_recovery_after_the_earthquake_of_1931
+		icon = GFX_z_goal_brutality_is_bringing_people_together
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_San_Vicente_Hospital_in_Leon }
+		relative_position_id = NIC_San_Vicente_Hospital_in_Leon
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_recovery_after_the_earthquake_of_1931"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					infrastructure < 5
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_establish_a_national_publishing_house
+		icon = GFX_z_goal_promoting_unity
+		x = 2
+		y = 0
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {  }
+		bypass = {  }
+		relative_position_id = NIC_recovery_after_the_earthquake_of_1931
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_establish_a_national_publishing_house"
+			add_ideas = NIC_establish_a_national_publishing_house_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_establish_a_mortgage_bank
+		icon = GFX_z_goal_peoples_bank
+		x = 2
+		y = -1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {  }
+		bypass = {  }
+		relative_position_id = NIC_establish_a_national_publishing_house
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_establish_a_mortgage_bank"
+			add_political_power = 25
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = { ideology = democratic popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = neutrality }
+				add_popularity = { ideology = neutrality popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = monarchy }
+				add_popularity = { ideology = monarchy popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = communism }
+				add_popularity = { ideology = communism popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = trozkism }
+				add_popularity = { ideology = trozkism popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = fascism }
+				add_popularity = { ideology = fascism popularity = 0.05 }
+			}
+			else = { add_popularity = { ideology = technocracy popularity = 0.05 } }
+		}
+	}
+	
+	focus = {
+		id = NIC_establish_a_national_peoples_lending_fund
+		icon = GFX_z_goal_bank_ref
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_STABILITY }
+		available = {  }
+		bypass = {  }
+		prerequisite = { focus = NIC_establish_a_mortgage_bank }
+		relative_position_id = NIC_establish_a_mortgage_bank
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_establish_a_national_peoples_lending_fund"
+			add_stability = 0.05
+			if = {
+				limit = { has_government = democratic }
+				add_popularity = { ideology = democratic popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = neutrality }
+				add_popularity = { ideology = neutrality popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = monarchy }
+				add_popularity = { ideology = monarchy popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = communism }
+				add_popularity = { ideology = communism popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = trozkism }
+				add_popularity = { ideology = trozkism popularity = 0.05 }
+			}
+			else_if = {
+				limit = { has_government = fascism }
+				add_popularity = { ideology = fascism popularity = 0.05 }
+			}
+			else = { add_popularity = { ideology = technocracy popularity = 0.05 } }
+		}
+	}
+	
+	focus = {
+		id = NIC_Sakasas_resignation
+		icon = GFX_z_goal_NIC_Sakasas_resignation
+		x = -4
+		y = 1
+		cost = 0
+		ai_will_do = { factor = 10 } 
+		search_filters = { FOCUS_FILTER_HISTORICAL }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_focus_autocomplete_tt
+				always = no
+			}
+		}
+		bypass = {  }
+		relative_position_id = NIC_recovery_after_the_earthquake_of_1931
+		mutually_exclusive = { focus = NIC_Government_of_Consent }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Sakasas_resignation"
+			hidden_effect = {
+				country_event = { id = NW_NIC.30 days = 30 }
+				country_event = { id = NW_NIC.39 days = 60 }
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_simplify_currency_exchange
+		icon = GFX_z_goal_NIC_simplify_currency_exchange
+		x = -2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			has_completed_focus = NIC_stabilization_of_the_course_of_Cordoba
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Sakasas_resignation }
+		relative_position_id = NIC_Sakasas_resignation
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_simplify_currency_exchange"
+			add_political_power = 50
+			add_ideas = NIC_simplify_currency_exchange_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_strengthen_control_over_tax_collection
+		icon = GFX_z_goal_taxes
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = neutrality
+			has_idea = NIC_simplify_currency_exchange_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_simplify_currency_exchange }
+		relative_position_id = NIC_simplify_currency_exchange
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_strengthen_control_over_tax_collection"
+			swap_ideas = {
+				remove_idea = NIC_simplify_currency_exchange_idea
+				add_idea = NIC_simplify_currency_exchange_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_nationalization_of_railways
+		icon = GFX_z_goal_NIC_nationalization_of_railways
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_strengthen_control_over_tax_collection }
+		relative_position_id = NIC_strengthen_control_over_tax_collection
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_nationalization_of_railways"
+			NIC_Anastasio_Somoza_Garcia = { add_country_leader_trait = NIC_supreme_leader }
+		}
+	}
+	
+	focus = {
+		id = NIC_subordinate_the_national_bank
+		icon = GFX_z_goal_Bayt_al_mal2
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			has_idea = NIC_simplify_currency_exchange_idea_1
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_nationalization_of_railways }
+		relative_position_id = NIC_nationalization_of_railways
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_subordinate_the_national_bank"
+			swap_ideas = {
+				remove_idea = NIC_simplify_currency_exchange_idea_1
+				add_idea = NIC_simplify_currency_exchange_idea_2
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_alcohol_tax
+		icon = GFX_z_goal_anti_alcohol
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_Sakasas_resignation }
+		relative_position_id = NIC_strengthen_control_over_tax_collection
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_alcohol_tax"
+			add_ideas = NIC_alcohol_tax_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_blue_shirts
+		icon = GFX_z_goal_blue_shirts
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_Sakasas_resignation }
+		relative_position_id = NIC_Sakasas_resignation
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_blue_shirts"
+			add_ideas = NIC_blue_shirts_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_prohibition_of_municipal_elections
+		icon = GFX_z_goal_cancel_direct_elections
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_blue_shirts }
+		relative_position_id = NIC_blue_shirts
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_prohibition_of_municipal_elections"
+			add_ideas = NIC_prohibition_of_municipal_elections_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_reconcile_with_the_Liberal_Party
+		icon = GFX_z_goal_NIC_reconcile_with_the_liberal_party
+		x = 2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_Sakasas_resignation }
+		relative_position_id = NIC_Sakasas_resignation
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_reconcile_with_the_Liberal_Party"
+			custom_effect_tooltip = available_political_advisor
+			custom_effect_tooltip = NIC_Leonardo_Arguello_tt
+		}
+	}
+	
+	focus = {
+		id = NIC_Military_Liberal_League
+		icon = GFX_z_goal_democratic_war
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_reconcile_with_the_Liberal_Party }
+		relative_position_id = NIC_reconcile_with_the_Liberal_Party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Military_Liberal_League"
+			add_ideas = NIC_Military_Liberal_League_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_constitution_of_Somoza
+		icon = GFX_z_goal_NIC_constitution_of_somoza
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_prohibition_of_municipal_elections }
+		prerequisite = { focus = NIC_reconcile_with_the_Liberal_Party }
+		relative_position_id = NIC_prohibition_of_municipal_elections
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_constitution_of_Somoza"
+			add_ideas = NIC_constitution_of_Somoza_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_indulgences_for_workers
+		icon = GFX_focus_ICE_embrace_the_workers_revolution
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_constitution_of_Somoza }
+		prerequisite = { focus = NIC_alcohol_tax }
+		relative_position_id = NIC_subordinate_the_national_bank
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_indulgences_for_workers"
+			add_stability = 0.05
+			add_ideas = NIC_indulgences_for_workers_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_the_law_on_the_protection_of_democracy
+		icon = GFX_z_goal_generic_bastion_of_democracy
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = neutrality }
+		bypass = {  }
+		prerequisite = { focus = NIC_indulgences_for_workers }
+		relative_position_id = NIC_indulgences_for_workers
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_law_on_the_protection_of_democracy"
+			add_ideas = NIC_the_law_on_the_protection_of_democracy_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_elimination_of_Communist_threats_in_Central_America
+		icon = GFX_z_goal_NIC_elimination_of_communist_threats_in_central_america
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			is_subject = no
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_indulgences_for_workers }
+		relative_position_id = NIC_indulgences_for_workers
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_elimination_of_Communist_threats_in_Central_America"
+			unlock_decision_category_tooltip = NIC_elimination_of_Communist_threats_in_Central_America_category
+		}
+	}
+	
+	focus = {
+		id = NIC_alliance_with_the_Dominican_Republic
+		icon = GFX_z_goal_NIC_alliance_with_the_dominican_republic
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { 
+			factor = 10 
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			is_in_faction = no
+			is_subject = no
+			DOM = {
+				is_in_faction = no
+				is_subject = no
+				NOT = { has_war_with = ROOT }
+				has_country_leader = { character = DOM_rafael_trujillo ruling_only = yes }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_constitution_of_Somoza }
+		relative_position_id = NIC_alcohol_tax
+		mutually_exclusive = { focus = NIC_join_the_German_coalition focus = NIC_join_the_countries_of_the_anti_German_coalition }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_alliance_with_the_Dominican_Republic"
+			create_faction = NIC_Nicaraguan_Union
+			DOM = { country_event = generic.5 }
+		}
+	}
+	
+	focus = {
+		id = NIC_join_the_German_coalition
+		icon = GFX_focus_chi_mission_to_germany
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { 
+			factor = 10 
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			is_in_faction = no
+			is_subject = no
+			GER = {
+				is_faction_leader = yes
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+				has_civil_war = no
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_constitution_of_Somoza }
+		relative_position_id = NIC_constitution_of_Somoza
+		mutually_exclusive = { focus = NIC_alliance_with_the_Dominican_Republic focus = NIC_join_the_countries_of_the_anti_German_coalition }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_join_the_German_coalition"
+			GER = { country_event = generic.2 }
+		}
+	}
+	
+	focus = {
+		id = NIC_fascization_of_the_regime
+		icon = GFX_focus_generic_fascist_propaganda
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = neutrality
+			GER = { is_in_faction_with = ROOT has_government = fascism }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_join_the_German_coalition focus = NIC_alliance_with_the_Dominican_Republic }
+		relative_position_id = NIC_join_the_German_coalition
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_fascization_of_the_regime"
+			set_temp_variable = { temp1 = party_popularity@neutrality }
+			add_popularity = { ideology = fascism popularity = temp1 }
+			divide_temp_variable = { temp1 = -1 }
+			add_popularity = { ideology = neutrality popularity = temp1 }
+			set_politics = { ruling_party = fascism elections_allowed = no }
+			if = {
+				limit = { has_completed_focus = NIC_nationalization_of_railways }
+				add_country_leader_role = {
+					character = NIC_Anastasio_Somoza_Garcia
+					promote_leader = yes
+					country_leader = {
+						desc = "POLITICS_ANASTASIO_SOMOZA_GARCIA_DESC"
+						ideology = fascism_ideology
+						expire = "1965.1.1.1"
+						traits = { NIC_tacho_trash_can NIC_supreme_leader }
+					}
+				}
+			}
+			else = {
+				add_country_leader_role = {
+					character = NIC_Anastasio_Somoza_Garcia
+					promote_leader = yes
+					country_leader = {
+						desc = "POLITICS_ANASTASIO_SOMOZA_GARCIA_DESC"
+						ideology = fascism_ideology
+						expire = "1965.1.1.1"
+						traits = { NIC_tacho_trash_can }
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_return_Guanacaste
+		icon = GFX_z_goal_NIC_return_guanacaste
+		x = 1
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = neutrality
+			is_subject = no
+			1196 = { controller = { NOT = { OR = { tag = ROOT is_subject_of = ROOT is_in_faction_with = ROOT has_war_with = ROOT } } } }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_fascization_of_the_regime }
+		relative_position_id = NIC_fascization_of_the_regime
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_return_Guanacaste"
+			1196 = {
+				add_claim_by = ROOT
+				add_core_of = ROOT
+				controller = {
+					ROOT = {
+						create_wargoal = {
+							type = take_state_focus
+							target = PREV
+							generator = { 1196 }
+							expire = 0
+						}
+						add_ai_strategy = { type = antagonize id = PREV value = 200 }
+						add_ai_strategy = { type = declare_war id = PREV value = 200 }
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_introduce_martial_law
+		icon = GFX_z_goal_war_tax
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER }
+		available = {
+			has_government = neutrality
+			has_war = yes
+			OR = {
+				NOT = { has_idea = scraping_the_barrel }
+				NOT = { has_idea = tot_economic_mobilisation }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_fascization_of_the_regime }
+		relative_position_id = NIC_fascization_of_the_regime
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_introduce_martial_law"
+			if = {
+				limit = { has_idea = disarmed_nation }
+				swap_ideas = {
+					remove_idea = disarmed_nation
+					add_idea = volunteer_only
+				}
+			}
+			else_if = {
+				limit = { has_idea = volunteer_only }
+				swap_ideas = {
+					remove_idea = volunteer_only
+					add_idea = limited_conscription
+				}
+			}
+			else_if = {
+				limit = { has_idea = limited_conscription }
+				swap_ideas = {
+					remove_idea = limited_conscription
+					add_idea = extensive_conscription
+				}
+			}
+			else_if = {
+				limit = { has_idea = extensive_conscription }
+				swap_ideas = {
+					remove_idea = extensive_conscription
+					add_idea = service_by_requirement
+				}
+			}
+			else_if = {
+				limit = { has_idea = service_by_requirement }
+				swap_ideas = {
+					remove_idea = service_by_requirement
+					add_idea = all_adults_serve
+				}
+			}
+			else_if = {
+				limit = { has_idea = all_adults_serve }
+				swap_ideas = {
+					remove_idea = all_adults_serve
+					add_idea = scraping_the_barrel
+				}
+			}
+			if = {
+				limit = { has_idea = civilian_economy }
+				swap_ideas = {
+					remove_idea = civilian_economy
+					add_idea = low_economic_mobilisation
+				}
+			}
+			else_if = {
+				limit = { has_idea = low_economic_mobilisation }
+				swap_ideas = {
+					remove_idea = low_economic_mobilisation
+					add_idea = partial_economic_mobilisation
+				}
+			}
+			else_if = {
+				limit = { has_idea = partial_economic_mobilisation }
+				swap_ideas = {
+					remove_idea = partial_economic_mobilisation
+					add_idea = war_economy
+				}
+			}
+			else_if = {
+				limit = { has_idea = war_economy }
+				swap_ideas = {
+					remove_idea = war_economy
+					add_idea = tot_economic_mobilisation
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_renounce_the_Brian_Chamorro_contract
+		icon = GFX_z_goal_NIC_renounce_the_brian_chamorro_contract
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = neutrality
+			is_subject = no
+			has_idea = NIC_the_Brian_Chamorro_agreement
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_join_the_German_coalition focus = NIC_alliance_with_the_Dominican_Republic }
+		relative_position_id = NIC_introduce_martial_law
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_renounce_the_Brian_Chamorro_contract"
+			remove_ideas = NIC_the_Brian_Chamorro_agreement
+			USA = {
+				country_event = NW_NIC.29
+				effect_tooltip = {
+					add_opinion_modifier = {
+						modifier = NIC_renounce_the_Brian_Chamorro_contract_op
+						target = ROOT
+					}
+				}
+			}
+			effect_tooltip = {
+				1036 = {
+					add_core_of = ROOT
+					transfer_state_to = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_denounce_the_Esguerra_Barquenas_Treaty
+		icon = GFX_z_goal_NIC_denounce_the_esguerra_barquenas_treaty
+		x = 2
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_WAR_SUPPORT }
+		available = {
+			has_government = neutrality
+			is_subject = no
+			1089 = { controller = { NOT = { OR = { tag = ROOT is_subject_of = ROOT is_in_faction_with = ROOT has_war_with = ROOT } } } }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_fascization_of_the_regime }
+		relative_position_id = NIC_introduce_martial_law
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_denounce_the_Esguerra_Barquenas_Treaty"
+			add_war_support = 0.05
+			1089 = {
+				add_claim_by = ROOT
+				add_core_of = ROOT
+				controller = {
+					ROOT = {
+						create_wargoal = {
+							type = take_state_focus
+							target = PREV
+							generator = { 1089 }
+							expire = 0
+						}
+						add_ai_strategy = { type = antagonize id = PREV value = 200 }
+						add_ai_strategy = { type = declare_war id = PREV value = 200 }
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_expand_cooperation_with_the_USA
+		icon = GFX_focus_generic_befriend_usa
+		x = 4
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_WAR_SUPPORT }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Government_of_Consent focus = NIC_Sakasas_resignation }
+		relative_position_id = NIC_reconcile_with_the_Liberal_Party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_expand_cooperation_with_the_USA"
+			USA = {
+				add_opinion_modifier = {
+					modifier = NIC_expand_cooperation_with_the_USA_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_expand_cooperation_with_the_USA_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_rubber_exports_to_the_USA
+		icon = GFX_focus_generic_rubber
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+			has_full_control_of_state = 317
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_expand_cooperation_with_the_USA }
+		relative_position_id = NIC_expand_cooperation_with_the_USA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_rubber_exports_to_the_USA"
+			add_offsite_building = { type = industrial_complex level = 1 }
+			give_resource_rights = { receiver = USA state = 317 resources = { rubber } }
+		}
+	}
+	
+	focus = {
+		id = NIC_construction_of_the_Pan_American_Highway_in_Nicaragua
+		icon = GFX_z_goal_deserted_road
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_rubber_exports_to_the_USA }
+		relative_position_id = NIC_rubber_exports_to_the_USA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_construction_of_the_Pan_American_Highway_in_Nicaragua"
+			every_core_state = {
+				limit = { infrastructure < 5 is_controlled_by = ROOT }
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_get_a_loan_to_stabilize_the_course_of_Cordoba
+		icon = GFX_z_goal_NIC_get_a_loan_to_stabilize_the_course_of_cordoba
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			has_idea = NIC_unstable_exchange_rate_of_cordoba
+			NOT = { has_war_with = USA }
+		}
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = NIC_foreign_debt_to_the_United_States_tt
+				NOT = {
+					has_idea = NIC_foreign_debt_to_the_United_States
+					has_idea = NIC_foreign_debt_to_the_United_States_1
+					has_idea = NIC_foreign_debt_to_the_United_States_2
+					has_idea = NIC_foreign_debt_to_the_United_States_3
+				}
+			}
+		}
+		prerequisite = { focus = NIC_expand_cooperation_with_the_USA }
+		relative_position_id = NIC_expand_cooperation_with_the_USA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_get_a_loan_to_stabilize_the_course_of_Cordoba"
+			remove_ideas = NIC_unstable_exchange_rate_of_cordoba
+			if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_3 }
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States_3
+					add_idea = NIC_foreign_debt_to_the_United_States_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_2 }
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States_2
+					add_idea = NIC_foreign_debt_to_the_United_States_1
+				}
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_1 }
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States_1
+					add_idea = NIC_foreign_debt_to_the_United_States
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States
+					add_idea = NIC_foreign_debt_to_the_United_States_0
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_San_Juan_River_Deepening_Project
+		icon = GFX_z_goal_establish_a_hydroelectric_power_station_system
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_get_a_loan_to_stabilize_the_course_of_Cordoba focus = NIC_rubber_exports_to_the_USA }
+		relative_position_id = NIC_get_a_loan_to_stabilize_the_course_of_Cordoba
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_San_Juan_River_Deepening_Project"
+			every_core_state = {
+				limit = { infrastructure < 5 is_controlled_by = ROOT }
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_joint_construction_of_the_Nicaraguan_Canal
+		icon = GFX_z_goal_development_of_social_infrastructure
+		x = 1
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			USA = { NOT = { OR = { has_war_with = ROOT controls_state = 685 } } }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_San_Juan_River_Deepening_Project }
+		prerequisite = { focus = NIC_construction_of_the_Pan_American_Highway_in_Nicaragua }
+		relative_position_id = NIC_San_Juan_River_Deepening_Project
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_joint_construction_of_the_Nicaraguan_Canal"
+		}
+	}
+	
+	focus = {
+		id = NIC_military_advisers_for_academies
+		icon = GFX_focus_generic_military_mission
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP FOCUS_FILTER_NAVY_XP FOCUS_FILTER_ARMY_XP }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_get_a_loan_to_stabilize_the_course_of_Cordoba }
+		relative_position_id = NIC_get_a_loan_to_stabilize_the_course_of_Cordoba
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_military_advisers_for_academies"
+			add_ideas = NIC_military_advisers_for_academies_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_join_the_countries_of_the_anti_German_coalition
+		icon = GFX_z_goal_ally_with_eng
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL, FOCUS_FILTER_HISTORICAL }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			is_in_faction = no
+			is_subject = no
+			NOT = { has_war_with = ENG }
+			NOT = { has_war_with = USA }
+			OR = {
+				USA = { is_faction_leader = yes }
+				ENG = { is_faction_leader = yes }
+			}
+			ENG = { is_in_faction_with = USA has_war_with = GER }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_military_advisers_for_academies }
+		relative_position_id = NIC_military_advisers_for_academies
+		mutually_exclusive = { focus = NIC_alliance_with_the_Dominican_Republic focus = NIC_join_the_German_coalition focus = NIC_declaration_of_Armed_Neutrality focus = NIC_Central_American_Union }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_join_the_countries_of_the_anti_German_coalition"
+			if = {
+				limit = { USA = { is_faction_leader = yes } }
+				USA = { country_event = generic.2 }
+			}
+			else = { ENG = { country_event = generic.2 } }
+		}
+	}
+	
+	focus = {
+		id = NIC_confiscation_of_German_property
+		icon = GFX_z_goal_industrial_soviet
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = neutrality
+				has_government = democratic
+			}
+			has_war_with = GER
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_join_the_countries_of_the_anti_German_coalition }
+		relative_position_id = NIC_join_the_countries_of_the_anti_German_coalition
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_confiscation_of_German_property"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_Government_of_Consent
+		icon = GFX_z_goal_NIC_Government_of_Consent
+		x = 4
+		y = 1
+		cost = 0
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_focus_autocomplete_tt
+				always = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = NIC_Government_of_Consent_tt
+				is_historical_focus_on = no
+			}
+		}
+		bypass = {  }
+		relative_position_id = NIC_establish_a_national_peoples_lending_fund
+		mutually_exclusive = { focus = NIC_Sakasas_resignation }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Government_of_Consent"
+			hidden_effect = {
+				country_event = { id = NW_NIC.30 days = 30 }
+				country_event = { id = NW_NIC.39 days = 60 }
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_eliminate_the_Somoza_Clan
+		icon = GFX_z_goal_NIC_eliminate_the_somoza_clan
+		x = -2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+				has_government = trozkism
+			}
+			has_idea = NIC_confrontation_with_Somoza_supporters
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Government_of_Consent }
+		relative_position_id = NIC_Government_of_Consent
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_eliminate_the_Somoza_Clan"
+			add_political_power = 100
+			remove_ideas = NIC_confrontation_with_Somoza_supporters
+		}
+	}
+	
+	focus = {
+		id = NIC_take_trade_unions_under_control
+		icon = GFX_z_goal_proclaim_national_revolution_red
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = democratic
+			has_country_flag = NIC_to_make_a_split_in_the_composition_of_the_NWP_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_eliminate_the_Somoza_Clan }
+		relative_position_id = NIC_eliminate_the_Somoza_Clan
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_take_trade_unions_under_control"
+			add_political_power = 100
+			add_ideas = NIC_take_trade_unions_under_control_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_return_Moncada_to_service
+		icon = GFX_z_goal_NIC_return_Moncada_to_service
+		x = 2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			has_government = democratic
+			has_completed_focus = NIC_reorganize_the_national_guard
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Government_of_Consent }
+		relative_position_id = NIC_Government_of_Consent
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_return_Moncada_to_service"
+			add_field_marshal_role = {
+				character = NIC_Jose_Maria_Moncada_Tapia
+				skill = 3
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 3
+				logistics_skill = 2
+				traits = { trait_cautious organizer }
+			}
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = NIC_Jose_Maria_Moncada_Tapia
+		}
+	}
+	
+	focus = {
+		id = NIC_Military_Liberal_League_2
+		icon = GFX_z_goal_democratic_war
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_return_Moncada_to_service }
+		relative_position_id = NIC_return_Moncada_to_service
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Military_Liberal_League_2"
+			add_ideas = NIC_Military_Liberal_League_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_El_Liberal
+		icon = GFX_z_goal_big_news
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_Military_Liberal_League_2 }
+		relative_position_id = NIC_Military_Liberal_League_2
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_El_Liberal"
+			add_ideas = NIC_El_Liberal_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_unite_the_social_strata_of_society
+		icon = GFX_z_goal_social_laws_2
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_Government_of_Consent }
+		relative_position_id = NIC_Government_of_Consent
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_unite_the_social_strata_of_society"
+			add_stability = 0.1
+			add_popularity = { ideology = democratic popularity = 0.1 }
+		}
+	}
+	
+	focus = {
+		id = NIC_introduce_university_autonomy
+		icon = GFX_z_goal_education2
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_unite_the_social_strata_of_society }
+		relative_position_id = NIC_unite_the_social_strata_of_society
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_introduce_university_autonomy"
+			add_ideas = NIC_introduce_university_autonomy_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_expand_education
+		icon = GFX_z_goal_eliminate_illiteracy_education
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_introduce_university_autonomy }
+		relative_position_id = NIC_introduce_university_autonomy
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_expand_education"
+			add_research_slot = 1
+		}
+	}
+	
+	focus = {
+		id = NIC_Democratic_Youth_Front
+		icon = GFX_z_goal_NIC_democratic_youth_front
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_unite_the_social_strata_of_society }
+		relative_position_id = NIC_unite_the_social_strata_of_society
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Democratic_Youth_Front"
+			add_ideas = NIC_Democratic_Youth_Front_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_put_the_Sandinistas_into_military_service
+		icon = GFX_z_goal_NIC_put_the_Sandinistas_into_military_service
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			has_government = democratic
+			has_country_flag = NIC_a_truce_has_been_concluded_with_the_Sandinistas_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Democratic_Youth_Front }
+		prerequisite = { focus = NIC_Military_Liberal_League_2 }
+		relative_position_id = NIC_Democratic_Youth_Front
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_put_the_Sandinistas_into_military_service"
+			add_field_marshal_role = {
+				character = NIC_Pedro_Altamirano
+				skill = 4
+				attack_skill = 3
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 5
+				traits = { harsh_leader guerilla_fighter trait_mountaineer logistics_wizard }
+			}
+			add_corps_commander_role = {
+				Character = NIC_Juan_Gregorio_Colindres
+				skill = 2
+				attack_skill = 3
+				defense_skill = 1
+				planning_skill = 2
+				logistics_skill = 2
+				traits = { guerilla_fighter jungle_rat }
+			}
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = NIC_Juan_Gregorio_Colindres
+			custom_effect_tooltip = available_military_high_command
+			show_ideas_tooltip = NIC_Pedro_Altamirano
+		}
+	}
+	
+	focus = {
+		id = NIC_continue_the_neighborhood_policy
+		icon = GFX_z_goal_NIC_continue_the_neighborhood_policy
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_unite_the_social_strata_of_society }
+		relative_position_id = NIC_unite_the_social_strata_of_society
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_continue_the_neighborhood_policy"
+			every_other_country = {
+				limit = {
+					OR = { tag = USA tag = GUA tag = ELS tag = HON tag = COS tag = PAN }
+					NOT = { has_war_with = ROOT }
+				}
+				add_opinion_modifier = {
+					modifier = NIC_continue_the_neighborhood_policy_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_continue_the_neighborhood_policy_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_declaration_of_Armed_Neutrality
+		icon = GFX_focus_SWI_neutrality_on_the_move
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+		available = { has_government = democratic }
+		bypass = {  }
+		prerequisite = { focus = NIC_continue_the_neighborhood_policy }
+		relative_position_id = NIC_put_the_Sandinistas_into_military_service
+		mutually_exclusive = { focus = NIC_Central_American_Union focus = NIC_join_the_countries_of_the_anti_German_coalition }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_declaration_of_Armed_Neutrality"
+			add_ideas = NIC_declaration_of_Armed_Neutrality_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_Central_American_Union
+		icon = GFX_z_goal_NIC_central_american_union
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			is_subject = no
+			is_in_faction = no
+			has_government = democratic
+			OR = {
+				GUA = { has_government = democratic }
+				ELS = { has_government = democratic }
+				HON = { has_government = democratic }
+				COS = { has_government = democratic }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_continue_the_neighborhood_policy }
+		relative_position_id = NIC_continue_the_neighborhood_policy
+		mutually_exclusive = { focus = NIC_declaration_of_Armed_Neutrality focus = NIC_join_the_countries_of_the_anti_German_coalition }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Central_American_Union"
+			if = {
+				limit = {
+					OR = {
+						GUA = { is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+						ELS = { is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+						HON = { is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+						COS = { is_faction_leader = yes has_government = democratic NOT = { has_war_with = ROOT } }
+					}
+				}
+				random_other_country = {
+					limit = {
+						OR = { tag = GUA tag = ELS tag = HON tag = COS }
+						NOT = { has_war_with = ROOT }
+						has_government = democratic
+						is_faction_leader = yes
+					}
+					country_event = generic.2
+				}
+			}
+			else = {
+				create_faction = NIC_Central_American_Democratic_Union
+				set_country_flag = NIC_Central_American_Democratic_Union_flag
+				unlock_decision_category_tooltip = NIC_Central_American_Union_category
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_scientific_integration
+		icon = GFX_goal_generic_scientific_exchange
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = {
+			has_government = democratic
+			is_faction_leader = yes
+			has_country_flag = NIC_Central_American_Democratic_Union_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Union }
+		relative_position_id = NIC_Central_American_Union
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_scientific_integration"
+			add_to_tech_sharing_group = NIC_scientific_integration_research
+			unlock_decision_tooltip = NIC_scientific_integration_decision
+		}
+	}
+	
+	focus = {
+		id = NIC_industrial_integration
+		icon = GFX_z_industry_democratic1
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = democratic
+			is_faction_leader = yes
+			has_country_flag = NIC_Central_American_Democratic_Union_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Union }
+		relative_position_id = NIC_Central_American_Union
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_industrial_integration"
+			unlock_decision_tooltip = NIC_industrial_integration_decision
+		}
+	}
+	
+	focus = {
+		id = NIC_the_Second_Great_Republic_of_Central_America
+		icon = GFX_z_goal_NIC_second_great_republic_of_central_america
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = democratic
+			is_faction_leader = yes
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_industrial_integration }
+		prerequisite = { focus = NIC_scientific_integration }
+		relative_position_id = NIC_scientific_integration
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_Second_Great_Republic_of_Central_America"
+			unlock_decision_tooltip = NIC_the_Second_Great_Republic_of_Central_America_decision
+		}
+	}
+	
+	focus = {
+		id = NIC_the_Great_Constitution
+		icon = GFX_z_goal_constitution_refotm
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = democratic
+			is_faction_leader = yes
+			custom_trigger_tooltip = {
+				tooltip = NIC_the_Great_Constitution_tt
+				check_variable = { NIC_the_Second_Great_Republic_of_Central_America_var > 0 }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Second_Great_Republic_of_Central_America }
+		relative_position_id = NIC_the_Second_Great_Republic_of_Central_America
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_Great_Constitution"
+			add_ideas = NIC_the_Great_Constitution_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_escape_of_the_President
+		icon = GFX_z_goal_kindle_fire_of_caribbean_revolution_red
+		x = 0
+		y = 2
+		cost = 0
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_focus_autocomplete_tt
+				always = no
+			}
+		}
+		bypass = {  }
+		relative_position_id = NIC_renounce_the_Brian_Chamorro_contract
+#		mutually_exclusive = { focus =  }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_escape_of_the_President"
+		}
+	}
+	
+	focus = {
+		id = NIC_eliminate_the_opposition_in_the_party
+		icon = GFX_z_goal_NIC_eliminate_the_opposition_in_the_party
+		x = 4
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = communism
+			has_idea = NIC_opposition_in_the_party_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_escape_of_the_President
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_eliminate_the_opposition_in_the_party"
+			remove_ideas = NIC_opposition_in_the_party_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_make_peace_with_the_Sandinistas
+		icon = GFX_z_goal_NIC_make_peace_with_the_sandinistas
+		x = 3
+		y = 4
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			has_government = communism
+			has_country_flag = NIC_a_truce_has_been_concluded_with_the_Sandinistas_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_escape_of_the_President
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_make_peace_with_the_Sandinistas"
+			add_field_marshal_role = {
+				character = NIC_Pedro_Altamirano
+				skill = 4
+				attack_skill = 3
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 5
+				traits = { harsh_leader guerilla_fighter trait_mountaineer logistics_wizard }
+			}
+			add_corps_commander_role = {
+				Character = NIC_Juan_Gregorio_Colindres
+				skill = 2
+				attack_skill = 3
+				defense_skill = 1
+				planning_skill = 2
+				logistics_skill = 2
+				traits = { guerilla_fighter jungle_rat }
+			}
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = NIC_Juan_Gregorio_Colindres
+			custom_effect_tooltip = available_military_high_command
+			show_ideas_tooltip = NIC_Pedro_Altamirano
+		}
+	}
+	
+	focus = {
+		id = NIC_capital_tax
+		icon = GFX_z_goal_support_soviet_anticapitalism_red
+		x = 2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_escape_of_the_President
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_capital_tax"
+			add_ideas = NIC_capital_tax_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_nationalization_of_large_enterprises
+		icon = GFX_z_goal_nationalization_of_foreign_companies
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_capital_tax }
+		relative_position_id = NIC_capital_tax
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_nationalization_of_large_enterprises"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_socialization_of_agricultural_enterprises
+		icon = GFX_z_goal_unite_into_communes
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = communism
+			has_idea = NIC_capital_tax_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_nationalization_of_large_enterprises }
+		relative_position_id = NIC_nationalization_of_large_enterprises
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_socialization_of_agricultural_enterprises"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+			}
+			swap_ideas = {
+				remove_idea = NIC_capital_tax_idea
+				add_idea = NIC_capital_tax_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_recognition_of_the_right_to_strike
+		icon = GFX_z_goal_revolution_in_alabama
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_escape_of_the_President
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_recognition_of_the_right_to_strike"
+			add_popularity = { ideology = communism popularity = 0.05 }
+			add_ideas = NIC_recognition_of_the_right_to_strike_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_propaganda_of_socialism_in_public_education
+		icon = GFX_focus_NOR_moscows_education_centers
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_RESEARCH }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_recognition_of_the_right_to_strike }
+		relative_position_id = NIC_recognition_of_the_right_to_strike
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_propaganda_of_socialism_in_public_education"
+			add_ideas = NIC_propaganda_of_socialism_in_public_education_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_labor_code_and_social_guarantees
+		icon = GFX_z_goal_generic_labor_democracy
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = communism
+			has_idea = NIC_recognition_of_the_right_to_strike_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_propaganda_of_socialism_in_public_education }
+		relative_position_id = NIC_propaganda_of_socialism_in_public_education
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_labor_code_and_social_guarantees"
+			add_popularity = { ideology = communism popularity = 0.05 }
+			swap_ideas = {
+				remove_idea = NIC_recognition_of_the_right_to_strike_idea
+				add_idea = NIC_recognition_of_the_right_to_strike_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_setting_the_minimum_wage
+		icon = GFX_z_goal_disaster_relief_association_in_help_money
+		x = -2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_escape_of_the_President
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_setting_the_minimum_wage"
+			add_popularity = { ideology = communism popularity = 0.05 }
+			add_ideas = NIC_setting_the_minimum_wage_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_El_Proletario
+		icon = GFX_z_goal_worker_press_commi
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_setting_the_minimum_wage }
+		relative_position_id = NIC_setting_the_minimum_wage
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_El_Proletario"
+			add_ideas = NIC_El_Proletario_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_confederation_of_Workers_of_Nicaragua
+		icon = GFX_focus_FIN_finnish_federation_of_trade_unions
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = communism
+			has_idea = NIC_setting_the_minimum_wage_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_El_Proletario }
+		relative_position_id = NIC_El_Proletario
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_confederation_of_Workers_of_Nicaragua"
+			swap_ideas = {
+				remove_idea = NIC_setting_the_minimum_wage_idea
+				add_idea = NIC_setting_the_minimum_wage_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_the_State_of_Workers
+		icon = GFX_z_goal_joining_the_comintern_red
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_STABILITY }
+		available = {
+			has_government = communism
+			has_idea = NIC_El_Proletario_idea
+			has_idea = NIC_setting_the_minimum_wage_idea_1
+			has_idea = NIC_propaganda_of_socialism_in_public_education_idea
+			has_idea = NIC_recognition_of_the_right_to_strike_idea_1
+			has_idea = NIC_capital_tax_idea_1
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_confederation_of_Workers_of_Nicaragua }
+		prerequisite = { focus = NIC_labor_code_and_social_guarantees }
+		prerequisite = { focus = NIC_socialization_of_agricultural_enterprises }
+		relative_position_id = NIC_confederation_of_Workers_of_Nicaragua
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_State_of_Workers"
+			remove_ideas = {
+				NIC_El_Proletario_idea
+				NIC_setting_the_minimum_wage_idea_1
+				NIC_propaganda_of_socialism_in_public_education_idea
+				NIC_recognition_of_the_right_to_strike_idea_1
+				NIC_capital_tax_idea_1
+			}
+			add_ideas = NIC_the_State_of_Workers_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_nationalization_of_land
+		icon = GFX_z_goal_sprouts_of_new_life_red
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = communism
+			has_idea = NIC_the_State_of_Workers_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_the_State_of_Workers }
+		relative_position_id = NIC_the_State_of_Workers
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_nationalization_of_land"
+			swap_ideas = {
+				remove_idea = NIC_the_State_of_Workers_idea
+				add_idea = NIC_the_State_of_Workers_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_a_course_to_strengthen_workers_in_Central_America
+		icon = GFX_z_goal_generic_dictatorship_of_proletariat
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = communism
+			is_subject = no
+		}
+		bypass = {
+			NOT = { country_exists = GUA }
+			NOT = { country_exists = ELS }
+			NOT = { country_exists = HON }
+			NOT = { country_exists = COS }
+		}
+		prerequisite = { focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_labor_code_and_social_guarantees
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_a_course_to_strengthen_workers_in_Central_America"
+			every_other_country = {
+				limit = { OR = { tag = GUA tag = ELS tag = HON tag = COS } }
+				country_event = NW_NIC.38
+				effect_tooltip = { add_timed_idea = { idea = NIC_a_course_to_strengthen_workers_in_Central_America_idea days = 365 } }
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_resume_dialogue_with_Mexican_workers
+		icon = GFX_z_goal_NIC_resume_dialogue_with_mexican_workers
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = communism
+			is_subject = no
+			country_exists = MEX
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_a_course_to_strengthen_workers_in_Central_America }
+		relative_position_id = NIC_a_course_to_strengthen_workers_in_Central_America
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_resume_dialogue_with_Mexican_workers"
+			if = {
+				limit = { MEX = { has_government = communism } }
+				MEX = {
+					add_opinion_modifier = {
+						modifier = NIC_resume_dialogue_with_Mexican_workers_op
+						target = ROOT
+					}
+					reverse_add_opinion_modifier = {
+						modifier = NIC_resume_dialogue_with_Mexican_workers_op
+						target = ROOT
+					}
+				}
+			}
+			else = {
+				set_country_flag = NIC_resume_dialogue_with_Mexican_workers_category_UNLOCK_flag
+				unlock_decision_category_tooltip = NIC_resume_dialogue_with_Mexican_workers_category
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_get_in_touch_with_the_Communist_Party_of_El_Salvador_again
+		icon = GFX_z_goal_NIC_get_in_touch_with_the_communist_party_of_el_salvador_again
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = communism
+			is_subject = no
+			country_exists = ELS
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_a_course_to_strengthen_workers_in_Central_America }
+		relative_position_id = NIC_a_course_to_strengthen_workers_in_Central_America
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_get_in_touch_with_the_Communist_Party_of_El_Salvador_again"
+			if = {
+				limit = { ELS = { has_government = communism } }
+				ELS = {
+					add_opinion_modifier = {
+						modifier = NIC_resume_dialogue_with_Mexican_workers_op
+						target = ROOT
+					}
+					reverse_add_opinion_modifier = {
+						modifier = NIC_resume_dialogue_with_Mexican_workers_op
+						target = ROOT
+					}
+				}
+			}
+			else = {
+				set_country_flag = NIC_get_in_touch_with_the_Communist_Party_of_El_Salvador_again_category_UNLOCK_flag
+				unlock_decision_category_tooltip = NIC_get_in_touch_with_the_Communist_Party_of_El_Salvador_again_category
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_Central_American_Workers_Union
+		icon = GFX_z_goal_NIC_central_american_workers_union
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			is_subject = no
+			is_in_faction = no
+			has_government = communism
+			OR = {
+				GUA = { has_government = communism }
+				ELS = { has_government = communism }
+				HON = { has_government = communism }
+				COS = { has_government = communism }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_a_course_to_strengthen_workers_in_Central_America }
+		relative_position_id = NIC_a_course_to_strengthen_workers_in_Central_America
+		mutually_exclusive = { focus = NIC_join_the_Comintern }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Central_American_Workers_Union"
+			if = {
+				limit = {
+					OR = {
+						GUA = { is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+						ELS = { is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+						HON = { is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+						COS = { is_faction_leader = yes has_government = communism NOT = { has_war_with = ROOT } }
+					}
+				}
+				random_other_country = {
+					limit = {
+						OR = { tag = GUA tag = ELS tag = HON tag = COS }
+						NOT = { has_war_with = ROOT }
+						has_government = communism
+						is_faction_leader = yes
+					}
+					country_event = generic.2
+				}
+			}
+			else = {
+				create_faction = NIC_Central_American_Communist_Union
+				set_country_flag = NIC_Central_American_Communist_Union_flag
+				unlock_decision_category_tooltip = NIC_Central_American_Workers_Union_category
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_expansion_to_the_Caribbean
+		icon = GFX_z_goal_financing_of_caribbean_antiimperialist_initiative_red
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			is_faction_leader = yes
+			has_government = communism
+			has_country_flag = NIC_Central_American_Communist_Union_flag
+			OR = {
+				HAI = { has_government = communism }
+				CUB = { has_government = communism }
+				DOM = { has_government = communism }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Workers_Union }
+		relative_position_id = NIC_Central_American_Workers_Union
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_expansion_to_the_Caribbean"
+			custom_effect_tooltip = NIC_expansion_to_the_Caribbean_tt
+		}
+	}
+	
+	focus = {
+		id = NIC_expand_the_communist_influence_of_Central_America
+		icon = GFX_z_goal_NIC_expand_the_communist_influence_of_central_america
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			is_faction_leader = yes
+			has_government = communism
+			has_country_flag = NIC_Central_American_Communist_Union_flag
+			OR = {
+				is_in_faction_with = GUA
+				is_in_faction_with = ELS
+				is_in_faction_with = HON
+				is_in_faction_with = COS
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Workers_Union }
+		relative_position_id = NIC_Central_American_Workers_Union
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_expand_the_communist_influence_of_Central_America"
+			unlock_decision_category_tooltip = NIC_expand_the_communist_influence_of_Central_America_category
+		}
+	}
+	
+	focus = {
+		id = NIC_centralization_of_the_Union_of_Latin_Republics
+		icon = GFX_z_goal_NIC_centralization_of_the_union_of_latin_republics
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			is_faction_leader = yes
+			has_government = communism
+			num_subjects > 0
+			has_country_flag = NIC_Central_American_Communist_Union_flag
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Workers_Union }
+		relative_position_id = NIC_Central_American_Workers_Union
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_centralization_of_the_Union_of_Latin_Republics"
+			every_subject_country = {
+				limit = {
+					is_in_faction_with = ROOT
+					OR = { original_tag = HAI original_tag = CUB original_tag = DOM original_tag = COS original_tag = PAN original_tag = GUA original_tag = HON original_tag = ELS original_tag = MEX }
+				}
+				add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_the_bastion_of_Communism_in_Central_America
+		icon = GFX_z_goal_protection_from_communism
+		x = 2
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MANPOWER }
+		available = { 
+			has_government = communism
+			OR = {
+				GUA = { has_government = communism }
+				ELS = { has_government = communism }
+				HON = { has_government = communism }
+				COS = { has_government = communism }
+			}
+			if = {
+				limit = { ELS = { has_government = communism } }
+				strength_ratio = {
+					tag = ELS
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { GUA = { has_government = communism } }
+				strength_ratio = {
+					tag = GUA
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { HON = { has_government = communism } }
+				strength_ratio = {
+					tag = HON
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { COS = { has_government = communism } }
+				strength_ratio = {
+					tag = COS
+					ratio > 1
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_Central_American_Workers_Union focus = NIC_join_the_Comintern }
+		relative_position_id = NIC_expand_the_communist_influence_of_Central_America
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_bastion_of_Communism_in_Central_America"
+			add_ideas = NIC_the_bastion_of_Communism_in_Central_America_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_the_Sandinista_Revolution
+		icon = GFX_z_goal_NIC_the_sandinista_revolution
+		x = 1
+		y = 2
+		cost = 0
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TUR_focus_autocomplete_tt
+				always = no
+			}
+		}
+		bypass = {  }
+		relative_position_id = NIC_the_Great_Constitution
+#		mutually_exclusive = { focus =  }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_Sandinista_Revolution"
+			retire_character = NIC_Anastasio_Somoza_Garcia
+		}
+	}
+	
+	focus = {
+		id = NIC_protection_of_communal_land_ownership
+		icon = GFX_z_goal_new_agrarian_reform
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Sandinista_Revolution }
+		relative_position_id = NIC_the_Sandinista_Revolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_protection_of_communal_land_ownership"
+			add_political_power = 50
+			add_stability = 0.05
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -2 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -2 }
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_agrarian_reforms
+		icon = GFX_z_goal_collectivization_of_agriculture
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_protection_of_communal_land_ownership }
+		relative_position_id = NIC_protection_of_communal_land_ownership
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_agrarian_reforms"
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = industrial_complex
+						size > 2
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 3
+			}
+			add_ideas = NIC_agrarian_reforms_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_mass_literacy_policy
+		icon = GFX_z_goal_sow_hatred_in_minds_red
+		x = -2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Sandinista_Revolution }
+		relative_position_id = NIC_the_Sandinista_Revolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_mass_literacy_policy"
+			add_ideas = NIC_mass_literacy_policy_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_introduction_of_the_Labor_Code
+		icon = GFX_z_goal_collective_agriculture_red
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_mass_literacy_policy }
+		relative_position_id = NIC_mass_literacy_policy
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_introduction_of_the_Labor_Code"
+			add_stability = 0.05
+			add_ideas = NIC_introduction_of_the_Labor_Code_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_Atlantic_Coast_Reincorporation
+		icon = GFX_z_goal_preparation_for_war_against_imperialism_red
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			has_government = trozkism
+			country_exists = USA
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_introduction_of_the_Labor_Code }
+		prerequisite = { focus = NIC_protection_against_possible_US_intervention }
+		relative_position_id = NIC_introduction_of_the_Labor_Code
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_Atlantic_Coast_Reincorporation"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			USA = {
+				add_opinion_modifier = {
+					modifier = NIC_Atlantic_Coast_Reincorporation_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_setting_gender_equality
+		icon = GFX_z_goal_emancipation_of_women
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_MANPOWER FOCUS_FILTER_POLITICAL }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_introduction_of_the_Labor_Code }
+		relative_position_id = NIC_introduction_of_the_Labor_Code
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_setting_gender_equality"
+			add_popularity = { ideology = trozkism popularity = 0.1 }
+			add_ideas = NIC_setting_gender_equality_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_respect_for_religious_beliefs
+		icon = GFX_z_goal_seizure_of_church_wealth_red
+		x = 0
+		y = 2
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_introduction_of_the_Labor_Code }
+		relative_position_id = NIC_introduction_of_the_Labor_Code
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_respect_for_religious_beliefs"
+			add_stability = 0.05
+			add_popularity = { ideology = trozkism popularity = 0.05 }
+		}
+	}
+	
+	focus = {
+		id = NIC_to_attract_the_communists_to_your_side
+		icon = GFX_z_goal_NIC_to_attract_the_communists_to_your_side
+		x = 2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Sandinista_Revolution }
+		relative_position_id = NIC_the_Sandinista_Revolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_to_attract_the_communists_to_your_side"
+			add_popularity = { ideology = communism popularity = -0.1 }
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = NIC_Efrain_Rodriguez
+			show_ideas_tooltip = NIC_Carlos_Perez_Bermudez
+		}
+	}
+	
+	focus = {
+		id = NIC_nationalization_of_banks
+		icon = GFX_z_goal_bank_ref
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_to_attract_the_communists_to_your_side }
+		relative_position_id = NIC_to_attract_the_communists_to_your_side
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_nationalization_of_banks"
+			add_stability = 0.05
+			add_political_power = 50
+			add_popularity = { ideology = trozkism popularity = 0.1 }
+		}
+	}
+	
+	focus = {
+		id = NIC_privatization_of_the_ruling_clan_funds
+		icon = GFX_z_goal_industry_nationalization
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_nationalization_of_banks }
+		relative_position_id = NIC_nationalization_of_banks
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_privatization_of_the_ruling_clan_funds"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_increase_funding_for_medicine
+		icon = GFX_z_goal_health_and_social_security_system
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_privatization_of_the_ruling_clan_funds }
+		relative_position_id = NIC_privatization_of_the_ruling_clan_funds
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_increase_funding_for_medicine"
+			add_ideas = NIC_increase_funding_for_medicine_idea
+			every_core_state = {
+				limit = { hospital < 5 is_controlled_by = ROOT }
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_spread_anti_dictatorial_sentiments
+		icon = GFX_z_goal_a_preemptive_strike_against_the_fascist_threat
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			has_government = trozkism
+			is_subject = no
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Sandinista_Revolution }
+		relative_position_id = NIC_privatization_of_the_ruling_clan_funds
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_spread_anti_dictatorial_sentiments"
+			every_other_country = {
+				limit = { NOT = { has_war_with = ROOT has_government = neutrality has_government = monarchy has_government = fascism } }
+				add_opinion_modifier = {
+					modifier = NIC_spread_anti_dictatorial_sentiments_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_spread_anti_dictatorial_sentiments_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_to_provide_reciprocal_assistance_to_Honduras
+		icon = GFX_z_goal_NIC_to_provide_reciprocal_assistance_to_honduras
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = HON
+			HON = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_spread_anti_dictatorial_sentiments }
+		relative_position_id = NIC_spread_anti_dictatorial_sentiments
+		will_lead_to_war_with = HON
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_to_provide_reciprocal_assistance_to_Honduras"
+			create_wargoal = { target = HON type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = HON value = 200 }
+			add_ai_strategy = { type = declare_war id = HON value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_save_El_Salvador_from_the_sorcerer
+		icon = GFX_z_goal_NIC_save_el_salvador_from_the_sorcerer
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = ELS
+			ELS = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_spread_anti_dictatorial_sentiments }
+		relative_position_id = NIC_spread_anti_dictatorial_sentiments
+		will_lead_to_war_with = ELS
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_save_El_Salvador_from_the_sorcerer"
+			create_wargoal = { target = ELS type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = ELS value = 200 }
+			add_ai_strategy = { type = declare_war id = ELS value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_send_Napoleon_to_a_new_link
+		icon = GFX_z_goal_NIC_send_napoleon_to_a_new_link
+		x = -2
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = COS
+			COS = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_spread_anti_dictatorial_sentiments }
+		relative_position_id = NIC_to_provide_reciprocal_assistance_to_Honduras
+		will_lead_to_war_with = COS
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_send_Napoleon_to_a_new_link"
+			create_wargoal = { target = COS type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = COS value = 200 }
+			add_ai_strategy = { type = declare_war id = COS value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_section_4_of_the_International
+		icon = GFX_z_focus_generic_join_tro
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			is_in_faction = no
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_spread_anti_dictatorial_sentiments }
+		relative_position_id = NIC_spread_anti_dictatorial_sentiments
+		mutually_exclusive = { focus = NIC_join_the_Comintern }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_section_4_of_the_International"
+			if = {
+				limit = { NOT = { has_global_flag = four_international_flag } }
+				if = {
+					limit = { is_faction_leader = yes }
+					set_faction_name = NIC_Central_American_Section_4_Internationals
+				}
+				else = { create_faction = NIC_Central_American_Section_4_Internationals }
+			}
+			else = {
+				random_other_country = {
+					limit = {
+						NOT = { has_war_with = ROOT }
+						has_government = trozkism
+						is_faction_leader = yes
+						has_country_flag = CURRENT_LEADER_FOUR_INTERNATIONAL_FLAG
+					}
+					country_event = { id = generic.2 }
+				}
+			}
+			add_to_variable = { global.troz_threat_var = 2 tooltip = troz_threat_tt }
+			set_var_for_troz_threat_dyn = yes
+		}
+	}
+	
+	focus = {
+		id = NIC_merge_with_the_South_American_Section
+		icon = GFX_focus_por_latin_american_communism
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			has_government = trozkism
+			is_faction_leader = yes
+			any_of_scopes = {
+				array = global.country_in_south_america
+				tooltip = NIC_merge_with_the_South_American_Section_tt
+				has_government = trozkism
+				is_faction_leader = yes
+				NOT = { original_tag = BRA has_war_with = ROOT }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_section_4_of_the_International }
+		relative_position_id = NIC_section_4_of_the_International
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_merge_with_the_South_American_Section"
+			random_scope_in_array = {
+				array = global.country_in_south_america
+				limit = {
+					has_government = trozkism
+					is_faction_leader = yes
+					NOT = { original_tag = BRA original_tag = ROOT has_war_with = ROOT }
+				}
+				country_event = NW_NIC.46
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_stop_the_change_of_dictatorships_in_Mexico
+		icon = GFX_focus_attack_mexico
+		x = 2
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = MEX
+			MEX = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_section_4_of_the_International }
+		relative_position_id = NIC_section_4_of_the_International
+		will_lead_to_war_with = MEX
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_stop_the_change_of_dictatorships_in_Mexico"
+			create_wargoal = { target = MEX type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = MEX value = 200 }
+			add_ai_strategy = { type = declare_war id = MEX value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_saving_Guatemala
+		icon = GFX_z_goal_NIC_saving_guatemala
+		x = 1
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = GUA
+			GUA = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_section_4_of_the_International }
+		relative_position_id = NIC_section_4_of_the_International
+		will_lead_to_war_with = GUA
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_saving_Guatemala"
+			create_wargoal = { target = GUA type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = GUA value = 200 }
+			add_ai_strategy = { type = declare_war id = GUA value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_liberate_Panama_from_the_American_presence
+		icon = GFX_z_goal_NIC_liberate_panama_from_the_american_presence
+		x = -1
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			has_government = trozkism
+			is_subject = no
+			country_exists = PAN
+			PAN = {
+				NOT = { has_war_with = ROOT is_in_faction_with = ROOT is_subject_of = ROOT }
+				OR = {
+					has_government = neutrality
+					has_government = monarchy
+					has_government = fascism
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_section_4_of_the_International }
+		relative_position_id = NIC_section_4_of_the_International
+		will_lead_to_war_with = PAN
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_liberate_Panama_from_the_American_presence"
+			create_wargoal = { target = PAN type = topple_government expire = 0 }
+			add_ai_strategy = { type = antagonize id = PAN value = 200 }
+			add_ai_strategy = { type = declare_war id = PAN value = 200 }
+		}
+	}
+	
+	focus = {
+		id = NIC_stronghold_of_Freedom_in_Central_America
+		icon = GFX_z_goal_construction_of_military_bases_red
+		x = -3
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MANPOWER }
+		available = { 
+			has_government = trozkism
+			OR = {
+				GUA = { has_government = trozkism }
+				ELS = { has_government = trozkism }
+				HON = { has_government = trozkism }
+				COS = { has_government = trozkism }
+				PAN = { has_government = trozkism }
+				MEX = { has_government = trozkism }
+				BLZ = { has_government = trozkism }
+			}
+			if = {
+				limit = { ELS = { has_government = trozkism } }
+				strength_ratio = {
+					tag = ELS
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { GUA = { has_government = trozkism } }
+				strength_ratio = {
+					tag = GUA
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { HON = { has_government = trozkism } }
+				strength_ratio = {
+					tag = HON
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { COS = { has_government = trozkism } }
+				strength_ratio = {
+					tag = COS
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { PAN = { has_government = trozkism } }
+				strength_ratio = {
+					tag = PAN
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { MEX = { has_government = trozkism } }
+				strength_ratio = {
+					tag = MEX
+					ratio > 1
+				}
+			}
+			if = {
+				limit = { BLZ = { has_government = trozkism } }
+				strength_ratio = {
+					tag = BLZ
+					ratio > 1
+				}
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_section_4_of_the_International focus = NIC_join_the_Comintern }
+		relative_position_id = NIC_section_4_of_the_International
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_stronghold_of_Freedom_in_Central_America"
+			add_ideas = NIC_stronghold_of_Freedom_in_Central_America_idea
+		}
+	}
+	
+	focus = {
+		id = NIC_refusal_to_service_external_debt
+		icon = GFX_z_goal_end_american_racism
+		x = -5
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+		}
+		bypass = {
+			custom_trigger_tooltip = {
+				tooltip = NIC_foreign_debt_to_the_United_States_tt
+				NOT = {
+					has_idea = NIC_foreign_debt_to_the_United_States
+					has_idea = NIC_foreign_debt_to_the_United_States_0
+					has_idea = NIC_foreign_debt_to_the_United_States_1
+					has_idea = NIC_foreign_debt_to_the_United_States_2
+					has_idea = NIC_foreign_debt_to_the_United_States_3
+				}
+			}
+		}
+		prerequisite = { focus = NIC_the_Sandinista_Revolution focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_mass_literacy_policy
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_refusal_to_service_external_debt"
+			if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_3 }
+				remove_ideas = NIC_foreign_debt_to_the_United_States_3
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_2 }
+				remove_ideas = NIC_foreign_debt_to_the_United_States_2
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_1 }
+				remove_ideas = NIC_foreign_debt_to_the_United_States_1
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States }
+				remove_ideas = NIC_foreign_debt_to_the_United_States
+			}
+			else_if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_0 }
+				remove_ideas = NIC_foreign_debt_to_the_United_States_0
+			}
+			USA = {
+				add_opinion_modifier = {
+					modifier = NIC_refusal_to_service_external_debt_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_anti_imperialism
+		icon = GFX_z_goal_NIC_anti_imperialism
+		x = -3
+		y = 0
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_the_Sandinista_Revolution focus = NIC_escape_of_the_President }
+		relative_position_id = NIC_mass_literacy_policy
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_anti_imperialism"
+			add_ideas = NIC_anti_imperialism_idea
+			every_other_country = {
+				limit = {
+					is_major = yes
+					NOT = { has_government = communism has_government = anarchism has_government = trozkism }
+				}
+				add_opinion_modifier = {
+					modifier = NIC_anti_imperialism_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_liberate_british_honduras
+		icon = GFX_z_goal_NIC_liberate_british_honduras
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_subject = no
+			can_declare_war_on = 311.controller
+			has_army_manpower = { size > 75000 }
+			OR = {
+				any_controlled_state = { any_neighbor_state = { state = 311 } }
+				any_subject_country = { any_controlled_state = { any_neighbor_state = { state = 311 } } }
+				any_allied_country = { any_controlled_state = { any_neighbor_state = { state = 311 } } }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_anti_imperialism }
+		relative_position_id = NIC_anti_imperialism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_liberate_british_honduras"
+			311 = {
+				if = {
+					limit = {
+						HON = {
+							OR = {
+								is_in_faction_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					add_core_of = HON
+					add_claim_by = HON
+				}
+				else = {
+					add_claim_by = ROOT
+				}
+			}
+			create_wargoal = { target = 311.controller type = take_state_focus generator = { 311 } expire = 0 }
+		}
+	}
+	
+	focus = {
+		id = NIC_protection_against_possible_US_intervention
+		icon = GFX_z_goal_end_american_influence
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+		}
+		bypass = { NOT = { country_exists = USA } }
+		prerequisite = { focus = NIC_anti_imperialism }
+		prerequisite = { focus = NIC_refusal_to_service_external_debt }
+		relative_position_id = NIC_refusal_to_service_external_debt
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_protection_against_possible_US_intervention"
+			every_controlled_state = {
+				add_building_construction = {
+					type = coastal_bunker
+					level = 3
+					instant_build = yes
+					province = {
+						all_provinces = yes
+						limit_to_naval_base = yes
+					}
+				}
+			}
+			swap_ideas = {
+				remove_idea = NIC_anti_imperialism_idea
+				add_idea = NIC_anti_imperialism_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_liquidate_the_Brian_Chamorro_Contract
+		icon = GFX_z_goal_NIC_liquidate_the_brian_chamorro_contract
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_subject = no
+			has_idea = NIC_the_Brian_Chamorro_agreement
+			NOT = { has_war_with = USA }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_protection_against_possible_US_intervention }
+		relative_position_id = NIC_protection_against_possible_US_intervention
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_liquidate_the_Brian_Chamorro_Contract"
+			USA = { country_event = NW_NIC.48 }
+			remove_ideas = NIC_the_Brian_Chamorro_agreement
+			custom_effect_tooltip = NIC_liquidate_the_Brian_Chamorro_Contract_tt1
+			effect_tooltip = {
+				1036 = {
+					add_core_of = ROOT
+					transfer_state_to = ROOT
+				}
+				USA = {
+					add_opinion_modifier = {
+						modifier = NIC_renounce_the_Brian_Chamorro_contract_op
+						target = ROOT
+					}
+				}
+			}
+			custom_effect_tooltip = NIC_liquidate_the_Brian_Chamorro_Contract_tt2
+			effect_tooltip = {
+				create_wargoal = {
+					target = USA
+					type = take_state_focus
+					generator = { 1036 }
+					expire = 0
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_rip_out_the_heart_of_american_commerce
+		icon = GFX_z_goal_NIC_rip_out_the_heart_of_american_commerce
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_subject = no
+			can_declare_war_on = 685.controller
+			has_army_manpower = { size > 75000 }
+			OR = {
+				any_controlled_state = { any_neighbor_state = { state = 685 } }
+				any_subject_country = { any_controlled_state = { any_neighbor_state = { state = 685 } } }
+				any_allied_country = { any_controlled_state = { any_neighbor_state = { state = 685 } } }
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_liquidate_the_Brian_Chamorro_Contract }
+		relative_position_id = NIC_liquidate_the_Brian_Chamorro_Contract
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_rip_out_the_heart_of_american_commerce"
+			685 = {
+				if = {
+					limit = {
+						PAN = {
+							OR = {
+								is_in_faction_with = ROOT
+								is_subject_of = ROOT
+							}
+						}
+					}
+					add_claim_by = PAN
+				}
+				else = {
+					add_claim_by = ROOT
+				}
+			}
+			create_wargoal = { target = 685.controller type = take_state_focus generator = { 685 } expire = 0 }
+		}
+	}
+	
+	focus = {
+		id = NIC_start_cooperation_with_the_USSR
+		icon = GFX_z_goal_cooperation_with_ussr
+		x = 0
+		y = 2
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			country_exists = SOV
+			NOT = { has_war_with = SOV }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_protection_against_possible_US_intervention }
+		relative_position_id = NIC_protection_against_possible_US_intervention
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_start_cooperation_with_the_USSR"
+			SOV = {
+				add_opinion_modifier = {
+					modifier = NIC_start_cooperation_with_the_USSR_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_start_cooperation_with_the_USSR_op
+					target = ROOT
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_the_help_of_soviet_economists_with_the_course_of_cordoba
+		icon = GFX_z_goal_take_soviet_path
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			country_exists = SOV
+			NOT = { has_war_with = SOV }
+			has_idea = NIC_unstable_exchange_rate_of_cordoba
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_start_cooperation_with_the_USSR }
+		relative_position_id = NIC_start_cooperation_with_the_USSR
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_the_help_of_soviet_economists_with_the_course_of_cordoba"
+			remove_ideas = NIC_unstable_exchange_rate_of_cordoba
+		}
+	}
+	
+	focus = {
+		id = NIC_military_support
+		icon = GFX_z_goal_means_for_revolution_red
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			country_exists = SOV
+			NOT = { has_war_with = SOV }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_start_cooperation_with_the_USSR }
+		relative_position_id = NIC_start_cooperation_with_the_USSR
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_military_support"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_join_the_Comintern
+		icon = GFX_focus_chi_mission_to_the_soviet_union
+		x = 0
+		y = 2
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_subject = no
+			is_in_faction = no
+			country_exists = SOV
+			SOV = {
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+				has_civil_war = no
+			}
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_start_cooperation_with_the_USSR }
+		relative_position_id = NIC_start_cooperation_with_the_USSR
+		mutually_exclusive = { focus = NIC_Central_American_Workers_Union focus = NIC_section_4_of_the_International }
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_join_the_Comintern"
+			SOV = { country_event = generic.2 }
+		}
+	}
+	
+	focus = {
+		id = NIC_naval_bases_for_the_USSR
+		icon = GFX_goal_continuous_naval_production
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_in_faction_with = SOV
+			has_full_control_of_state = 317
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_join_the_Comintern }
+		relative_position_id = NIC_join_the_Comintern
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_naval_bases_for_the_USSR"
+			317 = {
+				add_building_construction = {
+					type = naval_base
+					level = 2
+					instant_build = yes
+					province = 2075
+				}
+				add_building_construction = {
+					type = naval_base
+					level = 2
+					instant_build = yes
+					province = 14463
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_military_for_the_Nicaraguan_Academy
+		icon = GFX_focus_SOV_military_purge
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_AIR_XP FOCUS_FILTER_ARMY_XP FOCUS_FILTER_NAVY_XP }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_in_faction_with = SOV
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_naval_bases_for_the_USSR }
+		relative_position_id = NIC_naval_bases_for_the_USSR
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_military_for_the_Nicaraguan_Academy"
+			add_ideas = NIC_military_advisers_for_academies_idea_1
+		}
+	}
+	
+	focus = {
+		id = NIC_resume_construction_of_the_Nicaraguan_Canal
+		icon = GFX_focus_SOV_organize_wreckers
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			OR = {
+				has_government = communism
+				has_government = trozkism
+			}
+			is_in_faction_with = SOV
+			NOT = { has_completed_focus = NIC_joint_construction_of_the_Nicaraguan_Canal }
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_naval_bases_for_the_USSR }
+		relative_position_id = NIC_naval_bases_for_the_USSR
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_resume_construction_of_the_Nicaraguan_Canal"
+		}
+	}
+	
+	focus = {
+		id = NIC_liquidation_of_the_National_Guard
+		icon = GFX_z_goal_NIC_liquidation_of_the_national_guard
+		x = 4
+		y = 0
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = {  }
+		available = {
+			OR = {
+				has_government = trozkism
+				has_government = communism
+			}
+		}
+		bypass = {  }
+		relative_position_id = NIC_Nicaraguan_Navy
+		allow_branch = {
+			OR = {
+				has_completed_focus = NIC_escape_of_the_President
+				has_completed_focus = NIC_the_Sandinista_Revolution
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_liquidation_of_the_National_Guard"
+			custom_effect_tooltip = NIC_liquidation_of_the_National_Guard_tt
+			hidden_effect = { retire_character = NIC_Roberto_Martinez_Lacayo }
+			custom_effect_tooltip = remove_political_advisor
+			show_ideas_tooltip = NIC_Roberto_Martinez_Lacayo
+			if = {
+				limit = { has_idea = NIC_national_guard_idea }
+				remove_ideas = NIC_national_guard_idea
+			}
+			else_if = {
+				limit = { has_idea = NIC_national_guard_idea_1 }
+				remove_ideas = NIC_national_guard_idea_1
+			}
+			else_if = {
+				limit = { has_idea = NIC_reorganize_the_national_guard_idea }
+				remove_ideas = NIC_reorganize_the_national_guard_idea
+			}
+			else_if = {
+				limit = { has_idea = NIC_reorganize_the_national_guard_idea_1 }
+				remove_ideas = NIC_reorganize_the_national_guard_idea_1
+			}
+			delete_unit = { disband = yes }		#WILL DESTROY ALL UNITS#
+			hidden_effect = {
+				if = { limit = { has_template = "Brigada de Infanteria" } }
+				delete_unit_template_and_units = { division_template = "Brigada de Infanteria" }
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_creation_of_the_People_Patriotic_Army
+		icon = GFX_z_goal_german_red_army
+		x = -1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_liquidation_of_the_National_Guard }
+		relative_position_id = NIC_liquidation_of_the_National_Guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_creation_of_the_People_Patriotic_Army"
+			army_experience = 100
+			custom_effect_tooltip = NIC_creation_of_the_People_Patriotic_Army_tt
+			hidden_effect = {
+				division_template = {
+					name = "People's divisions"
+					is_locked = no
+					division_names_group = SPAN_INFB_01
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+					}
+				}
+			}
+			add_ideas = NIC_creation_of_the_People_Patriotic_Army_idea
+			add_ai_strategy = {
+				type = build_army
+				id = infantry
+				value = 1000
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_prepare_youth_organizations
+		icon = GFX_z_goal_red_army3
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = {
+			has_government = communism
+			has_idea = NIC_creation_of_the_People_Patriotic_Army_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_creation_of_the_People_Patriotic_Army }
+		relative_position_id = NIC_creation_of_the_People_Patriotic_Army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_prepare_youth_organizations"
+			swap_ideas = {
+				remove_idea = NIC_creation_of_the_People_Patriotic_Army_idea
+				add_idea = NIC_creation_of_the_People_Patriotic_Army_idea_1
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_war_on_the_streets
+		icon = GFX_z_goal_mountaineers
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { has_government = communism }
+		bypass = {  }
+		prerequisite = { focus = NIC_prepare_youth_organizations }
+		relative_position_id = NIC_prepare_youth_organizations
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_war_on_the_streets"
+			add_tech_bonus = {
+				name = NIC_war_on_the_streets
+				bonus = 1
+				uses = 1
+				category = mountaineers_tech
+			}
+			add_tech_bonus = {
+				name = NIC_war_on_the_streets
+				bonus = 1
+				uses = 1
+				category = para_tech
+			}
+			add_tech_bonus = {
+				name = NIC_war_on_the_streets
+				bonus = 1
+				uses = 1
+				category = marine_tech
+			}
+			set_technology = { mountain_warfare = 1 popup = no }
+			custom_effect_tooltip = NEP_mountain_training_effect
+		}
+	}
+	
+	focus = {
+		id = NIC_reform_ASNSN
+		icon = GFX_z_goal_NIC_reform_asnsn
+		x = 1
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_liquidation_of_the_National_Guard }
+		relative_position_id = NIC_liquidation_of_the_National_Guard
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_reform_ASNSN"
+			set_party_name = { ideology = trozkism long_name = NIC_trozkism_party_long_1 name = NIC_trozkism_party_1 }
+			army_experience = 100
+			country_lock_all_division_template = yes
+			custom_effect_tooltip = NIC_reform_ASNSN_tt
+			hidden_effect = {
+				division_template = {
+					name = "Liberation Army"
+					is_locked = no
+					division_names_group = SPAN_INFB_01
+					regiments = {
+						infantry = { x = 0 y = 0 }
+					}
+				}
+				division_template = {
+					name = "Guerrilla Army"
+					is_locked = no
+					division_names_group = SPAN_INFB_01
+					regiments = {
+						mountaineers = { x = 0 y = 0 }
+					}
+				}
+			}
+			add_ideas = NIC_reform_ASNSN_idea
+			add_ai_strategy = {
+				type = build_army
+				id = infantry
+				value = 1000
+			}
+		}
+	}
+	
+	focus = {
+		id = NIC_choir_of_angels
+		icon = GFX_z_goal_example_for_east_red
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = {
+			has_government = trozkism
+			has_idea = NIC_reform_ASNSN_idea
+		}
+		bypass = {  }
+		prerequisite = { focus = NIC_reform_ASNSN }
+		relative_position_id = NIC_reform_ASNSN
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_choir_of_angels"
+			swap_ideas = {
+				remove_idea = NIC_reform_ASNSN_idea
+				add_idea = NIC_reform_ASNSN_idea_1
+			}
+			add_corps_commander_role = {
+				Character = NIC_Santos_Lopes
+				skill = 2
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 3
+				logistics_skill = 2
+				traits = { guerilla_fighter skirmisher }
+			}
+			custom_effect_tooltip = available_military_high_command
+			show_ideas_tooltip = NIC_Santos_Lopes
+		}
+	}
+	
+	focus = {
+		id = NIC_jungle_war
+		icon = GFX_z_goal_foreign_expeditions
+		x = 0
+		y = 1
+		cost = 7.2
+		ai_will_do = { factor = 10 }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available = { has_government = trozkism }
+		bypass = {  }
+		prerequisite = { focus = NIC_choir_of_angels }
+		relative_position_id = NIC_choir_of_angels
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus NIC_jungle_war"
+			add_tech_bonus = {
+				name = NIC_jungle_war
+				bonus = 1
+				uses = 1
+				category = mountaineers_tech
+			}
+			add_tech_bonus = {
+				name = NIC_jungle_war
+				bonus = 1
+				uses = 1
+				category = para_tech
+			}
+			add_tech_bonus = {
+				name = NIC_jungle_war
+				bonus = 1
+				uses = 1
+				category = marine_tech
+			}
+			set_technology = { jungle_warfare = 1 popup = no }
+			custom_effect_tooltip = NEP_jungle_war_effect
+		}
+	}
+}

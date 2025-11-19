@@ -1,0 +1,1050 @@
+NIC_stabilization_of_the_course_of_Cordoba_category = {
+	
+	NIC_the_failure_of_the_Edwards_Plan_mission = {
+		priority = 200
+		icon = the_failure_of_the_Edwards_Plan
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		cancel_trigger = {
+			has_country_flag = NIC_introduce_a_system_of_rigid_currency_distribution_flag
+			has_country_flag = NIC_increase_the_issue_of_currency_flag
+			has_country_flag = NIC_to_purchase_equipment_for_entrepreneurs_flag
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission NIC_the_failure_of_the_Edwards_Plan_mission"
+		}
+		is_good = no
+		days_mission_timeout = 480
+		selectable_mission = no
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission NIC_the_failure_of_the_Edwards_Plan_mission"
+			country_event = NW_NIC.27
+		}
+	}
+	
+	NIC_introduce_a_system_of_rigid_currency_distribution = {
+		icon = introduce_a_system_of_rigid_currency_distribution
+		priority = 150
+		available = { has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission }
+		visible = { has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission }
+		fire_only_once = yes
+		cost = 50
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_introduce_a_system_of_rigid_currency_distribution"
+			set_country_flag = NIC_introduce_a_system_of_rigid_currency_distribution_flag
+			add_stability = 0.05
+			if = {
+				limit = { has_idea = NIC_foreign_debt_to_the_United_States_0 }
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States_0
+					add_idea = NIC_foreign_debt_to_the_United_States_2
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = NIC_foreign_debt_to_the_United_States_1
+					add_idea = NIC_foreign_debt_to_the_United_States_2
+				}
+			}
+			unlock_decision_tooltip = NIC_increase_the_issue_of_currency
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_increase_the_issue_of_currency = {
+		icon = increase_the_issue_of_currency
+		priority = 100
+		available = {
+			has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+			has_country_flag = NIC_introduce_a_system_of_rigid_currency_distribution_flag
+		}
+		visible = {
+			has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+		}
+		fire_only_once = yes
+		cost = 150
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_increase_the_issue_of_currency"
+			set_country_flag = NIC_increase_the_issue_of_currency_flag
+			add_stability = 0.05
+			swap_ideas = {
+				remove_idea = NIC_foreign_debt_to_the_United_States_2
+				add_idea = NIC_foreign_debt_to_the_United_States_3
+			}
+			custom_effect_tooltip = NIC_increase_the_issue_of_currency_tt
+			hidden_effect = {
+				remove_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+				activate_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+			}
+			unlock_decision_tooltip = NIC_to_purchase_equipment_for_entrepreneurs
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+			}
+		}
+	}
+	
+	NIC_to_purchase_equipment_for_entrepreneurs = {
+		icon = to_purchase_equipment_for_entrepreneurs
+		priority = 50
+		available = {
+			has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+			has_country_flag = NIC_increase_the_issue_of_currency_flag
+		}
+		visible = {
+			has_active_mission = NIC_the_failure_of_the_Edwards_Plan_mission
+		}
+		fire_only_once = yes
+		cost = 250
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_to_purchase_equipment_for_entrepreneurs"
+			set_country_flag = NIC_to_purchase_equipment_for_entrepreneurs_flag
+			add_stability = 0.05
+			add_tech_bonus = {
+				name = NIC_to_purchase_equipment_for_entrepreneurs
+				bonus = 1
+				uses = 1
+				category = industry
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			remove_ideas = NIC_foreign_debt_to_the_United_States_3
+			effect_tooltip = { remove_mission = NIC_the_failure_of_the_Edwards_Plan_mission }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+}
+
+NIC_elimination_of_Communist_threats_in_Central_America_category = {
+	
+	NIC_elimination_of_Communist_threats_in_Central_America_decision = {
+		icon = generic_form_nation
+		priority = 50
+		fire_only_once = yes
+		cost = 75
+		days_remove = 50
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		war_with_target_on_remove = yes
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = GUA
+					original_tag = ELS
+					original_tag = HON
+					original_tag = COS
+				}
+				is_left_ideology = yes
+				has_civil_war = no
+				NOT = { has_war_with = ROOT is_subject_of = ROOT is_in_faction_with = ROOT }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_elimination_of_Communist_threats_in_Central_America_decision"
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = FROM
+				expire = 0
+			}
+			add_ai_strategy = { type = antagonize id = FROM value = 200 }
+			add_ai_strategy = { type = declare_war id = FROM value = 200 }
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}
+
+NIC_Central_American_Union_category = {
+	
+	NIC_Central_American_Union_decision = {
+		icon = Central_American_Union
+		priority = 50
+		fire_only_once = yes
+		cost = 50
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = GUA
+					original_tag = ELS
+					original_tag = HON
+					original_tag = COS
+				}
+				is_in_faction = no
+				has_government = democratic
+				has_civil_war = no
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_Central_American_Union_decision"
+			FROM = { country_event = generic.5 }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_scientific_integration_decision = {
+		icon = scientific_integration
+		priority = 40
+		fire_only_once = yes
+		cost = 50
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		visible = { has_completed_focus = NIC_scientific_integration }
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = GUA
+					original_tag = ELS
+					original_tag = HON
+					original_tag = COS
+				}
+				is_in_faction_with = ROOT
+				has_government = democratic
+				NOT = { is_in_tech_sharing_group = NIC_scientific_integration_research }
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_scientific_integration_decision"
+			FROM = {
+				add_to_tech_sharing_group = NIC_scientific_integration_research
+				add_opinion_modifier = {
+					modifier = NIC_scientific_integration_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_scientific_integration_op
+					target = ROOT
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_industrial_integration_decision = {
+		icon = industrial_integration
+		priority = 30
+		fire_only_once = yes
+		cost = 50
+		days_remove = 30
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		visible = { has_completed_focus = NIC_industrial_integration }
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = GUA
+					original_tag = ELS
+					original_tag = HON
+					original_tag = COS
+				}
+				is_in_faction_with = ROOT
+				has_government = democratic
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_industrial_integration_decision"
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			FROM = {
+				set_country_flag = NIC_industrial_integration_decision_flag
+				random_owned_controlled_state = {
+					limit = {
+						is_core_of = PREV
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				add_opinion_modifier = {
+					modifier = NIC_industrial_integration_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = NIC_industrial_integration_op
+					target = ROOT
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_the_Second_Great_Republic_of_Central_America_decision = {
+		icon = the_Second_Great_Republic_of_Central_America
+		priority = 20
+		fire_only_once = yes
+		cost = 50
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		visible = { has_completed_focus = NIC_the_Second_Great_Republic_of_Central_America }
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = GUA
+					original_tag = ELS
+					original_tag = HON
+					original_tag = COS
+				}
+				is_in_faction_with = ROOT
+				is_in_tech_sharing_group = NIC_scientific_integration_research
+				has_country_flag = NIC_industrial_integration_decision_flag
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_the_Second_Great_Republic_of_Central_America_decision"
+			add_to_variable = { NIC_the_Second_Great_Republic_of_Central_America_var = 1 }
+			annex_country = { target = FROM transfer_troops = yes }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+}
+
+NIC_Central_American_Workers_Union_category = {
+	
+	NIC_Central_American_Workers_Union_decision = {
+		icon = Central_American_Workers_Union
+		priority = 50
+		fire_only_once = yes
+		cost = 50
+		targets = { GUA ELS HON COS }
+		targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+				is_in_faction = no
+				has_government = communism
+				has_civil_war = no
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_Central_American_Workers_Union_decision"
+			FROM = { country_event = generic.5 }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_expansion_to_the_Caribbean_decision = {
+		icon = generic_form_nation
+		priority = 50
+		fire_only_once = yes
+		cost = 50
+		targets = { HAI CUB DOM }
+		targets_dynamic = yes
+		target_root_trigger = { has_completed_focus = NIC_expansion_to_the_Caribbean }
+		target_trigger = {
+			FROM = {
+				is_in_faction = no
+				has_government = communism
+				has_civil_war = no
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_expansion_to_the_Caribbean_decision"
+			FROM = { country_event = generic.5 }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+}
+
+NIC_eliminating_the_influence_of_the_Communist_Party_category = {
+	
+	NIC_arrest_of_the_leaders_of_the_NWP = {
+		icon = arrest_of_the_leaders_of_the_NWP
+		priority = 300
+		fire_only_once = yes
+		cost = 50
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_arrest_of_the_leaders_of_the_NWP"
+			country_event = NW_NIC.31
+			set_country_flag = NIC_to_make_a_split_in_the_composition_of_the_NWP_UNLOCK_flag
+			unlock_decision_tooltip = NIC_to_make_a_split_in_the_composition_of_the_NWP
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+				date < 1936.08.01
+			}
+		}
+	}
+	
+	NIC_to_make_a_split_in_the_composition_of_the_NWP = {
+		icon = to_make_a_split_in_the_composition_of_the_NWP
+		priority = 200
+		fire_only_once = yes
+		cost = 50
+		visible = { has_country_flag = NIC_to_make_a_split_in_the_composition_of_the_NWP_UNLOCK_flag }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_to_make_a_split_in_the_composition_of_the_NWP"
+			country_event = NW_NIC.32
+			set_country_flag = NIC_to_make_a_split_in_the_composition_of_the_NWP_flag
+			if = {
+				limit = { has_government = democratic }
+				effect_tooltip = { unlock_national_focus = NIC_take_trade_unions_under_control }
+			}
+			unlock_decision_tooltip = NIC_dissolve_the_NWP
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+				date < 1938.01.01
+			}
+		}
+	}
+	
+	NIC_dissolve_the_NWP = {
+		icon = dissolve_the_NWP
+		priority = 100
+		fire_only_once = yes
+		cost = 50
+		visible = { has_country_flag = NIC_to_make_a_split_in_the_composition_of_the_NWP_flag }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_dissolve_the_NWP"
+			country_event = NW_NIC.33
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+				date < 1939.02.01
+			}
+		}
+	}
+}
+
+NIC_resume_dialogue_with_Mexican_workers_category = {
+	
+	NIC_support_for_Communists_in_Mexico = {
+		icon = generic_form_nation
+		priority = 100
+		fire_only_once = no
+		days_re_enable = 130
+		cost = 50
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_support_for_Communists_in_Mexico"
+			add_timed_idea = { idea = NIC_support_for_Communists_idea days = 120 }
+			MEX = { add_timed_idea = { idea = NIC_support_for_Communists_idea_MEX_ELS days = 120 } }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_support_the_communist_uprising_in_Mexico = {
+		priority = 50
+		icon = hol_engelandvaarders
+		fire_only_once = yes
+		days_remove = 7
+		cost = 50
+		available = {
+			MEX = {
+				has_stability < 0.5
+				communism > 0.2
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_support_the_communist_uprising_in_Mexico"
+			MEX = {
+				if = {
+					limit = { communism > 0.5 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.6
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.4 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.5
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.3 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.35
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else = {
+					start_civil_war = {
+						ideology = communism
+						size = 0.15
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_war_with = ROOT } }
+					ROOT = { declare_war_on = { target = PREV type = topple_government } }
+				}
+			}
+		}
+	}
+}
+
+NIC_get_in_touch_with_the_Communist_Party_of_El_Salvador_again_category = {
+
+	NIC_support_for_Communists_in_Salvador = {
+		icon = generic_form_nation
+		priority = 100
+		fire_only_once = no
+		days_re_enable = 130
+		cost = 50
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_support_for_Communists_in_Salvador"
+			add_timed_idea = { idea = NIC_support_for_Communists_idea_1 days = 120 }
+			ELS = { add_timed_idea = { idea = NIC_support_for_Communists_idea_MEX_ELS days = 120 } }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_support_the_communist_uprising_in_Salvador = {
+		priority = 50
+		icon = hol_engelandvaarders
+		fire_only_once = yes
+		days_remove = 7
+		cost = 50
+		available = {
+			ELS = {
+				has_stability < 0.5
+				communism > 0.2
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_support_the_communist_uprising_in_Salvador"
+			ELS = {
+				if = {
+					limit = { communism > 0.5 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.6
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.4 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.5
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.3 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.35
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else = {
+					start_civil_war = {
+						ideology = communism
+						size = 0.15
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_war_with = ROOT } }
+					ROOT = { declare_war_on = { target = PREV type = topple_government } }
+				}
+			}
+		}
+	}
+}
+
+NIC_expand_the_communist_influence_of_Central_America_category = {
+	
+	NIC_expand_the_communist_influence_of_Central_America_decision = {
+		icon = expand_the_communist_influence_of_Central_America
+		priority = 100
+		fire_only_once = no
+		days_re_enable = 130
+		cost = 50
+		days_remove = 7
+		targets = { HAI CUB DOM COS PAN GUA HON }
+		targets_dynamic = yes
+		available = { NOT = { has_idea = NIC_support_for_Communists_of_Central_America_idea } }
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = HAI
+					original_tag = CUB
+					original_tag = DOM
+					original_tag = COS
+					original_tag = PAN
+					original_tag = GUA
+					original_tag = HON
+				}
+				NOT = { has_government = communism is_in_faction_with = ROOT has_idea = NIC_support_for_Communists_idea_MEX_ELS }
+				has_civil_war = no
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_expand_the_communist_influence_of_Central_America_decision"
+			add_timed_idea = { idea = NIC_support_for_Communists_of_Central_America_idea days = 120 }
+			FROM = { add_timed_idea = { idea = NIC_support_for_Communists_idea_MEX_ELS days = 120 } }
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_support_the_communist_uprising_in_Central_America = {
+		priority = 50
+		icon = support_the_communist_uprising_in_Central_America
+		fire_only_once = yes
+		days_remove = 7
+		cost = 50
+		targets = { HAI CUB DOM COS PAN GUA HON }
+		targets_dynamic = yes
+		available = {
+			FROM = {
+				has_stability < 0.5
+				communism > 0.2
+				NOT = { is_in_faction_with = ROOT }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				OR = {
+					original_tag = HAI
+					original_tag = CUB
+					original_tag = DOM
+					original_tag = COS
+					original_tag = PAN
+					original_tag = GUA
+					original_tag = HON
+				}
+				has_civil_war = no
+				NOT = { has_government = communism is_in_faction_with = ROOT }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_support_the_communist_uprising_in_Central_America"
+			FROM = {
+				if = {
+					limit = { communism > 0.5 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.6
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.4 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.5
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { communism > 0.3 }
+					start_civil_war = {
+						ideology = communism
+						size = 0.35
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				else = {
+					start_civil_war = {
+						ideology = communism
+						size = 0.15
+						ROOT = {
+							if = {
+								limit = { OR = { has_dlc = "Together for Victory" has_dlc = "Man the Guns" } }
+								set_autonomy = { target = PREV autonomous_state = autonomy_integrated_puppet }
+								else = { puppet = PREV }
+							}
+							if = {
+								limit = {
+									has_completed_focus = NIC_centralization_of_the_Union_of_Latin_Republics
+									PREV = { NOT = { has_idea = NIC_centralization_of_the_Union_of_Latin_Republics_idea } }
+								}
+								PREV = { add_ideas = NIC_centralization_of_the_Union_of_Latin_Republics_idea }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_war_with = ROOT } }
+					ROOT = { declare_war_on = { target = PREV type = topple_government } }
+				}
+			}
+		}
+	}
+}
+
+NIC_elimination_of_the_Sandinista_Revolution_category = {
+	
+	NIC_the_rise_of_the_forces_of_the_Sandinista_Revolution_mission = {
+		priority = 200
+		icon = the_rise_of_the_forces_of_the_Sandinista_Revolution
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		cancel_trigger = {
+			if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea }
+				NOT = { has_idea = NIC_the_hushed_Sandinista_uprising_idea }
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_1 }
+				NOT = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_1 }
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_2 }
+				NOT = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_2 }
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_3 }
+				NOT = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_3 }
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission NIC_the_rise_of_the_forces_of_the_Sandinista_Revolution_mission"
+		}
+		is_good = no
+		days_mission_timeout = 100
+		selectable_mission = no
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission NIC_the_rise_of_the_forces_of_the_Sandinista_Revolution_mission"
+			if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea }
+				country_event = NW_NIC.40
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_1 }
+				country_event = NW_NIC.41
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_2 }
+				country_event = NW_NIC.42
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_3 }
+				country_event = NW_NIC.43
+			}
+		}
+	}
+	
+	NIC_eliminate_the_Sandinista_General = {
+		icon = eliminate_the_Sandinista_General
+		priority = 100
+		fire_only_once = yes
+		cost = 75
+		available = { has_idea = NIC_the_hushed_Sandinista_uprising_idea }
+		visible = { has_government = neutrality }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_eliminate_the_Sandinista_General"
+			country_event = NW_NIC.44
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = -1000
+				is_historical_focus_on = yes
+				date < 1937.12.01
+			}
+		}
+	}
+	
+	NIC_conclude_a_truce_with_the_Sandinistas = {
+		icon = conclude_a_truce_with_the_Sandinistas
+		priority = 100
+		fire_only_once = yes
+		cost = 75
+		available = { has_idea = NIC_the_hushed_Sandinista_uprising_idea }
+		visible = {
+			OR = {
+				has_government = democratic
+				has_government = communism
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_conclude_a_truce_with_the_Sandinistas"
+			country_event = NW_NIC.45
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	
+	NIC_send_a_raid_against_the_partisans = {
+		icon = send_a_raid_against_the_partisans
+		priority = 50
+		fire_only_once = no
+		custom_cost_trigger = {
+			set_temp_variable = { manpower_temp_cost = 100 }
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { war_support_temp_cost = 0.01 }
+			has_political_power > custom_cost_pp
+			has_manpower > manpower_temp_cost
+			has_war_support > war_support_temp_cost
+		}
+		custom_cost_text = pol_and_war_support_and_manpower_cost
+		days_remove = 14
+		visible = {
+			OR = {
+				has_idea = NIC_the_hushed_Sandinista_uprising_idea_1
+				has_idea = NIC_the_hushed_Sandinista_uprising_idea_2
+				has_idea = NIC_the_hushed_Sandinista_uprising_idea_3
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NIC_send_a_raid_against_the_partisans"
+			hidden_effect = {
+				add_political_power = -25
+				add_manpower = -100
+				add_war_support = -0.01
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision NIC_send_a_raid_against_the_partisans"
+			if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_3 }
+				swap_ideas = {
+					remove_idea = NIC_the_hushed_Sandinista_uprising_idea_3
+					add_idea = NIC_the_hushed_Sandinista_uprising_idea_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = NIC_the_hushed_Sandinista_uprising_idea_2 }
+				swap_ideas = {
+					remove_idea = NIC_the_hushed_Sandinista_uprising_idea_2
+					add_idea = NIC_the_hushed_Sandinista_uprising_idea_1
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = NIC_the_hushed_Sandinista_uprising_idea_1
+					add_idea = NIC_the_hushed_Sandinista_uprising_idea
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+			modifier = {
+				add = 1000
+				is_historical_focus_on = yes
+				date < 1937.12.01
+			}
+		}
+	}
+}

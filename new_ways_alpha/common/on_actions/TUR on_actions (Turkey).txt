@@ -1,0 +1,368 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			set_global_flag = NW_TUR_OLD_FOCUS_TREE
+			TUR = {
+				every_controlled_state = {
+					limit = { is_on_continent = europe }
+					PREV = { add_to_variable = { turkey_europe_controlled_state = 1 } }
+				}
+			}
+			
+			if = {
+			# 1936 #
+				limit = { has_start_date < 1936.01.02 }
+				# Саадабадский пакт
+				every_country = {
+					limit = {
+						OR = {
+							original_tag = TUR
+							original_tag = PER
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = EGY
+							original_tag = SYR
+							original_tag = BPL
+							original_tag = LEB
+							original_tag = ALW
+							original_tag = JDS
+						}
+						
+					}
+					activate_mission = TUR_preliminary_negotiations
+				}
+				### Турок стартпак
+				TUR = {
+					country_event = { id = NW_new_turkey.132 days = 120 }
+					country_event = { id = NW_new_turkey.133 days = 146 }
+					country_event = { id = NW_new_turkey.1500 days = 364 }
+					country_event = { id = NWkurd.0 days = 305 }
+					country_event = { id = NWkurd.2 days = 444 }
+					if = {
+						limit = { has_global_flag = NW_TUR_OLD_FOCUS_TREE }
+#						add_country_leader_trait = ataturk_trait
+#						country_event = { id = NWturkey.1000 days = 1044 }
+					}
+					else = {
+#						add_country_leader_trait = peace_in_country_world_peace
+#						add_country_leader_trait = modernization
+#						add_country_leader_trait = reformator
+						country_event = { id = NW_new_turkey.56 days = 1044 }
+						country_event = { id = NW_new_turkey.132 days = 60 }
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { is_on_continent = europe }
+					ROOT = { has_focus_tree = nw_turkish_focus_new }
+				}
+				ROOT = { add_to_variable = { turkey_europe_controlled_state = 1 } }
+			}
+			if = {
+				limit = {
+					FROM.FROM = { is_on_continent = europe }
+					FROM = { has_focus_tree = nw_turkish_focus_new }
+				}
+				FROM = { add_to_variable = { turkey_europe_controlled_state = -1 } }
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					tag = TUR
+					has_government = fascism
+					NOT = { has_country_flag = NWturkey70_flag }
+					has_global_flag = NW_TUR_OLD_FOCUS_TREE
+					has_completed_focus = TUR_proclaim_panturkism
+				}
+				TUR = {
+					set_country_flag = NWturkey70_flag
+					country_event = { id = NWturkey.69 days = 140 }
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#TUR / GRE договор о сердечном согласии
+			if = {
+				limit = {
+					has_global_flag = TUR_extension_of_agreement_on_cordial_consent_flag
+					OR = {
+						ROOT = {
+							OR = {
+								has_completed_focus = TUR_extension_of_agreement_on_cordial_consent
+								tag = GRE
+							}
+							has_government = democratic
+						}
+					}
+				}
+				random_country = {
+					limit = {
+						NOT = { tag = ROOT }
+						has_capitulated = no
+						OR = {
+							has_completed_focus = TUR_extension_of_agreement_on_cordial_consent
+							tag = GRE
+						}
+						has_government = democratic
+					}
+					ROOT = {
+						become_exiled_in = {
+							target = PREV
+							legitimacy = 50
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			# Автомир СССР // ТуркГВ
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = TUR
+						has_completed_focus = TUR_soviet_support
+						has_civil_war = yes
+					}
+					SOV = { has_country_flag = TUR_intervention_in_TCW_flag }
+				}
+				SOV = { clr_country_flag = TUR_intervention_in_TCW_flag }
+			}
+		}
+		effect = {
+			#Саадабад vs Союзников. Капитуляция Индии
+			if = {
+				limit = {
+					TUR = { NOT = { has_country_flag = pakistan_peace_accept_flag } }
+					ENG = { NOT = { has_country_flag = eng_pakistan_peace_accept_flag } }
+					ROOT = {
+						tag = RAJ
+						has_war_with = TUR
+					}
+				}
+				TUR = { set_country_flag = turkey_pakistan_peace_flag }
+				
+				#PAK = {
+				#	puppet = RAJ
+				#	transfer_state = 439
+				#	transfer_state = 433
+				#	transfer_state = 428
+				#	transfer_state = 437
+				#	transfer_state = 438
+				#}
+			}
+			
+			#Саадабад БЕЗ ТУРЦИИ vs Союзников. Капитуляция Индии
+			if = {
+				limit = {
+					ROOT = {
+						tag = RAJ
+						has_war_with = PAK
+					}
+					PAK = { is_in_faction = yes }
+				}
+				PAK = {
+					puppet = RAJ
+					transfer_state = 439
+					transfer_state = 433
+					transfer_state = 428
+					transfer_state = 437
+					transfer_state = 438
+				}
+				every_other_country = {
+					limit = {
+						has_war_with = PAK
+						is_subject = no
+						OR = { is_faction_leader = yes is_in_faction = no }
+					}
+					every_other_country = {
+						limit = {
+							is_in_faction_with = PAK
+							is_faction_leader = yes
+						}
+						white_peace = PREV
+					}
+				}
+				if = {
+					limit = {
+						JAP = { is_faction_leader = yes }
+						TIB = { is_in_faction = yes }
+					}
+					every_state = {
+						limit = {
+							is_core_of = TIB
+						}
+						add_claim_by = JAP
+					} 
+				}
+			}
+			
+			#Капитуляция Британии и война с турками и кипром ## Аннекс Кипра Турком
+			if = {
+				limit = {
+					ROOT = {
+						tag = ENG
+						has_war_with = TUR
+						has_war_with = NCP
+					}
+				}
+				TUR = { country_event = { id = NWturkey.18 days = 1 } }
+			}
+			
+			#Капитуляция Грека и война с турками и кипром ## Аннекс Кипра Турком
+			if = {
+				limit = {
+					ROOT = {
+						tag = GRE 
+						has_war_with = TUR
+						has_war_with = NCP
+					}
+				}
+				TUR = { country_event = { id = NWturkey.21 days = 1 } }
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - For civil wars on_civil_war_end is also fired
+	on_annex = {
+		effect = {
+			if = {
+				limit = {
+					FROM = { has_idea = TUR_debts_to_great_powers }
+					ROOT = { original_tag = TUR }
+				}
+				ROOT = { add_ideas = TUR_debts_to_great_powers }
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			#SAADABAD_PACT_COUNTRY_ARRAY fix
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = TUR
+							original_tag = PER
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = EGY
+							original_tag = SYR
+							original_tag = BPL
+							original_tag = LEB
+							original_tag = ALW
+							original_tag = JDS
+						}
+						has_country_flag = saadabad_accept_flag
+						OR = {
+							is_subject = yes
+							exists = no
+						}
+					}
+				}
+				FROM = {
+					clr_country_flag = saadabad_accept_flag
+					remove_from_array = { global.saadabad_pact_country_array = THIS }
+				}
+			}
+		}
+		
+		### TUR
+		effect = {
+			if = {
+				limit = {
+					FROM = { original_tag = KRD }
+					original_tag = TUR
+					has_civil_war = no
+					has_template = "Turkish Militia"
+				}
+				delete_unit_template_and_units = {
+					division_template = "Turkish Militia"
+					disband = yes
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		### TUR
+		effect = {
+			if = {
+				limit = {
+					original_tag = TUR
+					has_civil_war = no
+					NOT = { has_war_with = KRD }
+					has_template = "Turkish Militia"
+				}
+				delete_unit_template_and_units = {
+					division_template = "Turkish Militia"
+					disband = yes
+				}
+			}
+		}
+	}
+	
+	on_daily_TUR = {
+		effect = {
+			#TUR_send_kurds_from_region // Ежедневная численность населения в регионе: §R-300§!
+			if = {
+				limit = {
+					any_owned_state = { has_state_flag = TUR_send_kurds_from_region_flag }
+				}
+				every_owned_state = {
+					limit = { has_state_flag = TUR_send_kurds_from_region_flag }
+					add_manpower = -300
+				}
+			}
+		}
+	}
+	
+	on_weekly_TUR = {
+		effect = {
+			TUR_remove_Ataturk_coalition_if_he_isnt_leader = yes
+		}
+	}
+	
+	#FROM is war target, ROOT is war beginer
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					FROM = { tag = RAJ }
+					ROOT = { tag = TUR }
+				}
+				ENG = { country_event = { id = NWturkey.54 days = 90 } }
+			}
+			if = {
+				limit = {
+					FROM = { tag = event_target:NW_france_scope }
+					ROOT = { tag = TUR }
+					TUR = {
+						NOT = { has_full_control_of_state = 945 }
+						NOT = { has_country_flag = tur_hatay_peace_flag }
+					}
+				}
+				TUR = { country_event = { id = NWturkey.74 months = 1 } }
+			}
+		}
+	}
+}

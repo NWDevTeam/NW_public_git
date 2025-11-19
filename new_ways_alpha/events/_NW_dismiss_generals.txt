@@ -1,0 +1,70 @@
+﻿
+add_namespace = NWdismiss_generals
+
+unit_leader_event = {
+	id = NWdismiss_generals.1
+	title = NWdismiss_generals.1.t
+	desc = NWdismiss_generals.1.desc
+	is_triggered_only = yes
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NWdismiss_generals.1" 
+	}
+	
+	option = { #PURGE
+		name = NWdismiss_generals.1.a
+		custom_effect_tooltip = NWdismiss_generals_tt
+		set_temp_variable = { pp_cost = -25 }
+		set_temp_variable = { stability_cost = -0.01 }
+		set_temp_variable = { war_support_cost = -0.01 }
+		THIS = { # TODO почему-то считается дважды
+			if = {
+				limit = { has_trait = media_personality }
+				add_to_temp_variable = { pp_cost = -10 }
+				add_to_temp_variable = { stability_cost = -0.02 }
+				add_to_temp_variable = { war_support_cost = -0.01 }
+			}
+			if = {
+				limit = { has_trait = old_guard }
+				add_to_temp_variable = { stability_cost = -0.01 }
+				add_to_temp_variable = { war_support_cost = -0.02 }
+			}
+			if = {
+				limit = { is_field_marshal = yes }
+				add_to_temp_variable = { war_support_cost = -0.02 }
+			}
+			if = {
+				limit = { has_trait = war_hero }
+				add_to_temp_variable = { pp_cost = -5 }
+				add_to_temp_variable = { stability_cost = -0.02 }
+				add_to_temp_variable = { war_support_cost = -0.02 }
+			}
+			if = {
+				limit = { has_trait = politically_connected }
+				add_to_temp_variable = { pp_cost = -15 }
+				log = "XYZ"
+			}
+		}
+		
+		add_political_power = pp_cost
+		add_stability = stability_cost
+		add_war_support = war_support_cost
+		custom_effect_tooltip = empty_line_tooltip
+		THIS = {
+			retire = yes
+		}
+		
+		if = {
+			limit = { THIS = { is_field_marshal = yes } }
+			add_to_variable = { dismissal_field_marshal = 1 }
+			
+		}
+		else = {
+			add_to_variable = { dismissal_corp_leader = 1 }
+		}
+	}
+	
+	option = { #OKAY, NO
+		name = NWdismiss_generals.1.b
+		
+	}
+}

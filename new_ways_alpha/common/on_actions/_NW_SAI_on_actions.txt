@@ -1,20 +1,20 @@
 on_actions = {
 	on_startup = {
 		effect = {
-			every_possible_country = {
-				limit = {
-					if = {
-						limit = { has_start_date < 1936.1.2 }
-						NOT = {		# здесь должны писаться только tag, а не original_tag
-							tag = JAP
-						}		
-					}
-				}
-				activate_advisor = generic_political_advisor_blocked_1_political_advisor
-				activate_advisor = generic_political_advisor_blocked_2_political_advisor
+			# every_possible_country = {
+				# limit = {
+					# if = {
+						# limit = { has_start_date < 1936.1.2 }
+						# NOT = {		# здесь должны писаться только tag, а не original_tag
+							# tag = JAP
+						# }		
+					# }
+				# }
+				# activate_advisor = generic_political_advisor_blocked_1_political_advisor
+				# activate_advisor = generic_political_advisor_blocked_2_political_advisor
 				
-				set_country_flag = generic_political_advisor_blocked_1_political_advisor
-				set_country_flag = generic_political_advisor_blocked_2_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_1_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_2_political_advisor
 				
 #				meta_effect = {
 #					text = {
@@ -29,7 +29,7 @@ on_actions = {
 #					}
 #					TAG = "[This.GetTag]"
 #				}
-			}
+			# }
 			
 			SAI = {
 				# Первомайская демонстрация пульсар
@@ -63,14 +63,6 @@ on_actions = {
 	}
 	
 	
-	on_weekly_SOV = {
-		effect = {
-			if = {
-				limit = { NOT = { country_exists = SAI } }
-				SAI = { transfer_state = 1193 }
-			}
-		}
-	}
 	
 	on_daily_SAI = {
 		effect = {
@@ -90,17 +82,17 @@ on_actions = {
 		
 ### VOLUNTEER_ONLY
 			every_country = {
-				if = {
-					limit = { has_idea = volunteer_only }
-					if = {
-						limit = { NOT = { has_dynamic_modifier = { modifier = volunteer_only_dyn } } }
-						add_dynamic_modifier = { modifier = volunteer_only_dyn }
-					}
-					set_variable = { volunteer_only_var = party_popularity@ruling_party }
-					multiply_variable = { volunteer_only_var = has_war_support }
-					multiply_variable = { volunteer_only_var = 0.0045 }
-					subtract_from_variable = { volunteer_only_var = 0.015 }
-				}
+				# if = {
+					# limit = { has_idea = volunteer_only }
+					# if = {
+						# limit = { NOT = { has_dynamic_modifier = { modifier = volunteer_only_dyn } } }
+						# add_dynamic_modifier = { modifier = volunteer_only_dyn }
+					# }
+					# set_variable = { volunteer_only_var = party_popularity@ruling_party }
+					# multiply_variable = { volunteer_only_var = has_war_support }
+					# multiply_variable = { volunteer_only_var = 0.0045 }
+					# subtract_from_variable = { volunteer_only_var = 0.015 }
+				# }
 ### COMMUNICATION_WITH_BLACK_MARKET_FOCUS // GENERIC
 				if = {
 					limit = {
@@ -150,10 +142,16 @@ on_actions = {
 					limit = {
 						has_dlc = "Arms Against Tyranny"
 					}
-					set_temp_variable = { num_of_build_exp_temp = 0.5 }
+					if = {
+						limit = { num_of_factories > 125 }
+						set_temp_variable = { num_of_build_exp_temp = 0.15 }
+					}
+					else = {
+						set_temp_variable = { num_of_build_exp_temp = 0.25 }
+					}
 					add_to_temp_variable = { num_of_build_exp_temp = generic_building_organization_add_money }
 					multiply_temp_variable = { num_of_build_exp_temp = num_of_civilian_factories_available_for_projects }
-					clamp_temp_variable = { var = num_of_build_exp_temp min = 0.0 max = 100.0 }
+					clamp_temp_variable = { var = num_of_build_exp_temp min = 0.0 max = 50.0 }
 					set_variable = { ROOT.num_of_build_exp = num_of_build_exp_temp }
 					every_military_industrial_organization = {	# mio:generic_building_organization
 						limit = {
@@ -172,6 +170,39 @@ on_actions = {
 	
 	on_weekly_SAI = {
 		effect = {
+### CHI ### #Удержание позиций // Миссия для is_literally_china
+			if = {
+				limit = {
+					all_of_scopes = {
+						array = global.is_literally_china
+						all_core_state = { controller = { NOT = { tag = JAP is_subject_of = JAP is_in_faction_with = JAP } } }
+					}
+					KOR = { all_core_state = { controller = { NOT = { tag = JAP is_subject_of = JAP is_in_faction_with = JAP } } } }
+				}
+				random_scope_in_array = {
+					array = global.is_literally_china
+					limit = { exists = yes has_country_flag = china_declare_government_flag }
+					if = {
+						limit = { has_country_flag = JAP_offer_peace_to_Japan_flag }
+						clr_country_flag = JAP_offer_peace_to_Japan_flag
+					}
+					activate_mission = JAP_holding_positions_mission
+				}
+			}
+### BRM ### #Борьба коммунистов // Залупа BRM
+			# random_country_with_original_tag = {
+				# original_tag_to_check = BRM
+				# limit = {
+					# has_government = trozkism
+					# has_completed_focus = BRM_burmese_martyrs_day
+					# NOT = { has_country_flag = BRM_the_struggle_for_power_category_BLOCK_flag }
+				# }
+				# add_to_variable = { BRM_clear_party_var = modifier@BRM_clear_party_var_weekly_modifier }
+				# subtract_from_variable = { BRM_stable_party_var = modifier@BRM_clear_party_var_weekly_modifier }
+				# add_to_variable = { BRM_stable_party_var = modifier@BRM_stable_party_var_weekly_modifier }
+				# subtract_from_variable = { BRM_clear_party_var = modifier@BRM_stable_party_var_weekly_modifier }
+				# BRM_the_struggle_for_power_effect = yes
+			# }
 ### HOL ### #Пропаганда // Нацдух HOL
 			HOL = {
 				if = {
@@ -502,6 +533,25 @@ on_actions = {
 					}
 					load_focus_tree = { tree = generic_focus keep_completed = no }
 				}
+				
+### ASYMMETRIC_WARFARE_DOCTRINE
+				if = {
+					limit = {
+						has_tech = peoples_army_asy
+						NOT = { has_dynamic_modifier = { modifier = asymmetric_warfare_doctrine_dyn } }
+					}
+					add_dynamic_modifier = { modifier = asymmetric_warfare_doctrine_dyn }
+					if = {
+						limit = { NOT = { has_variable = NW_awd_num_battalions_limit } }
+						set_variable = { NW_awd_num_battalions_limit = 300 }
+					}
+				}
+				if = {
+					limit = {
+						has_dynamic_modifier = { modifier = asymmetric_warfare_doctrine_dyn }
+					}
+					NW_asymmetric_warfare_doctrine_effect = yes
+				}
 			}
 		}
 	}
@@ -528,7 +578,11 @@ on_actions = {
 					}
 				}
 			}
-			
+			# every_country_with_original_tag = {
+				# original_tag_to_check = BRM
+				# add_to_variable = { BRM_burmese_currency_var = modifier@BRM_burmese_currency_var_monthly_modifier }
+				# BRM_burmese_currency_effect = yes
+			# }
 			
 #			if = {
 #				limit = {
@@ -590,230 +644,230 @@ on_actions = {
 	# FROM is war target	# ROOT is for the country who is declaring war
 	on_declare_war = {
 		effect = {
-			if = {
-				limit = {
-					FROM = { original_tag = ROOT is_dynamic_tag = yes }
-					ROOT = { is_dynamic_tag = no }
-				}
-				FROM = {
-					if = {
-						limit = { has_character = generic_political_advisor_blocked_1 }
-						random_character = {
-							limit = { is_character = generic_political_advisor_blocked_1 }
-							set_nationality = ROOT
-						}
-					}
-					if = {
-						limit = { has_character = generic_political_advisor_blocked_2 }
-						random_character = {
-							limit = { is_character = generic_political_advisor_blocked_2 }
-							set_nationality = ROOT
-						}
-					}
-				}
-				ROOT = {
-					if = {
-						limit = { has_country_flag = generic_political_advisor_blocked_1_political_advisor }
-						activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					}
-					if = {
-						limit = { has_country_flag = generic_political_advisor_blocked_2_political_advisor }
-						activate_advisor = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					ROOT = { original_tag = ROOT is_dynamic_tag = yes }
-					FROM = { is_dynamic_tag = no }
-				}
-				ROOT = {
-					if = {
-						limit = { has_character = generic_political_advisor_blocked_1 }
-						random_character = {
-							limit = { is_character = generic_political_advisor_blocked_1 }
-							set_nationality = FROM
-						}
-					}
-					if = {
-						limit = { has_character = generic_political_advisor_blocked_2 }
-						random_character = {
-							limit = { is_character = generic_political_advisor_blocked_2 }
-							set_nationality = FROM
-						}
-					}
-				}
-				FROM = {
-					if = {
-						limit = { has_country_flag = generic_political_advisor_blocked_1_political_advisor }
-						activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					}
-					if = {
-						limit = { has_country_flag = generic_political_advisor_blocked_2_political_advisor }
-						activate_advisor = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
-			}
+			# if = {
+				# limit = {
+					# FROM = { original_tag = ROOT is_dynamic_tag = yes }
+					# ROOT = { is_dynamic_tag = no }
+				# }
+				# FROM = {
+					# if = {
+						# limit = { has_character = generic_political_advisor_blocked_1 }
+						# random_character = {
+							# limit = { is_character = generic_political_advisor_blocked_1 }
+							# set_nationality = ROOT
+						# }
+					# }
+					# if = {
+						# limit = { has_character = generic_political_advisor_blocked_2 }
+						# random_character = {
+							# limit = { is_character = generic_political_advisor_blocked_2 }
+							# set_nationality = ROOT
+						# }
+					# }
+				# }
+				# ROOT = {
+					# if = {
+						# limit = { has_country_flag = generic_political_advisor_blocked_1_political_advisor }
+						# activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# }
+					# if = {
+						# limit = { has_country_flag = generic_political_advisor_blocked_2_political_advisor }
+						# activate_advisor = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
+			# }
+			# else_if = {
+				# limit = {
+					# ROOT = { original_tag = ROOT is_dynamic_tag = yes }
+					# FROM = { is_dynamic_tag = no }
+				# }
+				# ROOT = {
+					# if = {
+						# limit = { has_character = generic_political_advisor_blocked_1 }
+						# random_character = {
+							# limit = { is_character = generic_political_advisor_blocked_1 }
+							# set_nationality = FROM
+						# }
+					# }
+					# if = {
+						# limit = { has_character = generic_political_advisor_blocked_2 }
+						# random_character = {
+							# limit = { is_character = generic_political_advisor_blocked_2 }
+							# set_nationality = FROM
+						# }
+					# }
+				# }
+				# FROM = {
+					# if = {
+						# limit = { has_country_flag = generic_political_advisor_blocked_1_political_advisor }
+						# activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# }
+					# if = {
+						# limit = { has_country_flag = generic_political_advisor_blocked_2_political_advisor }
+						# activate_advisor = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
+			# }
 			
 			
 			
-			every_possible_country = {
-				limit = {
-					if = {
-						limit = { has_start_date < 1936.1.2 }
-						NOT = {		# здесь должны писаться только tag, а не original_tag
-							tag = JAP
-						}		
-					}
-					has_any_generic_political_advisor_blocked = no
-					NOT = {
-						has_country_flag = generic_political_advisor_blocked_1_political_advisor
-						has_country_flag = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
+			# every_possible_country = {
+				# limit = {
+					# if = {
+						# limit = { has_start_date < 1936.1.2 }
+						# NOT = {		# здесь должны писаться только tag, а не original_tag
+							# tag = JAP
+						# }		
+					# }
+					# has_any_generic_political_advisor_blocked = no
+					# NOT = {
+						# has_country_flag = generic_political_advisor_blocked_1_political_advisor
+						# has_country_flag = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
 				
-				if = {
-					limit = { is_dynamic_tag = yes }
-					meta_effect = {
-						text = {
-							recruit_character = [TAG]_generic_political_advisor_blocked_1
-							recruit_character = [TAG]_generic_political_advisor_blocked_2
+				# # if = {
+					# # limit = { is_dynamic_tag = yes }
+					# # meta_effect = {
+						# # text = {
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_1
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_2
 							
-							activate_advisor = [TAG]_generic_political_advisor_blocked_1_political_advisor
-							activate_advisor = [TAG]_generic_political_advisor_blocked_2_political_advisor
-						}
-						TAG = "[This.GetTag]"
-					}
-				}
-				else = {
-					activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					activate_advisor = generic_political_advisor_blocked_2_political_advisor
-				}
-				set_country_flag = generic_political_advisor_blocked_1_political_advisor
-				set_country_flag = generic_political_advisor_blocked_2_political_advisor
-			}
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_1_political_advisor
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_2_political_advisor
+						# # }
+						# # TAG = "[This.GetTag]"
+					# # }
+				# # }
+				# # else = {
+					# # activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# # activate_advisor = generic_political_advisor_blocked_2_political_advisor
+				# # }
+				# set_country_flag = generic_political_advisor_blocked_1_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_2_political_advisor
+			# }
 		}
 	}
 	
 	# THIS is country that has just gotten into a war.
 	on_war = {
 		effect = {
-			every_possible_country = {
-				limit = {
-					if = {
-						limit = { has_start_date < 1936.1.2 }
-						NOT = {		# здесь должны писаться только tag, а не original_tag
-							tag = JAP
-						}		
-					}
-					has_any_generic_political_advisor_blocked = no
-					NOT = {
-						has_country_flag = generic_political_advisor_blocked_1_political_advisor
-						has_country_flag = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
+			# every_possible_country = {
+				# limit = {
+					# if = {
+						# limit = { has_start_date < 1936.1.2 }
+						# NOT = {		# здесь должны писаться только tag, а не original_tag
+							# tag = JAP
+						# }		
+					# }
+					# has_any_generic_political_advisor_blocked = no
+					# NOT = {
+						# has_country_flag = generic_political_advisor_blocked_1_political_advisor
+						# has_country_flag = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
 				
-				if = {
-					limit = { is_dynamic_tag = yes }
-					meta_effect = {
-						text = {
-							recruit_character = [TAG]_generic_political_advisor_blocked_1
-							recruit_character = [TAG]_generic_political_advisor_blocked_2
+				# # if = {
+					# # limit = { is_dynamic_tag = yes }
+					# # meta_effect = {
+						# # text = {
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_1
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_2
 							
-							activate_advisor = [TAG]_generic_political_advisor_blocked_1
-							activate_advisor = [TAG]_generic_political_advisor_blocked_2
-						}
-						TAG = "[This.GetTag]"
-					}
-				}
-				else = {
-					activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					activate_advisor = generic_political_advisor_blocked_2_political_advisor
-				}
-				set_country_flag = generic_political_advisor_blocked_1_political_advisor
-				set_country_flag = generic_political_advisor_blocked_2_political_advisor
-			}
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_1
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_2
+						# # }
+						# # TAG = "[This.GetTag]"
+					# # }
+				# # }
+				# # else = {
+					# # activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# # activate_advisor = generic_political_advisor_blocked_2_political_advisor
+				# # }
+				# set_country_flag = generic_political_advisor_blocked_1_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_2_political_advisor
+			# }
 		}
 	}
 	
 	# ROOT is attacker, FROM is defender
 	on_war_relation_added = {
 		effect = {
-			every_possible_country = {
-				limit = {
-					if = {
-						limit = { has_start_date < 1936.1.2 }
-						NOT = {		# здесь должны писаться только tag, а не original_tag
-							tag = JAP
-						}		
-					}
-					has_any_generic_political_advisor_blocked = no
-					NOT = {
-						has_country_flag = generic_political_advisor_blocked_1_political_advisor
-						has_country_flag = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
+			# every_possible_country = {
+				# limit = {
+					# if = {
+						# limit = { has_start_date < 1936.1.2 }
+						# NOT = {		# здесь должны писаться только tag, а не original_tag
+							# tag = JAP
+						# }		
+					# }
+					# has_any_generic_political_advisor_blocked = no
+					# NOT = {
+						# has_country_flag = generic_political_advisor_blocked_1_political_advisor
+						# has_country_flag = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
 				
-				if = {
-					limit = { is_dynamic_tag = yes }
-					meta_effect = {
-						text = {
-							recruit_character = [TAG]_generic_political_advisor_blocked_1
-							recruit_character = [TAG]_generic_political_advisor_blocked_2
+				# # if = {
+					# # limit = { is_dynamic_tag = yes }
+					# # meta_effect = {
+						# # text = {
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_1
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_2
 							
-							activate_advisor = [TAG]_generic_political_advisor_blocked_1
-							activate_advisor = [TAG]_generic_political_advisor_blocked_2
-						}
-						TAG = "[This.GetTag]"
-					}
-				}
-				else = {
-					activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					activate_advisor = generic_political_advisor_blocked_2_political_advisor
-				}
-				set_country_flag = generic_political_advisor_blocked_1_political_advisor
-				set_country_flag = generic_political_advisor_blocked_2_political_advisor
-			}
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_1
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_2
+						# # }
+						# # TAG = "[This.GetTag]"
+					# # }
+				# # }
+				# # else = {
+					# # activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# # activate_advisor = generic_political_advisor_blocked_2_political_advisor
+				# # }
+				# set_country_flag = generic_political_advisor_blocked_1_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_2_political_advisor
+			# }
 		}
 	}
 	
 	on_government_change = {
 		effect = {
-			every_possible_country = {
-				limit = {
-					if = {
-						limit = { has_start_date < 1936.1.2 }
-						NOT = {		# здесь должны писаться только tag, а не original_tag
-							tag = JAP
-						}		
-					}
-					has_any_generic_political_advisor_blocked = no
-					NOT = {
-						has_country_flag = generic_political_advisor_blocked_1_political_advisor
-						has_country_flag = generic_political_advisor_blocked_2_political_advisor
-					}
-				}
+			# every_possible_country = {
+				# limit = {
+					# if = {
+						# limit = { has_start_date < 1936.1.2 }
+						# NOT = {		# здесь должны писаться только tag, а не original_tag
+							# tag = JAP
+						# }		
+					# }
+					# has_any_generic_political_advisor_blocked = no
+					# NOT = {
+						# has_country_flag = generic_political_advisor_blocked_1_political_advisor
+						# has_country_flag = generic_political_advisor_blocked_2_political_advisor
+					# }
+				# }
 				
-				if = {
-					limit = { is_dynamic_tag = yes }
-					meta_effect = {
-						text = {
-							recruit_character = [TAG]_generic_political_advisor_blocked_1
-							recruit_character = [TAG]_generic_political_advisor_blocked_2
+				# # if = {
+					# # limit = { is_dynamic_tag = yes }
+					# # meta_effect = {
+						# # text = {
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_1
+							# # recruit_character = [TAG]_generic_political_advisor_blocked_2
 							
-							activate_advisor = [TAG]_generic_political_advisor_blocked_1
-							activate_advisor = [TAG]_generic_political_advisor_blocked_2
-						}
-						TAG = "[This.GetTag]"
-					}
-				}
-				else = {
-					activate_advisor = generic_political_advisor_blocked_1_political_advisor
-					activate_advisor = generic_political_advisor_blocked_2_political_advisor
-				}
-				set_country_flag = generic_political_advisor_blocked_1_political_advisor
-				set_country_flag = generic_political_advisor_blocked_2_political_advisor
-			}
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_1
+							# # activate_advisor = [TAG]_generic_political_advisor_blocked_2
+						# # }
+						# # TAG = "[This.GetTag]"
+					# # }
+				# # }
+				# # else = {
+					# # activate_advisor = generic_political_advisor_blocked_1_political_advisor
+					# # activate_advisor = generic_political_advisor_blocked_2_political_advisor
+				# # }
+				# set_country_flag = generic_political_advisor_blocked_1_political_advisor
+				# set_country_flag = generic_political_advisor_blocked_2_political_advisor
+			# }
 		}
 		
 ### IDEOLOGY ARRAY BLOCK

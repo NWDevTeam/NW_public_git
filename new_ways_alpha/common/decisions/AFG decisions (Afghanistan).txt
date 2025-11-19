@@ -1,0 +1,4110 @@
+nw_political_actions = {
+	AFG_return_Alam_Khan_to_service = {
+		allowed = { original_tag = AFG }
+		visible = { 
+			original_tag = AFG
+			OR = {
+				has_country_leader = { character = AFG_Mirza_Ali_Han ruling_only = yes }
+				has_country_leader = { character = AFG_Amanulla ruling_only = yes }
+			}
+		}
+		priority = 1000
+		icon = my_icon
+		fire_only_once = yes
+		cost = 0
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_return_Alam_Khan_to_service"
+			add_corps_commander_role = {
+				Character = AFG_Mohammad_Alam_Han
+				traits = { trait_very_old_guard }
+				skill = 3
+				attack_skill = 3
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 4
+			}
+		}
+		ai_will_do = { factor = 50 }
+	}
+	
+	AFG_sign_peace_with_the_UK = {
+		allowed = { original_tag = AFG }
+		visible = { original_tag = AFG has_completed_focus = AFG_end_British_rule_in_India has_war_with = ENG }
+		priority = 900
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 90
+		cost = 10
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_sign_peace_with_the_UK"
+			ENG = { country_event = { id = NW_AFG.37 days = 1 } }
+		}	
+	}
+	
+	AFG_demand_submission_from_Uighurs = {
+		allowed = { original_tag = AFG }
+		visible = { original_tag = AFG has_completed_focus = AFG_support_for_Uighurs }
+		available = { SIK = { exists = no } KAS = { exists = yes NOT = { is_in_faction_with = ROOT has_war_with = ROOT is_subject_of = ROOT } } }
+		priority = 800
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 90
+		cost = 40
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_demand_submission_from_Uighurs"
+			custom_effect_tooltip = AFG_demand_submission_from_Uighurs_tt
+			KAS = { country_event = { id = NW_AFG.39 days = 1 } }
+		}
+		ai_will_do = { factor = 50 }
+	}
+	
+}
+
+AFG_tribal_militia_category = {
+	
+	AFG_to_convene_a_tribal_militia = {
+		icon = generic_cavalry
+		available = {
+			has_war = yes
+			num_of_controlled_states > 0
+			check_variable = { AFG_number_of_divisions_to_be_created > 0 }
+			NOT = { has_country_flag = AFG_to_convene_a_tribal_militia_2_tt }
+		}
+		cancel_trigger = { has_war = no }
+		ai_will_do = { factor = 1000 }
+		cost = 70
+		days_remove = 4	
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_convene_a_tribal_militia"
+			custom_effect_tooltip = BHU_summon_peoples_militia_tt3
+			set_country_flag = AFG_to_convene_a_tribal_militia_2_tt
+			set_temp_variable = { num_of_cycle = AFG_number_of_divisions_to_be_created }
+			if = {
+				limit = { has_completed_focus = AFG_tribal_unions }
+				custom_effect_tooltip = AFG_to_convene_a_tribal_militia_3_tt
+				hidden_effect = {
+					if = {
+						limit = { NOT = { has_template = "Tribal Lashkar" } }
+						division_template = {
+							name = "Tribal Lashkar"
+							is_locked = yes
+							division_names_group = AFG_CAV_01
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								infantry = { x = 0 y = 2 }
+								cavalry = { x = 1 y = 0 }
+								cavalry = { x = 1 y = 1 }
+								cavalry = { x = 1 y = 2 }
+							}
+						}
+					}
+					while_loop_effect = {
+						limit = { check_variable = { num_of_cycle > 0 } }
+						add_to_temp_variable = { num_of_cycle = -1 }
+						meta_effect = {
+							text = {
+								random_controlled_state = {
+									create_unit = {
+										division = "name = \"Tribal Lashkar\" division_template = \"Tribal Lashkar\" start_experience_factor = [IRREGULAR_EXP]"
+										owner = PREV
+										count = 1
+										allow_spawning_on_enemy_provs = yes
+									}
+								}	
+							}
+							IRREGULAR_EXP = "[?AFG_start_experience_factor_irregular]"
+						}
+					}
+				}
+			}
+			else = {
+				custom_effect_tooltip = AFG_to_convene_a_tribal_militia_tt
+				hidden_effect = {
+					if = {
+						limit = { NOT = { has_template = "Tribal Lashkar" } }
+						division_template = {
+							name = "Tribal Lashkar"
+							is_locked = yes
+							division_names_group = AFG_CAV_01
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								cavalry = { x = 1 y = 0 }
+								cavalry = { x = 1 y = 1 }
+							}
+						}
+					}
+					while_loop_effect = {
+						limit = { check_variable = { num_of_cycle > 0 } }
+						add_to_temp_variable = { num_of_cycle = -1 }
+						meta_effect = {
+							text = {
+								random_controlled_state = {
+									create_unit = {
+										division = "name = \"Tribal Lashkar\" division_template = \"Tribal Lashkar\" start_experience_factor = [IRREGULAR_EXP]"
+										owner = PREV
+										count = 1
+										allow_spawning_on_enemy_provs = yes
+									}
+								}	
+							}
+							IRREGULAR_EXP = "[?AFG_start_experience_factor_irregular]"
+						}
+					}
+				}		
+			}
+			if = {
+				limit = { has_completed_focus = AFG_conscription_of_mountain_tribes }
+				add_ideas = YEM_special_force_expend
+				division_template = {
+					name = "Milishya alzaydi"
+					priority = 1
+					regiments = {
+						mountaineers = { x = 0 y = 0 }
+						mountaineers = { x = 0 y = 1 }
+						mountaineers = { x = 0 y = 2 }
+						mountaineers = { x = 0 y = 3 }
+						mountaineers = { x = 1 y = 0 }
+						mountaineers = { x = 1 y = 1 }
+						mountaineers = { x = 1 y = 2 }
+					}
+				}
+				meta_effect = {
+					text = {
+						random_controlled_state = {
+							create_unit = {
+								division = "name = \"Milishya alzaydi\" division_template = \"Milishya alzaydi\" start_experience_factor = [IRREGULAR_EXP]"
+								owner = PREV
+								count = 3
+								allow_spawning_on_enemy_provs = yes
+							}
+						}	
+					}
+					IRREGULAR_EXP = "[?AFG_start_experience_factor_irregular]"
+				}
+			}
+		}
+	}
+}
+
+AFG_balance_of_power_category = {
+
+	AFG_to_give_Fazl_Omar_land_under_lock_and_key = {
+		priority = 500
+		icon = GFX_decision_AFG_to_give_Fazl_Omar_land_under_lock_and_key
+		allowed = { original_tag = AFG }
+		custom_cost_trigger = {
+			any_controlled_state = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		custom_cost_text = slot_cost
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_give_Fazl_Omar_land_under_lock_and_key"
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = 0.05
+				tooltip_side = AFG_ulema_council
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_MONARCHY
+			}
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_FASCISM_NH
+			}
+		}
+	}		
+	
+	AFG_benefits_for_mullahs = {
+		priority = 400
+		icon = GFX_decision_AFG_benefits_for_mullahs
+		allowed = { original_tag = AFG }
+		fire_only_once = no
+		cost = 80
+		days_remove = 100
+		days_re_enable = 70
+		modifier = { political_power_factor = -0.1 }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_benefits_for_mullahs"
+			add_stability = 0.02
+			add_power_balance_modifier = { id = AFG_power_balance modifier = AFG_benefits_for_mullahs_modifier }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_benefits_for_mullahs"
+			remove_power_balance_modifier = { id = AFG_power_balance modifier = AFG_benefits_for_mullahs_modifier }
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_MONARCHY
+			}
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				}
+			}
+		}
+	}
+	
+	AFG_expand_the_role_of_the_clergy_in_legal_proceedings = {
+		priority = 300
+		icon = GFX_decision_AFG_expand_the_role_of_the_clergy_in_legal_proceedings
+		allowed = { original_tag = AFG }
+		available = {
+			OR = {
+				NOT = { has_country_leader = { character = AFG_Mohammad_Hashim_han ruling_only = yes } }
+				has_completed_focus = AFG_amendments_to_the_Constitution
+			}
+		}
+		fire_only_once = no
+		cost = 50
+		days_remove = 110
+		days_re_enable = 100
+		modifier = {
+			political_power_factor = 0.1
+			production_speed_buildings_factor = -0.07
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expand_the_role_of_the_clergy_in_legal_proceedings"
+			add_war_support = -0.05
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_the_role_of_the_clergy_in_legal_proceedings"
+			add_stability = 0.04
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = 0.1
+				tooltip_side = AFG_ulema_council
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_MONARCHY
+			}
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				}
+			}
+		}
+	}
+	
+	AFG_expand_the_role_of_the_state_in_legal_proceedings = {
+		priority = 200
+		icon = GFX_decision_AFG_expand_the_role_of_the_state_in_legal_proceedings
+		allowed = { original_tag = AFG }
+		available = {
+			OR = {
+				NOT = { has_country_leader = { character = AFG_Mohammad_Hashim_han ruling_only = yes } }
+				has_completed_focus = AFG_reorganization_of_courts
+			}
+		}
+		fire_only_once = no
+		cost = 100
+		days_remove = 90
+		days_re_enable = 100
+		modifier = {
+			production_speed_buildings_factor = 0.05
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expand_the_role_of_the_state_in_legal_proceedings"
+			add_stability = -0.03
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_the_role_of_the_state_in_legal_proceedings"
+			add_stability = 0.02
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = -0.1
+				tooltip_side = AFG_modernists
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_MONARCHY 
+			}
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				} 
+			}
+		}
+	}
+	
+	AFG_expand_the_waqf_holdings = {
+		priority = 150
+		icon = GFX_decision_AFG_expand_the_waqf_holdings
+		allowed = { original_tag = AFG }
+		fire_only_once = no
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 20 }
+			check_variable = {
+				has_political_power > custom_cost_pp
+			} 
+			any_controlled_state = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		custom_cost_text = slot_and_pol_cost
+		days_remove = 70
+		days_re_enable = 140
+		modifier = {
+			stability_factor = 0.05
+			consumer_goods_factor = -0.3
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expand_the_waqf_holdings"
+			hidden_effect = { add_political_power = -20 }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_the_waqf_holdings"
+			add_stability = 0.02
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = 0.1
+				tooltip_side = AFG_ulema_council
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_MONARCHY 
+			}
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				}
+			}
+		}
+	}
+	
+	AFG_expand_the_propaganda_of_Pashtun_nationalism = {
+		priority = 100
+		icon = GFX_decision_muslim_propaganda
+		allowed = { original_tag = AFG }
+		available = { has_completed_focus = AFG_support_for_Pashtun_nationalism }
+		fire_only_once = no
+		cost = 30
+		days_remove = 30
+		days_re_enable = 100
+		modifier = {
+			political_power_factor = -0.15
+			war_support_weekly_factor = 0.02
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expand_the_propaganda_of_Pashtun_nationalism"
+			add_stability = -0.015
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_the_propaganda_of_Pashtun_nationalism"
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = -0.05
+				tooltip_side = AFG_modernists
+			}
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -5
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 10
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 10
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_MONARCHY 
+			}
+			modifier = {
+				add = 5
+				has_country_flag = NW_AFG_AI_MONARCHY 
+				check_variable = { AFG_Pashtun_tension > 85 }
+				check_variable = { AFG_Tajiks_tension < 80 }
+				check_variable = { AFG_Hoz_tension < 80 }
+			}
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				}
+				check_variable = { AFG_Tajiks_tension < 80 }
+				check_variable = { AFG_Hoz_tension < 80 }
+			}
+		}
+	}
+	
+	AFG_expand_the_powers_of_Sharia_patrols = {
+		priority = 70
+		icon = GFX_decision_tur_up
+		allowed = { original_tag = AFG }
+		available = { NOT = { has_country_flag = AFG_curtail_the_powers_of_Sharia_patrols_flag } }
+		fire_only_once = no
+		cost = 40
+		days_remove = 70
+		days_re_enable = 120
+		modifier = {
+			monthly_population = -0.05
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expand_the_powers_of_Sharia_patrols"
+			set_country_flag = AFG_expand_the_powers_of_Sharia_patrols_flag
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.05
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = -0.05
+			}
+			add_popularity = {
+				ideology = trozkism
+				popularity = -0.05
+			}			
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_the_powers_of_Sharia_patrols"
+			clr_country_flag = AFG_expand_the_powers_of_Sharia_patrols_flag
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = 0.1
+				tooltip_side = AFG_ulema_council
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_MONARCHY 
+			}
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				}
+			}
+		}
+	}
+	
+	AFG_curtail_the_powers_of_Sharia_patrols = {
+		priority = 50
+		icon = GFX_decision_AFG_curtail_the_powers_of_Sharia_patrols
+		allowed = { original_tag = AFG }
+		available = { NOT = { has_country_flag = AFG_expand_the_powers_of_Sharia_patrols_flag } }
+		fire_only_once = no
+		cost = 50
+		days_remove = 70
+		days_re_enable = 120
+		modifier = {
+			research_speed_factor = 0.05
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_curtail_the_powers_of_Sharia_patrols"
+			set_country_flag = AFG_curtail_the_powers_of_Sharia_patrols_flag
+			add_stability = -0.05
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_curtail_the_powers_of_Sharia_patrols"
+			clr_country_flag = AFG_curtail_the_powers_of_Sharia_patrols_flag
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = -0.1
+				tooltip_side = AFG_modernists
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_MONARCHY 
+			}
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_FASCISM_NH
+					has_country_flag = NW_AFG_AI_SHAH_MAHMUD_KHAN_NH
+				} 
+			}
+		}
+	}
+}
+
+AFG_the_pro_fascist_intelligentsia = {
+
+	AFG_attract_more_instructors_from_Germany = {
+		priority = 1000
+		icon = GFX_decision_ger_reichskommissariats
+		allowed = { original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+		}
+		visible = {
+			GER = {
+				exists = yes
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		fire_only_once = no
+		cost = 30
+		days_re_enable = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_attract_more_instructors_from_Germany"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 7
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+
+	AFG_attract_more_instructors_from_Italy = {
+		priority = 900
+		icon = GFX_decision_generic_political_discourse
+		allowed = { original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+		}
+		visible = {
+			ITA = {
+				exists = yes
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		fire_only_once = no
+		cost = 30
+		days_re_enable = 300
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_attract_more_instructors_from_Italy"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 5
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_tech_bonus = {
+				name = AFG_attract_more_instructors_from_Italy_bonus
+				bonus = 0.25
+				uses = 1
+				category = industry
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}		
+	
+	AFG_attract_more_instructors_from_Japan = {
+		priority = 800
+		icon = GFX_decision_generic_political_discourse
+
+		allowed = { original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+		}
+		visible = {
+			JAP = {
+				exists = yes
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		fire_only_once = no
+		cost = 30
+		days_re_enable = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_attract_more_instructors_from_Japan"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 2
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_manpower = 18
+			add_war_support = 0.02
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}	
+	
+	AFG_to_support_the_mining_business_in_Hazarajat = {
+		priority = 700
+		icon = GFX_decision_steel
+		allowed = { original_tag = AFG }
+		available = {
+			has_completed_focus = AFG_to_found_Afghanistan_Mines_Ltd
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+			set_temp_variable = { AFG_fashist_influence_temp2_cost_focus = 60 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_3_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp2_cost_focus }
+			}
+			controls_state = 949
+			949 = {
+				is_controlled_by = ROOT
+				has_resources_amount = {
+					resource = steel
+					amount < 12
+					delivered = no
+				}
+			}
+		}
+		visible = {
+			949 = {
+				is_controlled_by = ROOT
+				has_resources_amount = {
+					resource = steel
+					amount < 12
+					delivered = no
+				}
+			}
+		}
+		fire_only_once = no
+		cost = 70
+		days_re_enable = 300
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_support_the_mining_business_in_Hazarajat"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 3
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.04
+			}
+			add_resource = {
+				type = steel
+				amount = 2
+				state = 949
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+	
+	AFG_to_support_the_mining_business_in_Kabulistan = {
+		priority = 600
+		icon = GFX_decision_tungsten
+		allowed = { original_tag = AFG }
+		available = {
+			has_completed_focus = AFG_to_found_Afghanistan_Mines_Ltd
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+			set_temp_variable = { AFG_fashist_influence_temp2_cost_focus = 60 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_3_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp2_cost_focus }
+			}
+			267 = {
+				is_controlled_by = ROOT
+				has_resources_amount = {
+					resource = tungsten
+					amount < 12
+					delivered = no
+				}
+			}
+		}
+		visible = {
+			267 = {
+				is_controlled_by = ROOT
+				has_resources_amount = {
+					resource = tungsten
+					amount < 12
+					delivered = no
+				}
+			}
+		}
+		fire_only_once = no
+		cost = 70
+		days_re_enable = 300
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_support_the_mining_business_in_Kabulistan"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 3
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.04
+			}
+			add_resource = {
+				type = tungsten
+				amount = 2
+				state = 267
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+	
+	AFG_lapis_lazuli_mining = {
+		priority = 500
+		icon = GFX_decision_lazurit
+		allowed = { original_tag = AFG }
+		available = {
+			has_completed_focus = AFG_to_found_Afghanistan_Mines_Ltd
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 60 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp_cost_focus }
+			}
+		}
+		fire_only_once = yes
+		cost = 40
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_lapis_lazuli_mining"
+			add_ideas = AFG_lapis_lazuli_mining_idea
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+	
+	AFG_to_attract_modernists_to_our_side = {
+		priority = 400
+		icon = GFX_decision_modernist_afg
+		allowed = { original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+			set_temp_variable = { AFG_fashist_influence_temp2_cost_focus = 50 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_3_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp2_cost_focus }
+			}
+		}
+		fire_only_once = no
+		cost = 30
+		days_re_enable = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_attract_modernists_to_our_side"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 3
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			add_power_balance_value = {
+				id = AFG_power_balance
+				value = -0.05
+				tooltip_side = AFG_modernists
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.02
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+	
+	AFG_support_war_shops = {
+		priority = 300
+		icon = GFX_decision_generic_industrial
+		allowed = {	original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 100 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_2_tt 
+				check_variable = { AFG_fashist_influence < AFG_fashist_influence_temp_cost_focus }
+			}
+			set_temp_variable = { AFG_fashist_influence_temp2_cost_focus = 70 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_3_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp2_cost_focus }
+			}
+		}
+		fire_only_once = no
+		cost = 100
+		days_re_enable = 400
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_support_war_shops"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = 3
+				tooltip = AFG_plus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.04
+			}
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes		
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = -1
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+				}
+			}
+			modifier = {
+				add = 10
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+	
+	AFG_expulsion_of_German_designers = {
+		priority = 200
+		icon = GFX_decision_eng_trade_unions_demand
+		allowed = { original_tag = AFG }
+		available = {
+			set_temp_variable = { AFG_fashist_influence_temp_cost_focus = 0 }
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_tt 
+				check_variable = { AFG_fashist_influence > AFG_fashist_influence_temp_cost_focus }
+			}
+		}
+		fire_only_once = no
+		cost = 60
+		days_re_enable = 200
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_expulsion_of_German_designers"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = -8
+				tooltip = AFG_minus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_popularity = {
+				ideology = fascism
+				popularity = -0.02
+			}
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+					date > 1939.9.1
+				}
+			}
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+	
+	AFG_repression_against_Basmachestvo = {
+		priority = 100
+		icon = GFX_decision_generic_brainwash
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_check_influence_tt 
+				check_variable = { AFG_fashist_influence > 0 }
+			}
+		}
+		fire_only_once = no
+		cost = 100
+		days_re_enable = 300
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_repression_against_Basmachestvo"
+			add_to_variable = {
+				var = AFG_fashist_influence
+				value = -12
+				tooltip = AFG_minus_to_fashist_influence_tt
+			}
+			AFG_fashist_influence_check_effect = yes
+			add_manpower = -2
+		}
+		ai_will_do = {
+			base = 1
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_MONARCHY 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_NEUTRAL_NH 
+					has_country_flag = NW_AFG_AI_ISMAIL_BALHI_DEMOCRATIC_NH
+					date > 1939.9.1
+				}
+			}
+			modifier = {
+				add = -1
+				has_country_flag = NW_AFG_AI_FASCISM_NH 
+			}
+		}
+	}
+}
+
+AFG_tribes_tension_category = {
+
+	AFG_disarm_the_tribes = {
+		visible = {
+			FROM = { is_controlled_by = ROOT check_variable = { AFG_demilitarize_state < 4 } } 
+			has_completed_focus = AFG_disarming_the_tribes
+			NOT = { any_enemy_country = { original_tag = ROOT } }
+		}
+		available = { NOT = { has_country_flag = AFG_demilit_is_going_flag } }
+		state_target = yes
+		targets = { 947 948 950 267 949 946 951 952 415 }
+		on_map_mode = map_only
+		icon = {
+			key = demilitarized_0
+			trigger = { FROM = { check_variable = { var = AFG_demilitarize_state value = 0 compare = equals } } }
+		}
+		icon = {
+			key = demilitarized_1
+			trigger = { FROM = { check_variable = { var = AFG_demilitarize_state value = 1 compare = equals } } }
+		}
+		icon = {
+			key = demilitarized_2
+			trigger = { FROM = { check_variable = { var = AFG_demilitarize_state value = 2 compare = equals } } }
+		}
+		icon = {
+			key = demilitarized_3
+			trigger = { FROM = { check_variable = { var = AFG_demilitarize_state value = 3 compare = equals } } }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { command_power_temp_cost = 10 }
+			set_temp_variable = { custom_cost_pp = 15 }
+			has_political_power > custom_cost_pp
+			command_power > command_power_temp_cost
+		}
+		custom_cost_text = pol_and_comnand_power_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_disarm_the_Pashtun_tribes"
+			FROM = { set_state_flag = AFG_demilitarize_state_flag }
+			set_country_flag = AFG_demilit_is_going_flag
+			hidden_effect = { add_political_power = -15 add_command_power = -10 }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_disarm_the_Pashtun_tribes"
+			clr_country_flag = AFG_demilit_is_going_flag
+			if = {
+				limit = { FROM = { OR = { state = 947 state = 948 state = 950 } } }
+				if = { limit = { check_variable = { AFG_Pashtun_tension > 0 } }
+					random_list = {
+						AFG_Pashtun_tension = {
+							custom_effect_tooltip = AFG_disarm_1_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.0 } }
+						}
+						AFG_Pashtun_tension = {
+							custom_effect_tooltip = AFG_disarm_2_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.1 } }
+						}
+						10 = {
+							custom_effect_tooltip = AFG_disarm_3_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+						}
+					}
+				}
+				else = {
+					custom_effect_tooltip = AFG_disarm_3_tt
+					hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+				}
+			}
+			if = {
+				limit = { FROM = { state = 267 } }
+				random_list = {
+					1 = {
+						custom_effect_tooltip = AFG_disarm_1_tt
+						hidden_effect = { country_event = { id = NW_AFG_disarm.0 } }
+					}
+					4 = {
+						custom_effect_tooltip = AFG_disarm_2_tt
+						hidden_effect = { country_event = { id = NW_AFG_disarm.1 } }
+					}
+					90 = {
+						custom_effect_tooltip = AFG_disarm_3_tt
+						hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+					}
+				}
+			}
+			if = {
+				limit = { FROM = { state = 949 } }
+				if = {
+					limit = { check_variable = { AFG_Hoz_tension > 0 } }
+					random_list = {
+						AFG_Hoz_tension = {
+							custom_effect_tooltip = AFG_disarm_1_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.0 } }
+						}
+						AFG_Hoz_tension = {
+							custom_effect_tooltip = AFG_disarm_2_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.1 } }
+						}
+						10 = {
+							custom_effect_tooltip = AFG_disarm_3_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+						}
+					}
+				}
+				else = {
+					custom_effect_tooltip = AFG_disarm_3_tt
+					hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+				}
+			}
+			if = {
+				limit = { FROM = { OR = { state = 946 state = 951 state = 952 state = 415 } } }
+				if = {
+					limit = { check_variable = { AFG_Tajiks_tension > 0 } }
+					random_list = {
+						AFG_Tajiks_tension = {
+							custom_effect_tooltip = AFG_disarm_1_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.0 } }
+						}
+						AFG_Tajiks_tension = {
+							custom_effect_tooltip = AFG_disarm_2_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.1 } }
+						}
+						10 = {
+							custom_effect_tooltip = AFG_disarm_3_tt
+							hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+						}
+					}
+				}
+				else = {
+					custom_effect_tooltip = AFG_disarm_3_tt
+					hidden_effect = { country_event = { id = NW_AFG_disarm.2 } }
+				}
+			}
+		}
+		ai_will_do = {
+			base = 30
+			modifier = {
+				add = 70
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+					AND = {
+						check_variable = { AFG_Pashtun_tension < 60 }
+						check_variable = { AFG_Tajiks_tension < 60 }
+						check_variable = { AFG_Hoz_tension < 60 }
+					}
+				}
+			}
+			modifier = {
+				add = -30
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				OR = {
+					check_variable = { AFG_Pashtun_tension > 80 }
+					check_variable = { AFG_Tajiks_tension > 80 }
+					check_variable = { AFG_Hoz_tension > 80 }	
+				}
+			}
+		}
+	}
+	
+	AFG_make_concessions_to_the_Khazars = {
+		priority = 600
+		icon = GFX_decision_give_land_to_hazara
+		allowed = { original_tag = AFG }
+		visible = { any_enemy_country = { has_cosmetic_tag = AFG_hazarajat } }
+		fire_only_once = no
+		days_re_enable = 50
+		cost = 0
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_make_concessions_to_the_Khazars"
+			custom_effect_tooltip = AFG_make_concessions_to_the_Khazars_tt
+			random_enemy_country = {
+				limit = { has_cosmetic_tag = AFG_hazarajat }
+				country_event = { id = NW_AFG.42 hours = 6 }
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_benefits_for_Hazars = {
+		priority = 590
+		icon = GFX_decision_give_land_to_hazara
+		allowed = { original_tag = AFG }
+		visible = { has_completed_focus = AFG_constitution_based_on_Pashtunvalai }
+		fire_only_once = yes
+		custom_cost_trigger = {
+			set_temp_variable = { stability_cost = 0.05 }
+			set_temp_variable = { stability_total = stability }
+			subtract_from_temp_variable = { stability_total = modifier@stability_factor }
+		}
+		custom_cost_text = stability_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_benefits_for_Hazars"
+			hidden_effect = { add_stability = -0.05 }
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 70
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			custom_effect_tooltip = AFG_constitution_based_on_Pashtunvalai_idea_tt_change1
+			if = {
+				limit = { has_idea = AFG_constitution_based_on_Pashtunvalai_idea }
+				hidden_effect = {
+					swap_ideas = { 
+						remove_idea = AFG_constitution_based_on_Pashtunvalai_idea
+						add_idea = AFG_constitution_based_on_Pashtunvalai_idea1
+					}
+				}
+			}
+			else = {
+				hidden_effect = {
+					swap_ideas = { 
+						remove_idea = AFG_constitution_based_on_Pashtunvalai_idea2
+						add_idea = AFG_constitution_based_on_Pashtunvalai_idea3
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 30
+			modifier = {
+				add = -30
+				check_variable = { AFG_Pashtun_tension > 20 }
+			}
+		}
+	}
+	
+	AFG_benefits_for_Tajiks = {
+		priority = 580
+		icon = GFX_decision_give_land_to_tajik
+		allowed = { original_tag = AFG }
+		visible = { has_completed_focus = AFG_constitution_based_on_Pashtunvalai }
+		fire_only_once = yes
+		custom_cost_trigger = {
+			set_temp_variable = { stability_cost = 0.05 }
+			set_temp_variable = { stability_total = stability }
+			subtract_from_temp_variable = { stability_total = modifier@stability_factor }
+		}
+		custom_cost_text = stability_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_benefits_for_Tajiks"
+			hidden_effect = { add_stability = -0.05 }
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 65
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			custom_effect_tooltip = AFG_constitution_based_on_Pashtunvalai_idea_tt_change2
+			if = {
+				limit = { has_idea = AFG_constitution_based_on_Pashtunvalai_idea }
+				hidden_effect = {
+					swap_ideas = { 
+						remove_idea = AFG_constitution_based_on_Pashtunvalai_idea
+						add_idea = AFG_constitution_based_on_Pashtunvalai_idea2
+					}
+				}
+			}
+			else = {
+				hidden_effect = {
+					swap_ideas = { 
+						remove_idea = AFG_constitution_based_on_Pashtunvalai_idea1
+						add_idea = AFG_constitution_based_on_Pashtunvalai_idea3
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 30
+			modifier = {
+				add = -30
+				check_variable = { AFG_Pashtun_tension > 25 }
+			}
+		}
+	}
+	
+	AFG_to_support_the_militancy_of_the_tribes = {
+		priority = 500
+		icon = GFX_decision_support_militancy
+		allowed = { original_tag = AFG }
+		available = { has_war_support < 1 }
+		fire_only_once = no
+		days_remove = 90
+		days_re_enable = 230
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 30 }
+			has_political_power > custom_cost_pp
+			set_temp_variable = { stability_cost = 0.01 }
+			set_temp_variable = { stability_total = stability }
+			subtract_from_temp_variable = { stability_total = modifier@stability_factor }
+		}
+		custom_cost_text = pol_and_stability_cost
+		modifier = {
+			mobilization_speed = 0.25
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_support_the_militancy_of_the_tribes"
+			hidden_effect = {
+				add_political_power = -30
+				add_stability = -0.01
+				country_event = { id = NW_AFG.11 days = 200 } 
+			}
+			add_war_support = 0.05
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -5
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			custom_effect_tooltip = AFG_to_support_the_militancy_of_the_tribes_tt
+		}
+		ai_will_do = {
+			base = 0			#suck dick#
+		}
+	}
+	
+	AFG_to_bribe_tribal_sheikhs = {
+		priority = 400
+		icon = GFX_decision_generic_political_discourse
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_bribe_tribal_sheikhs_tt 
+				check_variable = { AFG_Pashtun_tension > 20 }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_bribe_tribal_sheikhs_tt_1
+				check_variable = { AFG_Tajiks_tension > 20 }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_bribe_tribal_sheikhs_tt_2 
+				check_variable = { AFG_Hoz_tension > 20 }
+			}
+		}
+		fire_only_once = no
+		cost = AFG_to_bribe_tribal_sheikhs_cost_counter
+		days_re_enable = 360
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_bribe_tribal_sheikhs"
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -15
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -15
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -15
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_to_bribe_tribal_sheikhs_cost_counter
+				value = 20
+			}
+			if = {
+				limit = { any_controlled_state = { check_variable = { AFG_demilitarize_state < 4 } } }
+				random_controlled_state = {
+					limit = { 
+						is_core_of = ROOT 
+						check_variable = { AFG_demilitarize_state > 0 } 
+						check_variable = { AFG_demilitarize_state < 4 }
+						NOT = { has_state_flag = AFG_demilitarize_state_flag }
+					}
+					add_to_variable = {
+						var = AFG_demilitarize_state
+						value = -1
+						tooltip = AFG_minus_to_demilitarize_state_tt
+					}
+					clamp_variable = {
+						var = AFG_demilitarize_state
+						min = 0
+						max = 4
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+			modifier = {
+				add = -10
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+			}
+			modifier = {
+				add = 90
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				OR = {
+					check_variable = { AFG_Pashtun_tension > 50 }
+					check_variable = { AFG_Tajiks_tension > 50 }
+					check_variable = { AFG_Hoz_tension > 50 }	
+				}
+			}
+		}
+	}
+	
+	AFG_expand_state_land_holdings = {
+		priority = 400
+		icon = GFX_decision_nationalize_part_of_church_lands
+		allowed = { original_tag = AFG }
+		fire_only_once = no
+		cost = 35
+		days_remove = 20
+		days_re_enable = 360
+		modifier = {
+			consumer_goods_factor = -0.25
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_expand_state_land_holdings"
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 5
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 5
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 5
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			random_controlled_state = { 
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1 
+			}
+		}
+		ai_will_do = {
+			base = 10
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+			}
+			modifier = {
+				add = -10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+			}
+		}
+	}
+	
+	AFG_weaken_state_control = {
+		priority = 350
+		icon = GFX_decision_nationalize_part_of_church_lands
+		allowed = { original_tag = AFG }
+		available = { has_completed_focus = AFG_disarming_the_tribes }
+		fire_only_once = no
+		days_re_enable = 200
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_weaken_state_control"
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -5
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -5
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -5
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			every_controlled_state = {
+				limit = {
+					check_variable = { AFG_demilitarize_state < 4 } 
+					check_variable = { AFG_demilitarize_state > 0 } 
+					NOT = { has_state_flag = AFG_demilitarize_state_flag }
+				}
+				custom_effect_tooltip = AFG_weaken_state_control_tt
+				add_to_variable = {
+					var = AFG_demilitarize_state
+					value = -1
+					tooltip = AFG_minus_to_demilitarize_state_tt
+				}
+				clamp_variable = {
+					var = AFG_demilitarize_state
+					min = 0
+					max = 4
+				}
+			}
+			add_political_power = 45
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				check_variable = { AFG_Pashtun_tension > 5 }
+				check_variable = { AFG_Tajiks_tension > 5 }
+				check_variable = { AFG_Hoz_tension > 5 }
+			}
+		}
+	}
+	
+	AFG_send_Mohammad_Gul_han_Momand = {
+		visible = { has_country_flag = AFG_Mohammad_Gul_han_Momand_flag }
+		state_target = yes
+		targets = { 947 948 950 445 442 }
+		available = { FROM = { is_controlled_by = ROOT } }
+		on_map_mode = map_only
+		icon = my_icon
+		cost = 20
+		days_remove = 50
+		fire_only_once = yes
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_send_Mohammad_Gul_han_Momand"
+			set_country_flag = AFG_Mohammad_Gul_han_Momand_on_mission_flag 
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_send_Mohammad_Gul_han_Momand"
+			clr_country_flag = AFG_Mohammad_Gul_han_Momand_on_mission_flag
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -5
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			if = {
+				limit = { FROM = { NOT = { is_core_of = ROOT } } }
+				FROM = { add_compliance = 10 }
+			}	
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				check_variable = { AFG_Pashtun_tension > 5 }
+			}
+		}
+	}
+	
+	AFG_land_benefits_for_Tajiks = {
+		priority = 300
+		icon = GFX_decision_give_land_to_tajik
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_deprive_the_lands_Tajiks_tt_2 
+				NOT = { has_country_flag = AFG_to_deprive_the_lands_of_the_Takiks_Sardars_flag }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_tt 
+				NOT = { 
+					has_country_flag = AFG_land_benefits_for_Hoz_flag 
+					has_country_flag = AFG_land_benefits_for_Tajiks_flag 
+					has_country_flag = AFG_land_benefits_for_Pashtuns_flag 
+				}
+			}
+		}
+		fire_only_once = no
+		days_remove = 50
+		days_re_enable = 180
+		modifier = {
+			monthly_population = 0.15
+			production_speed_buildings_factor = -0.15
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_land_benefits_for_Tajiks"
+			set_country_flag = { flag = AFG_land_benefits_for_Tajiks_flag days = 180 value = 1 }
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -10
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 5
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 5
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+					AND = {
+						check_variable = { AFG_Tajiks_tension > 10 }
+						check_variable = { AFG_Pashtun_tension < 80 }
+						check_variable = { AFG_Hoz_tension < 80 }
+					}
+				}
+				
+			}
+		}
+	}
+	
+	AFG_land_benefits_for_Hoz = {
+		priority = 200
+		icon = GFX_decision_give_land_to_hazara
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_for_Hoz_tt 
+				NOT = { has_country_flag = AFG_to_deprive_the_lands_of_the_Hoz_Sardars_flag }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_tt 
+				NOT = { 
+					has_country_flag = AFG_land_benefits_for_Hoz_flag 
+					has_country_flag = AFG_land_benefits_for_Tajiks_flag 
+					has_country_flag = AFG_land_benefits_for_Pashtuns_flag 
+				}
+			}
+		}
+		fire_only_once = no
+		days_remove = 50
+		days_re_enable = 180
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_land_benefits_for_Tajiks"
+			set_country_flag = { flag = AFG_land_benefits_for_Hoz_flag days = 180 value = 1 }
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -10
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 5
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 5
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+		}
+		modifier = {
+			monthly_population = 0.15
+			production_factory_efficiency_gain_factor = -0.05
+			industrial_capacity_dockyard = -0.15
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+					AND = {
+						check_variable = { AFG_Hoz_tension > 10 }
+						check_variable = { AFG_Pashtun_tension < 80 }
+						check_variable = { AFG_Tajiks_tension < 80 }
+					}
+				}
+				
+			}
+		}
+	}
+	
+	AFG_land_benefits_for_Pashtuns = {
+		priority = 100
+		icon = GFX_decision_give_land_to_pashto
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_for_Pashtuns_tt 
+				NOT = { has_country_flag = AFG_to_deprive_the_lands_of_the_Pashtun_Sardars_flag }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_tt 
+				NOT = { 
+					has_country_flag = AFG_land_benefits_for_Hoz_flag 
+					has_country_flag = AFG_land_benefits_for_Tajiks_flag 
+					has_country_flag = AFG_land_benefits_for_Pashtuns_flag 
+				}
+			}
+		}
+		fire_only_once = no
+		days_remove = 50
+		days_re_enable = 180
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_land_benefits_for_Pashtuns"
+			set_country_flag = { flag = AFG_land_benefits_for_Pashtuns_flag days = 180 value = 1 }
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -10
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 5
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 5
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+		}
+		modifier = {
+			political_power_factor = -0.05
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				check_variable = { AFG_Pashtun_tension > 10 }
+				check_variable = { AFG_Hoz_tension < 80 }
+				check_variable = { AFG_Tajiks_tension < 80 }	
+			}
+		}
+	}
+	
+	AFG_to_deprive_the_lands_of_the_Pashtun_Sardars = {
+		priority = 70
+		icon = GFX_decision_transfer_state_lands_to_church
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_for_Pashtuns_tt_2 
+				NOT = { has_country_flag = AFG_land_benefits_for_Pashtuns_flag }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_deprive_the_lands_tt 
+				NOT = { 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Pashtun_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Takiks_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Hoz_Sardars_flag 
+				}
+			}
+		}
+		fire_only_once = no
+		days_remove = 40
+		days_re_enable = 180
+		custom_cost_trigger = {
+			any_controlled_state = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		custom_cost_text = slot_cost
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_deprive_the_lands_of_the_Pashtun_Sardars"
+			set_country_flag = { flag = AFG_to_deprive_the_lands_of_the_Pashtun_Sardars_flag days = 180 value = 1 }
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_deprive_the_lands_of_the_Pashtun_Sardars"
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -10
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -10
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 15
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.03
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				OR = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+					AND = {
+						check_variable = { AFG_Pashtun_tension < 80 }
+						check_variable = { AFG_Hoz_tension > 10 }
+						check_variable = { AFG_Tajiks_tension > 10 }	
+					}
+				}
+			}
+		}
+	}
+	
+	AFG_to_deprive_the_lands_of_the_Takiks_Sardars = {
+		priority = 65
+		icon = GFX_decision_transfer_state_lands_to_church
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_deprive_the_lands_Tajiks_tt 
+				NOT = { has_country_flag = AFG_land_benefits_for_Tajiks_flag }
+			}			
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_deprive_the_lands_tt 
+				NOT = { 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Pashtun_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Takiks_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Hoz_Sardars_flag 
+				}
+			}
+		}
+		fire_only_once = no
+		days_remove = 40
+		days_re_enable = 180
+		custom_cost_trigger = {
+			any_controlled_state = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		custom_cost_text = slot_cost
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_deprive_the_lands_of_the_Takiks_Sardars"
+			set_country_flag = { flag = AFG_to_deprive_the_lands_of_the_Takiks_Sardars_flag days = 180 value = 1 }
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_deprive_the_lands_of_the_Takiks_Sardars"
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -10
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 15
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -10
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.03
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				check_variable = { AFG_Pashtun_tension > 10 }
+				check_variable = { AFG_Hoz_tension > 10 }
+				check_variable = { AFG_Tajiks_tension < 80 }	
+			}
+		}
+	}
+	
+	AFG_to_deprive_the_lands_of_the_Hoz_Sardars = {
+		priority = 60
+		icon = GFX_decision_transfer_state_lands_to_church
+		allowed = { original_tag = AFG }
+		available = {
+			custom_trigger_tooltip = { 
+				tooltip = AFG_land_benefits_for_Hoz_tt_2
+				NOT = { has_country_flag = AFG_land_benefits_for_Hoz_flag }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_to_deprive_the_lands_tt 
+				NOT = { 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Pashtun_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Takiks_Sardars_flag 
+					has_country_flag = AFG_to_deprive_the_lands_of_the_Hoz_Sardars_flag 
+				}
+			}
+			hidden_trigger = { NOT = { has_country_flag = { flag = AFG_make_concessions_to_the_Khazars_flag value > 0 } } }
+		}
+		fire_only_once = no
+		days_remove = 40
+		days_re_enable = 180
+		custom_cost_trigger = {
+			any_controlled_state = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		custom_cost_text = slot_cost
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_deprive_the_lands_of_the_Hoz_Sardars"
+			set_country_flag = { flag = AFG_to_deprive_the_lands_of_the_Hoz_Sardars_flag days = 180 value = 1 }
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = no
+					}
+				}
+				hidden_effect = { add_state_modifier = { modifier = { local_building_slots = -1 } } }
+				effect_tooltip = { add_extra_state_shared_building_slots = -1 }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_deprive_the_lands_of_the_Hoz_Sardars"
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 15
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -10
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -10
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.03
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = {
+					has_country_flag = NW_AFG_AI_ULEMA
+					has_country_flag = NW_AFG_AI_AMANULLA_NH
+				}
+				check_variable = { AFG_Pashtun_tension > 10 }
+				check_variable = { AFG_Hoz_tension < 80 }
+				check_variable = { AFG_Tajiks_tension > 10 }	
+			}
+		}
+	}
+	
+	AFG_send_an_army_to_suppress_the_Tajiks = {
+		priority = 50
+		icon = GFX_decision_generic_political_discourse
+		allowed = { original_tag = AFG }
+		visible = { has_country_flag = AFG_the_Uprising_of_the_Daryl_speaking_peoples_flag }
+		fire_only_once = no
+		days_remove = 15
+		custom_cost_trigger = {
+			set_temp_variable = { rifles_temp_cost = 400 }
+			has_equipment = {
+				infantry_equipment > rifles_temp_cost
+			}
+		}
+		custom_cost_text = rifles_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_send_an_army_to_suppress_the_Tajiks"
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -400
+				}
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_send_an_army_to_suppress_the_Tajiks"
+			add_manpower = -45
+			add_days_mission_timeout = {
+				mission = AFG_the_Uprising_of_the_Daryl_speaking_peoples_mission
+				days = -40
+			}
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 5
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	
+	AFG_the_Uprising_of_the_Daryl_speaking_peoples_mission = {
+		allowed = { always = no }
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		icon = decision_category_generic_trozkism
+		is_good = no
+		days_mission_timeout = 340
+		fire_only_once = no
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_the_Uprising_of_the_Daryl_speaking_peoples_mission"
+			every_controlled_state = {
+				limit = { 
+					has_dynamic_modifier = { modifier = AFG_the_Uprising_of_the_Daryl_speaking_peoples }
+					OR = { state = 415 state = 952 state = 951 state = 946 }
+				}
+				remove_dynamic_modifier = { modifier = AFG_the_Uprising_of_the_Daryl_speaking_peoples }
+			}
+			clr_country_flag = AFG_the_Uprising_of_the_Daryl_speaking_peoples_flag
+		}
+	}
+}
+
+AFG_shirketization_category = {
+
+	AFG_association_of_small_shirketov = {
+		priority = 1000
+		icon = GFX_decision_generic_political_discourse
+		allowed = { original_tag = AFG }
+		fire_only_once = no
+		days_remove = 100
+		cost = 100
+		modifier = {
+			consumer_goods_factor = -0.15
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_association_of_small_shirketov"
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_construction_of_a_textile_factory_in_Puli_Khumri = {
+		cancel_trigger = {
+			OR = {
+				NOT = { controls_state = 951 }
+				has_completed_focus = AFG_privatization_of_State_owned_enterprises
+				has_completed_focus = AFG_stop_the_work_of_the_ANB
+			}
+		}
+		visible = { NOT = { has_country_flag = AFG_construction_of_a_textile_factory_in_Puli_Khumri_flag } }		#for new tags#
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		cost = 10
+		days_remove = 200
+		fire_only_once = yes
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_construction_of_a_textile_factory_in_Puli_Khumri"
+			set_country_flag = AFG_construction_of_a_textile_factory_in_Puli_Khumri_flag
+			951 = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes		
+					}
+				}
+			}	
+		}
+		modifier = {
+			consumer_goods_factor = 0.2
+			production_speed_buildings_factor = -0.02
+			production_factory_max_efficiency_factor = 0.02
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_construction_of_a_textile_factory_in_Jabal_Ussaranj = {
+		cancel_trigger = {
+			OR = {
+				NOT = { controls_state = 267 }
+				has_completed_focus = AFG_privatization_of_State_owned_enterprises
+				has_completed_focus = AFG_stop_the_work_of_the_ANB
+			}
+		}
+		visible = { NOT = { has_country_flag = AFG_construction_of_a_textile_factory_in_Jabal_Ussaranj_flag } }		#for new tags#
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		cost = 10
+		days_remove = 305
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_construction_of_a_textile_factory_in_Jabal_Ussaranj"
+			set_country_flag = AFG_construction_of_a_textile_factory_in_Jabal_Ussaranj_flag
+			267 = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes		
+					}
+				}
+			}	
+		}
+		modifier = {
+			consumer_goods_factor = 0.05
+			production_speed_buildings_factor = -0.04
+			production_factory_efficiency_gain_factor = 0.05
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_create_sugar_company = {
+		icon = generic_cavalry
+		cost = 40
+		fire_only_once = yes
+		visible = { NOT = { has_country_flag = AFG_create_sugar_company_flag } }		#for new tags#
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_create_sugar_company"
+			set_country_flag = AFG_create_sugar_company_flag
+			unlock_decision_tooltip = AFG_construction_of_a_sugar_factory_in_Baglan
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_construction_of_a_sugar_factory_in_Baglan = {
+		cancel_trigger = {
+			OR = {
+				NOT = { controls_state = 267 }
+				has_completed_focus = AFG_privatization_of_State_owned_enterprises
+				has_completed_focus = AFG_stop_the_work_of_the_ANB
+			}
+		}
+		visible = { 
+			has_country_flag = AFG_create_sugar_company_flag 
+			NOT = { has_country_flag = AFG_construction_of_a_sugar_factory_in_Baglan_flag }		#for new tags#
+		}
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		cost = 10
+		days_remove = 120
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_construction_of_a_sugar_factory_in_Baglan"
+			set_country_flag = AFG_construction_of_a_sugar_factory_in_Baglan_flag
+			267 = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes		
+					}
+				}
+			}	
+		}
+		modifier = {
+			consumer_goods_factor = 0.1
+			production_speed_buildings_factor = -0.01
+			production_factory_start_efficiency_factor = 0.03
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_resume_the_work_of_the_cement_plant = {
+		icon = generic_cavalry
+		available = {
+			controls_state = 267
+			num_of_factories > 3
+			267 = {
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		visible = { NOT = { has_country_flag = AFG_resume_the_work_of_the_cement_plant_flag } }    #for new tags#
+		cost = 120
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_resume_the_work_of_the_cement_plant"
+			set_country_flag = AFG_resume_the_work_of_the_cement_plant_flag
+			267 = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+			add_ideas = AFG_cement_plant
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_Vatan = {
+		icon = generic_cavalry
+		visible = { NOT = { has_country_flag = AFG_Vatan_flag } }  #for new tags#
+		cost = 55
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_Vatan"
+			set_country_flag = AFG_Vatan_flag
+			add_ideas = AFG_Vatan_idea
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_increase_the_industrial_capacity_of_the_north = {
+		available = {
+			has_completed_focus = AFG_spinzar
+			has_country_flag = AFG_Vatan_flag
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { controls_state = 951 }
+				has_completed_focus = AFG_privatization_of_State_owned_enterprises
+				has_completed_focus = AFG_stop_the_work_of_the_ANB
+			}
+		}
+		visible = { NOT = { has_country_flag = AFG_increase_the_industrial_capacity_of_the_north_flag } }		#for new tags#
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		cost = 80
+		days_remove = 70
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_increase_the_industrial_capacity_of_the_north"
+			set_country_flag = AFG_increase_the_industrial_capacity_of_the_north_flag
+			951 = {
+				if = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes		
+					}
+				}
+			}	
+			remove_ideas = AFG_Vatan_idea
+		}
+		modifier = {
+			monthly_population = 0.15
+			political_power_cost = 0.2
+			army_fuel_consumption_factor = 0.3
+		}
+		ai_will_do = {
+			base = 15
+		}
+	}
+	
+	AFG_concentration_on_domestic_production = {
+		available = {
+			has_completed_focus = AFG_introduce_customs_duties_on_trade_with_India
+			RAJ = { is_neighbor_of = ROOT }
+		}
+		visible = { RAJ = { exists = yes } }
+		cancel_trigger = { 
+			OR = {
+				NOT = { RAJ = { is_neighbor_of = ROOT  } }
+				has_completed_focus = AFG_privatization_of_State_owned_enterprises
+				has_completed_focus = AFG_stop_the_work_of_the_ANB
+			}			 
+		}
+		icon = decision_category_generic_trozkism
+		fire_only_once = no
+		cost = 50
+		days_remove = 90
+		days_re_enable = 70
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_concentration_on_domestic_production"
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.1
+			production_lack_of_resource_penalty_factor = -0.15
+			trade_opinion_factor = -0.5
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+AFG_joint_economic_planning_category = {
+	
+	AFG_industrial_complex_development_plan = {
+		priority = 300
+		icon = decision_category_generic_trozkism
+		fire_only_once = no
+		days_remove = 365
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_joint_economic_planning_category"
+			clr_country_flag = AFG_joint_economic_planning_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_infrastructure_development_plan"
+			set_country_flag = AFG_joint_economic_planning_flag
+		}
+		modifier = {
+			production_speed_industrial_complex_factor = 0.4
+			consumer_goods_factor = 0.2
+			production_speed_arms_factory_factor = -0.4
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_arms_factory_development_plan = {
+		priority = 200
+		icon = decision_category_generic_trozkism
+		fire_only_once = no
+		days_remove = 365
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_arms_factory_development_plan"
+			clr_country_flag = AFG_joint_economic_planning_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_infrastructure_development_plan"
+			set_country_flag = AFG_joint_economic_planning_flag
+		}
+		modifier = {
+			production_speed_arms_factory_factor = 0.4
+			consumer_goods_factor = 0.2
+			production_speed_industrial_complex_factor = -0.4
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_infrastructure_development_plan = {
+		priority = 100
+		icon = decision_category_generic_trozkism
+		fire_only_once = no
+		days_remove = 365
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_infrastructure_development_plan"
+			clr_country_flag = AFG_joint_economic_planning_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_infrastructure_development_plan"
+			set_country_flag = AFG_joint_economic_planning_flag
+		}
+		modifier = {
+			production_speed_rail_way_factor = 0.4
+			production_speed_supply_node_factor = 0.4
+			production_speed_infrastructure_factor = 0.4
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+AFG_support_the_Pashtuns_in_the_Free_Tribes_zone_category = {
+	
+	AFG_delivery_of_guns_to_Waziristan = {
+		priority = 300
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		custom_cost_trigger = {
+			set_temp_variable = { rifles_temp_cost = 400 }
+			has_equipment = {
+				infantry_equipment > rifles_temp_cost
+			} 
+		}
+		custom_cost_text = rifles_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_delivery_of_guns_to_Waziristan"
+			custom_effect_tooltip = AFG_delivery_of_guns_to_Waziristan_tt
+			set_country_flag = AFG_delivery_of_guns_to_Waziristan_flag
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -400
+				}
+			}
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+	
+	AFG_enlist_the_loyalty_of_the_Waziristan_Khans = {
+		priority = 200
+		icon = decision_category_generic_trozkism
+		fire_only_once = no
+		days_re_enable = 50
+		cost = 90
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_enlist_the_loyalty_of_the_Waziristan_Khans"
+			445 = {
+				add_compliance = -20
+				add_resistance = 20
+			}
+			442 = {
+				add_compliance = -20
+				add_resistance = 20
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_strike_at_the_occupiers = {
+		priority = 100
+		icon = decision_category_generic_trozkism
+		fire_only_once = yes
+		custom_cost_trigger = {
+			set_temp_variable = { command_power_temp_cost = 10 }
+			check_variable = {
+				command_power > command_power_temp_cost
+			} 
+		}
+		custom_cost_text = command_power_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_strike_at_the_occupiers"
+			hidden_effect = { add_command_power = -10 }
+			if = {
+				limit = { 445 = { controller = { controls_state = 442 } } }
+				445 = { 
+					controller = {
+						ROOT = {
+							declare_war_on = {
+								target = PREV
+								type = annex_everything
+							}
+						}
+					}
+				}
+			}
+			else = {
+				445 = { 
+					controller = {
+						ROOT = {
+							declare_war_on = {
+								target = PREV
+								type = annex_everything
+							}
+						}
+					}	
+				}
+				442 = { 
+					controller = {
+						ROOT = {
+							declare_war_on = {
+							target = PREV
+							type = annex_everything
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = AFG_delivery_of_guns_to_Waziristan_flag }
+				if = {
+					limit = { has_completed_focus = AFG_tribal_unions }
+					if = {
+						limit = { NOT = { has_template = "Tribal Lashkar" } }
+						division_template = {
+							name = "Tribal Lashkar"
+							is_locked = yes
+							division_names_group = AFG_CAV_01
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								infantry = { x = 0 y = 2 }
+								cavalry = { x = 1 y = 0 }
+								cavalry = { x = 1 y = 1 }
+								cavalry = { x = 1 y = 2 }
+							}
+						}
+					}
+				}
+				else = {
+					if = {
+						limit = { NOT = { has_template = "Tribal Lashkar" } }
+						division_template = {
+							name = "Tribal Lashkar"
+							is_locked = yes
+							division_names_group = AFG_CAV_01
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								cavalry = { x = 1 y = 0 }
+								cavalry = { x = 1 y = 1 }
+							}
+						}
+					}
+				}
+				meta_effect = {
+					text = {
+						445 = {
+							create_unit = {
+								division = "name = \"Tribal Lashkar\" division_template = \"Tribal Lashkar\" start_experience_factor = [IRREGULAR_EXP]"
+								owner = PREV
+								count = 3
+								allow_spawning_on_enemy_provs = yes
+							}
+						}	
+						442 = {
+							create_unit = {
+								division = "name = \"Tribal Lashkar\" division_template = \"Tribal Lashkar\" start_experience_factor = [IRREGULAR_EXP]"
+								owner = PREV
+								count = 2
+								allow_spawning_on_enemy_provs = yes
+							}
+						}
+					}
+					IRREGULAR_EXP = "[?AFG_start_experience_factor_irregular]"
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+AFG_central_Asian_Islamic_Federation_category = {
+	
+	AFG_integrate_state = {	
+		priority = 100
+		visible = { FROM = { is_owned_by = ROOT NOT = { is_core_of = ROOT } } }
+		state_target = yes
+		targets = { 1120 1187 1099 760 1188 440 441 442 443 444 445 1018 619 1122 287 759 617 1047 618 1121 742 1058 405 732 586 1156 1155 404 585 584 587 402 406 407 583 1157 589 1158 416 410 414 1158 412 413 411 418 266 1019 420 419 963 421 417 936 1186 }
+		available = { FROM = { compliance > 20 } }
+		cancel_trigger = { FROM = { compliance < 20 NOT = { is_controlled_by = ROOT } } }
+		icon = my_icon
+		cost = 50
+		on_map_mode = map_only
+		days_remove = 70
+		target_root_trigger = {
+			has_completed_focus = AFG_central_Asian_Islamic_Federation
+			has_capitulated = no
+			is_subject = no
+		}
+		target_trigger = {
+			FROM = { is_owned_by = ROOT NOT = { is_core_of = ROOT } }
+		}
+		modifier = {
+			political_power_factor = -0.05
+		}
+		remove_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_integrate_state"
+			FROM = { add_core_of = ROOT } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_integrate_country = {
+		priority = 200
+		visible = { FROM = { exists = yes all_owned_state = { NOT = { is_owned_by = ROOT } } } }
+		available = { FROM = { is_subject_of = ROOT } }
+		cancel_trigger = { FROM = { NOT = { is_subject_of = ROOT } } }
+		targets = { PER PAK TAJ TMS UZB KYR KAZ KAS SIK TNG KUM DZH }
+		targets_dynamic = yes
+		target_root_trigger = {
+			has_completed_focus = AFG_central_Asian_Islamic_Federation
+			has_capitulated = no
+			is_subject = no
+		}
+		target_trigger = {
+			FROM = {
+				exists = yes
+				OR = {
+					original_tag = PER
+					original_tag = PAK
+					original_tag = TAJ
+					original_tag = TMS
+					original_tag = UZB
+					original_tag = KYR
+					original_tag = KAZ
+					original_tag = KAS
+					original_tag = SIK
+					original_tag = TNG
+					original_tag = KUM
+					original_tag = DZH
+				}
+				all_owned_state = { NOT = { is_owned_by = ROOT } }
+			}
+		}
+		icon = my_icon
+		cost = 100
+		on_map_mode = decision_view_only
+		days_remove = 100
+		modifier = {
+			political_power_factor = -0.1
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_integrate_country"
+			annex_country = {
+				target = FROM
+				transfer_troops = yes
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_announce_CAIF = {
+		priority = 300
+		available = { 
+			custom_trigger_tooltip = { 
+				tooltip = AFG_num_core_states_tt 
+				check_variable = { num_core_states > 30 }
+			}
+			custom_trigger_tooltip = { 
+				tooltip = AFG_num_owned_states_tt 
+				check_variable = { num_owned_states > 30 }
+			}
+		}
+		icon = my_icon
+		cost = 100
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_announce_CAIF"
+			drop_cosmetic_tag = yes
+			set_cosmetic_tag = AFG_caif
+			set_country_flag = AFG_caif_flag
+			every_controlled_state = {
+				limit = { NOT = { is_core_of = ROOT } }
+				add_compliance = 30
+				add_resistance = -15
+			}
+			hidden_effect = { promote_character = AFG_Amanulla }
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+AFG_radical_modernization_category = {
+
+	AFG_dismantle_the_GazarGah_Mausoleum = {
+		priority = 700
+		available = { 
+		}
+		icon = my_icon
+		cost = 50
+		days_remove = 28
+		fire_only_once = yes 
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_dismantle_the_GazarGah_Mausoleum"
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				add_to_variable = {
+					var = AFG_ulema_tension
+					value = 15
+					tooltip = AFG_ulema_tension_tt
+				}
+				AFG_Amanulla_check_effect = yes
+			}
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 5
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.02
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_dismantle_the_GazarGah_Mausoleum"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = 5
+				tooltip = AFG_revolutionary_tt
+			}
+			AFG_Amanulla_check_effect = yes
+			random_owned_controlled_state = {
+				prioritize = { 415 }
+				limit = { 
+					hospital < 4
+					free_building_slots = {
+						building = fuel_silo
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = hospital
+					level = 2
+					instant_build = yes	
+				}
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Pashtun_tension < 80 }
+				check_variable = { AFG_ulema_tension < 70 }
+			}
+			modifier = {
+				add = 100
+				has_country_flag = NW_AFG_AI_ULEMA
+			}
+		}
+	}
+	
+	AFG_imprison_conservative_mullahs = {
+		priority = 600
+		available = { 
+		}
+		icon = my_icon
+		cost = 30
+		fire_only_once = no 
+		days_re_enable = 60
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_imprison_conservative_mullahs"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = 5
+				tooltip = AFG_revolutionary_tt
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				add_to_variable = {
+					var = AFG_ulema_tension
+					value = 8
+					tooltip = AFG_ulema_tension_tt
+				}
+			}
+			AFG_Amanulla_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_ulema_tension < 80 }
+			}
+			modifier = {
+				add = 100
+				has_country_flag = NW_AFG_AI_ULEMA
+			}
+		}
+	}
+	
+	AFG_restrict_the_rights_of_Sharia_courts = {
+		priority = 500
+		available = { 
+		}
+		icon = my_icon
+		cost = 70
+		fire_only_once = no 
+		days_re_enable = 210
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_restrict_the_rights_of_Sharia_courts"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = 10
+				tooltip = AFG_revolutionary_tt
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				add_to_variable = {
+					var = AFG_ulema_tension
+					value = 15
+					tooltip = AFG_ulema_tension_tt
+				}
+			}
+			AFG_Amanulla_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_ulema_tension < 70 }
+			}
+			modifier = {
+				add = 100
+				has_country_flag = NW_AFG_AI_ULEMA
+			}
+		}
+	}
+	
+	AFG_criticize_Afghan_citizens = {
+		priority = 400
+		available = { 
+		}
+		icon = my_icon
+		cost = 70
+		days_remove = 100
+		fire_only_once = no 
+		days_re_enable = 210
+		modifier = {
+			production_speed_buildings_factor = 0.1
+			production_factory_efficiency_gain_factor = 0.2
+			consumer_goods_factor = -0.15
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_criticize_Afghan_citizens"
+			add_stability = -0.03
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				add_to_variable = {
+					var = AFG_ulema_tension
+					value = 5
+					tooltip = AFG_ulema_tension_tt
+				}
+				AFG_Amanulla_check_effect = yes
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100
+				has_country_flag = NW_AFG_AI_ULEMA
+			}
+		}
+	}
+	
+	AFG_distribute_administrative_positions_among_the_clergy = {
+		priority = 300
+		visible = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+		available = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+		cancel_trigger = { has_completed_focus = AFG_dissolve_the_Ulema_Council }
+		icon = my_icon
+		cost = 40
+		days_remove = 20
+		fire_only_once = no 
+		days_re_enable = 90
+		modifier = {
+			political_power_factor = -0.4
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_distribute_administrative_positions_among_the_clergy"
+			add_to_variable = {
+				var = AFG_ulema_tension
+				value = -10
+				tooltip = AFG_ulema_tension_tt
+			}
+			AFG_Amanulla_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = { has_country_flag = NW_AFG_AI_ULEMA }
+				check_variable = { AFG_ulema_tension > 10 }
+			}
+		}
+	}
+	
+	AFG_the_abolition_of_revolutionary_transformations = {
+		priority = 200
+		available = {
+			set_temp_variable = { AFG_revolutionary_temp_cost_focus = 30 }
+			custom_trigger_tooltip = {
+				check_variable = { AFG_revolutionary > AFG_revolutionary_temp_cost_focus }
+				tooltip = AFG_revolutionary_2_tt
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				set_temp_variable = { AFG_ulema_tension_temp_cost_focus = 70 }
+				custom_trigger_tooltip = {
+					check_variable = { AFG_ulema_tension > AFG_ulema_tension_temp_cost_focus }
+					tooltip = AFG_ulema_tension_3_tt
+				}
+			}
+		}
+		icon = my_icon
+		cost = 40
+		fire_only_once = no 
+		days_re_enable = 20
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_the_abolition_of_revolutionary_transformations"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = -20
+				tooltip = AFG_revolutionary_tt
+			}
+			if = {
+				limit = { NOT = { has_completed_focus = AFG_dissolve_the_Ulema_Council } }
+				add_to_variable = {
+					var = AFG_ulema_tension
+					value = -15
+					tooltip = AFG_ulema_tension_tt
+				}
+			}
+			AFG_Amanulla_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				NOT = { has_country_flag = NW_AFG_AI_ULEMA }
+				check_variable = { AFG_ulema_tension > 15 }
+			}
+		}
+	}
+
+	AFG_direct_resources_to_industrialization = {
+		priority = 100
+		available = {
+			set_temp_variable = { AFG_revolutionary_temp_cost_focus = 10 }
+			custom_trigger_tooltip = {
+				check_variable = { AFG_revolutionary > AFG_revolutionary_temp_cost_focus }
+				tooltip = AFG_revolutionary_2_tt
+			}
+		}
+		icon = my_icon
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_revolutionary_temp_cost = 10 }
+			check_variable = {
+				AFG_revolutionary > AFG_revolutionary_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_revolutionary_cost
+		fire_only_once = no 
+		days_re_enable = 360
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_direct_resources_to_industrialization"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = -10
+				tooltip = AFG_revolutionary_tt
+			}
+			AFG_Amanulla_check_effect = yes
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_to_direct_the_revolutionary_spirit_to_the_administrative_apparatus = {
+		priority = 90
+		available = { 
+			set_temp_variable = { AFG_revolutionary_temp_cost_focus = 10 }
+			custom_trigger_tooltip = {
+				check_variable = { AFG_revolutionary > AFG_revolutionary_temp_cost_focus }
+				tooltip = AFG_revolutionary_2_tt
+			}
+		}
+		icon = my_icon
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_revolutionary_temp_cost = 10 }
+			check_variable = {
+				AFG_revolutionary > AFG_revolutionary_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_revolutionary_cost
+		fire_only_once = no 
+		days_re_enable = 360
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_direct_the_revolutionary_spirit_to_the_administrative_apparatus"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = -10
+				tooltip = AFG_revolutionary_tt
+			}
+			AFG_Amanulla_check_effect = yes
+			add_political_power = 120
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_overcome_the_backlog = {
+		priority = 80
+		visible = { has_dynamic_modifier = { modifier = AFG_an_underdeveloped_feudal_tribal_state } }
+		available = { 
+			set_temp_variable = { AFG_revolutionary_temp_cost_focus = 40 }
+			custom_trigger_tooltip = {
+				check_variable = { AFG_revolutionary > AFG_revolutionary_temp_cost_focus }
+				tooltip = AFG_revolutionary_2_tt
+			}
+			has_dynamic_modifier = { modifier = AFG_an_underdeveloped_feudal_tribal_state }
+		}
+		icon = my_icon
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_revolutionary_temp_cost = 40 }
+			check_variable = {
+				AFG_revolutionary > AFG_revolutionary_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_revolutionary_cost
+		fire_only_once = no 
+		days_re_enable = 360
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_overcome_the_backlog"
+			add_to_variable = {
+				var = AFG_revolutionary
+				value = -40
+				tooltip = AFG_revolutionary_tt
+			}
+			AFG_Amanulla_check_effect = yes
+			custom_effect_tooltip = AFG_an_underdeveloped_feudal_tribal_state_tt
+			add_to_variable = { a = 0.04 tooltip = production_speed_buildings_tooltip }
+			add_to_variable = { b = 0.04 tooltip = production_factory_max_efficiency_factor_tooltip }
+			add_to_variable = { c = 0.02 tooltip = research_speed_factor_tooltip }
+			add_to_variable = { d = 0.03 tooltip = global_building_slots_tooltip }
+			force_update_dynamic_modifier = yes
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+AFG_unity_of_Shiites_and_Sunnis_category = {
+	
+	AFG_propaganda_speeches_in_mixed_areas = {
+		priority = 120
+		icon = my_icon
+		cost = 45
+		fire_only_once = no 
+		days_re_enable = 180
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_propaganda_speeches_in_mixed_areas"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = 15
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 5
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Pashtun_tension < 80 }
+			}
+		}
+	}
+	
+	AFG_acceptance_of_the_Jafari_Madhhab = {
+		available = { NOT = { has_country_flag = AFG_acceptance_of_the_Hanafit_Madhhab_flag } }
+		visible = { NOT = { has_country_flag = AFG_acceptance_of_the_Hanafit_Madhhab_flag } }
+		priority = 110
+		icon = my_icon
+		fire_only_once = yes
+		days_remove = 28
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_acceptance_of_the_Jafari_Madhhab"
+			set_country_flag = AFG_acceptance_of_the_Jafari_Madhhab_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_acceptance_of_the_Jafari_Madhhab"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = 30
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = 15
+				tooltip = AFG_plus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -16
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = -20
+				tooltip = AFG_minus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Pashtun_tension < 80 }
+				check_variable = { AFG_Tajiks_tension > 16 }
+				check_variable = { AFG_Hoz_tension > 20 }
+			}
+		}
+	}
+	
+	AFG_acceptance_of_the_Hanafit_Madhhab = {
+		available = { NOT = { has_country_flag = AFG_acceptance_of_the_Jafari_Madhhab_flag } }
+		visible = { NOT = { has_country_flag = AFG_acceptance_of_the_Jafari_Madhhab_flag } }
+		priority = 100
+		icon = my_icon
+		fire_only_once = yes
+		days_remove = 28
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_acceptance_of_the_Hanafit_Madhhab"
+			set_country_flag = AFG_acceptance_of_the_Hanafit_Madhhab_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_acceptance_of_the_Hanafit_Madhhab"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = 20
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 20
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 8
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -10
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes					
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Pashtun_tension > 10 }
+				check_variable = { AFG_Tajiks_tension < 80 }
+				check_variable = { AFG_Hoz_tension < 70 }
+			}
+		}
+	}
+	
+	AFG_enlist_the_support_of_Sunni_Ulema = {
+		priority = 90
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 50
+		cost = 60
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_enlist_the_support_of_Sunni_Ulema"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = 5
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		ai_will_do = {
+			base = 10
+		}		
+	}
+	
+	AFG_interpret_the_Quran_in_the_right_way = {
+		priority = 80
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 280
+		cost = 30
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_interpret_the_Quran_in_the_right_way"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = 10
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		ai_will_do = {
+			base = 10
+		}		
+	}
+	
+	AFG_to_solve_the_contradictions_of_Tajiks_and_Pashtuns = {
+		priority = 80
+		icon = my_icon
+		fire_only_once = yes
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 35 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_solve_the_contradictions_of_Tajiks_and_Pashtuns"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -35
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+			custom_effect_tooltip = AFG_tajiks_tt
+			if = {
+				limit = { has_idea = AFG_oppression_from_Pashtuns }
+				remove_ideas = AFG_oppression_from_Pashtuns
+			}
+			else = { remove_ideas = AFG_oppression_from_Pashtuns1 }
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_unity = {
+		visible = { FROM = { is_owned_by = ROOT NOT = { is_core_of = ROOT } } }
+		state_target = yes
+		targets = { 995 896 229 894 895 963 419 420 421 417 266 1099 418 411 413 412 1187 1188 414 410 416  }
+		cancel_trigger = { FROM = { NOT = { is_controlled_by = ROOT } } }
+		icon = my_icon
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 15 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		on_map_mode = map_only
+		days_remove = 60
+		modifier = {
+			political_power_factor = -0.05
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_unity"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -15
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		remove_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_unity"
+			FROM = { add_core_of = ROOT } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_unity2 = {
+		visible = { has_completed_focus = AFG_unity_of_Islam FROM = { is_owned_by = ROOT NOT = { is_core_of = ROOT } } }
+		state_target = yes 
+		targets = { 1120 760 440 441 442 443 444 445 1018 619 1122 287 759 617 1047 618 1121 742 1058 405 732 586 1156 1155 404 585 584 587 402 406 407 583 1157 589 1158 414 1158 1019 936 1186 }
+		cancel_trigger = { FROM = { NOT = { is_controlled_by = ROOT } } }
+		icon = my_icon
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 15 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		on_map_mode = map_only
+		days_remove = 60
+		modifier = {
+			political_power_factor = -0.05
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_unity2"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -15
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		remove_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_unity2"
+			FROM = { add_core_of = ROOT } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_to_issue_a_fatwa_on_the_unity_of_the_people = {
+		available = { surrender_progress > 0.1 }
+		priority = 70
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 200
+		days_remove = 200
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 20 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		modifier = {
+			army_core_defence_factor = 0.2
+			surrender_limit = 1
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_issue_a_fatwa_on_the_unity_of_the_people"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -20
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_issue_a_fatwa_on_the_unity_of_the_people"
+		}
+		ai_will_do = {
+			base = 50
+		}		
+	}
+	
+	AFG_to_calm_Pashtuns_down = {
+		priority = 60
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 150
+		days_remove = 20
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 10 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_calm_Pashtuns_down"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -10
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_calm_Pashtuns_down"
+			add_to_variable = {
+				var = AFG_Pashtun_tension
+				value = -10
+				tooltip = AFG_minus_to_Pashtun_tension_tt
+			}
+			AFG_Pashtun_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Pashtun_tension > 10 }
+			}
+		}
+	}
+	
+	AFG_to_calm_Tajiks_down = {
+		priority = 50
+		icon = my_icon
+		fire_only_once = no
+		days_re_enable = 150
+		days_remove = 20
+		custom_cost_trigger = {
+			set_temp_variable = { AFG_unity_temp_cost = 10 }
+			check_variable = {
+				AFG_unity_var > AFG_unity_temp_cost
+			} 
+		}
+		custom_cost_text = AFG_unity_cost
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_calm_Tajiks_down"
+			add_to_variable = {
+				var = AFG_unity_var
+				value = -10
+				tooltip = AFG_unity_var_tt
+			}
+			AFG_unity_var_check_effect = yes
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_calm_Tajiks_down"
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = -5
+				tooltip = AFG_minus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				check_variable = { AFG_Tajiks_tension > 5 }
+			}
+		}		
+	}
+}
+
+AFG_red_shirts_category = {
+	
+	AFG_use_radio_propaganda = {
+		visible = { 
+			FROM = {
+				controller = { NOT = { tag = ROOT is_subject_of = ROOT is_in_faction_with = ROOT } }		#????????????????????????????????????
+				NOT = { 
+					has_dynamic_modifier = { modifier = AFG_red_shirts_modifier }
+					AND = {
+						is_controlled_by = BAN
+						is_core_of = BAN
+					}
+				} 
+			}
+		}
+		available = { has_tech = radio }
+		state_target = yes
+		targets = { 444 1018 440 443 445 442 }
+		cancel_trigger = {
+			FROM = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+						is_in_faction_with = ROOT
+					}
+				}
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision AFG_use_radio_propaganda"
+		}
+		icon = my_icon
+		cost = 30
+		on_map_mode = map_only
+		days_remove = 28
+		remove_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_use_radio_propaganda"
+			FROM = { add_dynamic_modifier = { modifier = AFG_red_shirts_modifier } } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_to_remind_of_the_pre_colonial_dawn = {
+		available = { FROM = { has_dynamic_modifier = { modifier = AFG_red_shirts_modifier } } }
+		visible = { 
+			FROM = {
+				has_dynamic_modifier = { modifier = AFG_red_shirts_modifier }
+				controller = { NOT = { tag = ROOT is_subject_of = ROOT is_in_faction_with = ROOT } }		#????????????????????????????????????
+				NOT = {
+					AND = {
+						is_controlled_by = BAN
+						is_core_of = BAN
+					}
+				} 
+			}
+		}
+		state_target = yes
+		targets = { 444 1018 440 443 445 442 }
+		icon = my_icon
+		cost = 20
+		fire_only_once = no
+		days_re_enable = 90
+		on_map_mode = map_only
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_to_remind_of_the_pre_colonial_dawn"
+			FROM = { add_compliance = -20 add_resistance = 10 } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_spread_the_info_about_colonial_crimes = {
+		available = { FROM = { has_dynamic_modifier = { modifier = AFG_red_shirts_modifier } } }
+		visible = { 
+			FROM = {
+				has_dynamic_modifier = { modifier = AFG_red_shirts_modifier }
+				controller = { NOT = { tag = ROOT is_subject_of = ROOT is_in_faction_with = ROOT } }		#????????????????????????????????????
+				NOT = {
+					AND = {
+						is_controlled_by = BAN
+						is_core_of = BAN
+					}
+				} 
+			}
+		}
+		state_target = yes
+		targets = { 444 1018 440 443 445 442 }
+		icon = my_icon
+		cost = 40
+		fire_only_once = no
+		days_re_enable = 90
+		on_map_mode = map_only
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_spread_the_info_about_colonial_crimes"
+			FROM = { add_compliance = -10 add_resistance = 5 } 
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	AFG_push_Pakistanis_towards_independence = {
+		priority = 50
+		icon = my_icon
+		fire_only_once = yes
+		cost = 50
+		available = {
+			PAK = {
+				all_core_state = { 
+					controller = {
+						core_compliance = {
+							occupied_country_tag = PREV
+							value < 10
+						}
+						core_resistance = {
+							occupied_country_tag = PREV
+							value > 70
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_push_Pakistanis_towards_independence"
+			every_country = {
+				limit = { NOT = { tag = ROOT is_in_faction_with = ROOT is_subject_of = ROOT } any_controlled_state = { is_core_of = PAK } }
+				release_on_controlled = PAK 
+				PAK = {
+					declare_war_on = {
+						target = PREV
+						type = civil_war
+					}
+					add_civil_war_target = PREV
+					PREV = { 
+						add_civil_war_target = PREV 
+						transfer_units_fraction = {
+							target = PREV
+							size = 0.3
+							stockpile_ratio = 0.3
+							army_ratio = 0.3
+							air_ratio = 0.3
+							navy_ratio = 0.3
+						}
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}		
+	}
+}
+
+AFG_pashtunisation_category = {
+	
+	AFG_pashtunisation = {				#афганский захват яйцами#
+		visible = { 
+			FROM = { 
+				is_controlled_by = ROOT
+				NOT = { is_core_of = ROOT } 
+			} 
+		}
+		available = { 950 = { state_population_k > 100 is_controlled_by = ROOT } }			
+		state_target = yes
+		targets = { 999 742 584 961 350 786 352 1049 962 416 417 414 266 1118 1187 1099 1097 995 420 421 412 410 411 1186 }
+		cancel_trigger = { FROM = { NOT = { is_controlled_by = ROOT } } }
+		icon = generic_nationalism
+		cost = 25
+		on_map_mode = map_only
+		days_remove = 100
+		complete_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_pashtunisation"
+			950 = { add_manpower = -15000 }
+		}
+		remove_effect = { 
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_pashtunisation"
+			FROM = { add_core_of = ROOT }
+			add_to_variable = {
+				var = AFG_Tajiks_tension
+				value = 3
+				tooltip = AFG_plus_to_Tajiks_tension_tt
+			}
+			AFG_Tajiks_tension_check_effect = yes
+			add_to_variable = {
+				var = AFG_Hoz_tension
+				value = 3
+				tooltip = AFG_plus_to_Hoz_tension_tt
+			}
+			AFG_Hoz_tension_check_effect = yes				
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 100
+				check_variable = { AFG_Tajiks_tension < 80 }
+				check_variable = { AFG_Hoz_tension < 80 }
+			}
+		}
+	}
+}
+
+AFG_great_Pashtunistan_category = {
+
+	AFG_to_put_a_viceroy_in_Pakistan = {
+		priority = 300
+		icon = my_icon		
+		cost = 120
+		available = {
+			controls_state = 1018
+			controls_state = 441
+			controls_state = 443
+			controls_state = 440
+			controls_state = 898
+			controls_state = 844
+			controls_state = 439
+			controls_state = 433
+			controls_state = 428
+		}
+		fire_only_once = yes
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_put_a_viceroy_in_Pakistan"
+			PAK = {
+				transfer_state = 1018
+				transfer_state = 441
+				transfer_state = 443
+				transfer_state = 440
+				transfer_state = 898
+				transfer_state = 844
+				transfer_state = 439
+				transfer_state = 433
+				transfer_state = 428
+				if = {
+					limit = {
+						OR = {
+							has_dlc = "Together for Victory"
+							has_dlc = "Man the Guns"
+						}
+					}
+					ROOT = {
+						set_autonomy = {
+							target = PREV
+							autonomy_state = autonomy_integrated_puppet
+						}
+					}
+				}
+				else = { ROOT = { puppet = PREV } }
+				set_cosmetic_tag = AFG_PAK_pashto_pak_xeno
+				add_ideas = AFG_pashtun_leaders_idea
+				hidden_effect = {
+					every_country = {
+						limit = { has_character = AFG_Mohammad_Hashim_han }
+						set_nationality = {
+							target_country = PREV
+							character = AFG_Mohammad_Hashim_han
+						}
+					}
+					add_country_leader_role = {
+						character = AFG_Mohammad_Hashim_han
+						promote_leader = yes
+						country_leader = {
+							ideology = nationalism_ideology
+							expire = "1965.1.1.1"
+							traits = { AFG_anglophile conservative_politician cruel }
+						}
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}		
+	}
+
+	AFG_to_put_a_viceroy_in_India = {
+		priority = 200
+		icon = my_icon		
+		cost = 200
+		available = {
+			controls_state = 834
+			controls_state = 923
+			controls_state = 423
+			controls_state = 425
+			controls_state = 424
+			controls_state = 427
+			controls_state = 1175
+			controls_state = 429
+			controls_state = 437
+			controls_state = 438
+			controls_state = 435
+			controls_state = 436
+			controls_state = 426
+			controls_state = 431
+			controls_state = 902
+			controls_state = 1104
+			controls_state = 430
+			controls_state = 432
+		}
+		fire_only_once = yes
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision AFG_to_put_a_viceroy_in_India"
+			RAJ = {
+				transfer_state = 834
+				transfer_state = 923
+				transfer_state = 423
+				transfer_state = 425
+				transfer_state = 424
+				transfer_state = 427
+				transfer_state = 1175
+				transfer_state = 429
+				transfer_state = 437
+				transfer_state = 438
+				transfer_state = 435
+				transfer_state = 436
+				transfer_state = 426
+				transfer_state = 431
+				transfer_state = 902
+				transfer_state = 1104
+				transfer_state = 430
+				transfer_state = 432
+				if = {
+					limit = {
+						OR = {
+							has_dlc = "Together for Victory"
+							has_dlc = "Man the Guns"
+						}
+					}
+					ROOT = {
+						set_autonomy = {
+							target = PREV
+							autonomy_state = autonomy_integrated_puppet
+						}
+					}
+				}
+				else = { ROOT = { puppet = PREV } }
+				set_cosmetic_tag = AFG_RAJ_pashto_ind_xeno
+				add_ideas = AFG_pashtun_leaders_idea 
+				add_ideas = RAJ_agrarian_society
+				hidden_effect = {
+					every_country = {
+						limit = { has_character = AFG_Mohammad_Gul_han_Momand }
+						set_nationality = {
+							target_country = PREV
+							character = AFG_Mohammad_Gul_han_Momand
+						}
+					}
+					promote_character = AFG_Mohammad_Gul_han_Momand
+				}
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}		
+	}
+}
+
+AFG_search_for_allies_in_the_middle_east_category = {
+	
+	AFG_search_for_allies_in_the_middle_east_dec = {
+		icon = generic_form_nation	
+		cost = 10		
+		targets = { OMA TUR PER AFG IRQ SYR EGY YEM BPL PAL JOR SAU }
+		targets_dynamic = yes
+		fire_only_once = yes		
+		visible = {
+			FROM = {
+				is_faction_leader = yes
+				exists = yes
+				NOT = { has_war_with = ROOT }
+			}
+			has_capitulated = no
+			is_in_faction = no
+			is_subject = no
+		}
+		target_root_trigger = {
+			has_completed_focus = AFG_search_for_allies_in_the_middle_east
+			has_capitulated = no
+			is_in_faction = no
+			is_subject = no
+		}
+		target_trigger = {
+			FROM = {
+				exists = yes
+				is_faction_leader = yes
+				NOT = { has_war_with = ROOT }
+				OR = {
+					original_tag = OMA
+					original_tag = TUR
+					original_tag = PER
+					original_tag = AFG
+					original_tag = IRQ
+					original_tag = SYR
+					original_tag = EGY
+					original_tag = YEM
+					original_tag = BPL
+					original_tag = PAL
+					original_tag = JOR
+					original_tag = SAU
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_search_for_allies_in_the_middle_east_dec (From [From.GetName] [From.GetTag])"
+			FROM = { country_event = { id = generic.2 hours = 3 } }
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+}
+
+nw_political_actions = {
+	
+	AFG_transfer_full_power_to_Zahir = {
+		priority = 1
+		icon = my_icon
+		fire_only_once = yes
+		allowed = { original_tag = AFG }
+		visible = { has_country_leader = { character = AFG_Shah_Mahmud_Khan ruling_only = yes } }
+		cost = 30
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision AFG_transfer_full_power_to_Zahir"
+			if = {
+				limit = { has_stability > 0.2 }
+				add_country_leader_role = {
+					character = AFG_Mohammed_Zahir_Shah
+					promote_leader = yes
+					country_leader = {
+						ideology = absolute_monarchy
+						expire = "1965.1.1.1"
+						traits = { AFG_speaks_Pashto_poorly AFG_supporter_of_modernization AFG_ladies_man inexperienced_monarch }
+					}
+				}
+			}
+			else = {
+				add_country_leader_role = {
+					character = AFG_Humaira_Begum 
+					promote_leader = yes
+					country_leader = {
+						ideology = absolute_monarchy
+						expire = "1965.1.1.1"
+						traits = { womens_rights_activist disgraced_monarch }
+					}
+				}
+				hidden_effect = { 
+					remove_advisor_role = {
+						character = "AFG_Humaira_Begum"
+						slot = political_advisor
+					}
+				}
+			}
+			remove_ideas = AFG_Mohammed_Zahir_Shah_idea
+		}
+		ai_will_do = {
+			base = 0
+		}		
+	}
+}

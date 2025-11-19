@@ -1,0 +1,176 @@
+on_actions = {
+	
+	### YCP ##
+	
+	on_weekly_YCP = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				if = {
+					limit = {
+						surrender_progress > 0.75 # TODO balance
+						has_war_with = MAN
+					}
+					country_event = ycp.3
+				}
+				
+				if = {
+					limit = { has_idea = YCP_communist_logistic_idea }
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 35
+					}
+				}
+				
+				if = {
+					limit = { 
+						has_war = yes 
+						has_dynamic_modifier = { modifier = YCP_young_chinese_party } 
+						check_variable = { casualties > YCP_ycp_casualties_recorded }
+					}
+					set_temp_variable = { casualties_temp = casualties }
+					subtract_from_temp_variable = { casualties_temp = YCP_ycp_casualties_recorded }
+					multiply_temp_variable = { casualties_temp = YCP_ycp_casualties_percent }
+					subtract_from_variable = { YCP_ycp_size = casualties_temp }
+					
+					add_to_variable = { YCP_ycp_casualties_size = casualties_temp }
+					set_variable = { YCP_ycp_casualties_recorded = casualties }
+				}
+			}
+		}
+	}
+	
+	on_weekly_MAN = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				if = {
+					limit = {
+						surrender_progress > 0.6 # TODO balance
+						has_war_with = YCP
+						NOT = { 
+							has_war_together_with = JAP
+							country_exists = CMA country_exists = MGM 
+						}
+						is_subject_of = JAP
+					}
+					JAP = { country_event = ycp.38 }
+				}
+			}
+		}
+	}
+	
+	on_monthly_YCP = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				if = {
+					limit = {
+						any_neighbor_country = {
+							is_literally_china = yes
+							NOT = { is_subject_of = JAP } # not japan bitches (MAN CSR EHB)
+							OR = { controls_state = 608 controls_state = 1132 } 
+						} 
+					}
+					country_event = { id = ycp.1 }
+					country_event = { id = ycp.2 } # TODO days = 1
+				}
+			}
+		}
+	}
+	
+	on_war_relation_added = { # on_declare_war 
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							FROM = { original_tag = JAP }
+							original_tag = CHI
+						}
+						AND = {
+							original_tag = JAP 
+							FROM = { original_tag = CHI }
+						}
+					}
+				}
+				CHI = { country_event = { id = ycp.5 days = 50 } }
+			}
+		}
+	}
+	
+	on_join_faction = { 
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							FROM = { original_tag = PRC }
+							original_tag = CHI
+						}
+						AND = {
+							original_tag = PRC
+							FROM = { original_tag = CHI }
+						}
+					}
+				}
+				CHI = { country_event = { id = ycp.6 days = 30 } }
+			}
+		}
+	}
+	
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					tag = MAN
+					FROM = { tag = YCP }
+					is_subject_of = JAP
+					NOT = { country_exists = MGM country_exists = CMA }
+				}
+				JAP = { country_event = ycp.40 }
+			}
+		}
+	}
+	
+	on_annex = { # on_civil_war_end
+		effect = {
+			if = {
+				limit = {
+					FROM = { original_tag = YCP }
+					original_tag = MAN
+				}
+				FROM = { # TODO возвращать в случае повторного появления YCP?
+					every_character = { ## FROM characters return to ROOT ##
+						limit = {
+							OR = {
+								is_character = YCP_zeng_qi 
+								is_character = YCP_li_huan 
+								is_character = YCP_zuo_shunsheng 
+							}
+						}
+						set_nationality = ROOT
+						log = "[GetDateText]: [THIS.GetName]: character set_nationality = [Root.GetTag]"
+					}
+				}
+			}
+		}
+	}
+	
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { 
+						state = 716 
+						has_dynamic_modifier = { modifier = YCP_storm_mukden_idea } 
+						NOT = { has_state_flag = YCP_fall_of_mukden }
+					}
+					ROOT = { original_tag = YCP has_war_with = FROM }
+					FROM = { original_tag = MAN } 
+				}
+				news_event = { id = ycp.43 hours = 6 } # TODO fire_only_once?
+			}
+		}
+	}
+}

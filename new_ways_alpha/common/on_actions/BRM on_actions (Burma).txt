@@ -1,0 +1,207 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				# BRM = {
+					# country_event = { id = NW_BRM.0 days = 23 }
+					# country_event = { id = NW_BRM.1 days = 63 }
+					# country_event = { id = NW_BRM.2 days = 65 }
+					# country_event = { id = NW_BRM.14 days = 122 }
+					# country_event = { id = NW_BRM.15 days = 123 }
+					# country_event = { id = NW_BRM.19 days = 158 }
+					# country_event = { id = NW_BRM.20 days = 229 }
+					# country_event = { id = NW_BRM.21 days = 247 }
+					# country_event = { id = NW_BRM.22 days = 335 }
+					# country_event = { id = NW_BRM.28 days = 373 }
+					# country_event = { id = NW_BRM.29 days = 382 }
+					# country_event = { id = NW_BRM.30 days = 457 }
+					# country_event = { id = NW_BRM.31 days = 471 }
+					# country_event = { id = NW_BRM.32 days = 758 }
+					# country_event = { id = NW_BRM.33 days = 776 }
+					# country_event = { id = NW_BRM.43 days = 854 }
+					# country_event = { id = NW_BRM.44 days = 874 }
+					# country_event = { id = NW_BRM.48 days = 983 }
+					# country_event = { id = NW_BRM.49 days = 1348 }
+					# country_event = { id = NW_BRM.103 days = 1588 }
+				# }
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			#Ивент для BRM
+			# if = {
+				# limit = {
+					# FROM.FROM = { state = 1175 }
+					# ROOT = {
+						# tag = BRM
+						# OR = {
+							# has_government = monarchy
+							# has_government = neutrality
+						# }
+						# has_country_flag = BRM_event_55_flag_1175
+					# }
+				# }
+				# ROOT = {
+					# clr_country_flag = BRM_event_55_flag_1175
+					# country_event = { id = NW_BRM.57 hours = 12 }
+				# }
+			# }
+		}
+	}
+	
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { original_tag = BRM }
+					FROM = {
+						tag = JAP
+						has_character = JAP_Ba_Maw
+						OR = {
+							has_government = fascism
+							has_government = monarchy
+							has_government = neutrality
+						}
+					}
+				}
+				ROOT = {
+					FROM = { JAP_Ba_Maw = { set_nationality = PREV } }
+					if = {
+						limit = { has_government = fascism }
+						add_country_leader_role = {
+							character = JAP_Ba_Maw
+							promote_leader = yes
+							country_leader = {
+								ideology = fascism_ideology
+								expire = "1965.1.1.1"
+								traits = {  }
+							}
+						}
+					}
+					else_if = {
+						limit = { has_government = monarchy }
+						add_country_leader_role = {
+							character = JAP_Ba_Maw
+							promote_leader = yes
+							country_leader = {
+								ideology = monarchy_ideology
+								expire = "1965.1.1.1"
+								traits = {  }
+							}
+						}
+					}
+					else = {
+						add_country_leader_role = {
+							character = JAP_Ba_Maw
+							promote_leader = yes
+							country_leader = {
+								ideology = militarism_ideology
+								expire = "1965.1.1.1"
+								traits = {  }
+							}
+						}
+					}
+					drop_cosmetic_tag = yes
+					set_cosmetic_tag = BRM_pro_japan_burma
+					mark_focus_tree_layout_dirty = yes
+				}
+			}
+		}
+	}
+	
+	#ROOT is subject FROM is overlord
+	on_subject_autonomy_level_change = {
+		effect = {
+			# if = {
+				# limit = {
+					# tag = BRM
+					# has_autonomy_state = autonomy_dominion
+					# FROM = { tag = RAJ }
+				# }
+				# if = {
+					# limit = { has_idea = BRM_divided_nations_idea }
+					# country_event = { id = NW_BRM.12 days = 3 }
+				# }
+				# if = {
+					# limit = { has_completed_focus = BRM_unite_the_union_of_five_flowers }
+					# news_event = { id = NW_BRM_news.0 days = 2 }
+					# country_event = { id = NW_BRM.50 days = 1 }
+				# }
+			# }
+		}
+	}
+	
+	# on_weekly_BRM = {
+		# effect = {
+			# if = {
+				# limit = {
+					# monarchy > 0.25
+					# OR = {
+						# has_government = monarchy
+						# has_government = neutrality
+					# }
+					# has_completed_focus = BRM_whitewash_the_name_of_king_thibault
+					# NOT = { has_country_flag = BRM_event_54_BLOCK_flag }
+				# }
+				# set_country_flag = BRM_event_54_BLOCK_flag
+				# if = {
+					# limit = { RAJ = { is_subject_of = ENG } }
+					# ENG = { country_event = { id = NW_BRM.54 hours = 6 } }
+				# }
+				# else = { RAJ = { country_event = { id = NW_BRM.54 hours = 6 } } }
+			# }
+			# if = {
+				# limit = { has_active_mission = BRM_hunger_marches_mission }
+				# if = {
+					# limit = {
+						# communism > 0.3
+						# NOT = { has_country_flag = BRM_event_35_BLOCK_flag }
+					# }
+					# set_country_flag = BRM_event_35_BLOCK_flag
+					# country_event = NW_BRM.35
+				# }
+				# else_if = {
+					# limit = {
+						# communism > 0.25
+						# NOT = { has_country_flag = BRM_event_36_BLOCK_flag }
+					# }
+					# set_country_flag = BRM_event_36_BLOCK_flag
+					# country_event = NW_BRM.36
+				# }
+				# else_if = {
+					# limit = {
+						# communism > 0.2
+						# NOT = { has_country_flag = BRM_event_37_BLOCK_flag }
+					# }
+					# set_country_flag = BRM_event_37_BLOCK_flag
+					# country_event = NW_BRM.37
+				# }
+				# else_if = {
+					# limit = {
+						# communism > 0.1
+						# NOT = { has_country_flag = BRM_event_38_BLOCK_flag }
+					# }
+					# set_country_flag = BRM_event_38_BLOCK_flag
+					# country_event = NW_BRM.38
+				# }
+			# }
+		# }
+	# }
+	
+	# on_daily_BRM = {
+		# effect = {
+			# if = {
+				# limit = { has_idea = BRM_propaganda_of_burmese_nationalism_idea }
+				# add_to_variable = { BRM_national_tension_var = modifier@BRM_national_tension_var_daily_modifier }
+				# BRM_national_tension_effect = yes
+			# }
+		# }
+	# }
+}

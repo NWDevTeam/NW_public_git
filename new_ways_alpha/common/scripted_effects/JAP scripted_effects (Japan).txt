@@ -1,0 +1,781 @@
+## Ассоциация_Помощи_Трону block
+
+JAP_aht_legitimacy_check = {
+	clamp_variable = { var = JAP_aht_legitimacy min = 0 max = 1 }
+	if = {
+		limit = { 
+			check_variable = { JAP_aht_legitimacy = 0 } 
+			NOT = { has_country_flag = JAP_aht_no_zero_legitimacy_effect }
+		}
+		country_event = NW_JAP_aht.14
+	}
+}
+
+JAP_aht_fractions_influence_update = {
+	set_temp_variable = { loyal = 0 }
+	set_temp_variable = { opposition = 0 }
+	for_each_scope_loop = {
+		array = JAP_aht_fractions
+		
+		clamp_variable = { var = JAP_aht_influence min = 0 }
+		if = {
+			limit = {
+				check_variable = { JAP_aht_fraction_position = 1 }
+			}
+			add_to_temp_variable = { loyal = JAP_aht_influence }
+		}
+		else_if = {
+			limit = {
+				check_variable = { JAP_aht_fraction_position = 3 }
+			}
+			add_to_temp_variable = { opposition = JAP_aht_influence }
+		}
+	}
+	set_variable = { JAP_aht_fraction_support = loyal }
+	add_to_temp_variable = { opposition = loyal }
+	divide_variable = { JAP_aht_fraction_support = opposition } # TODO opposition=0 ?
+}
+
+JAP_aht_faction_status_update = {
+	clamp_temp_variable = { var = position min = 1 max = 3 }
+	if = {
+		limit = { 
+			NOT = { check_variable = { position = var:faction:JAP_aht_fraction_position } }
+		}
+		set_temp_variable = { JAP_aht_fraction_position = position }
+		custom_effect_tooltip = {
+			localization_key = JAP_faction_status_change
+			FACTION = "[?var:faction.JAP_get_current_fraction_desc]"
+			NEW_STATUS = "[JAP_get_current_fraction_position_full]"
+		}
+		
+		set_variable = { var:faction:JAP_aht_fraction_position = position }
+	}
+	JAP_aht_fractions_influence_update = yes # TODO вынести наружу?
+}
+
+JAP_aht_activate = {
+	add_to_array = { JAP_aht_fractions = 1 }
+	add_to_array = { JAP_aht_fractions = 2 }
+	add_to_array = { JAP_aht_fractions = 3 }
+	add_to_array = { JAP_aht_fractions = 4 }
+	add_to_array = { JAP_aht_fractions = 5 }
+	add_to_array = { JAP_aht_fractions = 6 }
+	
+	if = {
+		limit = { has_country_leader = { character = JAP_Fumimaro_Konoe ruling_only = yes } }
+		set_variable = { 1.JAP_aht_influence = 15 } # Фракция партийных реформаторов
+		set_variable = { 1.JAP_aht_fraction_position = 1 }
+		set_variable = { 2.JAP_aht_influence = 20 } # Фракция левых обновленцев
+		set_variable = { 2.JAP_aht_fraction_position = 1 }
+		set_variable = { 3.JAP_aht_influence = 20 } # Фракция правых обновленцев
+		set_variable = { 3.JAP_aht_fraction_position = 1 }
+		set_variable = { 4.JAP_aht_influence = 10 } # Фракция национал-социалистов
+		set_variable = { 4.JAP_aht_fraction_position = 2 }
+		set_variable = { 5.JAP_aht_influence = 25 } # Фракция консерваторов
+		set_variable = { 5.JAP_aht_fraction_position = 3 }
+		set_variable = { 6.JAP_aht_influence = 0 } # Фракция Мацуоки
+		set_variable = { 6.JAP_aht_fraction_position = 2 }
+		set_variable = { JAP_aht_legitimacy = 0.8 } # Легитимность АПТ
+	}
+	else_if = {
+		limit = { has_country_leader = { character = JAP_Yosuke_Matsuoka ruling_only = yes } }
+		set_variable = { 1.JAP_aht_influence = 20 } # Фракция партийных реформаторов
+		set_variable = { 1.JAP_aht_fraction_position = 3 }
+		set_variable = { 2.JAP_aht_influence = 10 } # Фракция левых обновленцев
+		set_variable = { 2.JAP_aht_fraction_position = 2 }
+		set_variable = { 3.JAP_aht_influence = 15 } # Фракция правых обновленцев
+		set_variable = { 3.JAP_aht_fraction_position = 1 }
+		set_variable = { 4.JAP_aht_influence = 5 } # Фракция национал-социалистов
+		set_variable = { 4.JAP_aht_fraction_position = 2 }
+		set_variable = { 5.JAP_aht_influence = 25 } # Фракция консерваторов
+		set_variable = { 5.JAP_aht_fraction_position = 3 }
+		set_variable = { 6.JAP_aht_influence = 30 } # Фракция Мацуоки
+		set_variable = { 6.JAP_aht_fraction_position = 1 }
+		set_variable = { JAP_aht_legitimacy = 0.75 } # Легитимность АПТ
+	}
+	else_if = {
+		limit = { has_country_leader = { character = JAP_Hiranuma_Kiichiro ruling_only = yes } }
+		set_variable = { 1.JAP_aht_influence = 25 } # Фракция партийных реформаторов
+		set_variable = { 1.JAP_aht_fraction_position = 2 }
+		set_variable = { 2.JAP_aht_influence = 5 } # Фракция левых обновленцев
+		set_variable = { 2.JAP_aht_fraction_position = 3 }
+		set_variable = { 3.JAP_aht_influence = 10 } # Фракция правых обновленцев
+		set_variable = { 3.JAP_aht_fraction_position = 3 }
+		set_variable = { 4.JAP_aht_influence = 15 } # Фракция национал-социалистов
+		set_variable = { 4.JAP_aht_fraction_position = 2 }
+		set_variable = { 5.JAP_aht_influence = 45 } # Фракция консерваторов
+		set_variable = { 5.JAP_aht_fraction_position = 1 }
+		set_variable = { 6.JAP_aht_influence = 0 } # Фракция Мацуоки
+		set_variable = { 6.JAP_aht_fraction_position = 2 }
+		set_variable = { JAP_aht_legitimacy = 0.5 } # Легитимность АПТ
+	}
+	else_if = {
+		limit = { has_country_leader = { character = JAP_Fusanosuke_Kuhara ruling_only = yes } }
+		set_variable = { 1.JAP_aht_influence = 35 } # Фракция партийных реформаторов
+		set_variable = { 1.JAP_aht_fraction_position = 1 }
+		set_variable = { 2.JAP_aht_influence = 15 } # Фракция левых обновленцев
+		set_variable = { 2.JAP_aht_fraction_position = 3 }
+		set_variable = { 3.JAP_aht_influence = 15 } # Фракция правых обновленцев
+		set_variable = { 3.JAP_aht_fraction_position = 3 }
+		set_variable = { 4.JAP_aht_influence = 10 } # Фракция национал-социалистов
+		set_variable = { 4.JAP_aht_fraction_position = 2 }
+		set_variable = { 5.JAP_aht_influence = 25 } # Фракция консерваторов
+		set_variable = { 5.JAP_aht_fraction_position = 2 }
+		set_variable = { 6.JAP_aht_influence = 0 } # Фракция Мацуоки
+		set_variable = { 6.JAP_aht_fraction_position = 2 }
+		set_variable = { JAP_aht_legitimacy = 0.67 } # Легитимность АПТ
+	}
+	else = {
+		log = "BUG: САНЯ ДОЛБАЕБ ТУТ [ROOT.GetLeader] ЗАТЕСАЛСЯ!"
+	}
+	JAP_aht_fractions_influence_update = yes
+	
+	if = { # Влияние военных
+		limit = { check_variable = { JAP_the_level_of_insubordination_var > 0 } }
+		set_variable = { JAP_aht_military_influence = JAP_the_level_of_insubordination_var }
+	}
+	else = {
+		set_variable = { JAP_aht_military_influence = 10 }
+	}
+}
+
+##
+
+JAP_the_level_of_insubordination_effect = {
+
+	hidden_effect = {
+		if = {
+			limit = { has_dynamic_modifier = { modifier = JAP_ugaki_relationship_with_the_officer_corps_modifier } }
+			add_to_variable = { JAP_the_level_of_insubordination_var = JAP_the_level_of_insubordination_modifier_var }
+		}
+		clamp_variable = { var = JAP_the_level_of_insubordination_var min = 0 max = 100 }
+		set_temp_variable = { JAP_the_level_of_insubordination_var_TEMP = JAP_the_level_of_insubordination_var }
+		divide_temp_variable = { JAP_the_level_of_insubordination_var_TEMP = -200 }
+		set_variable = { JAP_the_level_of_insubordination_var_dyn = JAP_the_level_of_insubordination_var_TEMP }
+		divide_temp_variable = { JAP_the_level_of_insubordination_var_TEMP = 2 }
+		set_variable = { JAP_the_level_of_insubordination_var_1_dyn = JAP_the_level_of_insubordination_var_TEMP }
+		force_update_dynamic_modifier = yes
+		
+		if = {
+			limit = {
+				check_variable = { JAP_the_level_of_insubordination_var > 89 }
+				NOT = {
+					has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_country_flag
+					has_country_flag = JAP_event290_flag
+					has_country_flag = JAP_event289_flag
+					has_country_flag = JAP_event288_flag
+				}
+				JAP_isoroku_yamamoto = { is_assigned = no }
+			}
+			set_country_flag = JAP_event288_flag
+			country_event = NW_JAP.288
+		}
+		else_if = {
+			limit = {
+				check_variable = { JAP_the_level_of_insubordination_var > 69 }
+				NOT = {
+					has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_country_flag
+					has_country_flag = JAP_event290_flag
+					has_country_flag = JAP_event289_flag
+				}
+			}
+			set_country_flag = JAP_event289_flag
+			country_event = NW_JAP.289
+		}
+		else_if = {
+			limit = {
+				check_variable = { JAP_the_level_of_insubordination_var > 59 }
+				NOT = {
+					has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_country_flag
+					has_country_flag = JAP_event290_flag
+				}
+			}
+			set_country_flag = JAP_event290_flag
+			country_event = NW_JAP.290
+		}
+	}
+}
+
+JAP_ugaki_office_category_effect = {
+	
+	hidden_effect = {
+		clamp_variable = { var = JAP_ugaki_faction_power min = 0 max = 100 }
+		clamp_variable = { var = JAP_manchurian_faction_power min = 0 max = 100 }
+		if = {
+			limit = { has_variable = JAP_toseikha_faction_power }
+			clamp_variable = { var = JAP_toseikha_faction_power min = 0 max = 100 }
+		}
+		if = {
+			limit = { has_variable = JAP_kodoha_faction_power }
+			clamp_variable = { var = JAP_kodoha_faction_power min = 0 max = 100 }
+		}		
+		set_temp_variable = { JAP_one_hundred_temp_var = 100 }
+		set_temp_variable = { JAP_ugaki_faction_power_temp = JAP_ugaki_faction_power }
+		subtract_from_temp_variable = { JAP_one_hundred_temp_var = JAP_ugaki_faction_power_temp }
+		divide_temp_variable = { JAP_one_hundred_temp_var = -100 }
+		set_variable = { JAP_planning_speed_var = JAP_one_hundred_temp_var }
+		set_variable = { JAP_command_power_gain_mult_var = JAP_one_hundred_temp_var }
+		set_temp_variable = { JAP_one_hundred_temp_var = 100 }
+		set_temp_variable = { JAP_sum_of_all_factions = 0 }
+		set_temp_variable = { JAP_ugaki_faction_power_temp = JAP_ugaki_faction_power }
+		set_temp_variable = { JAP_manchurian_faction_power_temp = JAP_manchurian_faction_power }
+		add_to_temp_variable = { JAP_sum_of_all_factions = JAP_manchurian_faction_power }
+		if = {
+			limit = { has_variable = JAP_toseikha_faction_power }
+			set_temp_variable = { JAP_toseikha_faction_power_temp = JAP_toseikha_faction_power }
+			add_to_temp_variable = { JAP_sum_of_all_factions = JAP_toseikha_faction_power_temp }
+		}
+		if = {
+			limit = { has_variable = JAP_kodoha_faction_power }
+			set_temp_variable = { JAP_kodoha_faction_power_temp = JAP_kodoha_faction_power }
+			add_to_temp_variable = { JAP_sum_of_all_factions = JAP_kodoha_faction_power_temp }
+		}
+		divide_temp_variable = { JAP_ugaki_faction_power_temp = JAP_sum_of_all_factions }
+		add_to_temp_variable = { JAP_ugaki_faction_power_temp = 1 }
+		set_temp_variable = { JAP_minus_one_temp_var = -1 }
+		divide_temp_variable = { JAP_minus_one_temp_var = JAP_ugaki_faction_power_temp }
+		add_to_temp_variable = { JAP_minus_one_temp_var = 0.5 }
+		set_variable = { JAP_the_level_of_insubordination_modifier_var = JAP_minus_one_temp_var }
+		JAP_the_level_of_insubordination_effect = yes
+		
+		# GUI
+		add_to_variable = { JAP_ugaki_faction_power_chart = JAP_ugaki_faction_power }
+		add_to_variable = { JAP_kodoha_faction_power_chart = JAP_ugaki_faction_power_chart }
+		add_to_variable = { JAP_kodoha_faction_power_chart = JAP_kodoha_faction_power }
+		add_to_variable = { JAP_toseikha_faction_power_chart = JAP_kodoha_faction_power_chart }
+		add_to_variable = { JAP_toseikha_faction_power_chart = JAP_toseikha_faction_power }
+		add_to_variable = { JAP_manchurian_faction_power_chart = JAP_toseikha_faction_power_chart }
+		add_to_variable = { JAP_manchurian_faction_power_chart = JAP_manchurian_faction_power }
+	}
+}
+JAP_radicals_Set_new_Rules_effect = {
+	
+	hidden_effect = {
+		clamp_variable = { var = JAP_inflience_of_akamatsu min = 0 }
+		clamp_variable = { var = JAP_inflience_of_national_socialists min = 0 }
+		clamp_variable = { var = JAP_inflience_of_arima min = 0 }
+	}
+}
+
+JAP_the_level_of_integration = {
+
+	hidden_effect = {
+		clamp_variable = { var = JAP_the_level_of_integration_var min = 0 max = 100 }
+		if = {
+			limit = { check_variable = { JAP_the_level_of_integration_var > 99 } }
+			525 = { add_core_of = ROOT }
+			527 = { add_core_of = ROOT }
+		}
+	}
+}
+
+JAP_interservice_rivalry_towards_army = {
+	
+	if = {
+		limit = {  has_idea = JAP_interservice_rivalry_army_strengthened }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_army_strengthened
+			add_idea = JAP_interservice_rivalry_army_dominant
+		}
+	}
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_balanced }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_balanced
+			add_idea = JAP_interservice_rivalry_army_strengthened
+		}
+	}
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_navy_strengthened }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_navy_strengthened
+			add_idea = JAP_interservice_rivalry_balanced
+		}
+	}
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_navy_dominant }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_navy_dominant
+			add_idea = JAP_interservice_rivalry_navy_strengthened
+		}
+	}
+}
+
+JAP_interservice_rivalry_towards_navy = {
+
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_navy_strengthened }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_navy_strengthened
+			add_idea = JAP_interservice_rivalry_navy_dominant
+		}
+	}	
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_balanced }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_balanced
+			add_idea = JAP_interservice_rivalry_navy_strengthened
+		}
+	}
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_army_strengthened }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_army_strengthened
+			add_idea = JAP_interservice_rivalry_balanced
+		}
+	}
+	if = {
+		limit = { has_idea = JAP_interservice_rivalry_army_dominant }
+		swap_ideas = {
+			remove_idea = JAP_interservice_rivalry_army_dominant
+			add_idea = JAP_interservice_rivalry_army_strengthened
+		}
+	}	
+}
+
+JAP_Miyadzaki_plan_effect = {
+	
+	hidden_effect = {
+		clamp_variable = { var = JAP_the_size_of_the_Investment_Fund_var min = 0 max = 10 }
+		set_temp_variable = { JAP_the_size_of_the_Investment_Fund_var_TEMP = JAP_the_size_of_the_Investment_Fund_var }
+		divide_temp_variable = { JAP_the_size_of_the_Investment_Fund_var_TEMP = 100 }
+		set_variable = { JAP_Miyadzaki_plan_var_for_modifier3 = JAP_the_size_of_the_Investment_Fund_var_TEMP }
+		multiply_temp_variable = { JAP_the_size_of_the_Investment_Fund_var_TEMP = -1 }
+		set_variable = { JAP_Miyadzaki_plan_var_for_modifier2 = JAP_the_size_of_the_Investment_Fund_var_TEMP }
+		multiply_temp_variable = { JAP_the_size_of_the_Investment_Fund_var_TEMP = -3 }
+		set_variable = { JAP_Miyadzaki_plan_var_for_modifier1 = JAP_the_size_of_the_Investment_Fund_var_TEMP }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+JAP_new_genro_effect = {
+	
+	hidden_effect = {
+		set_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp = JAP_backwardness_of_the_Genro_Council_var }
+		subtract_from_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp = 10 }
+		set_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp_help = JAP_backwardness_of_the_Genro_Council_var_temp }
+		multiply_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp = JAP_backwardness_of_the_Genro_Council_var_temp }
+		multiply_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp = JAP_backwardness_of_the_Genro_Council_var_temp_help }
+		divide_temp_variable = { JAP_backwardness_of_the_Genro_Council_var_temp = -1000 }
+		set_variable = { JAP_backwardness_of_the_Genro_Council_var_modifier = JAP_backwardness_of_the_Genro_Council_var_temp }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+JAP_Machid_Chunji_office_effect = {
+	
+	hidden_effect = { # TODO JAP_innovation_alliance_chart??
+		if = {
+			limit = { has_variable = JAP_rikken_sayukai_popularity }
+			clamp_variable = { var = JAP_rikken_sayukai_popularity min = 0 max = 100 }
+		}
+		else = {
+			clamp_variable = { var = JAP_sayukai_reformists_popularity min = 0 max = 100 }
+			clamp_variable = { var = JAP_sayukai_ortodox_popularity min = 0 max = 100 }
+		}
+		clamp_variable = { var = JAP_small_parties_popularity min = 0 max = 100 }
+		if = {
+			limit = { has_variable = JAP_kakushin_shinto_popularity }
+			clamp_variable = { var = JAP_kakushin_shinto_popularity min = 0 max = 100 }
+		}
+		else = {
+			clamp_variable = { var = JAP_tohokai_popularity min = 0 max = 100 }
+			clamp_variable = { var = JAP_shakai_taishuto_popularity min = 0 max = 100 }
+		}
+		if = {
+			limit = { has_variable = JAP_shinshinto_popularity }
+			clamp_variable = { var = JAP_shinshinto_popularity min = 0 max = 100 }
+		}
+		else = {
+			clamp_variable = { var = JAP_rikken_minseito_popularity min = 0 max = 100 }
+		}
+		JAP_Machid_Chunji_office_ui_update = yes
+	}
+}
+JAP_Machid_Chunji_office_ui_update = {
+	
+	set_variable = { JAP_shinshinto_popularity_pie = JAP_shinshinto_popularity }
+	#
+	set_variable = { JAP_rikken_minseito_popularity_pie = JAP_rikken_minseito_popularity }
+	add_to_variable = { JAP_rikken_minseito_popularity_pie = JAP_shinshinto_popularity_pie }
+	#
+	set_variable = { JAP_kakushin_shinto_popularity_pie = JAP_kakushin_shinto_popularity }
+	add_to_variable = { JAP_kakushin_shinto_popularity_pie = JAP_rikken_minseito_popularity_pie }
+	#
+	set_variable = { JAP_shakai_taishuto_popularity_pie = JAP_shakai_taishuto_popularity }
+	add_to_variable = { JAP_shakai_taishuto_popularity_pie = JAP_kakushin_shinto_popularity_pie }
+	#
+	set_variable = { JAP_tohokai_popularity_pie = JAP_tohokai_popularity }
+	add_to_variable = { JAP_tohokai_popularity_pie = JAP_shakai_taishuto_popularity_pie }
+	#
+	set_variable = { JAP_rikken_sayukai_popularity_pie = JAP_rikken_sayukai_popularity }
+	add_to_variable = { JAP_rikken_sayukai_popularity_pie = JAP_tohokai_popularity_pie }
+	#
+	set_variable = { JAP_innovation_alliance_popularity_pie = JAP_innovation_alliance_popularity }
+	add_to_variable = { JAP_innovation_alliance_popularity_pie = JAP_rikken_sayukai_popularity_pie }
+	#
+	set_variable = { JAP_sayukai_ortodox_popularity_pie = JAP_sayukai_ortodox_popularity }
+	add_to_variable = { JAP_sayukai_ortodox_popularity_pie = JAP_innovation_alliance_popularity_pie }
+	#
+	set_variable = { JAP_sayukai_reformists_popularity_pie = JAP_sayukai_reformists_popularity }
+	add_to_variable = { JAP_sayukai_reformists_popularity_pie = JAP_sayukai_ortodox_popularity_pie }
+	#
+	set_variable = { JAP_small_parties_popularity_pie = JAP_small_parties_popularity }
+	add_to_variable = { JAP_small_parties_popularity_pie = JAP_sayukai_reformists_popularity_pie }
+	
+	if = {
+		limit = { check_variable = { JAP_small_parties_popularity_pie > 100 } }
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): TODO_BUG JAP_Machid_Chunji_office_ui_update: сумма партий больше 100%! ([?JAP_small_parties_popularity_pie]%)"
+	}
+}
+
+JAP_global_tenno_effect = {
+	
+	hidden_effect = {
+		set_temp_variable = { JAP_num_faction_members_var_temp = num_faction_members }
+		divide_temp_variable = { JAP_num_faction_members_var_temp = 100 }
+		for_each_scope_loop = {
+			array = allies
+			if = {
+				limit = { NOT = { tag = PREV } }
+				set_variable = { JAP_global_tenno_modifier_for_allies_stability_var = JAP_num_faction_members_var_temp }
+				set_variable = { JAP_global_tenno_modifier_for_allies_war_support_var = JAP_num_faction_members_var_temp }
+				set_variable = { JAP_global_tenno_modifier_for_allies_production_speed_buildings_var = JAP_num_faction_members_var_temp }
+				force_update_dynamic_modifier = yes
+			}
+		}
+		set_temp_variable = { JAP_basic_temp_for_stab = 0.002 }
+		set_temp_variable = { JAP_basic_temp_for_war_sup = 0.003 }
+		set_temp_variable = { JAP_num_faction_members_var_temp_1 = num_faction_members }
+		set_temp_variable = { JAP_num_faction_members_var_temp_2 = num_faction_members }
+		multiply_temp_variable = { JAP_num_faction_members_var_temp_1 = JAP_basic_temp_for_stab }
+		multiply_temp_variable = { JAP_num_faction_members_var_temp_2 = JAP_basic_temp_for_war_sup }
+		set_variable = { JAP_global_tenno_modifier_for_japan_stability_var = JAP_num_faction_members_var_temp_1 }
+		set_variable = { JAP_global_tenno_modifier_for_japan_war_support_var = JAP_num_faction_members_var_temp_2 }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+JAP_consent_of_the_sejm_effect = {
+	
+	hidden_effect = {
+		clamp_variable = { var = JAP_consent_of_the_sejm_var min = 0 max = 100 }
+	}
+}
+
+
+JAP_unity_of_party_fall_effect = {
+	
+	hidden_effect = {
+		if = { 
+			limit = {
+				has_idea = JAP_high_unity_of_rikken_Seyukai_idea
+			}
+			swap_ideas = { 
+				remove_idea = JAP_high_unity_of_rikken_Seyukai_idea
+				add_idea = JAP_sufficient_unity_of_rikken_Seyukai_idea
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = JAP_sufficient_unity_of_rikken_Seyukai_idea
+			}
+			swap_ideas = { 
+				remove_idea = JAP_sufficient_unity_of_rikken_Seyukai_idea
+				add_idea = JAP_low_unity_of_rikken_Seyukai_idea
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = JAP_low_unity_of_rikken_Seyukai_idea
+			}
+			add_stability = -0.02 
+		}
+	}
+}
+
+JAP_check_numbers_of_jews_effect = {
+
+	hidden_effect = {
+		if = { 
+			limit = { 
+				NOT = { has_country_flag = JAP_plan_fugu_aim1 }
+				check_variable = { JAP_amount_of_jews > 49999 } 
+			}
+			set_country_flag = JAP_plan_fugu_aim1
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+		}
+		else_if = { 
+			limit = { 
+				NOT = { has_country_flag = JAP_plan_fugu_aim2 }
+				check_variable = { JAP_amount_of_jews > 99999 } 
+			}
+			set_country_flag = JAP_plan_fugu_aim2
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+			USA = { 
+				add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa1_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa1_op
+					target = ROOT
+				} 
+			}
+		}
+		else_if = { 
+			limit = { 
+				NOT = { has_country_flag = JAP_plan_fugu_aim3 }
+				check_variable = { JAP_amount_of_jews > 199999 } 
+			}
+			set_country_flag = JAP_plan_fugu_aim3
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+			USA = { 
+				add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa2_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa2_op
+					target = ROOT
+				} 
+			}
+		}
+		else_if = { 
+			limit = { 
+				NOT = { has_country_flag = JAP_plan_fugu_aim4 }
+				check_variable = { JAP_amount_of_jews > 399999 } 
+			}
+			set_country_flag = JAP_plan_fugu_aim4
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+			USA = { 
+				add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa3_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa3_op
+					target = ROOT
+				} 
+			}
+		}
+		else_if = { 
+			limit = { 
+				NOT = { has_country_flag = JAP_plan_fugu_aim5 }
+				check_variable = { JAP_amount_of_jews > 799999 } 
+			}
+			set_country_flag = JAP_plan_fugu_aim5
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = ROOT
+					free_building_slots = {
+						building = industrial_complex
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes		
+				}
+			}
+			USA = {
+				add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa4_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = JAP_plan_Fugu_befriend_with_usa4_op
+					target = ROOT
+				} 
+			}
+		}
+	}
+}
+
+JAP_reform_bureaucrats_effect = {
+	hidden_effect = {
+		clamp_variable = { var = JAP_support_from_parliament_var min = 0 max = 10 }
+		clamp_variable = { var = JAP_support_from_army_var min = 0 max = 10 }
+		clamp_variable = { var = JAP_support_from_fleet_var min = 0 max = 10 }
+		clamp_variable = { var = JAP_support_from_imperial_court_var min = 0 max = 10 }
+		if = { 
+			limit = { 
+				OR = { 
+					AND = { 
+						NOT = { has_country_flag = JAP_centralization_of_governing_bodies_flag }
+						OR = { 
+							check_variable = { JAP_support_from_parliament_var < 1 }
+							check_variable = { JAP_support_from_army_var < 1 }
+							check_variable = { JAP_support_from_fleet_var < 1 }
+							check_variable = { JAP_support_from_imperial_court_var < 1 }
+						}
+					}
+					AND = { 	
+						has_country_flag = JAP_centralization_of_governing_bodies_flag 
+						NOT = { has_completed_focus = JAP_reassure_the_military } 
+						check_variable = { JAP_support_from_parliament_var < 1 }
+						check_variable = { JAP_support_from_army_var < 1 }
+						check_variable = { JAP_support_from_fleet_var < 1 }
+						check_variable = { JAP_support_from_imperial_court_var < 1 }
+					}
+					AND = { 	
+						has_country_flag = JAP_centralization_of_governing_bodies_flag 
+						has_completed_focus = JAP_reassure_the_military
+						OR = { 
+							check_variable = { JAP_support_from_army_var < 1 }
+							check_variable = { JAP_support_from_fleet_var < 1 }
+						}
+					}
+				}
+			}
+			country_event = NW_JAP.720 
+			set_country_flag = JAP_fall_of_bureaucrats
+		}
+	}
+}
+
+
+JAP_resource_allocation_effect = { 
+	hidden_effect = { 
+		set_variable = { var = JAP_RA_industrial_capacity_dockyard_var value = JAP_RA_var }
+		divide_variable = { var = JAP_RA_industrial_capacity_dockyard_var value = 100 }
+		
+		set_variable = { var = JAP_RA_industrial_capacity_factory_var value = JAP_RA_var }
+		multiply_variable = { var = JAP_RA_industrial_capacity_factory_var value = -1 }
+		divide_variable = { var = JAP_RA_industrial_capacity_factory_var value = 100 }
+		
+		set_variable = { var = JAP_RA_consumer_goods_factor_var value = JAP_RA_var }
+		set_temp_variable = { JAP_RA_consumer_goods_factor_var_TEMP = JAP_RA_consumer_goods_factor_var } 
+		multiply_variable = { var = JAP_RA_consumer_goods_factor_var value = JAP_RA_consumer_goods_factor_var_TEMP }
+		divide_variable = { var = JAP_RA_consumer_goods_factor_var value = 2 } 
+		divide_variable = { var = JAP_RA_consumer_goods_factor_var value = 100 }
+		
+		if = { 
+			limit = { check_variable = { JAP_RA_var < 0 } }
+			clr_country_flag = JAP_fleet_dominates_flag
+			set_country_flag = JAP_army_dominates_flag
+		}
+		else_if = { 
+			limit = { check_variable = { JAP_RA_var > 0 } }
+			clr_country_flag = JAP_army_dominates_flag
+			set_country_flag = JAP_fleet_dominates_flag
+		}
+		else = { 
+			clr_country_flag = JAP_army_dominates_flag
+			clr_country_flag = JAP_fleet_dominates_flag
+		}
+	}
+}
+
+JAP_confrontation_with_parliament_effect = {
+	hidden_effect = { 
+		if = { 
+			limit = { check_variable = { JAP_discontent_of_parliament_var > 9 } }
+			country_event = NW_JAP.208
+			set_country_flag = JAP_Hayashi_failed
+		}
+		
+	}
+}
+
+JAP_army_minister_clear_effect = { 
+	hidden_effect = { 
+		clr_country_flag = JAP_Kuniaki_Koiso_army_minister 
+		clr_country_flag = JAP_Renya_Mutaguchi_army_minister
+		clr_country_flag = JAP_Hideki_Todze_army_minister
+		clr_country_flag = JAP_Seishiro_Itagaki_army_minister
+		clr_country_flag = JAP_Hayao_Tada_army_minister 
+		clr_country_flag = JAP_Korechika_Anami_army_minister
+		clr_country_flag = JAP_Sunroku_Hata_army_minister 
+		clr_country_flag = JAP_Hajime_Sugiyama_army_minister 
+	}
+}
+
+JAP_fleet_minister_clear_effect = { 
+	hidden_effect = { 
+		clr_country_flag = JAP_Mitsumasa_Yonai_fleet_minister
+		clr_country_flag = JAP_Shigetaro_Shimada_fleet_minister
+		clr_country_flag = JAP_Osami_Nagano_fleet_minister
+		clr_country_flag = JAP_Dzengo_Yosida_fleet_minister
+		clr_country_flag = JAP_Shigetari_Shimado_fleet_minister
+		clr_country_flag = JAP_Nobumasa_Suecegu_fleet_minister
+		clr_country_flag = JAP_Kosiro_Oikava_fleet_minister
+	}
+
+}
+
+JAP_foreign_affairs_minister_clear_effect = { 
+	hidden_effect = { 
+		clr_country_flag = JAP_Hirota_Koki_FA_minister
+		clr_country_flag = JAP_Mamoru_Sigemitsu_FA_minister
+		clr_country_flag = JAP_Shigenori_Togo_FA_minister
+		clr_country_flag = JAP_Shigeru_Yoshida_FA_minister
+		clr_country_flag = JAP_Hachiro_Arita_FA_minister
+		clr_country_flag = JAP_Tosio_Siratori_FA_minister
+		clr_country_flag = JAP_Yosuke_Matsuoka_FA_minister
+	}
+}

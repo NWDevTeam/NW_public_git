@@ -1,0 +1,51 @@
+on_actions = {
+
+	on_daily_KRD = {
+		effect = {
+			#KRD_colonization_neighboring_territories_kurds_category // Ежедневная численность населения в регионе
+			if = {
+				limit = {
+					any_controlled_state = { check_variable = { state_manpower_coefficient_var > 0 } }
+				}
+				every_controlled_state = {
+					limit = { check_variable = { state_manpower_coefficient_var > 0 } }
+					add_manpower = var:state_manpower_var
+				}
+			}
+			if = {
+				limit = {
+					has_variable = level_kurdish_westernization_var
+				}
+				add_to_variable = { level_kurdish_westernization_var = daily_level_kurdish_westernization_var }
+				clamp_variable = { var = level_kurdish_westernization_var min = 0 max = 100 }
+				if = {
+					limit = {
+						check_variable = { level_kurdish_westernization_var = 100 }
+						NOT = { has_country_flag = kurdish_westernization_completed_flag }
+					}
+					set_country_flag = kurdish_westernization_completed_flag
+					clear_variable = level_kurdish_westernization_var
+				}
+			}
+		}
+	}
+	
+	# called when a country send volunteers to another
+	# ROOT is sender, FROM is receiver
+	on_send_volunteers = {
+		effect = {
+			#Чек SOV добровольцев в Курдистане	TODO хуй знает, мб это и у турции
+			if = {
+				limit = {
+					KRD = { has_war_with = TUR }
+					ROOT = {
+						tag = SOV
+						NOT = { has_country_flag = SOV_send_volunteers_kurds_flag }
+					}
+					FROM = { tag = KRD }
+				}
+				set_country_flag = SOV_send_volunteers_kurds_flag
+			}
+		}
+	}
+}

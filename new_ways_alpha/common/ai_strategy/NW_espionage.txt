@@ -1,21 +1,22 @@
-build_intelligence_agency_as_major = {
+build_intelligence_agency_major = {
 	allowed = {
-		has_dlc = "La Resistance"
-		NOT = { tag = SAI }
+		has_dlc_lar = yes
 	}
 	enable = {
 		is_major = yes
-		OR = {
-			has_war = yes
-			date > 1936.6.1
-		}
-		has_intelligence_agency = no
+		date > 1937.1.1
+		num_of_civilian_factories_available_for_projects > 25
 	}
-	abort_when_not_enabled = yes
+	abort = {
+		OR = {
+			is_major = no
+			num_of_civilian_factories_available_for_projects < 15
+		}
+	}
 
 	ai_strategy = {
 		type = intelligence_agency_usable_factories
-		value = 15
+		value = 5
 	}
 }
 
@@ -28,18 +29,23 @@ build_intelligence_agency = {
 		}
 	}
 	enable = {
-		date > 1937.6.1
-		has_war = no
-		num_of_civilian_factories > 25
-		has_intelligence_agency = no
+		is_major = no
+		date > 1939.1.1
+		num_of_civilian_factories_available_for_projects > 25
 	}
-	abort_when_not_enabled = yes
+	abort = {
+		OR = {
+			is_major = yes
+			num_of_civilian_factories_available_for_projects < 15
+		}
+	}
 
 	ai_strategy = {
 		type = intelligence_agency_usable_factories
-		value = 15
+		value = 5
 	}
 }
+
 
 upgrade_intelligence_agency = {
 	allowed = {
@@ -48,19 +54,16 @@ upgrade_intelligence_agency = {
 	}
 	enable = {
 		has_intelligence_agency = yes
-		num_of_civilian_factories > 20
-		OR = {
-			date > 1937.1.1
-			has_war = yes
-		}
-#		NOT = { check_variable = { agency_upgrade_number < 5 } }
-		check_variable = { agency_upgrade_number < NW_max_agency_upgrades }
+		date > 1940.1.1
+		num_of_civilian_factories_available_for_projects > 50
 	}
-	abort_when_not_enabled = yes
+	abort = {
+		num_of_civilian_factories_available_for_projects < 40
+	}
 
 	ai_strategy = {
 		type = intelligence_agency_usable_factories
-		value = 15
+		value = 5
 	}
 }
 
@@ -71,14 +74,13 @@ upgrade_intelligence_agency_as_spy_master = {
 	}
 	enable = {
 		is_spymaster = yes
-		OR = {
-			has_war = no
-			num_of_civilian_factories > 50
-		}
+		num_of_civilian_factories_available_for_projects > 50
 	}
 	abort = {
-		is_spymaster = no
-		num_of_civilian_factories < 40
+		OR = {
+			is_spymaster = no
+			num_of_civilian_factories_available_for_projects < 40
+		}
 	}
 
 	ai_strategy = {
@@ -87,17 +89,34 @@ upgrade_intelligence_agency_as_spy_master = {
 	}
 }
 
-addintelligence_agency_normal_upgrade_prio = {
+more_upgrades_as_spymaster = {
 	allowed = {
 		has_dlc = "La Resistance"
 		NOT = { tag = SAI }
 	}
 	enable = {
-		always = yes
+		is_spymaster = yes
 	}
-	abort = {
-		always = no
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = agency_ai_base_num_factories_factor
+		value = -50    # -50% on the define
 	}
+
+	ai_strategy = {
+		type = agency_ai_per_upgrade_factories_factor
+		value = -25    # -25% on the define
+	}
+}
+
+addintelligence_agency_normal_upgrade_prio = {
+	allowed = {
+		has_dlc = "La Resistance"
+		NOT = { tag = SAI }
+	}
+	enable = { always = yes }
+	abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = intelligence_agency_branch_desire_factor
@@ -126,54 +145,6 @@ addintelligence_agency_normal_upgrade_prio = {
 	}
 }
 
-ask_foreign_manpower_as_major = {
-	allowed = {
-		NOT = { tag = SAI }
-	}
-	enable = {
-		OR = {
-			is_major = yes
-			num_of_military_factories > 49
-		}
-		garrison_manpower_need > 200000
-	}
-
-	abort = {
-		garrison_manpower_need < 100000
-	}
-
-	ai_strategy = {
-		type = asking_foreign_garrison
-		value = 100
-		# id = ITA # id is optionnal. If it is filled, the value will just apply for this country. If not, the value will apply for all countries.
-	}
-}
-
-more_upgrades_as_spymaster = {
-	allowed = {
-		has_dlc = "La Resistance"
-		NOT = { tag = SAI }
-	}
-	enable = {
-		is_spymaster = yes
-	}
-
-	abort = {
-		is_spymaster = no
-	}
-
-	ai_strategy = {
-		type = agency_ai_base_num_factories_factor
-		value = -50    # -50% on the define
-	}
-
-	ai_strategy = {
-		type = agency_ai_per_upgrade_factories_factor
-		value = -25    # -25% on the define
-	}
-}
-
-
 put_garrisons_on_high_prio = {
 	allowed = {
 		NOT = { tag = SAI }
@@ -192,28 +163,28 @@ put_garrisons_on_high_prio = {
 }
 
 
-generic_operation_fake_intel = {
-	allowed = {
-		has_dlc = "La Resistance"
-	}
-	
-	enable = {
-		has_intelligence_agency = yes
-		check_variable = { num_fake_intel_divisions < 50 }
-	}
-	abort_when_not_enabled = yes
-	
-	ai_strategy = {
-		type = operative_operation
-		operation = operation_fake_intel
-		value = 75
-		operation_target = FIT
-	}
-	
-	ai_strategy = {
-		type = operative_mission
-		mission = build_intel_network
-		value = 3000
-		mission_target = FIT
-	}
-}
+#generic_operation_fake_intel = {
+#	allowed = {
+#		has_dlc = "La Resistance"
+#	}
+#	
+#	enable = {
+#		has_intelligence_agency = yes
+#		check_variable = { num_fake_intel_divisions < 50 }
+#	}
+#	abort_when_not_enabled = yes
+#	
+#	ai_strategy = {
+#		type = operative_operation
+#		operation = operation_fake_intel
+#		value = 75
+#		operation_target = FIT
+#	}
+#	
+#	ai_strategy = {
+#		type = operative_mission
+#		mission = build_intel_network
+#		value = 3000
+#		mission_target = FIT
+#	}
+#}

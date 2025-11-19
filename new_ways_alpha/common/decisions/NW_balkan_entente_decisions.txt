@@ -1,0 +1,45 @@
+NW_balkan_entente_category = {
+
+    NW_form_a_military_alliance = {
+		priority = 500
+		icon = GFX_decision_lazurit
+		available = {
+			is_in_faction = no
+            is_subject = no
+			set_temp_variable = { NW_level_of_trust_temp_var = 50 }
+			custom_trigger_tooltip = {
+				check_variable = { var = global.NW_level_of_trust_var value = NW_level_of_trust_temp_var compare = greater_than_or_equals }
+				tooltip = NW_level_of_trust_var_check_tt
+			}
+		}
+        visible = { NOT = { has_global_flag = NW_balkan_military_alliance_created } }
+		fire_only_once = yes
+		cost = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision NW_form_a_military_alliance"
+            set_global_flag = NW_balkan_military_alliance_created
+            set_country_flag = NW_leader_of_balkan_military_alliance
+            create_faction = NW_balkan_entente_alliance
+			custom_effect_tooltip = empty_line_tooltip
+            custom_effect_tooltip = NW_form_a_military_alliance_tt
+			for_each_scope_loop = {
+				array = global.balkan_entente
+				if = {
+					limit = {
+						NOT = { original_tag = ROOT }
+                        is_subject = no
+                        is_in_faction = no
+					}
+					country_event = { id = generic.5 hours = 12 }
+				}
+			}
+		}
+		ai_will_do = {
+			base = 50
+			modifier = {
+				add = -50
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}

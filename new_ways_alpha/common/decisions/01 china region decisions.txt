@@ -1,0 +1,618 @@
+# пояснялки, как использовать меху интеграции провинций
+# ищите в china_integrate_province_Example в файле NW_china_region_scripted_effects.txt
+
+# включить меху объединения страны (завоевания):
+# set_country_flag = chinese_reunification_flag
+
+chinese_reunification = { 
+	
+	china_declare_government = {
+		icon = generic_speech
+
+		allowed = {
+			is_literally_china = yes
+		}
+		
+		visible = {
+			is_subject = no
+			has_civil_war = no
+			NOT = { has_country_flag = china_declare_government_flag }
+		}
+
+		available = {
+			owns_state = 608 #Beijing
+			owns_state = 613 #Nanjing
+			set_temp_variable = { var_for_check = 0.1 }
+			controls_chinese_states = yes
+		}
+
+		cost = 150
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName]: complete decision china_declare_government"
+			if = {
+				limit = { has_idea = chine_clique }
+				remove_ideas = chine_clique
+			}
+			hidden_effect = {
+				set_country_flag = china_declare_government_flag
+				if = {
+					limit = { NOT = { has_country_flag = chinese_integration_of_province_flag } }
+					activate_china_integrate_province = yes # TODO tooltip?
+				}
+			}
+			custom_effect_tooltip = news_event_NW_chinese_reunification.1
+			hidden_effect = { news_event = NW_chinese_reunification.1 }
+			# set_cosmetic_tag = CHI TODO
+		}
+		
+		ai_will_do = { #?
+			factor = 100
+		}
+	}
+	
+	china_integrate_province = {
+		icon = generic_nationalism
+		allowed = { always = no } # Activated by effect
+		
+		visible = {
+			has_country_flag = chinese_integration_of_province_flag
+			has_dynamic_modifier = { modifier = china_integration_of_province_dyn }
+		}
+		available = {
+			# state
+			set_temp_variable = { index = FROM.china_capital_of_province_index }
+			set_temp_variable = { cost = china_integrate_province_cost_array^index }
+
+			# country
+			set_temp_variable = { multiplier = 1 }
+			add_to_temp_variable = { multiplier = modifier@china_integration_of_province_cost_modifier }
+			multiply_temp_variable = { cost = multiplier }
+			custom_trigger_tooltip = {
+				tooltip = NW_has_political_power_more_than_cost_tt
+				
+				check_variable = { has_political_power > cost }
+			}
+			all_of_scopes = {
+				array = FROM.FROM.chinese_province
+				tooltip = all_state_chinese_province
+
+				is_controlled_by = ROOT
+			} 
+		}
+		target_trigger = {
+			any_of_scopes = {
+				array = FROM.FROM.chinese_province
+				# tooltip = any_state_chinese_province
+				
+				NOT = { is_core_of = ROOT }
+			}
+		}
+		
+		state_target = any_controlled_state # TODO !!
+		on_map_mode = map_and_decisions_view #map_only
+		
+		fire_only_once = yes # TODO check если проебли миссию, решение заново появится? !!
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_integrate_province target: [From.GetName] ([From.GetID])"
+			# state
+			set_temp_variable = { index = FROM.china_capital_of_province_index }
+			set_temp_variable = { cost = china_integrate_province_cost_array^index }
+			
+			# country
+			set_temp_variable = { multiplier = 1 }
+			add_to_temp_variable = { multiplier = modifier@china_integration_of_province_cost_modifier }
+			multiply_temp_variable = { cost = multiplier }
+			
+			set_temp_variable = { cost_tooltip = cost }
+			multiply_temp_variable = { cost = -1 }
+			add_political_power = cost
+			
+			# effect tooltip
+			set_temp_variable = { mission_days_remove = 120 }
+			set_temp_variable = { multiplier = 1 }
+			add_to_temp_variable = { multiplier = modifier@china_integration_of_province_time_modifier }
+			add_to_temp_variable = { multiplier = china_integrate_province_time_array^index }
+			multiply_temp_variable = { mission_days_remove = multiplier }
+			set_variable = { china_integration_of_province_time = mission_days_remove }
+			activate_targeted_decision = { decision = china_integrate_province_mission target = FROM }
+			
+			custom_effect_tooltip = NW_target_mission_timeout
+			custom_effect_tooltip = empty_line_tooltip
+			custom_effect_tooltip = NW_target_mission_modifiers
+			add_to_variable = { china_iop_political_power_gain = -0.25 tooltip = political_power_gain_tooltip }
+			add_to_variable = { china_iop_stability_weekly = -0.003 tooltip = stability_weekly_tooltip }
+			force_update_dynamic_modifier = yes
+			custom_effect_tooltip = empty_line_tooltip
+			custom_effect_tooltip = NW_target_mission_timeout_effect
+			effect_tooltip = {
+				china_integrate_province_effect = yes
+			}
+			custom_effect_tooltip = china_integrate_province_cost_tooltip
+		}
+		
+		ai_will_do = { #?
+			factor = 100
+		}
+	}
+	china_integrate_province_mission = {
+		icon = generic_nationalism
+		allowed = { always = no } # Activated by effect
+		activation = { always = no }
+		
+		visible = {
+			has_country_flag = chinese_integration_of_province_flag
+			has_dynamic_modifier = { modifier = china_integration_of_province_dyn }
+		}
+		available = {
+			any_of_scopes = {
+				array = FROM.FROM.chinese_province  # TODO поч это работает?
+				tooltip = any_state_chinese_province
+
+				NOT = { is_controlled_by = ROOT }
+			} 
+			# all_of_scopes = {
+				# array = FROM.FROM.chinese_province
+				# tooltip = any_state_chinese_province
+				
+				# is_core_of = ROOT
+			# }
+		}
+		
+		state_target = any_controlled_state # TODO !!
+		on_map_mode = map_and_decisions_view #map_only
+
+		is_good = yes
+		selectable_mission = no
+		days_mission_timeout = china_integration_of_province_time
+
+		fire_only_once = yes
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_integrate_province target: [From.GetName]"
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision china_integrate_province target: [From.GetName]"
+			add_to_variable = { china_iop_political_power_gain = 0.25 }
+			add_to_variable = { china_iop_stability_weekly = 0.003 }
+			force_update_dynamic_modifier = yes
+			china_integrate_province_effect = yes
+		}
+	}
+	
+	china_attack_decision = { # from KR
+		icon = generic_prepare_civil_war
+
+		available = {
+			can_declare_war_on = FROM
+			OR = {
+				is_neighbor_of = FROM
+				any_subject_country = { is_neighbor_of = FROM }
+				FROM = { any_subject_country = { is_neighbor_of = ROOT } }
+			}
+		}
+
+		visible = {
+			has_country_flag = chinese_reunification_flag
+			is_subject = no
+		}
+
+		target_array = neighbors
+		target_root_trigger = {
+			NOT = { has_rule = can_not_declare_war } 
+		}
+		target_trigger = {
+			FROM = {
+				is_literally_china = yes
+				NOT = { has_war_with = ROOT }
+			}
+		}
+
+		cancel_trigger = {
+			OR = {
+				NOT = { can_declare_war_on = FROM }
+				is_subject = yes
+			}
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 100 }
+			set_temp_variable = { cp_cost = 100 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 20
+		
+		war_with_target_on_remove = yes
+		fire_only_once = yes
+
+		ai_will_do = {
+			factor = 100
+			modifier = { #когда нападать нельзя ?
+				factor = 0
+				always = no
+			}
+		}
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision china_attack_decision target: [From.GetName]"
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_attack_decision target: [From.GetName]"
+			hidden_effect = {
+				add_political_power = -50
+				add_command_power = -50
+			}
+			# ивент-предупреждение ?
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision china_attack_decision target: [From.GetName]"
+			add_war_support = -0.05
+			add_stability = -0.025
+			create_wargoal = { 
+				target = FROM
+				type = annex_everything
+			}
+			if = {
+				limit = { FROM = { has_civil_war = yes } }
+				every_other_country = {
+					limit = { civilwar_target = FROM }
+					ROOT = {
+						create_wargoal = {
+							target = PREV
+							type = annex_everything
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	china_integrate_subjects = { # from KR
+		icon = eng_trade_unions_support
+
+		available = {
+			NOT = { has_war_together_with = FROM }
+		}
+
+		cancel_trigger = {
+			OR = {
+				NOT = { has_subject = FROM }
+				hidden_trigger = { FROM = { has_country_flag = china_subject_refused } }
+			}
+		}
+
+		target_array = subjects
+		target_trigger = {
+			FROM = { 
+				OR = { 
+					is_literally_china = yes 
+					original_tag = MAN
+					original_tag = TIB
+					original_tag = CSR
+					#original_tag = EHB ?
+				} 
+			}
+		}
+
+		cost = 100
+		days_remove = 60
+
+		ai_will_do = {
+			factor = 100
+			modifier = {
+				factor = 0
+				always = no
+			}
+		}
+
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision china_integrate_subjects target: [From.GetName]"
+			hidden_effect = { FROM = { remove_mission = china_integration_timer clr_country_flag = china_subject_refused } }
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_integrate_subjects target: [From.GetName]"
+			FROM = { activate_mission = china_integration_timer }
+		}
+
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision china_integrate_subjects target: [From.GetName]"
+			effect_tooltip = {
+				FROM = {
+					add_autonomy_score = {
+						value = -500
+					}
+				}
+			}
+		}
+	}
+	
+	china_integration_timer = { # from KR
+		icon = eng_trade_unions_demand
+
+		allowed = { always = no } #activated by china_integrate_subjects
+
+		available = {
+			has_capitulated = no
+			NOT = { has_war_together_with = overlord }
+		}
+
+		cancel_trigger = {
+			is_subject = no
+		}
+
+		cost = 150
+		is_good = yes
+		days_mission_timeout = 60
+		selectable_mission = yes
+
+		ai_will_do = {
+			factor = 0 #ИИ будет отказывать ?
+		}
+
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision china_integration_timer target: [From.GetName]"
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_integration_timer target: [From.GetName]"
+			overlord = {
+				country_event = NW_chinese_reunification.0
+			}
+			set_country_flag = china_subject_refused
+		}
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision china_integration_timer target: [From.GetName]"
+			add_autonomy_score = {
+				value = -500
+			}
+		}
+	}
+	
+	# timers
+	
+	china_intervention_timer = {
+		icon = generic_prepare_civil_war
+
+		allowed = { always = no } #activated by effects
+		available = { always = no }
+		cancel_trigger = {
+			OR = {
+				is_subject = yes
+				has_capitulated = yes
+				has_global_flag = JAP_will_surrender
+				has_war_with = FROM
+			}
+		}
+
+		is_good = no
+		fire_only_once = yes
+		days_mission_timeout = china_intervention_timer_timeout
+
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision china_intervention_timer"
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision china_intervention_timer"
+			if = {
+				limit = { original_tag = YSC }
+				FROM = { country_event = hebei.16 }
+			}
+			else_if = {
+				limit = { is_manchurian_warlord = yes }
+				FROM = {
+					declare_war_on = {
+						target = YCP
+						type = annex_everything
+					}
+				}
+				activate_targeted_decision = { decision = china_capitulation_decision target = FROM }
+			}
+		}
+	}
+	
+	china_capitulation_timer = {
+		icon = revolt
+		
+		allowed = { 
+			always = no # activated by effects
+		}
+		target_root_trigger = {
+			is_subject = no
+			has_capitulated = no
+		}
+		target_trigger = {
+			has_war_with = FROM
+		}
+		available = { 
+			always = no 
+		}
+
+		is_good = yes
+		fire_only_once = yes
+		days_mission_timeout = 180
+
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision china_capitulation_timer"
+			if = {
+				limit = { original_tag = YSC }
+				FROM = { country_event = hebei.17 }
+			}
+			else_if = {
+				limit = { is_manchurian_warlord = yes }
+				FROM = { country_event = manchukou.124 }
+			}
+		}
+	}
+	
+	china_capitulation_decision = {
+		icon = generic_prepare_civil_war
+
+		allowed = {
+			always = no
+		}
+		target_trigger = {
+			has_war_with = FROM
+		}
+		available = {
+			if = {
+				limit = { is_manchurian_warlord = yes }
+				controls_province = 4052
+			}
+		}
+
+		cost = 10
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision china_capitulation_decision target: [From.GetName]"
+			if = {
+				limit = { is_manchurian_warlord = yes }
+				FROM = { country_event = ycp.39 }
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+political_actions = {
+
+	CHI_join_united_front = {
+		available = {
+			is_literally_china = yes
+			CHI = {
+				is_in_faction_with = PRC
+			}
+			OR = {
+				PRC = {
+					is_faction_leader = yes
+				}
+				CHI = {
+					is_faction_leader = yes
+				}
+			}
+			NOT = {
+				OR = {
+					has_war_with = CHI
+					has_war_with = PRC
+				}
+			}
+			is_in_faction = no
+			OR = {
+				is_subject = no
+				OVERLORD = {
+					is_in_faction_with = CHI
+				}
+			}
+		}
+		visible = {
+			is_literally_china = yes
+			CHI = {
+				is_in_faction_with = PRC
+			}
+			is_in_faction = no
+		}
+		cost = 25
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				JAP = {
+					OR = {
+						has_war_with = CHI
+						has_war_with = PRC
+					}
+				}
+				factor = 10
+			}
+			modifier = {
+				has_war_with = JAP
+				factor = 500
+			}
+		}
+		complete_effect = {
+			If = {
+				limit = {
+					CHI = {
+						is_faction_leader = yes
+					}
+				}
+				CHI = {
+					country_event = generic.2
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = "CHI"
+					value = 200
+				}
+			}
+			else_if = {
+				limit = {
+					PRC = {
+						is_faction_leader = yes
+					}
+				}
+				PRC = {
+					country_event = generic.2
+				}
+				add_ai_strategy = {
+					type = alliance
+					id = "PRC"
+					value = 200
+				}
+			}
+		}
+	}
+	CHI_move_the_capital = {
+		allowed = {
+			is_literally_china = yes
+		}
+		available = {
+			has_war = no
+			OR = {
+				has_full_control_of_state = 608
+				has_full_control_of_state = 613
+			}
+			capital_scope = {
+				NOT = {
+					OR = {
+						state = 608
+						state = 613
+					}
+				}
+			}
+		}
+		visible = {
+			has_war = no
+			is_subject = no
+			OR = {
+				has_full_control_of_state = 608
+				has_full_control_of_state = 613
+			}
+			capital_scope = {
+				NOT = {
+					OR = {
+						state = 608
+						state = 613
+					}
+				}
+			}
+		}
+		cost = 50
+		ai_will_do = {
+			factor = 1
+		}
+		complete_effect = {
+			country_event = wtt_china.204
+		}
+	}
+}

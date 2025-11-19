@@ -1,0 +1,1153 @@
+YCP_political_decisions = {
+	
+	YCP_agitation_in_liberated_territories = {
+		icon = eng_propaganda_campaigns
+		
+		cost = 15
+		
+		days_remove = 30
+		days_re_enable = 90 # TODO tooltip	TODO balance
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_agitation_in_liberated_territories"
+			set_temp_variable = { size = 100 } # TODO name?
+			multiply_temp_variable = { size = num_occupied_states }
+			add_to_temp_variable = { size = 100 }
+			add_to_variable = { YCP_ycp_size = size tooltip = YCP_ycp_size_tooltip }
+			
+			set_temp_variable = { size = 0.005 }
+			multiply_temp_variable = { size = num_occupied_states }
+			add_to_temp_variable = { size = 0.005 }
+			add_to_variable = { YCP_ycp_political_power_gain = size tooltip = political_power_gain_tooltip }
+			add_to_variable = { YCP_ycp_command_power_gain_mult = size tooltip = command_power_gain_mult_tooltip }
+			add_to_variable = { YCP_ycp_industrial_capacity_factory = size tooltip = industrial_capacity_factory_tooltip }
+			add_to_variable = { YCP_ycp_army_attack_factor = size tooltip = army_attack_factor_tooltip }
+			add_to_variable = { YCP_ycp_army_defence_factor = size tooltip = army_defence_factor_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	YCP_material_support_from_party = {
+		icon = eng_propaganda_campaigns
+		
+		available = {
+			# TODO контролирует порт или проход к пекину
+		}
+		
+		cost = 75
+		
+		days_remove = 30
+		days_re_enable = 120 # TODO tooltip
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_material_support_from_party"
+			if = {
+				limit = { has_completed_focus = YCP_beijing_cell_of_ycp }
+				set_temp_variable = { multiplier = 2 }
+			}
+			else = {
+				set_temp_variable = { multiplier = 1 }
+			}
+			
+			set_temp_variable = { size = YCP_ycp_size }
+			divide_temp_variable = { size = 80 } # TODO бонусы удвоятся если выйти к пекину и контролить проход?
+			multiply_temp_variable = { size = multiplier }
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = size
+			}
+			
+			set_temp_variable = { size = YCP_ycp_size }
+			divide_temp_variable = { size = 160 }
+			multiply_temp_variable = { size = multiplier }
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = size
+			}
+		}
+	}
+	
+	YCP_call_party_to_fight = {
+		icon = eng_propaganda_campaigns
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 100 }
+			set_temp_variable = { cp_cost = 50 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 60
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_call_party_to_fight"
+			hidden_effect = {
+				add_political_power = -100
+				add_command_power = -50
+			}
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_call_party_to_fight"
+			add_manpower = 5000
+			if = {
+				limit = { NOT = { has_template = "Renmin Jundui" } }
+				division_template = {
+					name = "Renmin Jundui"
+					
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" 
+					owner = PREV
+					count = 3
+				}
+			}
+			multiply_variable = { YCP_ycp_casualties_percent = 2 tooltip = YCP_ycp_casualties_percent_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	YCP_working_with_locals = {
+		icon = eng_propaganda_campaigns
+
+		# cancel_trigger = { # TODO если не контролим, то отмена
+			# divisions_in_state = {
+				# state = FROM
+				# size < 1
+			# }
+		# }
+		state_target = yes
+		
+		on_map_mode = map_and_decisions_view
+		target_array = MAN.core_states
+		target_trigger = {
+			FROM = { 
+				is_controlled_by = ROOT
+				NOT = { is_core_of = ROOT } 
+			}
+		}
+		
+		cost = 50
+		
+		days_remove = 30 # TODO balance
+		
+		# cancel_effect = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_working_with_locals"
+		# }
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_working_with_locals"
+			FROM = {
+				add_compliance = 20
+				add_resistance = -15
+			}
+			random_list = {
+				1 = { add_manpower = 1000 }
+				1 = { 
+					if = {
+						limit = { NOT = { has_template = "Renmin Jundui" } }
+						division_template = {
+							name = "Renmin Jundui"
+							
+							regiments = {
+								irregular_infantry = { x = 0 y = 0 }
+								irregular_infantry = { x = 0 y = 1 }
+								irregular_infantry = { x = 0 y = 2 }
+								irregular_infantry = { x = 1 y = 0 }
+							}
+						}
+					}
+					FROM = {
+						create_unit = {
+							division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" # TODO дивизия ополчения
+							owner = PREV
+							count = 1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+YCP_political_decisions_bop = { # TODO объединить?
+	
+	YCP_employ_former_manchurian_bureaucrats = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			has_dynamic_modifier = { modifier = YCP_weak_state_apparatus }
+			has_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		available = {
+			owns_state = 328
+			NOT = {
+				has_country_flag = {
+					flag = YCP_employ_former_manchurian_bureaucrats_flag
+					value > 2
+				}
+			}
+		}
+		
+		cost = 50
+		
+		days_remove = 30 # TODO balance
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_employ_former_manchurian_bureaucrats"
+			add_to_variable = { YCP_ycp_size = 10000 tooltip = YCP_ycp_size_tooltip }
+			set_temp_variable = { size = YCP_ycp_size } # for loc
+			add_to_temp_variable = { size = 10000 } # TODO баг, лока нормально не отображается
+			YCP_chinese_democracy_update = yes
+			#
+			custom_effect_tooltip = empty_line_tooltip
+			YCP_weak_state_apparatus_update = yes
+			
+			# TODO баланс сил на -5%?
+			
+			if = {
+				limit = { has_country_flag = YCP_employ_former_manchurian_bureaucrats_flag }
+				modify_country_flag = {
+					flag = YCP_employ_former_manchurian_bureaucrats_flag
+					value = 1
+				}
+			}
+			else = { set_country_flag = YCP_employ_former_manchurian_bureaucrats_flag }
+		}
+	}
+	
+	YCP_employ_former_kuomintang_bureaucrats = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			has_dynamic_modifier = { modifier = YCP_weak_state_apparatus }
+			has_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		available = {
+			OR = {
+				owns_state = 608
+				owns_state = 613
+			}
+			NOT = {
+				has_country_flag = {
+					flag = YCP_employ_former_kuomintang_bureaucrats_flag
+					value > 2
+				}
+			}
+		}
+		
+		cost = 50
+		
+		days_remove = 30 # TODO balance
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_employ_former_kuomintang_bureaucrats"
+			add_to_variable = { YCP_ycp_size = 10000 tooltip = YCP_ycp_size_tooltip }
+			set_temp_variable = { size = YCP_ycp_size } # for loc
+			add_to_variable = { size = 10000 }
+			YCP_chinese_democracy_update = yes
+			#
+			custom_effect_tooltip = empty_line_tooltip
+			YCP_weak_state_apparatus_update = yes
+			
+			if = {
+				limit = { has_country_flag = YCP_employ_former_kuomintang_bureaucrats_flag }
+				modify_country_flag = {
+					flag = YCP_employ_former_kuomintang_bureaucrats_flag
+					value = 1
+				}
+			}
+			else = { set_country_flag = YCP_employ_former_kuomintang_bureaucrats_flag }
+		}
+	}
+	
+	YCP_integrate_army_of_iron_blood_into_ycp = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			has_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		available = {
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 15 }
+			set_temp_variable = { cp_cost = 50 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 30 # TODO balance
+		fire_only_once = yes
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_integrate_army_of_iron_blood_into_ycp"
+			add_political_power = 275
+			effect_tooltip = { # loc
+				uncomplete_national_focus = {
+					focus = YCP_nonparty_nature_of_army
+				}
+				uncomplete_national_focus = {
+					focus = YCP_modern_warfare_doctrine
+				}
+			}
+			set_country_flag = YCP_integrate_army_of_iron_blood_into_ycp_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_to_variable = { YCP_ycp_size = 21000 tooltip = YCP_ycp_size_tooltip }
+			set_temp_variable = { size = YCP_ycp_size } # for loc
+			add_to_variable = { size = 21000 }
+			YCP_chinese_democracy_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	YCP_party_purges = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			has_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		available = {
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 25 }
+			set_temp_variable = { cp_cost = 25 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 30 # TODO balance
+		days_re_enable = 180 # TODO balance
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_party_purges"
+			add_stability = -0.03
+			
+			set_temp_variable = { minus = -7000 }
+			set_temp_variable_to_random = { # TODO убрать?
+				var = rand
+				min = -2000
+				max = 1000
+				integer = yes
+			}
+			add_to_temp_variable = { minus = rand }
+			add_to_variable = { YCP_ycp_size = minus tooltip = YCP_ycp_size_tooltip }
+			set_temp_variable = { size = YCP_ycp_size } # for loc
+			add_to_variable = { size = minus }
+			YCP_chinese_democracy_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+}
+
+YCP_zhao_dong_seek_help = {
+	
+	YCP_zhao_dong_seek_help_mission = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no 
+		}
+		activation = { 
+			always = no 
+		}
+		available = {
+			surrender_progress > 0.95 # TODO balance
+		}
+		
+		is_good = yes
+		selectable_mission = no
+		days_mission_timeout = 180
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_zhao_dong_seek_help_mission"
+			country_event = ycp.4
+		}
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision YCP_zhao_dong_seek_help_mission"
+			country_event = ycp.7
+		}
+	}
+}
+
+YCP_the_grandma_two_guns = {
+	
+	YCP_transfer_weapons_by_sea = {
+		icon = eng_propaganda_campaigns
+
+		available = {
+			controls_province = 11764
+		}
+		cancel_trigger = {
+			controls_province = 11764
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 45 }
+			set_temp_variable = { cp_cost = 15 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 7
+		days_re_enable = 150 # TODO tooltip
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_transfer_weapons_by_sea"
+			hidden_effect = {
+				add_political_power = -45
+				add_command_power = -15
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_transfer_weapons_by_sea"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_transfer_weapons_by_sea"
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 500
+			}
+		}
+	}
+	
+	YCP_direct_supply_of_weapons = {
+		icon = eng_propaganda_campaigns
+
+		available = {
+			any_neighbor_country = {
+				is_literally_china = yes
+				NOT = { is_subject_of = JAP } # not japan bitches (MAN CSR EHB)
+				OR = { controls_state = 608 controls_state = 1132 } 
+			} 
+		}
+		# TODO cancel?
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 20 }
+			set_temp_variable = { cp_cost = 5 }
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 7
+		days_re_enable = 150 # TODO tooltip
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_direct_supply_of_weapons"
+			hidden_effect = {
+				add_political_power = -20
+				add_command_power = -5
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_direct_supply_of_weapons"
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 500
+			}
+		}
+	}
+	
+	YCP_arrange_meeting_with_grandma = {
+		icon = eng_propaganda_campaigns
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 35 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
+
+		days_re_enable = 75 # TODO tooltip
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_arrange_meeting_with_grandma"
+			hidden_effect = {
+				add_command_power = -35
+			}
+			add_political_power = 35
+			add_stability = 0.02
+			add_war_support = 0.03
+		}
+	}
+}
+
+YCP_escalation_in_manchuria_category = {
+}
+
+YCP_the_deal_with_manchukuo_army = {
+	
+	YCP_take_away_weapon = {
+		icon = eng_propaganda_campaigns
+
+		available = {
+			divisions_in_state = { 
+				state = FROM 
+				size > 0 
+			}
+		}
+		cancel_trigger = {
+			divisions_in_state = {
+				state = FROM
+				size < 1
+			}
+		}
+		state_target = yes
+		
+		on_map_mode = map_and_decisions_view
+		target_array = MAN.owned_states
+		
+		custom_cost_trigger = {
+			set_temp_variable = { pp_cost = 10 } # 25
+			set_temp_variable = { cp_cost = 25 } # 5
+			check_variable = { var = political_power value = pp_cost }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = PP_CP_COST
+		
+		days_remove = 10
+		days_re_enable = 140 # 180 # TODO tooltip
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_take_away_weapon"
+			hidden_effect = {
+				add_political_power = -10
+				add_command_power = -25
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_take_away_weapon"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_take_away_weapon"
+			MAN = {
+				if = {
+					limit = {
+						has_equipment = { infantry_equipment > 0 } # infantry_equipment_1
+					}
+					send_equipment = {
+						equipment = infantry_equipment
+						amount = 250
+						target = ROOT
+					}
+				}
+				else = {
+					ROOT = {
+						add_equipment_to_stockpile = {
+							type = infantry_equipment
+							amount = 250
+							producer = MAN
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#
+
+YCP_provisional_parliament_category = {
+
+	YCP_reform_government = {
+		icon = eng_propaganda_campaigns
+		
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = YCP_more_than_one_party_in_coalition
+				check_variable = { YCP_government_party^num > 1 }
+			}
+		}
+		
+		cost = 10
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_reform_government"
+			custom_effect_tooltip = YCP_remove_all_parties_from_coalition_expect_ycp # TODO а после выборов?
+			# YCP_provisional_parliament_party_joins_opposition = yes TODO
+			# YCP_provisional_parliament_increase_opposition = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			for_each_scope_loop = {
+				array = YCP_government_party
+				
+				add_to_array = { YCP_non_aligned_party = THIS.id }
+				if = {
+					limit = { has_variable = YCP_num_government_party_deputies } # TODO могут быть проблемы?
+					add_to_variable = { YCP_num_non_aligned_deputies = YCP_num_government_party_deputies }
+					subtract_from_variable = { YCP_num_government_party_deputies = YCP_num_government_party_deputies }
+				}
+			}
+			clear_array = YCP_government_party
+			add_to_array = { YCP_government_party = YCP_ycp_party }
+			YCP_provisional_parliament_update = yes # TODO Раскидать везде
+		}
+	}
+	
+	YCP_invite_the_SSP_to_coalition = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			check_variable = { var:YCP_ssp_party:YCP_num_deputies > 0 }
+			NOT = { is_in_array = { YCP_government_party = YCP_ssp_party } }
+		}
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_ssp_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_party_deputies_less_than_ycp_deputies
+				check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_ssp_party:YCP_num_deputies }
+			}
+		}
+		
+		cost = var:YCP_ssp_party:YCP_num_deputies
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_invite_the_SSP_to_coalition"
+			set_temp_variable = { YCP_current_party = YCP_ssp_party }
+			YCP_invite_current_party_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+		}
+	}
+	
+	YCP_invite_the_KDU_to_coalition = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			check_variable = { var:YCP_kdu_party:YCP_num_deputies > 0 }
+			NOT = { is_in_array = { YCP_government_party = YCP_kdu_party } }
+		}
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_kdu_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_party_deputies_less_than_ycp_deputies
+				check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_kdu_party:YCP_num_deputies }
+			}
+		}
+		
+		cost = var:YCP_kdu_party:YCP_num_deputies
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_invite_the_SSP_to_coalition"
+			set_temp_variable = { YCP_current_party = YCP_kdu_party }
+			YCP_invite_current_party_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+		}
+	}
+	
+	YCP_invite_the_federalists_to_coalition = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			check_variable = { var:YCP_federalist_party:YCP_num_deputies > 0 }
+			NOT = { is_in_array = { YCP_government_party = YCP_federalist_party } }
+		}
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_federalist_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_party_deputies_less_than_ycp_deputies
+				check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_federalist_party:YCP_num_deputies }
+			}
+		}
+		
+		cost = var:YCP_federalist_party:YCP_num_deputies
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_invite_the_SSP_to_coalition"
+			set_temp_variable = { YCP_current_party = YCP_federalist_party }
+			YCP_invite_current_party_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+		}
+	}
+	
+	YCP_corrupt_an_independents = {
+		icon = eng_propaganda_campaigns
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_independent_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_fraction_has_non_aligned_or_opposition_deputies
+				OR = {
+					check_variable = { var:YCP_independent_party:YCP_num_non_aligned_deputies > 0 }
+					check_variable = { var:YCP_independent_party:YCP_num_opposition_party_deputies > 0 }
+				}
+			}
+		}
+		
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_corrupt_an_independents"
+			set_temp_variable = { YCP_current_party = YCP_independent_party }
+			YCP_invite_current_fraction_deputies_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	YCP_corrupt_an_professional_groups_deputies = {
+		icon = eng_propaganda_campaigns
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_professional_groups_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_fraction_has_non_aligned_or_opposition_deputies
+				OR = {
+					check_variable = { var:YCP_professional_groups_party:YCP_num_non_aligned_deputies > 0 }
+					check_variable = { var:YCP_professional_groups_party:YCP_num_opposition_party_deputies > 0 }
+				}
+			}
+		}
+		
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_corrupt_an_professional_groups_deputies"
+			set_temp_variable = { YCP_current_party = YCP_independent_party }
+			YCP_invite_current_fraction_deputies_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	YCP_corrupt_an_other_parties_deputies = {
+		icon = eng_propaganda_campaigns
+		
+		available = {
+			set_temp_variable = { YCP_current_party = YCP_other_parties_party }
+			custom_trigger_tooltip = {
+				tooltip = YCP_fraction_has_non_aligned_or_opposition_deputies
+				OR = {
+					check_variable = { var:YCP_other_parties_party:YCP_num_non_aligned_deputies > 0 }
+					check_variable = { var:YCP_other_parties_party:YCP_num_opposition_party_deputies > 0 }
+				}
+			}
+		}
+		
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_corrupt_an_professional_groups_deputies"
+			set_temp_variable = { YCP_current_party = YCP_independent_party }
+			YCP_invite_current_fraction_deputies_to_coalition = yes
+			custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	###
+	
+	YCP_nationwide_revolution = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			# TODO bop?
+			custom_trigger_tooltip = {
+				tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+				check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 25
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_nationwide_revolution"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_nationwide_revolution"
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.06 # 0.12
+			}
+			custom_effect_tooltip = YCP_nationwide_revolution_tt
+			set_country_flag = YCP_nationwide_revolution_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			# YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	
+	YCP_local_government_from_controlled_cities = { # TODO rename
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.94
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.94
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 25
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_local_government_from_controlled_cities"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_local_government_from_controlled_cities"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.07
+			}
+			add_to_variable = { china_integration_of_province_cost_var = -0.25 tooltip = china_integration_of_province_cost_tooltip }
+			set_country_flag = YCP_local_government_from_controlled_cities_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			# YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	
+	YCP_compulsory_education = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+				check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 50
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_compulsory_education"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_compulsory_education"
+			add_research_slot = 1
+			set_country_flag = YCP_compulsory_education_flag
+			# TODO ??
+			
+			# TODO cpc
+		}
+	}
+	
+	YCP_controlled_opposition = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.84
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.84
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 50
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_controlled_opposition"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_controlled_opposition"
+			add_ideas = YCP_controlled_opposition_idea
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = YCP_zhang_junmai
+			set_country_flag = YCP_controlled_opposition_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	
+	YCP_system_of_checks_and_balances = { # TODO rename? 	TODO придумать тут чето другое!!
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			OR = {
+				power_balance_value = { # TODO ??
+					id = YCP_power_balance
+					value > 0.45
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				power_balance_value = { # TODO ??
+					id = YCP_power_balance
+					value > 0.45
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 50
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_system_of_checks_and_balances"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_system_of_checks_and_balances"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.2
+			}
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.15
+			}
+			set_country_flag = YCP_system_of_checks_and_balances_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			# YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	
+	YCP_protectionist_tariffs = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.74
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.74
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 50
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_protectionist_tariffs"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_protectionist_tariffs"
+			custom_effect_tooltip = YCP_protectionist_tariffs_tt
+			add_ideas = YCP_protectionist_tariffs_idea
+			set_country_flag = YCP_protectionist_tariffs_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			# YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	
+	YCP_progressive_income_tax = {
+		icon = eng_propaganda_campaigns
+		
+		allowed = {
+			always = no
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.84
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		cancel_trigger = {
+			NOT = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.84
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		
+		cost = 50
+		days_remove = 7
+		
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel decision YCP_progressive_income_tax"
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision YCP_progressive_income_tax"
+			custom_effect_tooltip = YCP_progressive_income_tax_tt
+			add_ideas = YCP_progressive_income_tax_idea
+			# Независимые депутаты перестанут быть частью правящей коалиции TODO
+			set_country_flag = YCP_progressive_income_tax_flag
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+}
+
+YCP_old_connections_category = {
+	
+	YCP_offer_governors_deal = {
+		icon = eng_propaganda_campaigns
+
+		available = {
+			set_temp_variable = { size = 30000 }
+			custom_trigger_tooltip = {
+				tooltip = YCP_ycp_size_greater_than
+				check_variable = { YCP_ycp_size > size }
+			}
+			FROM = {
+				is_subject = no
+				NOT = { has_country_flag = china_declare_government_flag }
+				if = {
+					limit = { original_tag = SHX }
+					has_country_leader = { character = SHX_yan_xishan }
+				}
+				else_if = {
+					limit = { original_tag = SIH }
+					has_country_leader = { character = SIH_liu_xiang }
+				}
+				else_if = {
+					limit = { original_tag = YUN }
+					has_country_leader = { character = YUN_long_yun }
+				}
+			}
+		}
+		target_trigger = {
+			country_exists = FROM
+		}
+		
+		on_map_mode = map_and_decisions_view
+		targets = { SHX SHA SIH YUN }
+		# targets_dynamic = yes TODO?
+		
+		cost = 15
+		
+		fire_only_once = yes
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision YCP_offer_governors_deal"
+			FROM = { country_event = ycp.28 }
+		}
+	}
+}

@@ -1,0 +1,186 @@
+scripted_gui = {
+
+	NW_coalition_parties_bg_gui = {
+		window_name = "NW_coalition_parties_bg_window"
+		parent_window_name = "NW_coalition_anchor"
+		context_type = player_context
+		
+		visible = {
+			always = yes
+		}
+		
+		dynamic_lists = {
+			coalition_members = {
+				array = NW_coalition_array
+				entry_container = NW_coalition_pol_party_bg_entry
+				
+				change_scope = no
+			}
+		}
+		
+		properties = {
+			leading_pol_party_bg = {
+				y = global.NW_coalition_party_position_y@var:v
+			}
+		}
+	}
+	
+	##
+
+	NW_conditions_of_the_country = {
+		window_name = "NW_conditions_of_the_country_window"
+		parent_window_name = "NW_conditions_of_the_country_anchor"
+		context_type = player_context
+		
+		visible = {
+			always = yes
+		}
+		
+		effects = {
+			migration_button_click = {
+				effect_tooltip = {
+					meta_effect = {
+						text = {
+							show_ideas_tooltip = [IDEA]
+						}
+						IDEA = "[?current_level_migration_var.GetTokenKey]"
+					}
+				}
+				hidden_effect = {
+					if = {
+						limit = { 
+							NOT = { check_variable = { NW_cc_record_idea = 0 } }
+							check_variable = { NW_cc_record_idea = current_level_migration_var } 
+						}
+						set_variable = { NW_cc_record_idea = 0 }
+					}
+					else = {
+						set_variable = { NW_cc_record_idea = current_level_migration_var }
+						set_variable = { NW_cc_record_idea_idx = 0 }
+						set_variable = { NW_cc_legitimacy_title_y = 14 }
+						
+						clear_array = NW_coc_current_list
+						add_to_array = { NW_coc_current_list = token:high_migration_growth }
+						add_to_array = { NW_coc_current_list = token:average_migration_growth }
+						add_to_array = { NW_coc_current_list = token:low_migration_growth }
+						add_to_array = { NW_coc_current_list = token:normal_level_of_migration }
+						add_to_array = { NW_coc_current_list = token:low_level_of_emigration }
+						add_to_array = { NW_coc_current_list = token:average_level_of_emigration }
+						add_to_array = { NW_coc_current_list = token:high_level_of_emigration }
+						add_to_array = { NW_coc_current_list = token:catastrophic_level_of_emigration }
+					}
+				}
+			}
+			legitimacy_button_click = {
+				effect_tooltip = {
+					meta_effect = {
+						text = {
+							show_ideas_tooltip = [IDEA]
+						}
+						IDEA = "[?NW_current_legitimacy_idea.GetTokenKey]"
+					}
+				}
+				hidden_effect = {
+					if = {
+						limit = { 
+							NOT = { check_variable = { NW_cc_record_idea = 0 } }
+							check_variable = { NW_cc_record_idea = NW_current_legitimacy_idea } 
+						}
+						set_variable = { NW_cc_record_idea = 0 }
+					}
+					else = {
+						set_variable = { NW_cc_record_idea = NW_current_legitimacy_idea }
+						set_variable = { NW_cc_record_idea_idx = 1 }
+						set_variable = { NW_cc_legitimacy_title_y = 4 }
+						
+						clear_array = NW_coc_current_list
+						add_to_array = { NW_coc_current_list = token:very_good_legitimacy }
+						add_to_array = { NW_coc_current_list = token:good_legitimacy }
+						add_to_array = { NW_coc_current_list = token:normal_legitimacy }
+						add_to_array = { NW_coc_current_list = token:low_legitimacy }
+						add_to_array = { NW_coc_current_list = token:very_low_legitimacy }
+						add_to_array = { NW_coc_current_list = token:disaster_legitimacy }
+					}
+				}
+			}
+		}
+		
+		properties = {
+			migration_button = {
+				image = "GFX_idea_[?current_level_migration_var.GetTokenKey]"
+			}
+			legitimacy_button = {
+				image = "GFX_idea_[?NW_current_legitimacy_idea.GetTokenKey]"
+			}
+		}
+	}
+	
+	NW_condition_of_the_country_list = {
+		window_name = "NW_condition_of_the_country_list_window"
+		parent_window_token = politics_tab
+		context_type = player_context
+		
+		visible = {
+			NOT = { check_variable = { NW_cc_record_idea = 0 } }
+		}
+		
+		dynamic_lists = {
+			box_list = {
+				array = NW_coc_current_list
+				entry_container = NW_condition_of_the_country_item
+				
+				change_scope = no
+			}
+		}
+		
+		triggers = {
+			pp_value_visible = {
+				check_variable = { NW_cc_record_idea_idx = 1 }
+			}
+			
+			idea_entry_bg_visible = {
+				NOT = { check_variable = { NW_cc_record_idea = v } }
+			}
+			idea_entry_highlight_bg_visible = {
+				check_variable = { NW_cc_record_idea = v }
+			}
+			
+			icon_click_enabled = {
+				meta_trigger = {
+					text = { 
+						NW_can_set_[IDEA] = yes 
+					}
+					IDEA = "[?v.GetTokenKey]"
+				}	
+			}
+		}
+		
+		effects = {
+			close_click = {
+				set_variable = { NW_cc_record_idea = 0 }
+			}
+			
+			###
+			
+			name_click = {
+				effect_tooltip = {
+					meta_effect = {
+						text = {
+							show_ideas_tooltip = [IDEA]
+						}
+						IDEA = "[?v.GetTokenKey]"
+					}
+				}
+			}
+		}
+		
+		properties = {
+			icon = {
+				image = "GFX_idea_[?v.GetTokenKey]"
+			}
+			title = {
+				y = NW_cc_legitimacy_title_y
+			}
+		}
+	}
+}

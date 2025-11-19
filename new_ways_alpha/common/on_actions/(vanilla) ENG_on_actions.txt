@@ -1,0 +1,154 @@
+on_actions = {
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			#End of British Fascist Civil War
+			if = {
+				limit = {
+					original_tag = ENG
+					has_government = fascism
+					has_completed_focus = ENG_organize_the_blackshirts
+				}
+				set_country_flag = { flag = won_british_civil_war value = 1 days = 365 }
+				country_event = { id = mtg_britain.34 }
+			}
+			#End of British Fascist Civil War - Democrats won
+			if = {
+				limit = {
+					original_tag = ENG
+					has_government = democratic
+					FROM = {
+						has_government = fascism
+						has_completed_focus = ENG_organize_the_blackshirts
+					}
+				}
+				delete_unit_template_and_units = { division_template = "Loyalist Brigade" }
+				load_focus_tree = { tree = british_focus keep_completed = no }
+				unlock_national_focus = ENG_steady_as_she_goes
+				unlock_national_focus = limited_rearmament_focus
+				unlock_national_focus = shadow_scheme_focus
+				unlock_national_focus = uk_industrial_focus
+				unlock_national_focus = royal_ordnance_factories
+				if = {
+					limit = {
+						amount_research_slots > 4
+					}
+					unlock_national_focus = uk_extra_tech_slot
+				}
+			}
+			# Give back ENG focus tree to Communist ENG if they win a civil war.
+			if = {
+				limit = {
+					original_tag = ENG
+					has_government = communism
+					has_focus_tree = generic_focus
+					FROM = {
+						original_tag = ENG
+						has_government = communism
+					}
+				}
+				load_focus_tree = { tree = british_focus keep_completed = yes }
+			}
+			#End of British Communist Civil War
+			if = {
+				limit = {
+					original_tag = ENG
+					has_government = democratic
+					has_completed_focus = ENG_concessions_to_the_trade_unions
+				}
+				country_event = { id = mtg_britain.56 }
+			}
+			#End of Imperialist Loyalist civil war
+			if = {
+				limit = {
+					OR = {
+						original_tag = CAN
+						original_tag = SAF
+						original_tag = AST
+						original_tag = NZL
+					}
+					has_government = monarchy
+					ENG = { has_completed_focus = ENG_appeal_to_imperial_loyalists }
+					NOT = { is_subject_of = ENG }
+				}
+				ENG = { country_event = { id = mtg_britain.113 hours = 6 } }
+			}
+			# Cleaning up anti-exploiter divisions	TODO нам это надо?
+			delete_unit_template_and_units = { division_template = "Anti-Exploit Punitive Brigade" }
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This fires just before FROM gets annexed, meaning the country and everything it owns still exists. It will also fire on_annex and on_civil_war_end
+	on_civil_war_end_before_annexation = {
+		effect = {
+			#End of British Fascist Civil War - moving the fleet back to the Fascists because they won
+			if = {
+				limit = {
+					original_tag = ENG
+					has_government = fascism
+					has_completed_focus = ENG_organize_the_blackshirts
+				}
+				random_other_country = {
+					limit = {
+						original_tag = ENG
+						has_government = democratic
+					}
+					transfer_navy = { target = ENG }
+					every_unit_leader = {
+						limit = {
+							OR = {
+								has_id = 983
+								has_id = 984
+								has_id = 985
+								has_id = 986
+								has_id = 987
+								has_id = 988
+								has_id = 989
+								has_id = 990
+								has_id = 991
+								has_id = 992
+							}
+						}
+						set_nationality = ENG
+					}
+				}
+			}
+		}
+	}
+	
+	on_monthly_GER = { # TODO выпилить?
+		effect = {
+			if = {
+				limit = {
+					144 = { is_fully_controlled_by = GER }
+					check_variable = { GER_narvik_civs < 8 }
+					
+					666 = {
+						NOT = {
+							has_dynamic_modifier = {
+								modifier = SWE_blown_up_mines
+							}
+						}
+					}
+				}
+
+				add_to_variable = { GER_narvik_shipments = 1 }
+				if = {
+					limit = {
+						check_variable = { GER_narvik_shipments > 5 }
+					}
+
+					add_offsite_building = {
+						type = industrial_complex
+						level = 1
+					}
+
+					set_variable = { GER_narvik_shipments = 0 }
+					add_to_variable = { GER_narvik_civs = 1 }
+				}
+			}
+		}
+	}
+}
+

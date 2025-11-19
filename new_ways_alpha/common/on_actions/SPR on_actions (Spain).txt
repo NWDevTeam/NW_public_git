@@ -1,0 +1,734 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### Spain стартпак
+				SPR = {
+					country_event = { id = NWspain.2 days = 9 }
+					country_event = { id = NWspain.3 days = 12 random_days = 2 }
+					country_event = { id = NWspain.990 days = 15 } 			#Пульсар
+					country_event = { id = NWspain.5 days = 44 }
+					news_event = { id = trworldnews.171 days = 200 }		#Народная Олимпиада
+				}
+			}
+		}
+	}
+	
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+	on_puppet = {
+		effect = {
+			#Определение победителя // Конец ГВ либералов
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = liberal_spanish_civil_war
+						has_global_flag = haos_liberal_spanish_civil_war
+					}
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					NOT = { has_global_flag = scw_over }
+					ROOT = {
+						OR = {
+							tag = SPR
+							tag = CAS
+							tag = NAV
+							tag = SEU
+							tag = SPC
+							tag = ANL
+							tag = ARA
+							tag = ASU
+							tag = SNT
+							tag = CAT
+							tag = BAS
+							tag = GLC
+							tag = VLA
+						}
+					}
+					FROM = {
+						OR = {
+							tag = SPR
+							tag = CAS
+							tag = NAV
+							tag = SEU
+							tag = SPC
+							tag = ANL
+							tag = ARA
+							tag = ASU
+							tag = SNT
+							tag = CAT
+							tag = BAS
+							tag = GLC
+							tag = VLA
+						}
+					}
+				}
+				ROOT = { country_event = { id = NWspain.50 hours = 6 } }
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			#ARA states and troops
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							FROM = {
+								OR = {
+									tag = SPR
+									tag = SPA
+								}
+								OR = {
+									owns_state = 169
+									owns_state = 173
+								}
+							}
+							ROOT = { tag = ARA }
+						}
+						AND = {
+							FROM = { tag = ARA }
+							ROOT = {
+								OR = {
+									tag = SPR
+									tag = SPA
+								}
+								OR = {
+									owns_state = 169
+									owns_state = 173
+								}
+							}
+						}
+					}
+					ARA = { has_country_flag = ARA_call_to_anarchists_andalusia_flag }
+				}
+				ARA = {
+					transfer_state = 169
+					transfer_state = 173
+					division_template = {
+						name = "Anarchists Brigada N2"
+						priority = 1
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+					}
+					169 = {
+						create_unit = {
+							division = "name = \"1. Anarchists Brigada\" division_template = \"Anarchists Brigada N2\" start_experience_factor = 0.5" 
+							owner = ARA
+						}
+					}
+					173 = {
+						create_unit = {
+							division = "name = \"2. Anarchists Brigada\" division_template = \"Anarchists Brigada N2\" start_experience_factor = 0.5" 
+							owner = ARA
+						}
+					}
+					clr_country_flag = ARA_call_to_anarchists_andalusia_flag
+				}
+			}
+			
+			#Анархо-Испанская ГВ (1vs1vs1)
+			#if = {
+			#	limit = {
+			#		FROM = { tag = SPR }
+			#		ROOT = { tag = ARA }
+			#		has_global_flag = spanish_civil_war
+			#		NOT = { has_global_flag = scw_over }
+			#		SPR = { has_war_with = SPA }
+			#	}
+			#	ROOT = {
+			#		news_event = { id = trworldnews.68 hours = 6 }
+			#	}
+			#}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+#End of SCW
+#Классическая ГВ Испании
+			if = {
+				limit = {
+					FROM = {
+						tag = SPA
+					}
+					ROOT = {
+						tag = SPR
+					}
+				}
+#				FROM = { add_timed_idea = { idea = SPA_recovering_from_civil_war days = 1825 } }
+				
+				FROM = {
+					if = {
+						limit = {
+							ARA = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = ARA
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							BAS = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = BAS
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							CAT = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = CAT
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							GLC = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = GLC
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							ASU = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = ASU
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							SNT = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = SNT
+								transfer_troops = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							VLA = {
+								has_war_with = SPA
+								is_puppet_of = SPR
+							}
+						}
+						FROM = {
+							annex_country = {
+								target = VLA
+								transfer_troops = no
+							}
+						}
+					}
+				
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = SPR
+							tag = SPA
+						}
+					}
+					ROOT = {
+						OR = {
+							tag = SPR
+							tag = SPA
+						}
+					}
+				}
+				FROM = {
+					#add_timed_idea = { idea = SPA_recovering_from_civil_war days = 1825 }
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+				every_state = {
+					limit = { is_core_of = ROOT }
+					remove_core_of = ROOT
+				}
+				every_state = {
+					limit = { is_claimed_by = ROOT }
+					remove_claim_by = ROOT
+				}
+			}
+			if = {
+				limit = {
+					ROOT = { tag = ASU }
+				}
+				ROOT = {
+					174 = { remove_core_of = ASU }
+					drop_cosmetic_tag = yes
+				}
+			}
+			if = {
+				limit = {
+					ROOT = { tag = SNT }
+				}
+				ROOT = {
+					drop_cosmetic_tag = yes
+				}
+			}
+			
+			#Капитуляция SPB. Возврат в SPR SPR_manuel_fal_conde
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = SPA
+						has_character = SPR_manuel_fal_conde
+					}
+					country_exists = SPR
+				}
+				ROOT = {
+					SPR_manuel_fal_conde = {
+						set_nationality = SPR
+						remove_unit_leader_role = yes
+					}
+				}
+				SPR = {
+					add_country_leader_role = {
+						character = SPR_manuel_fal_conde
+						country_leader = {
+							desc = "POLITICS_MANUEL_FAL_CONDE_DESC"
+							ideology = dual_monarchy
+							traits = {
+								jefe
+							}
+							expire = "1965.1.1"
+						}
+						promote_leader = yes
+					}
+				}
+			}
+			#Капитуляция SPR. Возврат в SPA SPR_manuel_fal_conde
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = SPR
+						has_character = SPR_manuel_fal_conde
+					}
+					country_exists = SPA
+				}
+				ROOT = {
+					remove_country_leader_role = { character = SPR_manuel_fal_conde		ideology = dual_monarchy }
+					SPR_manuel_fal_conde = {
+						set_nationality = SPA
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - For civil wars on_civil_war_end is also fired
+	on_annex = {
+		effect = {
+			#SPR - ARA
+			if = {
+				limit = {
+					FROM = { tag = SPR }
+					ROOT = {
+						OR = {
+							tag = ARA
+							tag = CAT
+						}
+					}
+				}
+				ARA = {
+					every_state = {
+						limit = {
+							is_claimed_by = ARA
+							NOT = { is_fully_controlled_by = ARA }
+						}
+						remove_core_of = ARA
+						remove_claim_by = ARA
+					}
+				}
+				if = {
+					limit = { GLC = { exists = yes } }
+					ARA = {
+						every_state = {
+							limit = { is_fully_controlled_by = GLC }
+							add_claim_by = ARA
+							add_core_of = ARA
+						}
+					}
+				}
+				if = {
+					limit = { BAS = { exists = yes } }
+					ARA = {
+						every_state = {
+							limit = { is_fully_controlled_by = BAS }
+							add_claim_by = ARA
+							add_core_of = ARA
+						}
+					}
+				}
+				if = {
+					limit = { ASU = { exists = yes } }
+					ARA = {
+						every_state = {
+							limit = { is_fully_controlled_by = ASU }
+							add_claim_by = ARA
+							add_core_of = ARA
+						}
+					}
+				}
+				if = {
+					limit = { SNT = { exists = yes } }
+					ARA = {
+						every_state = {
+							limit = { is_fully_controlled_by = SNT }
+							add_claim_by = ARA
+							add_core_of = ARA
+						}
+					}
+				}
+				if = {
+					limit = { CAT = { exists = yes } }
+					CAT = {
+						every_state = {
+							limit = {
+								is_claimed_by = CAT
+								NOT = { is_fully_controlled_by = CAT }
+							}
+							remove_core_of = CAT
+							remove_claim_by = CAT
+						}
+					}
+				}
+				SPR = {
+					every_state = {
+						limit = {
+							is_core_of = SPR
+						}
+						remove_core_of = SPR
+						remove_claim_by = SPR
+					}
+				}
+			}
+			
+			#Пульсар побед лагерей // правые
+			if = {
+				limit = {
+					has_global_flag = liberal_spanish_civil_war
+					NOT = { has_global_flag = scw_over }
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					FROM = {
+						OR = {
+							tag = SPC
+							tag = ANL
+							tag = ARA
+						}
+					}
+				}
+				ROOT = { country_event = { id = NWspain.51 hours = 6 } }
+			}
+			
+			#Пульсар побед лагерей // левые
+			if = {
+				limit = {
+					has_global_flag = liberal_spanish_civil_war
+					NOT = { has_global_flag = scw_over }
+					FROM = {
+						OR = {
+							tag = CAS
+							tag = NAV
+							tag = SEU
+						}
+					}
+				}
+				ROOT = { country_event = { id = NWspain.52 hours = 6 } }
+			}
+			
+			#Снятие клеймов и корок у проигравшего минора Испании
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = liberal_spanish_civil_war
+						has_global_flag = haos_liberal_spanish_civil_war
+					}
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					NOT = { has_global_flag = scw_over }
+					FROM = {
+						OR = {
+							tag = SPR
+							tag = CAS
+							tag = NAV
+							tag = SEU
+							tag = SPC
+							tag = ANL
+							tag = ARA
+							tag = ASU
+							tag = SNT
+							tag = CAT
+							tag = BAS
+							tag = GLC
+							tag = VLA
+						}
+					}
+				}
+				every_state = {
+					limit = { is_claimed_by = FROM }
+					remove_claim_by = FROM
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					remove_core_of = FROM
+				}
+			}
+			
+			#Жор каталонии-марионетки // Либеральная ГВ
+			if = {
+				limit = {
+					has_global_flag = liberal_spanish_civil_war
+					NOT = { has_global_flag = scw_over }
+					FROM = { tag = SPR }
+				}
+				if = {
+					limit = {
+						country_exists = CAT
+						CAT = {
+							is_ai = yes
+							OR = {
+								has_war_with = CAS
+								has_war_with = NAV
+								has_war_with = SEU
+								has_war_with = SPC
+								has_war_with = ANL
+								has_war_with = ARA
+								has_war_with = ROOT
+							}
+						}
+					}
+					ROOT = {
+						annex_country = {
+							target = CAT
+							transfer_troops = no
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						country_exists = CAT
+						CAT = {
+							NOT = {
+								has_war_with = CAS
+								has_war_with = NAV
+								has_war_with = SEU
+								has_war_with = SPC
+								has_war_with = ANL
+								has_war_with = ARA
+								has_war_with = ROOT
+							}
+						}
+					}
+					ROOT = {
+						add_ai_strategy = {
+							type = antagonize
+							id = "CAT"
+							value = 500
+						}
+						add_ai_strategy = {
+							type = conquer
+							id = "CAT" 
+							value = 500
+						}
+					}
+				}
+			}
+			
+			#Определение победителя // Конец ГВ либералов
+			if = {
+				limit = {
+					OR = {
+						has_global_flag = liberal_spanish_civil_war
+						has_global_flag = haos_liberal_spanish_civil_war
+					}
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					NOT = { has_global_flag = scw_over }
+					ROOT = {
+						OR = {
+							tag = SPR
+							tag = CAS
+							tag = NAV
+							tag = SEU
+							tag = SPC
+							tag = ANL
+							tag = ARA
+							tag = ASU
+							tag = SNT
+							tag = CAT
+							tag = BAS
+							tag = GLC
+							tag = VLA
+						}
+					}
+					FROM = {
+						OR = {
+							tag = SPR
+							tag = CAS
+							tag = NAV
+							tag = SEU
+							tag = SPC
+							tag = ANL
+							tag = ARA
+							tag = ASU
+							tag = SNT
+							tag = CAT
+							tag = BAS
+							tag = GLC
+							tag = VLA
+						}
+					}
+				}
+				ROOT = { country_event = { id = NWspain.50 hours = 6 } }
+			}
+		}
+	}
+	
+	on_daily_SPR = {
+		effect = {
+			#Многоукладная экономика // Правый уклон SPR
+			if = {
+				limit = { has_variable = formation_of_multi_layered_economy_var }
+				if = {
+					limit = { check_variable = { formation_of_multi_layered_economy_var > 0 } }
+					subtract_from_variable = { formation_of_multi_layered_economy_var = 1 }
+				}
+				else = {
+				}
+			}
+		}
+	}
+	
+	#used when puppeting through the occupied territories menu during peace time (or when releasing from non-core but owned territory, f.e. Britain releasing Egypt)
+	#ROOT = nation being released, FROM = overlord
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					NOT = { has_global_flag = release_cat_flag }
+					ROOT = { original_tag = CAT }
+					FROM = { original_tag = SPR }
+				}
+				FROM = { country_event = { id = NWspain.6 hours = 6 } }
+				CAT = {
+					set_country_flag = catalonia_focus_democrat_flag
+					load_focus_tree = catalonia_focus_democrat
+				}
+				set_global_flag = release_cat_flag
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = release_bas_flag }
+					ROOT = { original_tag = BAS }
+					FROM = { original_tag = SPR }
+				}
+				FROM = { country_event = { id = NWspain.7 hours = 6 } }
+				set_global_flag = release_bas_flag
+			}
+		}
+	}
+	
+	on_release_as_free = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_global_flag = THE_MOTHER_OF_ORDER_FLAG
+						has_global_flag = WORLD_OF_SPLIT_FLAG
+					}
+					NOT = { has_global_flag = release_cat_flag }
+					ROOT = { original_tag = CAT }
+					FROM = { original_tag = SPR }
+				}
+				FROM = { country_event = { id = NWspain.6 hours = 6 } }
+				CAT = {
+					set_country_flag = catalonia_focus_democrat_flag
+					load_focus_tree = catalonia_focus_democrat
+				}
+				set_global_flag = release_cat_flag
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = release_bas_flag }
+					ROOT = { original_tag = BAS }
+					FROM = { original_tag = SPR }
+				}
+				FROM = { country_event = { id = NWspain.7 hours = 6 } }
+				set_global_flag = release_bas_flag
+			}
+		}
+	}
+}

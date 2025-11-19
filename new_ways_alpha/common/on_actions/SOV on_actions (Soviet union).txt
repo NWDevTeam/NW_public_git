@@ -1,0 +1,452 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### сторис в инсту
+				SOV = {
+					give_resource_rights = { receiver = JAP state = 655 }
+					country_event = { id = NWgeneric_stories.1 days = 488 }		#Извержение вулкана
+					country_event = { id = NWgeneric_stories.1 days = 839 }		#Кыршехирское землетрясение
+					country_event = { id = NW_JAP.35 days = 912 }
+					country_event = { id = NW_JAP.40 days = 1198 }
+				}
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = SOV
+					OR = {
+						has_focus_tree = generic_focus
+						has_focus_tree = generic_anarchism_focus
+					}
+				}
+				mark_focus_tree_layout_dirty = yes
+			}
+		}
+	}
+	
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = POL
+					FROM = {
+						tag = SOV
+						has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+					}
+				}
+				POL = {
+				    promote_character = POL_boleslaw_bierut
+				}
+			}			
+			if = {
+				limit = {
+					original_tag = PRC
+					FROM = {
+						tag = SOV
+						has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+					}
+				}
+				PRC = {
+				    promote_character = PRC_wang_ming
+				}
+			}
+			if = {
+				limit = {
+					original_tag = KOR
+					NOT = { has_country_leader = { ruling_only = yes character = KOR_kim_il_sung }}
+					FROM = {
+						tag = SOV
+						has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+					}
+				}
+				random_other_country = {
+					limit = {
+						has_character = KOR_kim_il_sung
+					}
+					KOR_kim_il_sung = {
+						set_nationality = KOR
+					}
+				}
+				KOR = { 
+					add_country_leader_role = {
+						character = KOR_kim_il_sung
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = stalinism
+							traits = {
+								
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+		}
+	}
+	
+	#used when puppeting through the occupied territories menu during peace time (or when releasing from non-core but owned territory, f.e. Britain releasing Egypt)
+	#ROOT = nation being released, FROM = overlord
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = POL
+					NOT = { has_country_leader = { ruling_only = yes character = POL_boleslaw_bierut }}
+					FROM = {
+						tag = SOV
+						has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+					}
+				}
+				POL = {
+				    promote_character = POL_boleslaw_bierut
+				}	
+			}		
+			if = {
+				limit = {
+					original_tag = PRC
+					NOT = { has_country_leader = { ruling_only = yes character = PRC_wang_ming }}
+					FROM = {
+						tag = SOV
+					}
+				}
+				PRC = {
+				    promote_character = PRC_wang_ming
+				}
+			}
+			if = {
+				limit = {
+					original_tag = KOR
+					NOT = { has_country_leader = { ruling_only = yes character = KOR_kim_il_sung }}
+					FROM = {
+						tag = SOV
+						has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+					}
+				}
+				random_other_country = {
+					limit = {
+						has_character = KOR_kim_il_sung
+					}
+					KOR_kim_il_sung = {
+						set_nationality = KOR
+					}
+				}
+				KOR = { 
+					add_country_leader_role = {
+						character = KOR_kim_il_sung
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = stalinism
+							traits = {
+								
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			# Для снятия договора СССР с Прибалтикой
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = SOV
+							has_idea = SOV_baltic_agreement_idea
+						}
+					}
+					ROOT = {
+						OR = {
+							original_tag = SOV
+							has_idea = SOV_baltic_agreement_idea
+						}
+					}
+				}
+				ROOT = {
+					remove_ideas = SOV_baltic_agreement_idea
+					clr_country_flag = SOV_baltic_falsification_ready
+				}
+				FROM = {
+					remove_ideas = SOV_baltic_agreement_idea
+					clr_country_flag = SOV_baltic_falsification_ready
+				}
+			}
+		}
+		
+		# SOV
+		effect = {
+			if = {
+				limit = {
+					FROM = { original_tag = SOV }
+					original_tag = SOV
+					NOT = { has_global_flag = SOV_soviet_civil_war }
+				}
+				set_global_flag = SOV_soviet_civil_war
+			}
+			if = {
+				limit = {
+					FROM = { original_tag = FIN }
+					tag = SOV
+					SOV = { has_country_flag = soviet_finland_war_flag }
+				}
+				FROM = {
+					if = {
+						limit = { has_rule = can_create_factions }
+						set_country_flag = can_create_factions_flag
+					}
+					set_rule = { can_join_factions = no }
+					set_rule = { can_create_factions = no }
+				}
+			}
+		}
+		
+		# GER SOV POL
+		effect = {
+			if = {
+				limit = {
+					FROM = { original_tag = POL }
+					tag = GER
+					has_global_flag = sov_yes_pact
+				}
+				SOV = {
+					country_event = { id = NWgermany.98 days = 3 }
+					add_ai_strategy = { type = prepare_for_war id = FROM value = 200 }
+				}
+				every_other_country = {
+					limit = { has_guaranteed = FROM }
+					add_ai_strategy = { type = diplo_action_desire id = FROM target = guarantee value = -200 }
+#					diplomatic_relation = {
+#						country = POL
+#						relation = guarantee
+#						active = no
+#					}
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#### Слёт соглашения стран Прибалтики с СССР при капитуляции последней
+			if = {
+				limit = {
+					ROOT = { original_tag = SOV }
+				}
+				every_country = {
+					limit = { has_idea = SOV_baltic_agreement_idea }
+					remove_ideas = SOV_baltic_agreement_idea
+					clr_country_flag = SOV_baltic_falsification_ready
+				}
+			}
+			
+			#Капитуляция Финов от СССР
+			if = {
+				limit = {
+					ROOT = { tag = FIN }
+					FROM = { tag = SOV }
+				}
+				set_global_flag = FIN_has_defeat_from_ussr_flag
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - For civil wars on_civil_war_end is also fired
+	on_annex = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						has_idea = SOV_baltic_agreement_idea
+					}
+				}
+				remove_ideas = SOV_baltic_agreement_idea
+				clr_country_flag = SOV_baltic_falsification_ready
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			#Костыль для советско-финской
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = SOV
+							tag = FIN
+						}
+					}
+					ROOT = {
+						OR = {
+							tag = SOV
+							tag = FIN
+						}
+					}
+					SOV = { has_country_flag = soviet_finland_war_flag }
+				}
+				SOV = { clr_country_flag = soviet_finland_war_flag }
+				FIN = {
+					if = {
+						limit = { has_country_flag = can_create_factions_flag }
+						clr_country_flag = can_create_factions_flag
+						set_rule = { can_join_factions = yes }
+					}
+				}
+			}
+			
+			#Нормальная Ялта
+			if = {
+				limit = {
+					FROM = {
+						tag = GER
+						GER = { has_government = fascism }
+					}
+					ROOT = {
+						OR = {
+							tag = SOV
+							is_in_faction_with = SOV
+							tag = ENG
+							is_in_faction_with = ENG
+							tag = FRA
+							is_in_faction_with = FRA
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = ENG
+								is_in_faction_with = ENG
+								tag = FRA
+								is_in_faction_with = FRA
+							}
+							OR = {
+								has_government = neutrality
+								has_government = democratic
+							}
+						}
+					}
+					every_state = {
+						limit = {
+							is_core_of = WGR
+							is_core_of = FROM
+							#is_owned_by = FROM
+						}
+						WGR = { transfer_state = PREV }
+					}
+				}
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = SOV
+								is_in_faction_with = SOV
+							}
+							OR = {
+								has_government = communism
+								has_government = trozkism
+							}
+						}
+					}
+					every_state = {
+						limit = {
+							is_core_of = DDR
+							is_core_of = FROM
+							#is_owned_by = FROM
+						}
+						DDR = { transfer_state = PREV }
+					}
+					if = {
+						limit = {
+							POL = {
+								OR = {
+									has_government = communism
+									has_government = trozkism
+								}
+							}
+						}
+						every_state = {
+							limit = {
+								OR = {
+									is_core_of = POL
+									state = 800
+								}
+								OR = {
+									is_owned_by = DDR
+									is_core_of = FROM
+								}
+							}
+							add_core_of = POL
+							POL = { transfer_state = PREV }
+						}
+						if = {
+							limit = { 85 = { OR = { controller = { OR = { is_in_faction_with = POL } } owner = { OR = { is_in_faction_with = POL } } } } }
+							POL = { transfer_state = 85 }
+							85 = { add_core_of = POL }
+						}
+						if = {
+							limit = { 774 = { OR = { controller = { OR = { is_in_faction_with = POL } } owner = { OR = { is_in_faction_with = POL } } } } }
+							POL = { transfer_state = 774 }
+							774 = { add_core_of = POL }
+						}
+						if = {
+							limit = { 798 = { OR = { controller = { OR = { is_in_faction_with = POL } } owner = { OR = { is_in_faction_with = POL } } } } }
+							POL = { transfer_state = 798 }
+							798 = { add_core_of = POL }
+						}
+						if = {
+							limit = { 837 = { OR = { controller = { OR = { is_in_faction_with = POL } } owner = { OR = { is_in_faction_with = POL } } } } }
+							POL = { transfer_state = 837 }
+							837 = { add_core_of = POL }
+						}
+						if = {
+							limit = { 908 = { OR = { controller = { OR = { is_in_faction_with = POL } } owner = { OR = { is_in_faction_with = POL } } } } }
+							POL = { transfer_state = 908 }
+							908 = { add_core_of = POL }
+						}
+						every_state = {
+							limit = {
+								is_core_of = POL
+								is_owned_by = SOV
+								NOT = { is_core_of = SOV }
+							}
+							remove_core_of = POL
+							add_core_of = SOV
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		### SOV
+		effect = {
+			# if = {
+				# limit = {
+					# original_tag = SOV
+					# NOT = { has_global_flag = SOV_soviet_civil_war_over }
+				# }
+				# set_global_flag = SOV_soviet_civil_war_over
+			# }
+		}
+	}
+}

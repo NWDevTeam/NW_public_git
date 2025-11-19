@@ -1,0 +1,213 @@
+﻿add_namespace = NW_balkan_entente
+
+###Нападение на Балканскую Антанту###
+country_event = {
+    id = NW_balkan_entente.0
+	title = NW_balkan_entente.0.t
+    desc = NW_balkan_entente.0.d
+	picture = GFX_report_event_afg_people2
+	is_triggered_only = yes
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_balkan_entente.0"
+		hidden_effect = {
+			FROM = { save_event_target_as = balkan_entente_agressor }
+			random_scope_in_array = {
+				array = global.balkan_entente
+				limit = { has_war_with = FROM }
+				save_event_target_as = balkan_entente_defender
+			}
+		}
+	}
+    option = {
+        name = NW_balkan_entente.0.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				OR = {
+					is_historical_focus_on = yes
+					check_variable = { global.NW_level_of_trust_var < 5 }
+				}
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					has_opinion = { target = event_target:balkan_entente_defender value < 10 }
+					check_variable = { global.NW_level_of_trust_var < 10 }
+				}
+			}
+			modifier = {
+				factor = 0.2
+				OR = {
+					AND = {
+						has_opinion = { target = event_target:balkan_entente_defender value < 30 }
+						has_opinion = { target = event_target:balkan_entente_defender value > 9 }
+					}
+					AND = {
+						check_variable = { global.NW_level_of_trust_var < 25 }
+						check_variable = { global.NW_level_of_trust_var > 9 }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.4
+				OR = {
+					AND = {
+						has_opinion = { target = event_target:balkan_entente_defender value < 50 }
+						has_opinion = { target = event_target:balkan_entente_defender value > 29 }
+					}
+					AND = {
+						check_variable = { global.NW_level_of_trust_var < 50 }
+						check_variable = { global.NW_level_of_trust_var > 24 }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.8
+				has_opinion = { target = event_target:balkan_entente_defender value > 70 }
+				check_variable = { global.NW_level_of_trust_var > 60 }
+			}
+		}
+		declare_war_on = { target = FROM type = topple_government }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { NW_level_of_trust_temp_var = 5 }
+		add_to_variable = { global.NW_level_of_trust_var = NW_level_of_trust_temp_var tooltip = NW_level_of_trust_var_add_tt }
+		NW_level_of_trust_be = yes
+	}
+	option = {
+        name = NW_balkan_entente.0.b
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.7
+				has_opinion = { target = event_target:balkan_entente_defender value > 70 }
+				check_variable = { global.NW_level_of_trust_var > 60 }
+			}
+		}
+		custom_effect_tooltip = NW_balkan_entente_0_b_tt
+		custom_effect_tooltip = empty_line_tooltip
+		remove_dynamic_modifier = { modifier = NW_balkan_entente_modifier }
+		remove_from_array = { global.balkan_entente = THIS }
+	}
+}
+
+###Укрепление Балканской Антанты###
+country_event = {
+    id = NW_balkan_entente.1
+	title = NW_balkan_entente.1.t
+    desc = NW_balkan_entente.1.d
+	picture = GFX_report_event_afg_people2
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_balkan_entente.1" }
+    option = {
+        name = NW_balkan_entente.1.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				has_opinion = { target = FROM value < 10 }
+			}
+			modifier = {
+				factor = 0.1
+				has_opinion = { target = FROM value < 10 }
+			}
+			modifier = {
+				factor = 0.2
+				has_opinion = { target = FROM value < 30 }
+				has_opinion = { target = FROM value > 9 }
+			}
+			modifier = {
+				factor = 0.4
+				has_opinion = { target = FROM value < 50 }
+				has_opinion = { target = FROM value > 29 }
+			}
+			modifier = {
+				factor = 0.8
+				has_opinion = { target = FROM value > 70 }
+			}
+		}
+		set_temp_variable = { NW_level_of_trust_temp_var = 5 }
+		add_to_variable = { global.NW_level_of_trust_var = NW_level_of_trust_temp_var tooltip = NW_level_of_trust_var_add_tt }
+		NW_level_of_trust_be = yes
+		custom_effect_tooltip = empty_line_tooltip
+		custom_effect_tooltip = NW_balkan_entente_modifier_change_tt
+		add_to_variable = { global.NW_balkan_entente_stability_factor_var = 0.05 tooltip = stability_factor_tooltip }
+		force_update_dynamic_modifier = yes
+	}
+	option = {
+        name = NW_balkan_entente.1.b
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_opinion = { target = event_target:balkan_entente_defender value > 90 }
+			}
+		}
+		custom_effect_tooltip = NW_balkan_entente_modifier_change_tt
+		add_to_variable = { global.NW_balkan_entente_stability_factor_var = 0.05 tooltip = stability_factor_tooltip }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+###Балканская Антанта предлагает пополнить их ряды###
+country_event = {
+    id = NW_balkan_entente.2
+	title = NW_balkan_entente.2.t
+	desc = {
+		text = NW_balkan_entente.2.d.a
+		trigger = { original_tag = BUL }
+	}
+	desc = {
+		text = NW_balkan_entente.2.d.b
+		trigger = { original_tag = ALB }
+	}
+	picture = GFX_report_event_afg_people2
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_balkan_entente.2" }
+    option = {
+        name = NW_balkan_entente.2.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				has_opinion = { target = FROM value < 10 }
+			}
+			modifier = {
+				factor = 0.1
+				has_opinion = { target = FROM value < 10 }
+			}
+			modifier = {
+				factor = 0.2
+				has_opinion = { target = FROM value < 30 }
+				has_opinion = { target = FROM value > 9 }
+			}
+			modifier = {
+				factor = 0.4
+				has_opinion = { target = FROM value < 50 }
+				has_opinion = { target = FROM value > 29 }
+			}
+			modifier = {
+				factor = 0.8
+				has_opinion = { target = FROM value > 70 }
+			}
+		}
+		add_threat = -1
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { NW_level_of_trust_temp_var = 5 }
+		add_to_variable = { global.NW_level_of_trust_var = NW_level_of_trust_temp_var tooltip = NW_level_of_trust_var_add_tt }
+		NW_level_of_trust_be = yes
+		custom_effect_tooltip = empty_line_tooltip
+		add_to_array = { global.balkan_entente = THIS }
+		add_dynamic_modifier = { modifier = NW_balkan_entente_modifier }
+	}
+	option = {
+        name = NW_balkan_entente.2.b
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_opinion = { target = FROM value > 90 }
+			}
+		}
+	}
+}

@@ -1,0 +1,98 @@
+scripted_gui = {
+
+    nw_Legitimacy_and_Migration_alert = {
+		context_type = player_context
+		parent_window_token = top_bar
+		window_name = "legitimacy_and_migration_alert"
+		
+		ai_enabled = { always = no }
+		visible = { OR = { has_country_flag = change_legitimacy_flag has_country_flag = change_migration_level_flag } }
+		triggers = {
+			background_red_visible = { #Понижение
+				check_variable = { GUI_up_or_down_status_var = 1 }
+			}
+			background_green_visible = { #Повышение
+				check_variable = { GUI_up_or_down_status_var = 2 }
+			}
+		}
+		effects = {
+			close_button_click = { clr_country_flag = change_legitimacy_flag clr_country_flag = change_migration_level_flag }
+			desc_alert_effect_click = {
+				if = {
+					limit = { has_country_flag = change_legitimacy_flag }
+					swap_ideas = {
+						remove_idea = var:GUI_current_legitimacy_idea
+						add_idea = var:GUI_new_legitimacy_idea
+					}
+				}
+				else_if = {
+					limit = { has_country_flag = change_migration_level_flag }
+					meta_effect = {
+						text = {
+							swap_ideas = {
+								remove_idea = [CURRENT_IDEA]
+								add_idea = [NEW_IDEA]
+							}
+						}
+						CURRENT_IDEA = "[?GUI_current_level_migration_var.GetTokenKey]"
+						NEW_IDEA = "[?GUI_new_level_migration_var.GetTokenKey]"
+					}
+				}
+			}
+		}
+	}
+	
+	nw_World_Of_Spilt_settings = {
+		context_type = player_context
+		parent_window_token = top_bar
+		window_name = "nw_World_Of_Spilt_settings_window"
+		
+		visible = {
+			has_country_flag = NW_WOS_settings
+		}
+		ai_enabled = {
+			always = no
+		}
+		
+		effects = {
+			random_checkbox_click = {
+				if = {
+					limit = { check_variable = { NW_WOS_random_bool = 2 } }
+					set_variable = { NW_WOS_random_bool = 1 }
+				}
+				else = {
+					set_variable = { NW_WOS_random_bool = 2 }
+				}
+			}
+			
+			play_click = {
+				clr_country_flag = NW_WOS_settings
+				clr_global_flag = NW_WOS_settings
+				if = {
+					limit = { check_variable = { NW_WOS_random_bool = 2 } }
+					random_country = {
+						country_event = rmap.1 # NW_WOS_randomize_world = yes
+					}
+				}
+				country_event = { id = NWgeneric.9998 }
+			}
+		}
+		
+		properties = {
+			random_checkbox = { frame = NW_WOS_random_bool }
+		}
+	}
+	
+	nw_World_Of_Spilt_settings_time_block = {
+		context_type = player_context
+		parent_window_token = top_bar
+		window_name = "nw_time_control_block_window"
+		
+		visible = {
+			has_global_flag = NW_WOS_settings
+		}
+		ai_enabled = {
+			always = no
+		}
+	}
+}

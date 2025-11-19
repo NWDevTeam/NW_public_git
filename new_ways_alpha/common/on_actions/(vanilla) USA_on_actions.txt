@@ -1,0 +1,214 @@
+on_actions = {
+	
+	on_new_term_election = {
+		random_events = {	# TODO?
+			100 = usa.6
+			100 = usa.7
+			100 = usa.8
+			100 = usa.9
+			100 = usa.10
+			100 = usa.11
+			100 = usa.12
+		}
+	}
+	
+	on_startup = {
+		effect = {
+			#Mexican oil concessions	TODO выпилить?
+			if = {
+				limit = {
+					has_dlc = "Man the Guns"
+				}
+				MEX = {
+					give_resource_rights = { receiver = ENG state = 476 }
+					give_resource_rights = { receiver = ENG state = 477 }
+					give_resource_rights = { receiver = USA state = 479 }
+					give_resource_rights = { receiver = USA state = 480 }
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	# on_declare_war = {	# TODO че это такое
+		# effect = {
+			# if = {
+				# limit = {
+					# FROM = {
+						# OR = {
+							# has_idea = american_protection_drift_democratic
+							# has_idea = american_protection_drift_communism
+							# has_idea = american_protection_drift_fascism
+							# has_idea = american_protection_defence_democratic
+							# has_idea = american_protection_defence_communism
+							# has_idea = american_protection_defence_fascism
+						# }
+					# }
+					# NOT = {
+						# tag = USA
+						# is_in_faction_with = USA # I guess USA will not go to war with someone they are in faction with
+						# has_war_with = USA
+						# #USA = { has_war_with = FROM } Should USA enforce peace in a nation it is already at war with?
+					# }
+					# OR = {
+						# has_idea = american_protection_drift_democratic
+						# has_idea = american_protection_drift_communism
+						# has_idea = american_protection_drift_fascism
+						# has_idea = american_protection_defence_democratic
+						# has_idea = american_protection_defence_communism
+						# has_idea = american_protection_defence_fascism
+					# }
+				# }
+				# FROM = { country_event = { id = usa.16 days = 1 } }
+			# }
+		# }
+	# }
+	
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					tag = CSA
+					FROM = {
+						OR = {
+							tag = USA
+							is_in_faction_with = USA
+						}
+					}
+				}
+				USA = {
+					annex_country = { target = CSA } #cleaner than hoping that the peace conference AI will sort it out
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			#End of US civil war
+			if = {
+				limit = {
+					original_tag = USA
+					OR = {
+						has_government = neutrality
+						has_government = fascism
+					}
+				}
+				news_event = { id = mtg_news.7 days = 4 random_days = 5 }
+			}
+			# Give back USA focus tree to CSA if they win a civil war.
+			if = {
+				limit = {
+					original_tag = USA
+					has_government = democratic
+					FROM = {
+						original_tag = USA
+						OR = {
+							has_government = neutrality
+							has_government = fascism
+						}
+					}
+				}
+				drop_cosmetic_tag = yes # we are done here
+				set_country_flag = democratic_usa_won_civil_war
+			}
+			if = {
+				limit = {
+					has_template = "Silver Legion"
+				}
+				delete_unit_template_and_units = { division_template = "Silver Legion" }
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			# USA 'civil war' ends
+			if = {
+				limit = {
+					tag = CSA
+					FROM = { original_tag = USA }
+				}
+				load_focus_tree = { tree = usa_focus keep_completed = no }
+				unlock_national_focus = USA_reestablish_the_gold_standard
+				complete_national_focus = USA_america_first
+				unlock_national_focus = USA_ally_with_the_silver_shirts
+				unlock_national_focus = USA_invite_foreign_support
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					tag = CSA
+					has_war = yes
+					FROM = {
+						tag = USA
+					}
+					FROM.FROM = {
+						is_core_of = USA
+						not = { has_state_flag = USA_civil_war_state_cooldown }
+					}
+				}
+				FROM.FROM = {
+					save_event_target_as = CSA_liberated_state
+					set_state_flag = {
+						flag = USA_civil_war_state_cooldown
+						days = 180
+						value = 1
+					}
+					state_event = { id = mtg_usa_civil_war_fascists.201 trigger_for = controller }
+				}
+			}
+			if = {
+				limit = {
+					tag = USA
+					has_war_with = CSA
+					FROM = {
+						tag = CSA
+					}
+					FROM.FROM = {
+						OR = {
+							is_core_of = CSA
+							is_claimed_by = USA
+						}
+						not = { has_state_flag = USA_civil_war_state_cooldown }
+					}
+				}
+				FROM.FROM = {
+					save_event_target_as = USA_liberated_state
+					set_state_flag = {
+						flag = USA_civil_war_state_cooldown
+						days = 180
+						value = 1
+					}
+					state_event = { id = mtg_usa_civil_war_fascists.202 trigger_for = controller }
+				}
+			}
+			if = {
+				limit = {
+					original_tag = USA
+					has_civil_war = yes
+					tag = event_target:USA_civil_war_democrats
+					has_country_flag = citizen_militia_spawned
+					FROM.FROM = {
+						is_core_of = USA
+						has_state_flag = USA_citizen_militia
+						not = { has_state_flag = USA_militia_spawned }
+					}
+				}
+				FROM.FROM = {
+					set_state_flag = USA_militia_spawned
+					state_event = { id = mtg_usa_civil_war_fascists.1000 trigger_for = controller }
+				}
+			}
+		}
+	}
+}
+

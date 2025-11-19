@@ -1,354 +1,275 @@
-# 	# Создание коалиции:
-# add_to_array = { coalition_array = token:ideology }	# ideology - название идеологии (democratic, communism, fascism, neutrality...)
-# NW_legitimacy_check = yes
-# 	# в легитимность будет прибавляться указанная партия. В коалицию можно добавить хоть все партии
-#   # флаг spain_block_legitimacy_flag - блокировка проверки легитимности
-
-NW_legitimacy_check = {
-	set_variable = { legitimacy_var = 0 }
+### Добавление партии в коалицию:
+# set_temp_variable = { ideology = token:[IDEOLOGY] } 	## IDEOLOGY -- название идеологии (democratic, communism, fascism, neutrality...)
+# NW_add_to_coalition = yes
+NW_add_to_coalition = {
+	log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): add_to_array NW_coalition_array = [?ideology.GetTokenKey] (NW_add_to_coalition)"
 	
-	### НАЧАЛО ПРОВЕРКИ КОАЛИЦИЙ
+	NW_convert_ideology_token_to_idx = yes
+	if = {
+		limit = { NOT = { is_in_array = { NW_coalition_array = ideology } } }
+		add_to_array = { NW_coalition_array = ideology }
+	}
+}
+
+### Исключение партии из коалиции:
+# set_temp_variable = { ideology = token:[IDEOLOGY] } 	## IDEOLOGY -- название идеологии (democratic, communism, fascism, neutrality...)
+# NW_remove_from_coalition = yes
+NW_remove_from_coalition = {
+	log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove_from_array NW_coalition_array = [?ideology.GetTokenKey] (NW_remove_from_coalition)"
+	
+	NW_convert_ideology_token_to_idx = yes
+	remove_from_array = { NW_coalition_array = ideology }
+}
+
+### Роспуск коалиции:
+# (optional) set_temp_variable = { no_rulling_party = 1 }	## правящая партия не будет учитываться в подсчете легитимности
+# NW_end_coalition = yes
+NW_end_coalition = {
+	clear_array = NW_coalition_array
+	log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): clear NW_coalition_array (NW_end_coalition)"
+	if = {
+		limit = { NOT = { check_variable = { no_rulling_party = 1 } } }
+		NW_startup_create_coalition_array = yes
+	}
+}
+
+# ниже вам делать нечего
+
+NW_startup_create_coalition_array = {
+	set_temp_variable = { ideology = current_party_ideology_group }
+	NW_convert_ideology_token_to_idx = yes
+	add_to_array = { NW_coalition_array = ideology }
+	log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): add_to_array NW_coalition_array = [?current_party_ideology_group.GetTokenKey] (NW_startup_create_coalition_array)"
+}
+
+NW_convert_ideology_token_to_idx = {
 	for_each_loop = {
 		array = global.ideology_groups
-		value = ideology
-		
 		if = {
-			limit = { is_in_array = { coalition_array = ideology } }
-			add_to_variable = { legitimacy_var = party_popularity_100@var:ideology }
-			log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: [?ideology.GetTokenKey] is in coalition_array"
+			limit = { check_variable = { ideology = v } }
+			set_temp_variable = { ideology = i }
+			set_temp_variable = { break = 1 }
 		}
 	}
-	### КОНЕЦ ПРОВЕРКИ КОАЛИЦИЙ
+}
+
+NW_legitimacy_update = {
+	set_temp_variable = { v = 0 }
+	for_each_loop = {
+		array = NW_coalition_array
+		value = ideology_num
+		
+		set_temp_variable = { party = global.ideology_groups^ideology_num }
+		add_to_temp_variable = { v = party_popularity@var:party }
+	}
+	add_to_temp_variable = { v = stability }
+	divide_temp_variable = { v = 2 }
 	
 	if = {
+		limit = { NOT = { check_variable = { v = NW_current_legitimacy_var } } }
+		NW_legitimacy_idea_update = yes
+	}
+}
+
+NW_legitimacy_idea_update = {
+	if = {
 		limit = {
+			check_variable = { v > 0.849 }
 			NOT = {
-				has_country_flag = very_good_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
+				check_variable = { NW_current_legitimacy_idea = token:very_good_legitimacy } ## опасно хранить токены в переменных (например при запуске сейва с другого компа токен может иметь другое значение, а в переменной останется прежнее), но в данном случае это допустимо?
 				has_government = anarchism
-				has_idea = AFG_non_acceptance_of_power
-				has_idea = TIB_power_without_power
-#				has_idea = NGX_no_hui_nationalism
-#				has_idea = NGX_very_weak_hui_nationalism
-#				has_idea = NGX_weak_hui_nationalism
-				has_idea = KHU_manual_state_management
-				has_idea = IRQ_rejection_of_hashemites
 			}
-			if = {
-				limit = { tag = BRD has_country_leader = { character = BRD_Ntare_V ruling_only = yes } }
-				BRD_Ntare_V = { NOT = { has_trait = BRW_impostor } }
-			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				always = no
-			}
-			else = {
-				check_variable = { legitimacy_var > 84.9 }
-			}
+			
+			NW_can_set_very_good_legitimacy = yes ## country specific
 		}
 		# Very Good Legitimacy 85% #
-		set_variable = { new_legitimacy_idea_var = token:very_good }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 1 }
+		set_temp_variable = { _new_legitimacy_idea = token:very_good_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 1 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.1
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
 	else_if = {
 		limit = {
+			check_variable = { v > 0.649 }
+			check_variable = { v < 0.85 }
 			NOT = {
-				has_country_flag = good_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
+				check_variable = { NW_current_legitimacy_idea = token:good_legitimacy }
 				has_government = anarchism
-				has_idea = AFG_non_acceptance_of_power
-				has_idea = TIB_power_without_power
-#				has_idea = NGX_no_hui_nationalism
-#				has_idea = NGX_very_weak_hui_nationalism
-#				has_idea = NGX_weak_hui_nationalism
-				has_idea = KHU_manual_state_management
-				has_idea = IRQ_rejection_of_hashemites
 			}
-			if = {
-				limit = { tag = BRD has_country_leader = { character = BRD_Ntare_V ruling_only = yes } }
-				BRD_Ntare_V = { NOT = { has_trait = BRW_impostor } }
-			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				always = no
-			}
-			else = {
-				check_variable = { legitimacy_var > 64.9 }
-				check_variable = { legitimacy_var < 85.0 }
-			}
+			
+			NW_can_set_good_legitimacy = yes ## country specific
 		}
 		# Good Legitimacy 65 - 84.9% #
-		set_variable = { new_legitimacy_idea_var = token:good }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 2 }
+		set_temp_variable = { _new_legitimacy_idea = token:good_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 2 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.2
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy  = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
 	else_if = {
 		limit = {
-			NOT = {
-				has_country_flag = normal_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
-#				has_idea = NGX_no_hui_nationalism
-#				has_idea = NGX_very_weak_hui_nationalism
-				has_idea = IRQ_rejection_of_hashemites
+			check_variable = { v > 0.499 }
+			check_variable = { v < 0.65 }
+			NOT = { 
+				check_variable = { NW_current_legitimacy_idea = token:normal_legitimacy } 
 			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				check_variable = { var = MEN_legitimacy_var value = 90 compare = less_than_or_equals }
-				check_variable = { MEN_legitimacy_var > 60 }
-			}
-			else_if = {
-				limit = { has_government = anarchism }
-				check_variable = { legitimacy_var > 49.9 }
-			}
-			else = {
-				check_variable = { legitimacy_var > 49.9 }
-				check_variable = { legitimacy_var < 65.0 }
-			}
+			
+			NW_can_set_normal_legitimacy = yes ## country specific
 		}
 		# Normal Legitimacy 50 - 64.9% #
-		set_variable = { new_legitimacy_idea_var = token:normal }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 3 }
+		set_temp_variable = { _new_legitimacy_idea = token:normal_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 3 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.3
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
 	else_if = {
 		limit = {
+			check_variable = { v > 0.299 }
+			check_variable = { v < 0.5 }
 			NOT = {
-				has_country_flag = low_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
-#				has_idea = NGX_no_hui_nationalism
+				check_variable = { NW_current_legitimacy_idea = token:low_legitimacy }
 			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				check_variable = { var = MEN_legitimacy_var value = 60 compare = less_than_or_equals }
-				check_variable = { MEN_legitimacy_var > 30 }
-			}
-			else_if = {
-				limit = {
-					has_idea = IRQ_rejection_of_hashemites
-				}
-				check_variable = { party_popularity_100@ruling_party > 0.299 }
-			}
-			else = {
-				check_variable = { legitimacy_var > 29.9 }
-				check_variable = { legitimacy_var < 50.0 }
-			}
+			
+			NW_can_set_low_legitimacy = yes ## country specific
 		}
 		# Low Legitimacy 30 - 49.9% #
-		set_variable = { new_legitimacy_idea_var = token:low }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 4 }
+		set_temp_variable = { _new_legitimacy_idea = token:low_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 4 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.4
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
 	else_if = {
 		limit = {
+			check_variable = { v > 0.099 }
+			check_variable = { v < 0.3 }
 			NOT = {
-				has_country_flag = very_low_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
+				check_variable = { NW_current_legitimacy_idea = token:very_low_legitimacy }
 			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				check_variable = { var = MEN_legitimacy_var value = 30 compare = less_than_or_equals }
-			}
-			else = {
-				check_variable = { legitimacy_var > 9.9 }
-				check_variable = { legitimacy_var < 30.0 }
-			}
+			
+			NW_can_set_very_low_legitimacy = yes ## country specific
 		}
 		# Very Low Legitimacy 10 - 29.9% #
-		set_variable = { new_legitimacy_idea_var = token:very_low }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 5 }
+		set_temp_variable = { _new_legitimacy_idea = token:very_low_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 5 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.5
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
 	else_if = {
 		limit = {
+			check_variable = { v < 0.099 }
 			NOT = {
-				has_country_flag = disaster_legitimacy_flag
-				has_country_flag = spain_block_legitimacy_flag
-				has_country_leader = { character = NFL_david_murray_anderson ruling_only = yes }
-				has_country_leader = { character = NFL_humphrey_t_walwyn ruling_only = yes }
-				has_country_leader = { character = NFL_gordon_macdonald ruling_only = yes }
-				has_country_leader = { character = NFL_john_hope_simpson ruling_only = yes }
+				check_variable = { NW_current_legitimacy_idea = token:disaster_legitimacy }
 			}
-			if = {
-				limit = {
-					original_tag = MEN
-					has_variable = MEN_legitimacy_var
-				}
-				always = no
-			}
-			else = {
-				check_variable = { legitimacy_var < 9.9 }
-			}
+			
+			NW_can_set_disaster_legitimacy = yes ## country specific
 		}
 		# Disaster Legitimacy 9.9% #
-		set_variable = { new_legitimacy_idea_var = token:disaster }
-		set_variable = { GUI_new_legitimacy_idea_var_NUM = 6 }
+		set_temp_variable = { _new_legitimacy_idea = token:disaster_legitimacy }
+		set_temp_variable = { _GUI_new_legitimacy_idea = 6 }
 		if = {
-			limit = { has_variable = current_legitimacy_idea_var }
-			NW_set_legitimacy = yes
-			if = {
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
-				country_event = TRlegitimacy.6
-			}
-			else_if = { 
-				limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
-				clr_country_flag = change_migration_level_flag
-				set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
-			} 
+			limit = { NOT = { check_variable = { NW_current_legitimacy_idea = 0 } } }
+			NW_swap_legitimacy_idea = yes
 		}
 		else = {
-			NW_startup_set_legitimacy = yes
+			NW_startup_set_legitimacy_idea = yes
 		}
 	}
 	
-	if = {
-		limit = { has_country_flag = spain_block_legitimacy_flag }
-		log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: итог - spain_block_legitimacy_flag"
-	}
-	else = {
-		log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: итог - legitimacy_[?current_legitimacy_idea_var.GetTokenKey]"
-	}
+	set_variable = { NW_current_legitimacy_var = v }
+	NW_legitimacy_default_effects_update = yes
+	
+	# if = {
+		# limit = { has_country_flag = spain_block_legitimacy_flag }
+		# log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: итог - spain_block_legitimacy_flag"
+	# }
+	# else = {
+		# log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: итог - legitimacy_[?current_legitimacy_idea_var.GetTokenKey]"
+	# }
 }
 
-###
-
-NW_startup_set_legitimacy = {
-	meta_effect = {
-		text = {
-			add_ideas = [NEW_LEG_IDEA]_legitimacy
-			set_country_flag = [NEW_LEG_IDEA]_legitimacy_flag
-		}
-		NEW_LEG_IDEA = "[?new_legitimacy_idea_var.GetTokenKey]"
-	}
-	#log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): idea legitimacy_[?THIS.new_legitimacy_idea_var.GetTokenKey]" 
-	set_variable = { current_legitimacy_idea_var = new_legitimacy_idea_var }
-	set_variable = { GUI_current_legitimacy_idea_var_NUM = GUI_new_legitimacy_idea_var_NUM } #GUI
+NW_legitimacy_default_effects_update = {
+	set_variable = { NW_l_political_power_gain = NW_current_legitimacy_var }
+	divide_variable = { NW_l_political_power_gain = 2 }
+	# force_update_dynamic_modifier = yes
 }
 
-NW_set_legitimacy = {
-	NW_set_GUI_legitimacy = yes
-	meta_effect = {
-		text = {
-			swap_ideas = {
-				remove_idea = [CURRENT_LEG_IDEA]_legitimacy
-				add_idea = [NEW_LEG_IDEA]_legitimacy
-			}
-			clr_country_flag = [CURRENT_LEG_IDEA]_legitimacy_flag
-			set_country_flag = [NEW_LEG_IDEA]_legitimacy_flag
-		}
-		CURRENT_LEG_IDEA = "[?current_legitimacy_idea_var.GetTokenKey]"
-		NEW_LEG_IDEA = "[?new_legitimacy_idea_var.GetTokenKey]"
-	}
-	log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: current idea legitimacy_[?THIS.current_legitimacy_idea_var.GetTokenKey] | new idea legitimacy_[?THIS.new_legitimacy_idea_var.GetTokenKey]" 
-	set_variable = { current_legitimacy_idea_var = new_legitimacy_idea_var }
-}
-
-NW_set_GUI_legitimacy = { ### ДЛЯ ГУИ
-	set_variable = { GUI_current_legitimacy_idea_var = current_legitimacy_idea_var }
-	set_variable = { GUI_new_legitimacy_idea_var = new_legitimacy_idea_var }
+NW_startup_set_legitimacy_idea = {
+	add_ideas = var:_new_legitimacy_idea
+	set_variable = { NW_current_legitimacy_idea = _new_legitimacy_idea }
+	set_variable = { GUI_current_legitimacy_idea_NUM = _GUI_new_legitimacy_idea } #GUI
 	
 	if = {
-		limit = { check_variable = { GUI_new_legitimacy_idea_var_NUM > GUI_current_legitimacy_idea_var_NUM } }
+		limit = { NOT = { has_dynamic_modifier = { modifier = NW_legitimacy_default_effects } } }
+		add_dynamic_modifier = { modifier = NW_legitimacy_default_effects }
+	}
+	# log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): idea [?_new_legitimacy_idea.GetTokenKey]" 
+}
+
+NW_swap_legitimacy_idea = {
+	NW_set_legitimacy_alert = yes
+	
+	swap_ideas = {
+		remove_idea = var:NW_current_legitimacy_idea
+		add_idea = var:_new_legitimacy_idea
+	}
+
+	# log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): NW_legitimacy_check: current idea legitimacy_[?THIS.current_legitimacy_idea_var.GetTokenKey] | new idea legitimacy_[?THIS.new_legitimacy_idea_var.GetTokenKey]" 
+	set_variable = { NW_current_legitimacy_idea = _new_legitimacy_idea }
+}
+
+NW_set_legitimacy_alert = { ### ДЛЯ ГУИ
+	set_variable = { GUI_current_legitimacy_idea = NW_current_legitimacy_idea }
+	set_variable = { GUI_new_legitimacy_idea = _new_legitimacy_idea }
+	
+	if = {
+		limit = { check_variable = { _GUI_new_legitimacy_idea > GUI_current_legitimacy_idea_NUM } }
 		set_variable = { GUI_up_or_down_status_var = 1 }	# Понижение
 	}
 	else = {
 		set_variable = { GUI_up_or_down_status_var = 2 }	# Повышение
 	}
 	
-	set_variable = { GUI_current_legitimacy_idea_var_NUM = GUI_new_legitimacy_idea_var_NUM }
+	set_variable = { GUI_current_legitimacy_idea_NUM = _GUI_new_legitimacy_idea }
+	
+	if = { 
+		limit = { has_game_rule = { rule = swap_legitimacy_alert option = DEFAULT } }
+		clr_country_flag = change_migration_level_flag
+		set_country_flag = { flag = change_legitimacy_flag days = 4 value = 1 } #alert
+	} 
+	else_if = {
+		limit = { has_game_rule = { rule = swap_legitimacy_alert option = SWAP_TO_EVENT } }
+		meta_effect = { 		# TODO лучше без этого
+			text = { country_event = TRlegitimacy.[NUM] }
+			NUM = "[?_GUI_new_legitimacy_idea]"
+		}
+	}
 }

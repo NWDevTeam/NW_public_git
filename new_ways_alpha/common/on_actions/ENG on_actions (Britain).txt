@@ -1,0 +1,87 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### ENG
+				ENG = {
+					country_event = { id = britain.16 days = 19 }
+					country_event = { id = britain.17 days = 345 }
+					#NFL
+					country_event = { id = Newfoundland.8 days = 218 }  # вопрос о губернаторе
+					#TIB
+					country_event = { id = tibet.602 days = 700 } 		# чтобы не застрял в воздухе. В пульсаре происходит проверка и переадресация правильным тегам
+					#GER
+					country_event = { id = NWgermany.25 days = 353 } 	# В GER может начаться ГВ и ивент застрянет в воздухе. В пульсаре происходит проверка и переадресация правильному GER
+					country_event = { id = NWgermany.28 days = 1406 }
+					#SAU
+					country_event = { id = NWsaudi.600 days = 415 }
+					country_event = { id = NWsaudi.601 days = 1123 }
+					country_event = { id = NWsaudi.601 days = 1477 }
+					country_event = { id = NWsaudi.601 days = 2186 }
+					country_event = { id = NWsaudi.601 days = 2541 }
+					country_event = { id = NWsaudi.601 days = 2895 }
+					country_event = { id = NWsaudi.601 days = 3249 }
+					country_event = { id = NWsaudi.601 days = 3603 }
+					country_event = { id = NWsaudi.601 days = 3957 }
+					country_event = { id = NWsaudi.601 days = 4312 }
+					country_event = { id = NWsaudi.601 days = 4312 }
+					country_event = { id = NWsaudi.601 days = 4666 }
+					country_event = { id = NWsaudi.601 days = 5021 }
+					country_event = { id = NWsaudi.601 days = 5376 }
+					#Хадрамут
+					country_event = { id = NWhadhramaut.1 days = 24 }	#25 января
+					### ивенты-затычки
+					country_event = { id = NWzatyk.17 days = 513 }
+					country_event = { id = NWzatyk.1900 days = 1590 }
+				}
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			#ВБ стала троц и воюет с троц
+			if = {
+				limit = {
+					tag = ENG
+					has_government = trozkism
+				}
+				every_enemy_country = {
+					limit = {
+						has_government = trozkism
+						is_subject = no
+						OR = { is_faction_leader = yes is_in_faction = no }
+					}
+					ROOT = { white_peace = PREV }
+				}
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			#Капитуляция Британии и раздача заморских террок + конференции	TODO ??
+			if = {
+				limit = {
+					ROOT = { NOT = { tag = ENG } }
+					FROM = { tag = ENG }
+					FROM.FROM = { state = 126 }
+					NOT = { has_global_flag = Georg_VI_dead}
+				}
+				ENG = { country_event = { id = NW_collapse.1 days = 1 } }
+			}
+			if = {
+				limit = {
+					ROOT = { NOT = { tag = ENG } }
+					FROM = { tag = ENG }
+					FROM.FROM = { state = 126 }
+					has_global_flag = Georg_VI_dead
+				}
+				ENG = { country_event = { id = NW_collapse.2 days = 3 } }
+			}
+		}
+	}
+}

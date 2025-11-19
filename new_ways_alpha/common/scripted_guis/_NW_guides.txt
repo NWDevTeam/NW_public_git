@@ -1,0 +1,120 @@
+scripted_gui = {	
+	
+	NW_giudes_menu_opener_gui = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "NW_guides_menu_opener"
+		ai_enabled = { always = no }
+		
+		visible = {
+			NOT = { check_variable = { NW_guide_character_array^0 = 0 } }
+		}
+		
+		triggers = {
+			NW_open_guides_visible = { NOT = { has_country_flag = NW_guides_ui_flag } }
+            NW_close_guides_visible = { has_country_flag = NW_guides_ui_flag }
+		}
+		effects = {
+			NW_open_guides_click = {
+				set_country_flag = NW_guides_ui_flag
+			}
+			NW_close_guides_click = {
+				clr_country_flag = NW_guides_ui_flag
+			}
+		}
+	}
+	
+	NW_guides_gui = {
+		context_type = player_context
+		window_name = "NW_guides_open_window"
+		visible = { has_country_flag = NW_guides_ui_flag }	
+		ai_enabled = { always = no }
+		
+		triggers = {
+			leader_frame2_click_enabled = {
+				OR = {
+					check_variable = { NW_character_token = token:JAP_Machida_Chuji }
+					check_variable = { NW_character_token = token:JAP_Fusanosuke_Kuhara }
+					check_variable = { NW_character_token = token:JAP_Seigo_Nakano }
+					check_variable = { NW_character_token = token:JAP_Chikuhei_Nakajima }
+					check_variable = { NW_character_token = token:JAP_Ichiro_Hatoyama }
+					check_variable = { NW_character_token = token:JAP_Abe_Iso }
+					check_variable = { NW_character_token = token:JAP_Aso_Hisashi }
+					check_variable = { NW_character_token = token:JAP_Ryutaro_Nagai }
+				}
+			}
+		}
+		effects = {
+			NW_guides_close_button_click = {
+				clr_country_flag = NW_guides_ui_flag
+			}
+			
+			leader_frame2_click = {
+				clear_array = NW_guide_current_character
+				add_to_array = { NW_guide_current_character = NW_character_token }
+				
+				meta_effect = {
+					text = {
+						[CHARACTER] = {
+							set_variable = { ROOT.NW_ideology_token = NW_ideology_token }
+							set_variable = { ROOT.NW_focus_token = NW_focus_token }
+						}
+					}
+					CHARACTER = "[?NW_character_token.GetTokenKey]"
+				}
+			}
+			
+			NW_guide_text_close_click = {
+				clear_array = ROOT.NW_guide_current_character
+				clear_variable = NW_ideology_token
+				clear_variable = NW_focus_token
+			}
+		}
+		dynamic_lists = {
+			NW_characters_grid = {
+				array = NW_guide_character_array
+				value = NW_character_token
+				change_scope = no
+				entry_container = scripted_gui_NW_characters_ui_entry
+			}
+			NW_guide_text = {
+				array = NW_guide_current_character # в этом массиве должен быть только один персонаж
+				value = NW_character_token
+				change_scope = no
+				entry_container = NW_guide_text_window
+			}
+			
+			NW_cg_horizontal = {
+				array = _NW_guides_horizontal
+				entry_container = NW_horizontal
+			}
+			NW_cg_vertical = {
+				array = _NW_guides_vertical
+				entry_container = NW_vertical
+			}
+			NW_cg_lines = {
+				array = global._NW_one_array
+				entry_container = "NW_[ROOT.GetTag]_lines"
+			}
+		}
+		properties = {
+			leader = { 
+				x = _NW_guides_l_x^i
+				y = _NW_guides_l_y^i
+				image = "GFX_portrait_[?NW_character_token.GetTokenKey]" 
+			}
+			leader_frame2 = {
+				x = _NW_guides_lf_x^i
+				y = _NW_guides_lf_y^i
+			}
+			leader_name = {
+				x = _NW_guides_ln_x^i
+				y = _NW_guides_ln_y^i
+			}
+			
+			leader2 = { image = "GFX_portrait_[?NW_character_token.GetTokenKey]" }
+			pol_faction_icon = { image = "GFX_ideology_[?NW_ideology_token.GetTokenKey]" }
+			focus_icon = { image = "GFX_z_goal_[?NW_focus_token.GetTokenKey]" }
+		}
+	}
+}

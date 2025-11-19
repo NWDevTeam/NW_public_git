@@ -1,0 +1,1436 @@
+﻿###########################
+# Young Chinese Party Events
+########################### 
+
+add_namespace = ycp
+
+country_event = { #Новые командиры
+	id = ycp.1
+	title = ycp.1.t
+	desc = ycp.1.desc
+	picture = GFX_report_event_NW_YCP.1
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.1" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes # TODO ??
+	
+	trigger = { # TODO сразу в on_action проверять? !!
+		NOT = { has_country_flag = YCP_zhao_dong_went_to_seek_help_flag }
+		YCP_gao_peng = { is_corps_commander = no }
+		YCP_song_mingao = { is_corps_commander = no }
+		NOT = { has_completed_focus = YCP_first_ycp_government }
+	}
+	
+	option = {
+		name = ycp.1.a
+		add_political_power = 50
+		add_manpower = 500
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 500
+		}
+		add_corps_commander_role = {
+			character = YCP_gao_peng
+			traits = { air_controller }
+			skill = 1
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 1
+		}
+		add_corps_commander_role = {
+			character = YCP_song_mingao
+			traits = { }
+			skill = 1
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 1
+			logistics_skill = 1
+		}
+	}
+}
+
+country_event = { #Привет от Молодого маршала
+	id = ycp.2
+	title = ycp.2.t
+	desc = ycp.2.desc
+	picture = GFX_report_event_NW_YCP.2
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.2" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = { # TODO сразу в on_action проверять? !!
+		NOT = { has_country_flag = YCP_zhao_dong_went_to_seek_help_flag }
+		NOT = { has_completed_focus = YCP_first_ycp_government }
+	}
+	
+	option = {
+		name = ycp.2.a
+		add_political_power = 100
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 1000
+		}
+	}
+}
+
+country_event = { #Экстренное совещание TODO: уведомление, как получить этот ивент?
+	id = ycp.3
+	title = ycp.3.t
+	desc = ycp.3.desc
+	picture = GFX_report_event_NW_YCP.3
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.3" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = { has_completed_focus = YCP_first_ycp_government }
+	}
+	
+	option = {
+		name = ycp.3.a
+		add_war_support = -0.02
+		promote_character = YCP_bai_junshi # TODO ??
+		set_country_flag = YCP_zhao_dong_went_to_seek_help_flag
+		activate_mission = YCP_zhao_dong_seek_help_mission
+	}
+	option = {
+		name = ycp.3.b
+		add_war_support = 0.03
+	}
+}
+
+country_event = { #Потеря связи
+	id = ycp.4
+	title = ycp.4.t
+	desc = ycp.4.desc
+	picture = GFX_report_event_NW_YCP.4
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.4" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.4.a
+		custom_effect_tooltip = YCP_zhao_dong_will_fight_in_CHI_tt
+		# hidden_effect = { 
+			remove_country_leader_role = { # TODO ??
+				character = YCP_zhao_dong
+				ideology = authoritarian_democracy
+			}
+		# }
+		set_country_flag = YCP_zhao_dong_lost_contact_flag
+		hidden_effect = {
+			CHI = {
+				if = {
+					limit = { has_war_with = JAP }
+					country_event = { id = ycp.5 days = 50 }
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Прибытие Чжао Дуна
+	id = ycp.5
+	title = ycp.5.t
+	desc = ycp.5.desc
+	picture = GFX_report_event_NW_YCP.5
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.5" 
+		hidden_effect = {
+			YCP = {
+				YCP_zhao_dong = { set_nationality = ROOT }
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = { YCP = { has_country_flag = YCP_zhao_dong_lost_contact_flag } }
+	
+	option = {
+		name = ycp.5.a
+		add_war_support = 0.02
+		effect_tooltip = {
+			YCP = {
+				YCP_zhao_dong = { set_nationality = ROOT }
+			}
+		}
+		custom_effect_tooltip = available_political_advisor
+		show_ideas_tooltip = YCP_zhao_dong
+		# TODO тултип что при коммунистах он умрет?
+		hidden_effect = {
+			if = {
+				limit = { is_in_faction_with = PRC }
+				country_event = { id = ycp.6 days = 30 }
+			}
+		}
+	}
+}
+
+country_event = { #Смерть Чжао Дуна
+	id = ycp.6
+	title = ycp.6.t
+	desc = ycp.6.desc
+	picture = GFX_report_event_NW_YCP.6
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.6" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = { has_character = YCP_zhao_dong }
+	
+	option = {
+		name = ycp.6.a
+		add_war_support = -0.01
+		retire_character = YCP_zhao_dong
+	}
+}
+
+country_event = { #Возвращение Чжао Дуна
+	id = ycp.7
+	title = ycp.7.t
+	desc = ycp.7.desc
+	picture = GFX_report_event_NW_YCP.7
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.7"
+		clr_country_flag = YCP_zhao_dong_went_to_seek_help_flag
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.7.a
+		add_political_power = 200
+		add_war_support = 0.15
+		promote_character = YCP_zhao_dong
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 1500
+		}
+		if = {
+			limit = { NOT = { has_template = "Renmin Jundui" } }
+			division_template = {
+				name = "Renmin Jundui"
+				
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 1 y = 0 }
+				}
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.3 start_equipment_factor = 1" 
+				owner = PREV
+				count = 1
+			}
+		}
+		
+		if = { # эффект ивента Новые командиры
+			limit = { YCP_gao_peng = { is_corps_commander = no } }
+			add_corps_commander_role = {
+				character = YCP_gao_peng
+				traits = { air_controller }
+				skill = 1
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 2
+				logistics_skill = 1
+			}
+		}
+		if = {
+			limit = { YCP_song_mingao = { is_corps_commander = no } }
+			add_corps_commander_role = {
+				character = YCP_song_mingao
+				traits = { }
+				skill = 1
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 1
+				logistics_skill = 1
+			}
+		}
+	}
+}
+
+country_event = { #Предложение о сотрудничестве // EHB
+	id = ycp.8
+	title = ycp.8.t
+	desc = ycp.8.desc
+	picture = GFX_report_event_NW_YCP.8
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.8" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.8.a
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_war_together_with = overlord
+				# is_historical_focus_on = yes
+			}
+		}
+		every_unit_leader = {
+			set_nationality = YCP
+		}
+		FROM = {
+			annex_country = {
+				target = ROOT
+				transfer_troops = yes # TODO characters?
+			}
+			if = {
+				limit = { is_ai = yes } # TODO ??
+				change_tag_from = ROOT
+			}
+			YCP_increase_war_escalation_level = yes
+			set_country_flag = YCP_annex_EHB_flag
+		}
+		hidden_effect = {
+			every_country = {
+				limit = { OR = { is_literally_china = yes tag = JAP tag = YCP } }
+				news_event = ycp.9
+			}
+		}
+	}
+	
+	option = {
+		name = ycp.8.b
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.5
+				MAN = { surrender_progress > 0.25 }
+			}
+			modifier = {
+				factor = 0.5
+				MAN = { surrender_progress > 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { controls_state = 610 }
+			}
+			modifier = {
+				factor = 0 # 0.1
+				NOT = { country_exists = MAN }
+			}
+		}
+		FROM = { country_event = ycp.10 }
+	}
+}
+
+news_event = { #Восточный Хэбэй присоединяется к сопротивлению // все китайские теги и JAP
+	id = ycp.9
+	title = ycp.9.t
+	desc = ycp.9.desc
+	picture = GFX_report_event_NW_YCP.9
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.9" } #?
+	
+	is_triggered_only = yes
+	major = no #?
+	
+	option = { name = ycp.9.a trigger = { tag = JAP } }
+	option = { name = ycp.9.b trigger = { NOT = { tag = JAP tag = YCP } } }
+	option = { name = ycp.9.c trigger = { tag = YCP } }
+}
+
+country_event = { #Отказ Иня
+	id = ycp.10
+	title = ycp.10.t
+	desc = ycp.10.desc
+	picture = GFX_report_event_NW_YCP.10
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.10" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.10.a
+	}
+}
+
+news_event = { #Армия Железной крови освободила Маньчжурию
+	id = ycp.11 # TODO допээфект для JAP как при проигрыше маньчжуру?
+	title = ycp.11.t
+	desc = ycp.11.desc
+	picture = GFX_news_event_NW_JAP_news.11
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.11" } #?
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = { name = ycp.11.a trigger = { NOT = { tag = JAP is_chinese_warlord = yes } } }
+	option = { name = ycp.11.b trigger = { tag = JAP } }
+	option = { name = ycp.11.c trigger = { is_chinese_warlord = yes } }
+}
+
+news_event = { #Третья партия становится второй
+	id = ycp.12
+	title = ycp.12.t
+	desc = ycp.12.desc
+	picture = GFX_news_event_NW_JAP_news.12
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.12" } #?
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = { name = ycp.12.a trigger = { NOT = { tag = JAP tag = YCP } } }
+	option = { name = ycp.12.b trigger = { tag = JAP } }
+	option = { name = ycp.12.c trigger = { tag = YCP } }
+}
+
+country_event = { #Созыв Временного парламента
+	id = ycp.13
+	title = ycp.13.t
+	desc = ycp.13.desc
+	picture = GFX_report_event_NW_YCP.13
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.13" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.13.a
+		unlock_decision_category_tooltip = YCP_provisional_parliament_category
+		YCP_provisional_parliament_activate = yes
+	}
+}
+
+country_event = { #Судьба партийных заговорщиков
+	id = ycp.14
+	title = ycp.14.t
+	desc = ycp.14.desc
+	picture = GFX_report_event_NW_YCP.14
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.14" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.14.a
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = -0.15
+		}
+		add_corps_commander_role = {
+			character = YCP_yu_fuxian
+			traits = { }
+			skill = 1
+			attack_skill = 2
+			defense_skill = 1
+			planning_skill = 1
+			logistics_skill = 1
+		}
+		add_corps_commander_role = {
+			character = YCP_wang_shizeng
+			traits = { }
+			skill = 1
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 1
+			logistics_skill = 1
+		}
+		add_corps_commander_role = {
+			character = YCP_zhang_zhenwen
+			traits = { }
+			skill = 1
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 1
+			logistics_skill = 1
+		}
+		add_corps_commander_role = {
+			character = YCP_zhou_qianchong
+			traits = { }
+			skill = 1
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 1
+			logistics_skill = 2
+		}
+		custom_effect_tooltip = available_political_advisor
+		if = {
+			limit = { has_character = YCP_chang_yansheng }
+			show_ideas_tooltip = YCP_chang_yansheng
+		}
+	}
+	option = {
+		name = ycp.14.b
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = 0.05
+		}
+	}
+}
+
+country_event = { #Статус наркоторговли
+	id = ycp.15
+	title = ycp.15.t
+	desc = ycp.15.desc
+	picture = GFX_report_event_NW_YCP.15
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.15" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.15.a
+		add_political_power = -100
+		add_war_support = 0.04
+	}
+	option = {
+		name = ycp.15.b
+		custom_effect_tooltip = YCP_deputies_move_from_party_to_party
+		hidden_effect = {
+			var:YCP_ycp_party = { subtract_from_variable = { YCP_num_deputies = 5 } }
+			var:YCP_independent_party = { add_to_variable = { YCP_num_deputies = 5 } set_variable = { YCP_num_non_aligned_deputies = 5 } }
+			YCP_provisional_parliament_update = yes
+		}
+	}
+}
+
+country_event = { #Статус проституции
+	id = ycp.16
+	title = ycp.16.t
+	desc = ycp.16.desc
+	picture = GFX_report_event_NW_YCP.16
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.16" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.16.a
+		add_political_power = -60
+		add_stability = 0.05
+	}
+	option = {
+		name = ycp.16.b
+		add_political_power = -30
+	}
+	option = {
+		name = ycp.16.c
+		add_political_power = 25
+		add_stability = -0.07
+	}
+}
+
+country_event = { #Флаг республики
+	id = ycp.17
+	title = ycp.17.t
+	desc = ycp.17.desc
+	picture = GFX_report_event_NW_YCP.17
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.17" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.17.a
+		add_political_power = 25
+		add_war_support = 0.05
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = -0.03
+		}
+	}
+	option = {
+		name = ycp.17.b
+		add_stability = 0.05
+		set_cosmetic_tag = YCP_cgc_with_flag
+	}
+}
+
+country_event = { #Партия Государственного Социализма
+	id = ycp.18
+	title = ycp.18.t
+	desc = ycp.18.desc
+	picture = GFX_report_event_NW_YCP.18
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.18" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.18.a
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.02
+		}
+	}
+}
+
+country_event = { #Новый демократический Китай
+	id = ycp.19
+	title = ycp.19.t
+	desc = ycp.19.desc
+	picture = GFX_report_event_NW_YCP.19
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.19" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.19.a
+	}
+}
+
+country_event = { #Сказка с печальным концом
+	id = ycp.20
+	title = ycp.20.t
+	desc = ycp.20.desc
+	picture = GFX_report_event_NW_YCP.20
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.20" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.20.a
+		add_ideas = YCP_corruption
+		remove_ideas = YCP_chinese_democracy_dummy
+		hidden_effect = {
+			remove_ideas = YCP_chinese_democracy_dummy_no_effects
+			remove_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		remove_power_balance = {
+			id = YCP_power_balance
+		}
+	}
+}
+
+country_event = { #Самая большая демократия в мире
+	id = ycp.21
+	title = ycp.21.t
+	desc = ycp.21.desc
+	picture = GFX_report_event_NW_YCP.21
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.21" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.21.a
+		add_ideas = YCP_chinese_democracy_idea
+		hidden_effect = {
+			remove_ideas = YCP_chinese_democracy_dummy
+			remove_ideas = YCP_chinese_democracy_dummy_no_effects
+			remove_dynamic_modifier = { modifier = YCP_chinese_democracy }
+		}
+		remove_power_balance = {
+			id = YCP_power_balance
+		}
+		# TODO бонус от оппозиции остается таким же, какой был
+		set_country_flag = YCP_largest_democracy_in_world
+	}
+}
+
+country_event = { #Война закончена
+	id = ycp.22
+	title = ycp.22.t
+	desc = ycp.22.desc
+	picture = GFX_report_event_NW_YCP.22
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.22" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.22.a
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = -0.15
+		}
+		if = {
+			limit = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < 0.39
+				}
+			}
+			add_ideas = YCP_corruption # TODO tooltip?
+			remove_ideas = YCP_chinese_democracy_dummy # TODO?
+			hidden_effect = {
+				remove_ideas = YCP_chinese_democracy_dummy_no_effects
+				remove_dynamic_modifier = { modifier = YCP_chinese_democracy }
+			}
+		}
+		remove_power_balance = {
+			id = YCP_power_balance
+		}
+		set_country_flag = YCP_largest_democracy_in_world # for correct trigger
+	}
+	option = {
+		name = ycp.22.b
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = 0.15
+		}
+		if = {
+			limit = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < 0.5
+				}
+			}
+			add_ideas = YCP_chinese_democracy_idea # TODO tooltip?
+			hidden_effect = {
+				remove_ideas = YCP_chinese_democracy_dummy
+				remove_ideas = YCP_chinese_democracy_dummy_no_effects
+				remove_dynamic_modifier = { modifier = YCP_chinese_democracy }
+			}
+		}
+		remove_power_balance = {
+			id = YCP_power_balance
+		}
+	}
+}
+
+country_event = { #Цзэн Ци избран президентом страны
+	id = ycp.23
+	title = ycp.23.t
+	desc = ycp.23.desc
+	picture = GFX_report_event_NW_YCP.23
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.23" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.23.a
+		trigger = { has_idea = YCP_corruption }
+		add_popularity = {
+			ideology = neutrality
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = neutrality
+			elections_allowed = no
+		}
+		add_country_leader_role = {
+			character = YCP_zeng_qi
+			country_leader = {
+				ideology = authoritarian_democracy
+				expire = "1951.5.7"
+				traits = { founder_of_Young_China_Party } # ?
+			}
+			promote_leader = yes
+		}
+	}
+	option = {
+		name = ycp.23.b
+		trigger = { NOT = { has_idea = YCP_corruption } }
+		if = {
+			limit = { NOT = { has_country_leader = { character = YCP_zeng_qi } } }
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = no
+			}
+			promote_character = YCP_zeng_qi
+		}
+		else = {
+			add_stability = 0.05
+		}
+	}
+}
+
+country_event = { #Ли Хуан избран президентом страны
+	id = ycp.24
+	title = ycp.24.t
+	desc = ycp.24.desc
+	picture = GFX_report_event_NW_YCP.24
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.24" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.24.a
+		trigger = { has_idea = YCP_corruption }
+		add_popularity = {
+			ideology = neutrality
+			popularity = 0.15
+		}
+		set_politics = {
+			ruling_party = neutrality
+			elections_allowed = no
+		}
+		add_country_leader_role = {
+			character = YCP_li_huan
+			country_leader = {
+				ideology = authoritarian_democracy
+				expire = "1951.5.7"
+				traits = { }
+			}
+			promote_leader = yes
+		}
+	}
+	option = {
+		name = ycp.24.b
+		trigger = { NOT = { has_idea = YCP_corruption } }
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		add_country_leader_role = {
+			character = YCP_li_huan
+			country_leader = {
+				ideology = national_etatism
+				expire = "1951.5.7"
+				traits = { }
+			}
+			promote_leader = yes
+		}
+	}
+}
+
+country_event = { #Чжан Цзюньмай избран президентом страны
+	id = ycp.25
+	title = ycp.25.t
+	desc = ycp.25.desc
+	picture = GFX_report_event_NW_YCP.25
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.25" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.25.a
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		add_country_leader_role = {
+			character = YCP_chang_chun_mai
+			country_leader = {
+				ideology = democratic_socialism # Социал-демократия
+				expire = "1965.1.1"
+				traits = { }
+			}
+			promote_leader = yes
+		}
+		set_party_name = {
+			name = MAN_party_of_state_socialism
+			long_name = MAN_party_of_state_socialism_long # TODO !!
+			ideology = democratic
+		}
+		
+		if = {
+			limit = { NOT = { check_variable = { YCP_current_rulling_party = YCP_ssp_party } } }
+			remove_from_array = { YCP_government_party = YCP_current_rulling_party }
+			add_to_array = { YCP_non_aligned_party = YCP_current_rulling_party }
+			set_variable = { YCP_current_rulling_party = YCP_ssp_party }
+			
+			remove_from_array = { YCP_non_aligned_party = YCP_current_rulling_party }
+			remove_from_array = { YCP_opposition_party = YCP_current_rulling_party }
+			add_to_array = { YCP_government_party = YCP_current_rulling_party }
+		}
+	}
+}
+
+country_event = { #Сунь Фо избран президентом страны
+	id = ycp.26
+	title = ycp.26.t
+	desc = ycp.26.desc
+	picture = GFX_report_event_NW_YCP.26
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.26" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.26.a
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		add_country_leader_role = { # TODO ??
+			character = GXC_sun_fo
+			country_leader = {
+				ideology = tridemism
+				expire = "1965.1.1"
+				traits = { son_of_sun_yat_sen }
+			}
+			promote_leader = yes
+		}
+		set_party_name = {
+			name = YCP_kdu_party
+			long_name = YCP_kdu_party_long
+			ideology = democratic
+		}
+		
+		if = {
+			limit = { NOT = { check_variable = { YCP_current_rulling_party = YCP_kdu_party } } }
+			remove_from_array = { YCP_government_party = YCP_current_rulling_party }
+			add_to_array = { YCP_non_aligned_party = YCP_current_rulling_party }
+			set_variable = { YCP_current_rulling_party = YCP_kdu_party }
+			
+			remove_from_array = { YCP_non_aligned_party = YCP_current_rulling_party }
+			remove_from_array = { YCP_opposition_party = YCP_current_rulling_party }
+			add_to_array = { YCP_government_party = YCP_current_rulling_party }
+		}
+	}
+}
+
+country_event = { #Комитеты реабилитации
+	id = ycp.27
+	title = ycp.27.t
+	desc = ycp.27.desc
+	picture = GFX_report_event_NW_YCP.27
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.27" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.27.a
+		add_political_power = -75
+		add_stability = 0.05
+		add_war_support = 0.05
+	}
+	option = {
+		name = ycp.27.b
+		add_war_support = -0.05
+		add_power_balance_value = {
+			id = YCP_power_balance
+			value = -0.1
+		}
+	}
+}
+
+country_event = { #Предложение младокитайского правительства // SHX SHA SIH YUN
+	id = ycp.28
+	title = ycp.28.t
+	desc = { text = ycp.28.desc_SHX trigger = { original_tag = SHX } }
+	desc = { text = ycp.28.desc_SIH trigger = { original_tag = SIH } }
+	desc = { text = ycp.28.desc_YUN_SHA trigger = { OR = { original_tag = SHA original_tag = YUN } } }
+	picture = GFX_report_event_NW_YCP.28
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.28" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.28.a
+		FROM = {
+			puppet = ROOT # TODO?
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.15 # TODO ??
+			}
+		}
+		hidden_effect = {
+			every_country = {
+				limit = { is_literally_china = yes }
+				if = { # TODO optimize
+					limit = { PREV = { original_tag = SHX } }
+					news_event = ycp.29
+				}
+				else_if = {
+					limit = { PREV = { original_tag = SIH } }
+					news_event = ycp.31
+				}
+				else_if = {
+					limit = { PREV = { original_tag = SHA } }
+					news_event = ycp.33
+				}
+				else_if = {
+					limit = { PREV = { original_tag = YUN } }
+					news_event = ycp.35
+				}
+			}
+		}
+	}
+	option = {
+		name = ycp.28.b
+		FROM = {
+			if = {
+				limit = { PREV = { original_tag = SHX } }
+				country_event = ycp.30
+			}
+			else_if = {
+				limit = { PREV = { original_tag = SIH } }
+				country_event = ycp.32
+			}
+			else_if = {
+				limit = { PREV = { original_tag = SHA } }
+				country_event = ycp.34
+			}
+			else_if = {
+				limit = { PREV = { original_tag = YUN } }
+				country_event = ycp.36
+			}
+		}
+	}
+}
+
+news_event = { #Сишань присоединяется к младокитайцам // китайские теги
+	id = ycp.29
+	title = ycp.29.t
+	desc = ycp.29.desc
+	picture = GFX_report_event_NW_YCP.29
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.29" } #?
+	
+	is_triggered_only = yes
+	major = no # ?
+	
+	option = { name = ycp.29.a trigger = { NOT = { tag = YCP tag = SHX } } }
+	option = { name = ycp.29.b trigger = { OR = { tag = YCP tag = SHX } } }
+}
+
+country_event = { #Сишань отказался
+	id = ycp.30
+	title = ycp.30.t
+	desc = ycp.30.desc
+	picture = GFX_report_event_NW_YCP.30
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.30" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.30.a
+	}
+}
+
+news_event = { #Сычуань присоединяется к младокитайцам // китайские теги
+	id = ycp.31
+	title = ycp.31.t
+	desc = ycp.31.desc
+	picture = GFX_report_event_NW_YCP.31
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.31" } #?
+	
+	is_triggered_only = yes
+	major = no # ?
+	
+	option = { name = ycp.31.a }
+}
+
+country_event = { #Отказ лидеров Сычуани
+	id = ycp.32
+	title = ycp.32.t
+	desc = ycp.32.desc
+	picture = GFX_report_event_NW_YCP.32
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.32" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.32.a
+	}
+}
+
+news_event = { #Шаньдун присоединяется к младокитайцам // китайские теги
+	id = ycp.33
+	title = ycp.33.t
+	desc = ycp.33.desc
+	picture = GFX_report_event_NW_YCP.33
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.33" } #?
+	
+	is_triggered_only = yes
+	major = no # ?
+	
+	option = { name = ycp.33.a }
+}
+
+country_event = { #Шаньдун отказывается
+	id = ycp.34
+	title = ycp.34.t
+	desc = ycp.34.desc
+	picture = GFX_report_event_NW_YCP.34
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.34" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.34.a
+	}
+}
+
+news_event = { #Юньнань присоединяется к младокитайцам // китайские теги
+	id = ycp.35
+	title = ycp.35.t
+	desc = ycp.35.desc
+	picture = GFX_report_event_NW_YCP.35
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.35" } #?
+	
+	is_triggered_only = yes
+	major = no # ?
+	
+	option = { name = ycp.35.a }
+}
+
+country_event = { #Юньнань отказывается
+	id = ycp.36
+	title = ycp.36.t
+	desc = ycp.36.desc
+	picture = GFX_report_event_NW_YCP.36
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.36" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.36.a
+	}
+}
+
+country_event = { #Раскол в Гоминьдане
+	id = ycp.37
+	title = ycp.37.t
+	desc = ycp.37.desc
+	picture = GFX_report_event_NW_YCP.37
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.37" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.37.a
+		# set_country_flag = YCP_kdu_party_available_flag # TODO
+		custom_effect_tooltip = YCP_kdu_party_available_tt
+	}
+}
+
+country_event = { #Поражения в Маньчжурии // JAP
+	id = ycp.38
+	title = ycp.38.t
+	desc = ycp.38.desc
+	picture = GFX_report_event_NW_YCP.38
+	immediate = { 
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.38" 
+		MAN = { add_manpower = -657 }
+		hidden_effect = {
+			YCP = { 
+				country_event = ycp.45 
+				YCP_increase_war_escalation_level = yes
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = ycp.38.a
+		MAN = {
+			add_ideas = MAN_help_from_japanese_army
+		}
+		if = {
+			limit = { check_variable = { YCP.YCP_war_escalation_level > 2 } }
+			unlock_decision_tooltip = JAP_strengthening_kwantung_army_MAN
+		}
+	}
+	option = {
+		name = ycp.38.b
+		ai_chance = {
+			factor = 0.25
+			# TODO агрессивная япа?
+		}
+		# declare_war_on = {
+			# target = YCP
+			# type = annex_everything
+		# }
+		YCP = { # TODO this also for CMA MGM
+			set_variable = { china_intervention_timer_timeout = 30 }
+			activate_targeted_decision = { decision = china_intervention_timer target = ROOT }
+			activate_targeted_decision = { decision = china_capitulation_decision target = ROOT } 
+			set_variable = { YCP_war_escalation_level = 4 }
+		}
+	}
+}
+
+country_event = { #[FROM.GetName] требует отступить // JAP
+	id = ycp.39
+	title = ycp.39.t
+	desc = ycp.39.desc
+	picture = GFX_report_event_NW_YCP.39
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.39" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.39.a
+		every_enemy_country = {
+			limit = { is_manchurian_warlord = yes }
+			white_peace = PREV
+		}
+		# TODO ивенты?
+	}
+	option = {
+		name = ycp.39.b
+		ai_chance = {
+			factor = 0
+			# TODO
+		}
+		# TODO
+	}
+}
+
+country_event = { #Крах Маньчжурии // JAP
+	id = ycp.40
+	title = ycp.40.t
+	desc = ycp.40.desc
+	picture = GFX_report_event_NW_YCP.40
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.40" }
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = ycp.40.a # Мы вынуждены отступить
+		YCP = {
+			country_event = ycp.41
+		}
+	}
+}
+
+country_event = { #Японцы отступают
+	id = ycp.41
+	title = ycp.41.t
+	desc = ycp.41.desc
+	picture = GFX_report_event_NW_YCP.41
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.41" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.41.a
+		if = {
+			limit = { has_war_with = MAN }
+			start_peace_conference = {
+				tag = MAN
+				score_factor = 1
+				loser_scope = LIMITED
+			}
+		}
+		EHB = {
+			every_unit_leader = {
+				set_nationality = YCP
+			}
+		}
+		ROOT = {
+			annex_country = {
+				target = EHB
+				transfer_troops = yes # TODO characters?
+			}
+		}
+		ROOT = {
+			annex_country = {
+				target = CSR
+				transfer_troops = yes # TODO characters?
+			}
+		}
+		FROM = {
+			white_peace = ROOT
+		}
+		diplomatic_relation = {
+			country = FROM
+			relation = non_aggression_pact
+			active = yes
+		}
+		hidden_effect = {
+			news_event = ycp.42
+		}
+	}
+}
+
+news_event = { #Япония подписывает мирный договор
+	id = ycp.42
+	title = ycp.42.t
+	desc = ycp.42.desc
+	picture = GFX_report_event_NW_YCP.42
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.42" } #?
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = { name = ycp.42.a trigger = { NOT = { tag = JAP is_chinese_warlord = yes } } }
+	option = { name = ycp.42.b trigger = { tag = JAP } }
+	option = { name = ycp.42.c trigger = { is_chinese_warlord = yes } }
+}
+
+news_event = { #Падение Мукдена
+	id = ycp.43
+	title = ycp.43.t
+	desc = ycp.43.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { #? TODO
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.43" 
+		716 = { set_state_flag = YCP_fall_of_mukden } 
+	}
+	
+	is_triggered_only = yes
+	major = yes
+	
+	option = { 
+		name = ycp.43.a 
+		trigger = { tag = YCP } 
+		effect_tooltip = {
+			MAN = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+					custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+					add_to_variable = { MAN_strength_of_partisan_movement_var = -0.1 tooltip = stability_factor_tooltip }
+				}
+			}
+		}
+	}
+	option = { 
+		name = ycp.43.b 
+		trigger = { OR = { tag = MAN tag = JAP } } 
+		if = {
+			limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+			custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+			add_to_variable = { MAN_strength_of_partisan_movement_var = -0.1 tooltip = stability_factor_tooltip }
+		}
+		else = {
+			effect_tooltip = {
+				MAN = {
+					if = {
+						limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+						custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+						add_to_variable = { MAN_strength_of_partisan_movement_var = -0.1 tooltip = stability_factor_tooltip }
+					}
+				}
+			}
+		}
+	}
+	option = { name = ycp.43.c trigger = { NOT = { tag = YCP tag = MAN tag = JAP } } }
+}
+
+country_event = { #Коммунисты требуют представительства
+	id = ycp.44
+	title = ycp.44.t
+	desc = ycp.44.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.44" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.44.a
+		trigger = { NOT = { has_completed_focus = YCP_maintain_anticommunist_policy } }
+	}
+	option = {
+		name = ycp.44.b
+		custom_effect_tooltip = YCP_ssp_is_new_enemy_tt
+		set_country_flag = YCP_ssp_is_new_enemy_flag
+	}
+}
+
+country_event = { #Японские поражения в Маньчжурии
+	id = ycp.45
+	title = ycp.45.t
+	desc = ycp.45.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.45" }
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		has_completed_focus = YCP_introduction_to_manchukuo_army
+	}
+	
+	option = {
+		name = ycp.45.a
+		add_war_support = 0.03
+		effect_tooltip = {
+			set_temp_variable = { YCP_war_escalation_level = 1 } # TODO сработает?
+			YCP_increase_war_escalation_level = yes
+		}
+	}
+}
+
+country_event = { #[FROM.GetName] запрашивает расширение Квантунской армии (MAN) // JAP
+	id = ycp.46
+	title = ycp.46.t
+	desc = ycp.46.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.46" }
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ycp.46.a
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				is_ai = yes
+			}
+		}
+		transfer_units_fraction = {
+			target = FROM
+			size = 0
+			army_ratio = 0.15
+			keep_unit_leaders_trigger = {
+				always = yes
+			}
+		}
+		hidden_effect = {
+			YCP = { 
+				country_event = ycp.47 
+				YCP_increase_war_escalation_level = yes
+			}
+		}
+	}
+	
+	option = {
+		name = ycp.46.b
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				is_ai = no
+			}
+		}
+		# TODO ycp.38.b?
+	}
+}
+
+country_event = { #Япония расширяет участие Квантунской армии
+	id = ycp.47
+	title = ycp.47.t
+	desc = ycp.47.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.47" }
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		has_completed_focus = YCP_introduction_to_manchukuo_army
+	}
+	
+	option = {
+		name = ycp.47.a
+		effect_tooltip = { # TODO в immediate?
+			set_temp_variable = { YCP_war_escalation_level = 1 } # TODO сработает?
+			YCP_increase_war_escalation_level = yes
+		}
+	}
+}
+
+country_event = { #Япония посылает снаряжение
+	id = ycp.48
+	title = ycp.48.t
+	desc = ycp.48.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.48" }
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		has_completed_focus = YCP_introduction_to_manchukuo_army
+	}
+	
+	option = {
+		name = ycp.48.a
+	}
+}
+
+country_event = { #Япония усиляет Квантунскую армию
+	id = ycp.49
+	title = ycp.49.t
+	desc = ycp.49.desc
+	picture = GFX_report_event_NW_YCP.43
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event ycp.49" }
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		has_completed_focus = YCP_introduction_to_manchukuo_army
+	}
+	
+	option = {
+		name = ycp.49.a
+	}
+}

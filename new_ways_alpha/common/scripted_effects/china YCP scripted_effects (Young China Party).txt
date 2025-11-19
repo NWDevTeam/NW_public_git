@@ -1,0 +1,392 @@
+YCP_increase_war_escalation_level = {
+	if = {
+		limit = { check_variable = { YCP_war_escalation_level < 3 } } 
+		add_to_variable = { YCP_war_escalation_level = 1 tooltip = YCP_war_escalation_level_tooltip }
+	}
+}
+
+YCP_chinese_democracy_update = {
+	# set_temp_variable = { size = YCP_ycp_size }
+	divide_temp_variable = { size = 10000 } # 10 000 000
+	divide_temp_variable = { size = 1000 }
+	multiply_temp_variable = { size = -1 }
+	if = {
+		limit = { has_dynamic_modifier = { modifier = YCP_chinese_democracy } }
+		set_variable = { YCP_cd_power_balance_weekly = size tooltip = YCP_cd_power_balance_weekly_tt } # TODO хуевый тултип?
+		# log = "[?YCP_ycp_size] [?size]"
+	}
+}
+
+YCP_weak_state_apparatus_update = {
+	if = {
+		limit = { has_dynamic_modifier = { modifier = YCP_weak_state_apparatus } check_variable = { YCP_weak_state_apparatus_update_count < 6 } }
+		custom_effect_tooltip = YCP_weak_state_apparatus_tooltip
+		add_to_variable = { YCP_wsa_conscription_factor = 0.09 tooltip = conscription_factor_tooltip }
+		add_to_variable = { YCP_wsa_consumer_goods_factor = 0.04 tooltip = consumer_goods_factor_tooltip }
+		add_to_variable = { YCP_wsa_local_resources_factor = 0.07 tooltip = local_resources_factor_tooltip }
+		# custom_effect_tooltip = empty_line_tooltip
+		
+		add_to_variable = { YCP_weak_state_apparatus_update_count = 1 }
+	}
+	else_if = {
+		limit = { has_dynamic_modifier = { modifier = YCP_weak_state_apparatus } }
+		remove_dynamic_modifier = { modifier = YCP_weak_state_apparatus }
+	}
+	# TODO log
+}
+
+YCP_chinese_democracy_dummy_update = {
+	if = {
+		limit = { has_idea = YCP_chinese_democracy_dummy }
+		modify_timed_idea = {
+			idea = YCP_chinese_democracy_dummy
+			days = add_days
+		}
+	}
+	else = {
+		hidden_effect = { remove_ideas = YCP_chinese_democracy_dummy_no_effects }
+		add_timed_idea = { idea = YCP_chinese_democracy_dummy days = add_days }
+		# TODO мб тултип?
+	}
+}
+
+YCP_provisional_parliament_activate = {
+	set_variable = { YCP_ycp_party = 1 } # МКП
+	set_variable = { YCP_ssp_party = 2 } # ПГС 
+	set_variable = { YCP_kdu_party = 3 } # ДСГ (по фокусу)
+	set_variable = { YCP_federalist_party = 4 } # Федералисты (по фокусу)
+	set_variable = { YCP_cpc_party = 8 } # КПК (главный антагонист сериала)
+	
+	set_variable = { YCP_independent_party = 5 } # Независимые депутаты
+	set_variable = { YCP_professional_groups_party = 6 } # Профессиональный группы
+	set_variable = { YCP_other_parties_party = 7 } # Мелкие партии
+	
+	var:YCP_ycp_party = { set_variable = { YCP_num_deputies = 18 } } # TODO tooltip?
+	var:YCP_ssp_party = { set_variable = { YCP_num_deputies = 5 } }
+	# var:YCP_kdu_party = { set_variable = { YCP_num_deputies = 0 } }
+	# var:YCP_federalist_party = { set_variable = { YCP_num_deputies = 0 } }
+	
+	var:YCP_independent_party = { set_variable = { YCP_num_deputies = 10 } set_variable = { YCP_num_non_aligned_deputies = 10 } }
+	var:YCP_professional_groups_party = { set_variable = { YCP_num_deputies = 10 } set_variable = { YCP_num_non_aligned_deputies = 10 } }
+	var:YCP_other_parties_party = { set_variable = { YCP_num_deputies = 2 } set_variable = { YCP_num_non_aligned_deputies = 2 } }
+
+	add_to_array = { YCP_government_party = var:YCP_ycp_party }
+	add_to_variable = { YCP_ruling_coalition_deputies = var:YCP_ycp_party:YCP_num_deputies }
+	set_variable = { YCP_current_rulling_party = YCP_ycp_party }
+
+	if = {
+		limit = { has_country_flag = YCP_ssp_is_new_enemy_flag }
+		var:YCP_ssp_party = { add_to_variable = { YCP_num_deputies = 15 } }
+		# add_to_array = { YCP_opposition_party = var:YCP_ssp_party }
+	}
+	else = {
+		var:YCP_cpc_party = { set_variable = { YCP_num_deputies = 15 } }
+		add_to_array = { YCP_non_aligned_party = var:YCP_cpc_party }
+	}
+	add_to_array = { YCP_non_aligned_party = var:YCP_ssp_party }
+	# add_to_array = { YCP_non_aligned_party = var:YCP_kdu_party }
+	# add_to_array = { YCP_non_aligned_party = var:YCP_federalist_party }
+	add_to_array = { YCP_non_aligned_party = var:YCP_independent_party }
+	add_to_array = { YCP_non_aligned_party = var:YCP_professional_groups_party }
+	add_to_array = { YCP_non_aligned_party = var:YCP_other_parties_party }
+
+	YCP_provisional_parliament_update = yes
+	# add_dynamic_modifier = { modifier = YCP_provisional_parliament }
+	hidden_effect = {
+		add_dynamic_modifier = { modifier = YCP_government_party_effect }
+		add_dynamic_modifier = { modifier = YCP_opposition_party_effect }
+	}
+}
+
+YCP_invite_current_party_to_coalition = {
+	set_temp_variable = { lvl = 1 } # government
+	custom_effect_tooltip = YCP_current_party_change_political_stand
+	#
+	remove_from_array = { YCP_opposition_party = YCP_current_party }
+	remove_from_array = { YCP_non_aligned_party = YCP_current_party }
+	add_to_array = { YCP_government_party = YCP_current_party }
+	YCP_provisional_parliament_update = yes
+	# TODO log
+}
+
+YCP_invite_current_fraction_deputies_to_coalition = {
+	if = {
+		limit = { check_variable = { var:YCP_current_party:YCP_num_non_aligned_deputies > 0 } }
+		var:YCP_current_party = {
+			set_temp_variable = { max_deputies = YCP_num_non_aligned_deputies }
+			divide_temp_variable = { max_deputies = 2 }
+			set_temp_variable_to_random = {
+				var = deputies
+				min = 1
+				max = max_deputies
+				integer = yes
+			}
+			subtract_from_variable = { YCP_num_non_aligned_deputies = deputies }
+			add_to_variable = { YCP_num_government_party_deputies = deputies }
+		}
+		set_temp_variable = { lvl = 1 } # government
+		custom_effect_tooltip = YCP_current_fraction_change_political_stand
+	}
+	else_if = {
+		limit = { check_variable = { var:YCP_current_party:YCP_num_opposition_party_deputies > 0 } }
+		var:YCP_current_party = {
+			set_temp_variable = { max_deputies = YCP_num_opposition_party_deputies }
+			divide_temp_variable = { max_deputies = 2 }
+			set_temp_variable_to_random = {
+				var = deputies
+				min = 1
+				max = max_deputies
+				integer = yes
+			}
+			subtract_from_variable = { YCP_num_opposition_party_deputies = deputies }
+			add_to_variable = { YCP_num_government_party_deputies = deputies }
+		}
+		set_temp_variable = { lvl = 1 } # government
+		custom_effect_tooltip = YCP_current_fraction_change_political_stand
+	}
+	if = {
+		limit = { NOT = { is_in_array = { YCP_government_party = YCP_current_party } } }
+		add_to_array = { YCP_government_party = YCP_current_party }
+	}
+	YCP_provisional_parliament_update = yes
+}
+
+YCP_provisional_parliament_increase_opposition = {
+	if = { # КПК всегда уходит в оппозицию (и никогда не вступает в коалицию) (TODO до добавления скрытого пути для коммунистов)
+		limit = { 
+			check_variable = { var:YCP_cpc_party:YCP_num_deputies > 0 }
+			is_in_array = { YCP_non_aligned_party = YCP_cpc_party }
+		}
+		remove_from_array = { YCP_non_aligned_party = YCP_cpc_party }
+		add_to_array = { YCP_opposition_party = YCP_cpc_party }
+		
+		set_temp_variable = { YCP_current_party = YCP_cpc_party }
+		set_temp_variable = { lvl = -1 } # opposition
+		custom_effect_tooltip = YCP_current_party_change_political_stand
+	}
+	else_if = {
+		limit = {
+			has_country_flag = YCP_ssp_is_new_enemy_flag
+			check_variable = { var:YCP_ssp_party:YCP_num_deputies > 0 }
+			OR = {
+				is_in_array = { YCP_non_aligned_party = YCP_ssp_party }
+				is_in_array = { YCP_government_party = YCP_ssp_party }
+			}
+		}
+		remove_from_array = { YCP_non_aligned_party = YCP_ssp_party }
+		remove_from_array = { YCP_government_party = YCP_ssp_party }
+		add_to_array = { YCP_opposition_party = YCP_ssp_party }
+		
+		set_temp_variable = { YCP_current_party = YCP_ssp_party }
+		set_temp_variable = { lvl = -1 } # opposition
+		custom_effect_tooltip = YCP_current_party_change_political_stand
+	}
+	
+	set_temp_variable_to_random = {
+		var = current_fraction
+		min = 5
+		max = 7
+		integer = yes
+	}
+	random_list = { # Фракции
+		2 = { 
+			modifier = {
+				factor = 0
+				check_variable = { var:current_fraction:YCP_num_non_aligned_deputies = 0 } # TODO а оно может быть отрицательным?
+			}
+			var:current_fraction = {
+				set_temp_variable = { max_deputies = YCP_num_non_aligned_deputies }
+				divide_temp_variable = { max_deputies = 2 }
+				set_temp_variable_to_random = {
+					var = deputies
+					min = 0
+					max = max_deputies
+					integer = yes
+				}
+				subtract_from_variable = { YCP_num_non_aligned_deputies = deputies }
+				add_to_variable = { YCP_num_opposition_party_deputies = deputies }
+			}
+			set_temp_variable = { YCP_current_party = current_fraction }
+			set_temp_variable = { lvl = -1 } # opposition
+			custom_effect_tooltip = YCP_current_fraction_change_political_stand
+		}
+		1 = { 
+			modifier = {
+				factor = 0
+				check_variable = { var:current_fraction:YCP_num_government_party_deputies = 0 } # TODO а оно может быть отрицательным?
+			}
+			var:current_fraction = {
+				set_temp_variable = { max_deputies = YCP_num_government_party_deputies }
+				# divide_temp_variable = { max_deputies = 2 }
+				set_temp_variable_to_random = {
+					var = deputies
+					min = 0
+					max = max_deputies
+					integer = yes
+				}
+				subtract_from_variable = { YCP_num_government_party_deputies = deputies }
+				add_to_variable = { YCP_num_non_aligned_deputies = deputies }
+			}
+			set_temp_variable = { YCP_current_party = current_fraction }
+			set_temp_variable = { lvl = 0 } # non-aligned
+			custom_effect_tooltip = YCP_current_fraction_change_political_stand
+		}
+		1 = {}
+	}
+}
+
+YCP_provisional_parliament_party_joins_opposition = {
+	set_temp_variable_to_random = {
+		var = current_party
+		min = 1
+		max = 4
+		integer = yes
+	}
+	if = {
+		limit = { 
+			NOT = { check_variable = { current_party = YCP_current_rulling_party } }
+		}
+		if = {
+			limit = { is_in_array = { YCP_government_party = current_party } }
+			remove_from_array = { YCP_government_party = current_party }
+			add_to_array = { YCP_non_aligned_party = current_party }
+			
+			set_temp_variable = { YCP_current_party = current_party }
+			set_temp_variable = { lvl = 0 } # non-aligned
+			custom_effect_tooltip = YCP_current_party_change_political_stand
+		}
+		else_if = {
+			limit = { is_in_array = { YCP_non_aligned_party = current_party } }
+			remove_from_array = { YCP_non_aligned_party = current_party }
+			add_to_array = { YCP_opposition_party = current_party }
+			
+			set_temp_variable = { YCP_current_party = current_party }
+			set_temp_variable = { lvl = -1 } # opposition
+			custom_effect_tooltip = YCP_current_party_change_political_stand
+		}
+	}
+}
+
+YCP_provisional_parliament_update = {
+	set_variable = { YCP_num_of_deputies = 0 }
+	for_loop_effect = {
+		end = YCP_cpc_party
+		value = current_party
+		
+		add_to_variable = { YCP_num_of_deputies = var:current_party:YCP_num_deputies }
+	}
+	
+	set_variable = { YCP_ruling_coalition_deputies = 0 }
+	for_each_loop = {
+		array = YCP_government_party
+		value = current_party
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { current_party = var:YCP_other_parties_party }
+					check_variable = { current_party = var:YCP_professional_groups_party }
+					check_variable = { current_party = var:YCP_independent_party }
+				}
+			}
+			add_to_variable = { YCP_ruling_coalition_deputies = var:current_party:YCP_num_government_party_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ruling_coalition_deputies = var:current_party:YCP_num_deputies }
+		}
+	}
+	
+	set_variable = { YCP_opposition_deputies = 0 }
+	for_each_loop = {
+		array = YCP_opposition_party
+		value = current_party
+		
+		if = {
+			limit = {
+				OR = {
+					check_variable = { current_party = var:YCP_other_parties_party }
+					check_variable = { current_party = var:YCP_professional_groups_party }
+					check_variable = { current_party = var:YCP_independent_party }
+				}
+			}
+			add_to_variable = { YCP_opposition_deputies = var:current_party:YCP_num_opposition_party_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_opposition_deputies = var:current_party:YCP_num_deputies }
+		}
+	}
+	
+	hidden_effect = {
+		YCP_pp_govenrment_party_effects_update = yes
+		YCP_pp_opposition_party_effects_update = yes
+		force_update_dynamic_modifier = yes
+	}
+	
+	log = "[GetDateText]: [THIS.GetName] ([THIS.GetTag]): YCP_provisional_parliament_update [?YCP_num_of_deputies] | [?YCP_ruling_coalition_deputies] | [?YCP_opposition_deputies]"
+}
+
+YCP_pp_govenrment_party_effects_update = {
+	if = {
+		limit = { is_in_array = { YCP_government_party = var:YCP_ycp_party } }
+		set_variable = { YCP_gpe_political_power_factor = 0.05 tooltip = political_power_factor_tooltip }
+	}
+	if = {
+		limit = { is_in_array = { YCP_government_party = var:YCP_ssp_party } }
+		set_variable = { YCP_gpe_production_factory_max_efficiency_factor = 0.05 tooltip = production_factory_max_efficiency_factor_tooltip }
+	}
+	if = {
+		limit = { is_in_array = { YCP_government_party = var:YCP_kdu_party } }
+		set_variable = { YCP_gpe_party_popularity_stability_factor = 0.05 tooltip = party_popularity_stability_factor_tooltip }
+		set_variable = { YCP_gpe_drift_defence_factor = 0.15 tooltip = drift_defence_factor_tooltp }
+	}
+	if = {
+		limit = { is_in_array = { YCP_government_party = var:YCP_federalist_party } }
+		set_variable = { YCP_gpe_compliance_growth = 0.1 tooltip = compliance_growth_tooltip }
+	}
+}
+
+YCP_pp_opposition_party_effects_update = {
+	if = {
+		limit = { is_in_array = { YCP_opposition_party = var:YCP_cpc_party } }
+		set_variable = { YCP_ope_communism_drift = 0.05 tooltip = communism_drift_tooltip }
+	}
+	if = {
+		limit = { is_in_array = { YCP_opposition_party = var:YCP_ycp_party } }
+		set_temp_variable = { political_power_factor = -0.05 }
+		set_temp_variable = { bonus = 0.02 }
+		multiply_temp_variable = { bonus = YCP_pp_opposition_bonus }
+		add_to_temp_variable = { political_power_factor = bonus }
+		set_variable = { YCP_ope_political_power_factor = political_power_factor tooltip = political_power_factor_tooltip }
+	}
+	if = {
+		limit = { is_in_array = { YCP_opposition_party = var:YCP_ssp_party } }
+		set_temp_variable = { production_factory_max_efficiency_factor = -0.05 }
+		set_temp_variable = { bonus = 0.02 }
+		multiply_temp_variable = { bonus = YCP_pp_opposition_bonus }
+		add_to_temp_variable = { production_factory_max_efficiency_factor = bonus }
+		set_variable = { YCP_ope_production_factory_max_efficiency_factor = production_factory_max_efficiency_factor tooltip = production_factory_max_efficiency_factor_tooltip }
+	}
+	
+	if = {
+		limit = { is_in_array = { YCP_opposition_party = var:YCP_kdu_party } }
+		set_temp_variable = { party_popularity_stability_factor = -0.05 }
+		set_temp_variable = { bonus = 0.02 }
+		multiply_temp_variable = { bonus = YCP_pp_opposition_bonus }
+		add_to_temp_variable = { party_popularity_stability_factor = bonus }
+		set_variable = { YCP_ope_party_popularity_stability_factor = party_popularity_stability_factor tooltip = party_popularity_stability_factor_tooltip }
+		
+		set_temp_variable = { drift_defence_factor = -0.15 }
+		set_temp_variable = { bonus = 0.06 }
+		multiply_temp_variable = { bonus = YCP_pp_opposition_bonus }
+		add_to_temp_variable = { drift_defence_factor = bonus }
+		set_variable = { YCP_ope_drift_defence_factor = drift_defence_factor tooltip = drift_defence_factor_tooltp }
+	}
+	if = {
+		limit = { is_in_array = { YCP_opposition_party = var:YCP_federalist_party } }
+		set_temp_variable = { compliance_growth = -0.1 }
+		set_temp_variable = { bonus = 0.04 }
+		multiply_temp_variable = { bonus = YCP_pp_opposition_bonus }
+		add_to_temp_variable = { compliance_growth = bonus }
+		set_variable = { YCP_ope_compliance_growth = compliance_growth tooltip = compliance_growth_tooltip }
+	}
+}

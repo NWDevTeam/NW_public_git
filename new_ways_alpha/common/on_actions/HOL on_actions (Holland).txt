@@ -1,0 +1,248 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### HOL
+				HOL = {
+					country_event = { id = NW_HOL.0 days = 10 }
+					country_event = { id = NW_HOL.1 days = 32 }
+					country_event = { id = NW_HOL.7 days = 101 }
+					country_event = { id = NW_HOL.8 days = 262 }
+					country_event = { id = NW_HOL.9 days = 315 }
+					country_event = { id = NW_HOL.10 days = 335 }
+					country_event = { id = NW_HOL.11 days = 358 }
+					country_event = { id = NW_HOL.12 days = 373 }
+					country_event = { id = NW_HOL.13 days = 763 }
+					country_event = { id = NW_HOL.14 days = 930 }
+					country_event = { id = NW_HOL.15 days = 1014 }
+					country_event = { id = NW_HOL.16 days = 1036 }
+					country_event = { id = NW_HOL.18 days = 2578 }
+					country_event = { id = NW_HOL.19 days = 1046 }
+					country_event = { id = NW_HOL.20 days = 46 }
+					country_event = { id = NW_HOL.70 days = 63 }
+					country_event = { id = NW_HOL.71 days = 769 }
+				}
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			#International#
+			if = {
+				limit = {
+					any_of_scopes = {
+						array = global.Labour_and_Socialist_International
+						NOT = { has_country_leader_ideology = socialism }
+					}
+				}
+				random_scope_in_array = {
+					array = global.Labour_and_Socialist_International
+					limit = { NOT = { has_country_leader_ideology = socialism } }
+					country_event = { id = NW_HOL.67 hours = 12 }
+					remove_from_array = { global.Labour_and_Socialist_International = THIS }
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#HOL BLOCK#
+			if = {
+				limit = { original_tag = HOL }
+				# Reducing the Crisisjaren idea to level 1 when capitulated (in case player didn't manage to finish the mainland industrial focuses), but still needs Liberation to remove it fully
+				if = {
+					limit = { has_idea = HOL_de_crisisjaren_4 }
+					swap_ideas = {
+						remove_idea = HOL_de_crisisjaren_4
+						add_idea = HOL_de_crisisjaren_1
+					}
+					add_to_variable = { var = HOL_percentage_of_unemployed value = -6 }
+					HOL_the_mechanics_of_unemployment = yes
+				}
+				else_if = {
+					limit = { has_idea = HOL_de_crisisjaren_3 }
+					swap_ideas = {
+						remove_idea = HOL_de_crisisjaren_3
+						add_idea = HOL_de_crisisjaren_1
+					}
+					add_to_variable = { var = HOL_percentage_of_unemployed value = -4 }
+					HOL_the_mechanics_of_unemployment = yes
+				}
+				else_if = {
+					limit = { has_idea = HOL_de_crisisjaren_2 }
+					swap_ideas = {
+						remove_idea = HOL_de_crisisjaren_2
+						add_idea = HOL_de_crisisjaren_1
+					}
+					add_to_variable = { var = HOL_percentage_of_unemployed value = -2 }
+					HOL_the_mechanics_of_unemployment = yes
+				}
+				# Only possible if Abandon the Gold Standard hasn't been taken yet, this can be taken later so should be reduced to level 2 rather than 1 (вы педики шведские все равно, делает вид что умный и расписывает свою хуйню, а в ивентах тэги юзает вместо FROM)
+				else_if = {
+					limit = { has_idea = HOL_de_crisisjaren_5 }
+					swap_ideas = {
+						remove_idea = HOL_de_crisisjaren_5
+						add_idea = HOL_de_crisisjaren_2
+					}
+					add_to_variable = { var = HOL_percentage_of_unemployed value = -6 }
+					HOL_the_mechanics_of_unemployment = yes
+				}
+			}
+			# if = {	# в ванильном файле
+				# limit = {
+					# tag = GER
+					# FROM = {
+						# tag = HOL
+						# has_completed_focus = HOL_wilhelminism
+					# }
+				# }
+				# HOL = { country_event = { id = mtg_netherlands.76 } }
+			# }
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			#HOL#
+			if = {
+				limit = {
+					original_tag = GER
+					has_idea = HOL_german_defectors_2
+					FROM = { original_tag = HOL }
+				}
+				remove_ideas = HOL_german_defectors_2
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			#HOL#
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = HOL
+						OR = {
+							has_government = communism
+							has_government = trozkism
+						}
+					}
+					FROM = { NOT = { has_government = communism has_government = trozkism } }
+				}
+				country_event = { id = NW_HOL.35 days = 1 }
+				if = {
+					limit = { FROM = { has_subject = INS } }
+					if = {
+						limit = {
+							OR = {
+								has_dlc = "Together for Victory"
+								has_dlc = "Man the Guns"
+							}	
+						}
+						ROOT = { set_autonomy = { target = INS autonomous_state = autonomy_integrated_puppet } }
+						else = { ROOT = { puppet = INS } }
+					}
+				}
+			}
+		}
+	}
+	
+	#HOL#
+	on_weekly_HOL = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = HOL_strike_flag_TOTAL }
+					set_temp_variable = { temp1 = party_popularity@communism }
+					set_temp_variable = { temp2 = party_popularity@trozkism }
+					set_temp_variable = { temp3 = party_popularity@anarchism }
+					add_to_temp_variable = { temp1 = temp2 }
+					add_to_temp_variable = { temp1 = temp3 }
+					check_variable = { temp1 > 0.49 }
+				}
+				country_event = { id = NW_HOL.26 }
+			}
+			if = {
+				limit = {
+					has_government = fascism
+					has_completed_focus = HOL_national_priorities
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_united_nation }
+						fascism > 0.99
+					}
+					add_ideas = HOL_united_nation
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_disciplined_nation }
+						has_war_support > 0.99
+					}
+					add_ideas = HOL_disciplined_nation
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_cohesive_nation }
+						num_divisions > 47
+					}
+					add_ideas = HOL_cohesive_nation
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_Great_Netherlands_idea }
+						controls_state = 1037
+						controls_state = 1038
+						controls_state = 29
+						controls_state = 1165
+					}
+					add_ideas = HOL_Great_Netherlands_idea
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_Ditland_idea }
+						controls_state = 51
+						controls_state = 42
+						controls_state = 56
+						controls_state = 801
+					}
+					add_ideas = HOL_Ditland_idea
+				}
+				if = {
+					limit = {
+						NOT = { has_idea = HOL_dutch_colonial_empire }
+						controls_state = 357
+						controls_state = 358
+						controls_state = 359
+						controls_state = 361
+						controls_state = 694
+						controls_state = 308
+						controls_state = 1142
+						controls_state = 692
+						controls_state = 691
+						controls_state = 916
+						controls_state = 310
+						controls_state = 918
+						controls_state = 919
+						controls_state = 687
+						controls_state = 920
+						controls_state = 274
+						controls_state = 1093
+						controls_state = 1092
+						controls_state = 1094
+						controls_state = 422
+					}
+					add_ideas = HOL_dutch_colonial_empire
+				}
+			}
+		}
+	}
+}

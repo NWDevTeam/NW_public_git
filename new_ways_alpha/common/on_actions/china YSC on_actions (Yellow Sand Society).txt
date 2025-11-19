@@ -1,0 +1,175 @@
+on_actions = {
+	
+	on_startup = {
+		effect = {
+			if = {
+				limit = {
+					has_start_date < 1936.01.02
+				}
+				YSC = { # сработает ?
+					country_event = { id = yellowsand.2 days = 824 }
+					country_event = { id = yellowsand.39 days = 2835 }
+					country_event = { id = yellowsand.40 days = 2448 }
+					country_event = { id = yellowsand.41 days = 3374 }				
+					if = {
+						limit = {
+							has_completed_focus = YSC_provisional_rule_of_the_regent
+						}
+						country_event = { id = yellowsand.11 days = 3948 }
+					}
+				}
+			}
+			every_state = {
+				limit = {
+					OR = {
+						AND = {
+							is_core_of = CHI
+							NOT = {
+								OR = {
+									state = 728
+									state = 729
+									state = 326
+								}
+							}
+						}
+						is_core_of = TIB
+						is_core_of = MON
+					}
+				}
+				add_state_modifier = { modifier = { chinese_state_modifiers = 1 } } # лучше считать кол-во стейтов через is_in_array = { global.chinese_state = THIS }
+			}
+		}
+	}
+	
+	on_weekly_YSC = {
+		effect = {
+			if = {
+				limit = {
+					has_war = yes
+					has_country_leader = {
+						character = YSC_soviet_of_monk
+						ruling_only = no
+					}
+					casualties_k > 3
+				}
+				country_event = yellowsand.1
+			}
+			if = {
+				limit = { has_variable = YSC_soldiers_trust_var }
+				if = {
+					limit = { has_completed_focus = YSC_new_legend }
+					set_variable = { YSC_casualities_var = casualties_k }
+					subtract_from_variable = { YSC_casualities_var = YSC_last_casualities_var }
+					if = {
+						limit = {
+							check_variable = { YSC_casualities_var > 0 }
+							check_variable = { YSC_casualities_var < 1 }
+						}
+						set_variable = { YSC_casualities_var = 0 }
+					}
+					subtract_from_variable = { YSC_soldiers_trust_var = YSC_casualities_var }
+					clamp_variable = { var = YSC_soldiers_trust_var min = 0 max = 9999 }
+					set_variable = { YSC_last_casualities_var = casualties_k }
+					clear_variable = YSC_casualities_var
+				}
+				else = {
+					set_variable = { YSC_casualities_var = casualties_k }
+					subtract_from_variable = { YSC_casualities_var = YSC_last_casualities_var }
+					subtract_from_variable = { YSC_soldiers_trust_var = YSC_casualities_var }
+					set_variable = { YSC_last_casualities_var = casualties_k }
+					clear_variable = YSC_casualities_var
+				}
+			}
+			ROOT = {
+				if = {
+					limit = { has_completed_focus = YSC_to_preserve_the_ideology_of_the_secret_society }
+					if = {
+						limit = {
+							check_variable = { YSC_waiting_for_people_var < 1 }
+							check_variable = { YSC_secret_society_elites_var < 90 }
+							has_completed_focus = YSC_the_disenfranchised_emperor
+							has_country_flag = YSC_zhu_yuxun_flag
+						}
+						country_event = yellowsand.14
+					}
+					else_if = {
+						limit = {
+							check_variable = { YSC_waiting_for_people_var < 1 }
+							check_variable = { YSC_secret_society_elites_var < 90 }
+							has_completed_focus = YSC_the_disenfranchised_emperor
+							has_country_flag = YSC_zhu_rongji_flag
+						}
+						country_event = yellowsand.15
+					}				
+					else_if = {
+						limit = {
+							check_variable = { YSC_waiting_for_people_var < 0 }
+							check_variable = { YSC_secret_society_elites_var < 90 }
+							has_completed_focus = YSC_the_disenfranchised_emperor
+							has_country_flag = YSC_zhu_rongji_flag
+							has_country_flag = YSC_jap_agreed_organize_union_flag
+							NOT = {
+								has_country_flag = YSC_coming_of_age_of_the_emperor_flag 
+							}
+						}
+						country_event = yellowsand.35
+					}
+					else_if = {
+						limit = {
+							has_country_leader = {
+								character = YSC_chang_yin_tang
+								ruling_only = yes
+							}
+							check_variable = { YSC_waiting_for_people_var < 0 }
+							check_variable = { YSC_secret_society_elites_var < 10 }
+							has_completed_focus = YSC_provisional_rule_of_the_regent
+							has_country_flag = YSC_jap_agreed_organize_union_flag
+						}
+						country_event = yellowsand.36
+					}				
+				}
+				else_if = {
+					limit = { has_completed_focus = YSC_striving_for_constitutionalism }
+					if = {
+						limit = {
+							has_country_leader = {
+								character = YSC_chang_yin_tang
+								ruling_only = yes
+							}
+							check_variable = { YSC_secret_society_elites_var < 20 }
+							NOT = {
+								has_completed_focus = YSC_alliance_with_local_elites
+								has_completed_focus = YSC_balancing_faction_in_the_government
+							}
+							has_country_flag = YSC_jap_agreed_organize_union_flag
+						}
+						country_event = yellowsand.37
+					}
+				}
+			}
+		}
+	}
+	
+	on_monthly_YSC = {
+		effect = {
+			if = {
+				limit = { has_dynamic_modifier = { modifier = YSC_millenarianism_dyn } }
+				set_temp_variable = { YSC_waiting_for_people_temp_var = -1 }
+				add_to_variable = { YSC_waiting_for_people_var = YSC_waiting_for_people_temp_var }
+
+				YSC_waiting_for_people_cap_effect = yes
+			}
+		}
+	}
+	
+	on_army_leader_won_combat = {
+		effect = {
+			FROM = {
+				if = {
+					limit = { tag = YSC has_completed_focus = YSC_engage_in_the_training_of_soldiers }
+					add_to_variable = { YSC_soldiers_trust_var = 1 }
+				}
+			}
+		}
+	}
+}

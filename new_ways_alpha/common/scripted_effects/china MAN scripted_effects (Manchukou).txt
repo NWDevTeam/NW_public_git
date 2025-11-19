@@ -1,0 +1,460 @@
+dsfsdfs = {
+	set_temp_variable = { gsadhas = token:MAN_manchurian_powder_company }
+	log = "[?gsadhas] [?gsadhas.GetTokenKey]"
+}
+
+MAN_kwantung_army_commander_change = { # TODO везде где меняется лидер квантунской армии
+	MAN = {
+		if = {
+			limit = { check_variable = { MAN_kwantung_army_commander_faction = token:toseikha } }
+			set_variable = { MAN_kas_power_balance_daily = -0.002 }
+		}
+		else_if = {
+			limit = { check_variable = { MAN_kwantung_army_commander_faction = token:ugaki } }
+			set_variable = { MAN_kas_power_balance_daily = -0.001 }
+		}
+		else_if = {
+			limit = { check_variable = { MAN_kwantung_army_commander_faction = token:neutral_officer } }
+			set_variable = { MAN_kas_power_balance_daily = -0.001 }
+		}
+		else_if = {
+			limit = { check_variable = { MAN_kwantung_army_commander_faction = token:manchurian_faction } }
+			set_variable = { MAN_kas_power_balance_daily = 0 }
+		}
+		else_if = {
+			limit = { check_variable = { MAN_kwantung_army_commander_faction = token:kodokha } }
+			set_variable = { MAN_kas_power_balance_daily = 0 }
+		}
+	}
+}
+
+MAN_banditry_activity_remove = {
+	if = {
+		limit = { check_variable = { MAN_banditry_end@var:state > 1 } }
+		var:state = { remove_dynamic_modifier = { modifier = MAN_banditry_activity } }
+		clear_variable = MAN_banditry_end@var:state
+	}
+	else = {
+		custom_effect_tooltip = MAN_banditry_activity_remove_tt
+		add_to_variable = { MAN_banditry_end@var:state = 1 }
+	}
+}
+
+MAN_five_year_plan_goal_update = {
+	set_temp_variable = { completed = MAN_fyp_goal_completed }
+	add_to_temp_variable = { completed = 1 }
+	if = {
+		limit = { check_variable = { var = completed value = MAN_five_year_plan_goals compare = greater_than_or_equals } }
+		country_event = nw_manchukou_economy.0
+	}
+	else = {
+		add_to_variable = { MAN_fyp_goal_completed = 1 }
+	}
+}
+
+###
+
+MAN_mongolian_asian_railway_activate = {
+	unlock_decision_category_tooltip = MAN_mongolian_asian_railway
+	hidden_effect = {
+		set_country_flag = MAN_mongolian_asian_railway_flag
+		add_dynamic_modifier = { modifier = MAN_mongolian_asian_railway_idea }
+		set_variable = { 716.MAN_mantetsu_line_building_days = 400 }
+		set_variable = { 716.MAN_mange_line_building_days = 400 }
+		set_variable = { 611.MAN_mantetsu_line_building_days = 420 }
+		set_variable = { 611.MAN_mange_line_building_days = 420 }
+		set_variable = { 1136.MAN_mantetsu_line_building_days = 620 }
+		set_variable = { 1136.MAN_mange_line_building_days = 620 }
+		set_variable = { 957.MAN_mantetsu_line_building_days = 740 }
+		set_variable = { 957.MAN_mange_line_building_days = 740 }
+		set_variable = { 1161.MAN_mantetsu_line_building_days = 1100 }
+		set_variable = { 1161.MAN_mange_line_building_days = 1100 }
+		set_variable = { 760.MAN_mantetsu_line_building_days = 1150 }
+		set_variable = { 760.MAN_mange_line_building_days = 1150 }
+		set_variable = { 1198.MAN_mantetsu_line_building_days = 980 }
+		set_variable = { 1198.MAN_mange_line_building_days = 980 }
+		set_variable = { 1122.MAN_mantetsu_line_building_days = 720 }
+		set_variable = { 1122.MAN_mange_line_building_days = 720 }
+		set_variable = { 442.MAN_mantetsu_line_building_days = 340 }
+		set_variable = { 442.MAN_mange_line_building_days = 340 }
+		set_variable = { 586.MAN_mantetsu_line_building_days = 340 }
+		set_variable = { 586.MAN_mange_line_building_days = 340 }
+		set_variable = { 584.MAN_mantetsu_line_building_days = 560 }
+		set_variable = { 584.MAN_mange_line_building_days = 560 }
+		set_variable = { 266.MAN_mantetsu_line_building_days = 420 }
+		set_variable = { 266.MAN_mange_line_building_days = 420 }
+		set_variable = { 444.MAN_mantetsu_line_building_days = 720 }
+		set_variable = { 444.MAN_mange_line_building_days = 720 }
+	}
+}
+
+# reduce
+# target_states
+MAN_mantetsu_line_building_days_remove = {
+	if = {
+		limit = { check_variable = { target_states^0 = 0 } }
+		add_to_temp_array = { target_states = 716 }
+		add_to_temp_array = { target_states = 611 }
+		add_to_temp_array = { target_states = 1136 }
+		add_to_temp_array = { target_states = 957 }
+		add_to_temp_array = { target_states = 1161 }
+		add_to_temp_array = { target_states = 760 }
+		add_to_temp_array = { target_states = 1198 }
+		add_to_temp_array = { target_states = 1122 }
+		add_to_temp_array = { target_states = 442 }
+		add_to_temp_array = { target_states = 586 }
+		add_to_temp_array = { target_states = 584 }
+		add_to_temp_array = { target_states = 266 }
+		add_to_temp_array = { target_states = 444 }
+	}
+	
+	set_temp_variable = { cost = 1 }
+	subtract_from_variable = { cost = reduce }
+	for_each_loop = {
+		array = target_states
+		value = state
+		
+		multiply_variable = { var:state.MAN_mantetsu_line_building_days = cost } # TODO эта формула скам, но я никому не скажу (─‿‿─)
+	}
+}
+
+MAN_mongolian_asian_railway_country_count = {
+	set_variable = { MAN_mongolian_asian_railway = 0 }
+	set_variable = { MAN_mongolian_asian_railway_need = 0 }
+	
+	for_each_loop = {
+		array = MAN_mongolian_asian_railwa_countries
+		value = country
+		
+		if = {
+			limit = { NOT = { is_in_array = { MAN_mongolian_asian_railwa_countries_UINQ = country } } }
+			add_to_temp_array = { MAN_mongolian_asian_railwa_countries_UINQ = country }
+			add_to_variable = { MAN_mongolian_asian_railway_need = 1 }
+			log = "MAN_mongolian_asian_railway_need: [?MAN_mongolian_asian_railway_need]"
+		}
+		log = "MAN_mongolian_asian_railway_need: [?country.GetName]"
+	}
+	
+	set_country_flag = {
+		flag = MAN_mongolian_asian_railway_cooldown
+		days = 14
+		value = 1
+	}
+}
+
+MAN_line_to_inner_mongolia_effect = {
+	set_variable = { 716.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 800 } # TODO tooltip?
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 } # TODO тултип для статуса проекта?
+	
+	build_railway = {
+		level = 4
+		path = { 11771 6951 9788 6852 11855 3881 9873 6937 4495 }
+		start_province = 11771
+		target_province = 4495
+	}
+	country_event = nw_manchukou_economy.16
+}
+
+MAN_line_via_inner_mongolia_effect = {
+	set_variable = { 611.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 500 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 4
+		path = { 4495 7674 11752 4612 7048 14381 12331 }
+		start_province = 4495
+		target_province = 12331
+	}
+	country_event = nw_manchukou_economy.17
+}
+
+MAN_line_to_outer_mongolia_effect = {
+	set_variable = { 1136.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 750 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 3
+		path = { 12331 1723 4856 10632 1787 7752 4801 }
+		start_province = 12331
+		target_province = 4801
+	}
+	country_event = nw_manchukou_economy.18
+}
+
+MAN_line_via_outer_mongolia_effect = {
+	set_variable = { 957.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1250 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 2
+		path = { 4801 4732 14493 1798 1728 12614 4858 10560 1781 4843 4704 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 4801
+		target_province = 4704
+	}
+	country_event = nw_manchukou_economy.19
+}
+
+MAN_line_via_gobi_effect = {
+	set_variable = { 1161.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1400 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 1
+		path = { 12331 2087 10629 12880 7803 10899 4783 7727 1778 4843 4704 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 12331
+		target_province = 4704
+	}
+	country_event = nw_manchukou_economy.20
+}
+
+MAN_line_in_alma_ata_effect = {
+	set_variable = { 760.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1400 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 1
+		path = { 4704 12524 13742 12656 13283 10674 1844 7866 12601 10885 8042 4845 10547 14500 1591 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 4704
+		target_province = 1591
+	}
+	country_event = nw_manchukou_economy.21
+}
+
+MAN_line_in_kashgar_effect = {
+	set_variable = { 1198.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1700 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 1
+		path = { 4704 12524 13742 12656 13283 10674 1844 7866 12601 10885 8042 14637 14488 1703 4828 13481 1766 2015 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 4704
+		target_province = 2015
+	}
+	country_event = nw_manchukou_economy.22
+}
+
+MAN_line_in_peshawar_effect = {
+	set_variable = { 1122.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 900 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 1
+		path = { 2015 13482 8112 1970 13663 10821 2084 12763 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 2015
+		target_province = 12763
+	}
+	country_event = nw_manchukou_economy.23
+}
+
+MAN_line_to_afganistan_effect = {
+	set_variable = { 442.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 250 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 2
+		path = { 12763 12717 12831 10737 } # TODO придумать контент связанный со стройкой через горы!
+		start_province = 12763
+		target_province = 10737
+	}
+	country_event = nw_manchukou_economy.24
+}
+
+MAN_line_via_central_asia_effect = {
+	set_variable = { 586.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1800 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 1
+		start_state = 586
+		target_state = 584
+	}
+	country_event = nw_manchukou_economy.25
+}
+
+MAN_line_in_iran_effect = {
+	set_variable = { 584.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 750 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 2
+		start_state = 584
+		target_state = 266
+	}
+	country_event = nw_manchukou_economy.26
+}
+
+MAN_line_in_baghdad_effect = {
+	set_variable = { 266.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 900 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = {
+		level = 2
+		start_state = 266
+		target_state = 291
+	}
+	country_event = nw_manchukou_economy.27
+}
+
+MAN_line_via_pakistan_effect = {
+	set_variable = { 444.MAN_mongolian_asian_railway_project_line_progress = 4 }
+	add_to_variable = { MAN_mongolian_asian_railway_road_km = 1700 }
+	add_to_variable = { MAN_mongolian_asian_railway_project_progress = 1 }
+	
+	build_railway = { # TODO !!
+		level = 2
+		start_state = 442
+		target_state = 266
+	}
+	country_event = nw_manchukou_economy.27
+}
+
+###
+
+MAN_apl_update_data = {
+	JAP = {
+		MAN_apl_calculate_factory = yes
+	}
+	MAN = {
+		MAN_apl_calculate_factory = yes
+		MAN_apl_compute_y_axis_intervals = yes
+		MAN_apl_add_point_to_graph = yes
+	}
+	JAP = {
+		MAN_apl_add_point_to_graph = yes
+	}
+	add_to_variable = { MAN.MAN_apl_graph_dirty = 1 }
+}
+
+MAN_apl_calculate_factory = {
+	set_variable = { MAN_apl_total_factories = num_of_factories }
+
+	if = {
+		limit = { NOT = { check_variable = { MAN_apl_last_total_factories = 0 } } }
+		set_variable = { MAN_apl_factory_growth = MAN_apl_total_factories }
+		divide_variable = { MAN_apl_factory_growth = MAN_apl_last_total_factories }
+		subtract_from_variable = { MAN_apl_factory_growth = 1 }
+	}
+
+	set_variable = { MAN_apl_last_total_factories = MAN_apl_total_factories }
+	add_to_array = { MAN_apl_factories_array = MAN_apl_total_factories }
+}
+MAN_apl_compute_y_axis_intervals = {
+	MAN = {
+		add_to_array = { MAN_apl_total_factories_array = MAN_apl_total_factories }
+		add_to_array = { MAN_apl_total_factories_array = JAP.MAN_apl_total_factories }
+
+		find_lowest_in_array = {
+			array = MAN_apl_total_factories_array
+			value = temp_min_factory
+			# index = temp_min_factory_i
+		}
+		set_variable = { MAN_apl_min_factory = temp_min_factory }
+		# set_variable = { MAN_apl_min_factory_i = temp_min_factory_i }
+		find_highest_in_array = {
+			array = MAN_apl_total_factories_array
+			value = temp_new_max_factory
+			# index = temp_max_factory_i
+		}
+		# set_variable = { MAN_apl_old_max_factory = temp_new_max_factory }
+		set_variable = { MAN_apl_max_factory = temp_new_max_factory }
+		# set_variable = { MAN_apl_max_factory_i = temp_max_factory_i }
+
+		# compute y axis intervals
+		set_variable = { MAN_apl_interval = MAN_apl_max_factory }
+		subtract_from_variable = { MAN_apl_interval = MAN_apl_min_factory }
+		set_temp_variable = { factory_interval_fifth = MAN_apl_interval }
+		divide_temp_variable = { factory_interval_fifth = 5 }
+
+		set_variable = { MAN_factory_100pct = MAN_apl_max_factory }
+		round_variable = MAN_factory_100pct
+
+		set_temp_variable = { 80pct = MAN_apl_max_factory }
+		subtract_from_temp_variable = { 80pct = factory_interval_fifth }
+		set_variable = { MAN_factory_80pct = 80pct }
+		round_variable = MAN_factory_80pct
+
+		set_temp_variable = { 60pct = 80pct }
+		subtract_from_temp_variable = { 60pct = factory_interval_fifth }
+		set_variable = { MAN_factory_60pct = 60pct }
+		round_variable = MAN_factory_60pct
+
+		set_temp_variable = { 40pct = 60pct }
+		subtract_from_temp_variable = { 40pct = factory_interval_fifth }
+		set_variable = { MAN_factory_40pct = 40pct }
+		round_variable = MAN_factory_40pct
+
+		set_temp_variable = { 20pct = 40pct }
+		subtract_from_temp_variable = { 20pct = factory_interval_fifth }
+		set_variable = { MAN_factory_20pct = 20pct }
+		round_variable = MAN_factory_20pct
+
+		set_temp_variable = { 00pct = 20pct }
+		subtract_from_temp_variable = { 00pct = factory_interval_fifth }
+		set_variable = { MAN_factory_0pct = 00pct }
+		round_variable = MAN_factory_0pct
+	}
+}
+MAN_apl_add_point_to_graph = {
+	add_to_variable = { MAN_apl_point_count = 1 }
+
+	clear_array = MAN_apl_graph_offsets
+	clear_array = MAN_apl_graph_slopes
+
+	for_each_loop = {
+		array = MAN_apl_factories_array
+		index = i
+
+		# y value
+		set_variable = { MAN_apl_y_position = MAN_apl_factories_array^i }
+		subtract_from_variable = { MAN_apl_y_position = MAN.MAN_apl_min_factory }
+		divide_variable = { MAN_apl_y_position = MAN.MAN_apl_interval }
+		multiply_variable = { MAN_apl_y_position = 100 }
+		round_variable = MAN_apl_y_position
+
+		if = {
+			limit = { check_variable = { i > 0 } }
+			# The y position offset is the inverse of the y position
+			set_temp_variable = { offset = MAN_apl_last_y_position }
+			multiply_temp_variable = { offset = -1 }
+			add_to_array = {
+				array = MAN_apl_graph_offsets
+				value = offset
+			}
+
+			# The 'slope' here is simply the difference between the current y value and the last one, divided by 2 plus 50
+			# These last two changes are needed for the shader
+			set_temp_variable = { diff = MAN_apl_y_position }
+			subtract_from_temp_variable = { diff = MAN_apl_last_y_position }
+			divide_temp_variable = { diff = 2 }
+			add_to_temp_variable = { diff = 50 }
+			add_to_array = {
+				array = MAN_apl_graph_slopes
+				value = diff
+			}
+		}
+		set_variable = { MAN_apl_last_y_position = MAN_apl_y_position }
+	}
+
+	# Prune arrays so they hold at most 50 elements
+	if = {
+		limit = { check_variable = { MAN_apl_point_count > 50 } }
+		remove_from_array = { array = MAN_apl_graph_offsets index = 0 }
+		remove_from_array = { array = MAN_apl_graph_slopes index = 0 }
+		# remove_from_array = { array = MAN_apl_numbers index = 0 }
+		remove_from_array = { array = MAN_apl_factories_array index = 0 }
+	}
+
+	# add_to_array = { MAN_apl_numbers = MAN_apl_point_count }
+}

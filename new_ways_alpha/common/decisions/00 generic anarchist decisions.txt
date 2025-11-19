@@ -1,0 +1,5819 @@
+nw_anarchy_political_actions = {
+	
+	generic_anarchism_manpower_decision = {
+		icon = generic_military
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = no
+		}
+		available = {
+			if = {
+				limit = { is_left_anarchist = yes }
+				OR = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+				}
+			}
+			else_if = {
+				limit = { is_right_anarchist = yes }
+				OR = {
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+			}
+			else = {
+				OR = {
+					has_idea = peoples_squads
+					has_idea = peoples_police
+					has_idea = peoples_militia
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+			}
+		}
+		days_mission_timeout = 10
+		cancel_trigger = {
+			OR = {
+				NOT = { has_government = anarchism }
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		is_good = no
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision generic_anarchism_manpower_decision"
+			if = {
+				limit = { check_variable = { anarchism_tendency_sense_of_danger_var < 30 } }
+				if = {
+					limit = { is_left_anarchist = yes }
+					add_ideas = peoples_squads
+				}
+				else_if = {
+					limit = { is_right_anarchist = yes }
+					add_ideas = mercenary_soldiers
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_squads }
+						50 = { add_ideas = mercenary_soldiers }
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					check_variable = { anarchism_tendency_sense_of_danger_var > 29.999 }
+					check_variable = { anarchism_tendency_sense_of_danger_var < 50 }
+				}
+				if = {
+					limit = { is_left_anarchist = yes }
+					add_ideas = peoples_police
+				}
+				else_if = {
+					limit = { is_right_anarchist = yes }
+					add_ideas = monopolized_private_armies
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_police }
+						50 = { add_ideas = monopolized_private_armies }
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { is_left_anarchist = yes }
+					add_ideas = peoples_militia
+				}
+				else_if = {
+					limit = { is_right_anarchist = yes }
+					add_ideas = thriving_private_army_market
+				}
+				else = {
+					random_list = {
+						50 = { add_ideas = peoples_militia }
+						50 = { add_ideas = thriving_private_army_market }
+					}
+				}
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_anarchism_manpower_decision"
+		}
+	}
+
+	drop_cosmetic_tag_anarchy = {
+		icon = eng_trade_unions_support
+		cost = 0
+		ai_will_do = {
+			factor = 0
+		}
+		visible = {
+			OR = {
+				has_cosmetic_tag = working_federation_cosmetic
+				has_cosmetic_tag = union_of_communes_cosmetic
+				has_cosmetic_tag = union_of_communes_cosmetic_2
+				has_cosmetic_tag = union_of_communes_cosmetic_3
+				has_cosmetic_tag = federation_of_syndicates_cosmetic
+				has_cosmetic_tag = federation_of_syndicates_cosmetic_2
+				has_cosmetic_tag = synthetic_anarchism_focus_cosmetic
+				has_cosmetic_tag = synthetic_anarchism_focus_cosmetic_2
+				has_cosmetic_tag = synthetic_anarchism_focus_cosmetic_3
+				has_cosmetic_tag = mutualism_cosmetic
+				has_cosmetic_tag = mutualism_cosmetic_2
+				has_cosmetic_tag = mutualism_cosmetic_3
+				has_cosmetic_tag = anarcho_egoism_cosmetic
+				has_cosmetic_tag = anarcho_egoism_cosmetic_2
+				has_cosmetic_tag = anarcho_egoism_cosmetic_3
+				has_cosmetic_tag = libertarian_cosmetic
+				has_cosmetic_tag = libertarian_cosmetic_2
+				has_cosmetic_tag = libertarian_cosmetic_3
+				has_cosmetic_tag = agorism_cosmetic
+				has_cosmetic_tag = agorism_cosmetic_2
+				has_cosmetic_tag = agorism_cosmetic_3
+			}
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision drop_cosmetic_tag_anarchy"
+			drop_cosmetic_tag = yes
+		}
+	}
+	
+	solving_armys_priority_tasks_unity = {
+		icon = hol_draw_up_staff_plans
+		
+		available = {
+			has_idea = changing_principles_of_army_organization
+		}
+		
+		visible = {
+			has_idea = changing_principles_of_army_organization
+			NOT = { has_country_flag = { flag = solving_armys_priority_tasks_flag value > 0 } }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 12.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+	
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision solving_armys_priority_tasks_unity"
+			subtract_from_variable = { anarchism_unity_var = 12.5 }
+			random_list = {
+				50 = { country_event = NWgeneric.131 }
+				50 = { country_event = NWgeneric.132 }
+			}
+			set_country_flag = { flag = solving_armys_priority_tasks_flag days = 20 value = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 5
+				check_variable = { anarchism_unity_var > 50 }
+			}
+		}
+	}
+	
+	solving_armys_priority_tasks_pp = {
+		icon = hol_draw_up_staff_plans
+		
+		available = {
+			has_idea = changing_principles_of_army_organization
+		}
+		
+		visible = {
+			has_idea = changing_principles_of_army_organization
+			NOT = { has_country_flag = { flag = solving_armys_priority_tasks_flag value > 0 } }
+		}
+		
+		cost = 50
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision solving_armys_priority_tasks_pp"
+			random_list = {
+				50 = { country_event = NWgeneric.131 }
+				50 = { country_event = NWgeneric.132 }
+			}
+			set_country_flag = { flag = solving_armys_priority_tasks_flag days = 20 value = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 5
+		}
+	}
+	
+	prepare_for_an_ideological_anniversary = {
+		icon = generic_form_nation
+		
+		available = {
+			NOT = { has_country_flag = { flag = prepare_for_an_ideological_anniversary_flag value > 0 } }
+		}
+		
+		days_remove = 50
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		
+		
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		modifier = {
+			anarchism_drift = 0.05
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision prepare_for_an_ideological_anniversary"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+			set_country_flag = { flag = prepare_for_an_ideological_anniversary_flag days = 365 value = 1 }
+		}
+		
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				anarchism > 0.99
+			}
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+	}
+	
+	encourage_people_to_cooperate = {
+		icon = hol_exchange_intelligence_data
+
+		cost = 50
+		days_remove = 70
+	
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				check_variable = { anarchism_unity_var < 100 }
+			}
+		}
+		
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		modifier = {
+			anarchist_unity_bonus = 0.5
+		}
+
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision encourage_people_to_cooperate"
+		}
+	}
+	
+	call_for_peaceful_coexistence_with_each_other = {
+		icon = hol_radio_oranje
+
+		cost = 25
+		days_remove = 50
+		
+		available = {
+			has_war = no
+		}
+	
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 15
+				check_variable = { anarchism_unity_var < 99 }
+			}
+			modifier = {
+				add = -14
+				has_war_support < 0.2 
+			}
+		}
+		
+		modifier = {
+			war_support_weekly = -0.007
+			anarchist_unity_bonus = 0.15
+		}
+		remove_trigger = {
+			has_war = yes
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision call_for_peaceful_coexistence_with_each_other"
+		}
+	}
+	
+	eradicate_pacifist_sentiments = {
+		icon = hol_war_on_pacifism
+		
+		available = {
+			OR = {
+				threat > 0.3
+				has_war = yes
+			}
+		}
+
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 100
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			war_support_weekly = 0.0035
+			weekly_manpower = 4000
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision eradicate_pacifist_sentiments"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+	
+	support_dialogue_between_producers_and_consumers = {
+		icon = generic_political_discourse
+		
+		available = {
+			is_right_anarchist = yes
+		}
+		
+		visible = {
+			is_right_anarchist = yes
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 300
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			consumer_goods_factor = -0.15
+			industrial_capacity_factory = 0.075
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+			}
+			is_right_anarchist = no
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision support_dialogue_between_producers_and_consumers"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+	
+	use_shadow_schemes = {
+		icon = recruit_operative
+		
+		available = {
+			is_right_anarchist = yes
+		}
+		
+		visible = {
+			is_right_anarchist = yes
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 20 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 45
+	
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			political_power_gain = 0.25
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+			}
+			is_right_anarchist = no
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision use_shadow_schemes"
+			subtract_from_variable = { anarchism_unity_var = 20 }
+		}
+	}
+	
+	combine_efforts_of_manufacturers_and_trade_unions = {
+		icon = generic_political_discourse
+		
+		available = {
+			is_left_anarchist = yes
+		}
+		
+		visible = {
+			is_left_anarchist = yes
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 300
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			production_speed_buildings_factor = 0.115
+			industrial_capacity_factory = 0.085
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+			}
+			is_left_anarchist = no
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision combine_efforts_of_manufacturers_and_trade_unions"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+	
+	use_theme_of_unity_in_propaganda = {
+		icon = generic_political_discourse
+		
+		available = {
+			is_right_anarchist = no
+			is_left_anarchist = no
+		}
+		
+		visible = {
+			is_right_anarchist = no
+			is_left_anarchist = no
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 300
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			mobilization_speed = 0.065
+			army_speed_factor = 0.05
+			army_morale_factor = 0.05
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+			}
+			is_right_anarchist = no
+			is_left_anarchist = no
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision use_theme_of_unity_in_propaganda"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+	
+	realise_shared_project = {
+		icon = generic_construction
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 150
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			production_speed_buildings_factor = 0.12
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision realise_shared_project"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+	
+	demonstrate_national_unity_to_world = {
+		icon = speech
+		
+		available = {
+			NOT = { has_country_flag = { flag = demonstrate_national_unity_to_world_flag value > 0 } }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			political_power_gain = 1.5
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision demonstrate_national_unity_to_world"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+			set_country_flag = { flag = demonstrate_national_unity_to_world_flag days = 120 value = 1 }
+		}
+	}
+	
+	scientific_cooperation = {
+		icon = generic_research
+		
+		available = {
+			NOT = { has_country_flag = { flag = scientific_cooperation_flag value > 0 } }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				political_power_daily < 0.15
+			}
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+			modifier = {
+				factor = 0
+				check_variable = { modifier@consumer_goods_factor > 0.5 }
+			}
+		}
+		
+		modifier = {
+			consumer_goods_factor = 0.15
+			political_power_cost = 0.1
+			research_speed_factor = 0.03
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision scientific_cooperation"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+			set_country_flag = { flag = scientific_cooperation_flag days = 180 value = 1 }
+		}
+	}
+	
+	military_training_of_population = {
+		icon = generic_prepare_civil_war
+		
+		available = {
+			NOT = { has_country_flag = { flag = military_training_of_population_flag value > 0 } }
+			has_war_support > 0.5
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_re_enable = 270
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision military_training_of_population"
+			subtract_from_variable = { anarchism_unity_var = 10 }
+			set_country_flag = { flag = military_training_of_population_flag days = 270 value = 1 }
+			army_experience = 20
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.25
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+	
+	improve_public_health_system = {
+		icon = generic_health
+		
+		available = {
+			NOT = { has_country_flag = { flag = improve_public_health_system_flag value > 0 } }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				all_owned_state = {
+					free_building_slots = {
+						building = hospital
+						size < 1
+					}					
+				}
+			}
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			production_speed_hospital_factor = 0.3
+			production_speed_industrial_complex_factor = -0.1
+			production_speed_arms_factory_factor = -0.1
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision improve_public_health_system"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+			set_country_flag = { flag = improve_public_health_system_flag days = 360 value = 1 }
+		}
+	}
+	
+	call_for_international_cooperation = {
+		icon = hol_exchange_intelligence_data
+		
+		available = {
+			has_offensive_war = no
+			threat > 0
+			NOT = { has_country_flag = { flag = call_for_international_cooperation_flag value > 0 } }
+			set_temp_variable = { anarchism_unity_trigger_var = 50 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 50
+	
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				has_added_tension_amount > 1
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0.5
+			}
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			political_power_cost = 0.5
+			custom_modifier_tooltip = add_threat_015_tt
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		remove_effect = {
+			clr_country_flag = call_for_international_cooperation_flag_2
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision call_for_international_cooperation"
+			subtract_from_variable = { anarchism_unity_var = 7.5 }
+			set_country_flag = { flag = call_for_international_cooperation_flag days = 180 value = 1 }
+			set_country_flag = call_for_international_cooperation_flag_2
+		}
+	}
+	
+	encourage_foreign_intellectuals = {
+		icon = generic_political_discourse
+		
+		available = {
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+	
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_unity_var < 50 }
+			}
+		}
+		
+		modifier = {
+			MONTHLY_POPULATION = 0.5
+			consumer_goods_factor = 0.15
+			civilian_intel_to_others = 10.0
+			drift_defence_factor = -0.075
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision encourage_foreign_intellectuals"
+			subtract_from_variable = { anarchism_unity_var = 5 }
+		}
+	}
+}
+
+###
+
+generic_anarchism_tendency_category = {
+
+	generic_follow_trade_convoys_foreign_manufacturers = {
+		icon = eng_blackshirt_march
+		available = {
+			NOT = { has_country_flag = { flag = generic_follow_trade_convoys_foreign_manufacturers_flag value > 0 } }
+			set_temp_variable = { anarchism_unity_trigger_var = 5 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { var_has_manpower_temp = 500 }
+			set_temp_variable = { var_infantry_equipment_temp = 100 }
+			has_manpower > var_has_manpower_temp
+			has_equipment = { infantry_equipment > var_infantry_equipment_temp }
+		}
+		custom_cost_text = infantry_equipment_and_manpower_cost
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_follow_trade_convoys_foreign_manufacturers"
+			set_country_flag = { flag = generic_follow_trade_convoys_foreign_manufacturers_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_need_trade_user_pool_temp = -20 }
+			add_to_variable = { anarchism_tendency_need_trade_user_pool_var = anarchism_tendency_need_trade_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_need_trade_user_pool_tt
+			add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+			hidden_effect = {
+				add_manpower = -500
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -100
+				}
+				set_var_generic_anarchism_tendency = yes
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = limited_exports
+					has_idea = closed_economy
+				}
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_encourage_foreign_manufacturers = {
+		icon = speech
+		available = {
+			NOT = { has_country_flag = { flag = generic_encourage_foreign_manufacturers_flag value > 0 } }
+		}
+	
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 50 }
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_encourage_foreign_manufacturers"
+			set_country_flag = { flag = generic_encourage_foreign_manufacturers_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_need_trade_user_pool_temp = 20 }
+			add_to_variable = { anarchism_tendency_need_trade_user_pool_var = anarchism_tendency_need_trade_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_need_trade_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -7.5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -50 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				has_idea = free_trade
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = export_focus
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_encourage_expansion_trade = {
+		icon = hol_attract_foreign_investors
+		available = {
+			NOT = { has_country_flag = { flag = generic_encourage_expansion_trade_flag value > 0 } }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_encourage_expansion_trade"
+			set_country_flag = { flag = generic_encourage_expansion_trade_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_need_trade_user_pool_temp = 10 }
+			add_to_variable = { anarchism_tendency_need_trade_user_pool_var = anarchism_tendency_need_trade_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_need_trade_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				has_idea = free_trade
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = export_focus
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_call_for_isolationism = {
+		icon = generic_break_treaty
+		available = {
+			NOT = { has_country_flag = { flag = generic_call_for_isolationism_flag value > 0 } }
+		}
+	
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_call_for_isolationism"
+			set_country_flag = { flag = generic_call_for_isolationism_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_need_trade_user_pool_temp = -10 }
+			add_to_variable = { anarchism_tendency_need_trade_user_pool_var = anarchism_tendency_need_trade_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_need_trade_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = limited_exports
+					has_idea = closed_economy
+				}
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_to_get_word_out_about_upcoming_strikes = {
+		icon = generic_political_rally
+		available = {
+			NOT = { has_country_flag = { flag = generic_to_get_word_out_about_upcoming_strikes_flag value > 0 } }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 50 }
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_to_get_word_out_about_upcoming_strikes"
+			set_country_flag = { flag = generic_to_get_word_out_about_upcoming_strikes_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_interest_industry_user_pool_temp = -20 }
+			add_to_variable = { anarchism_tendency_interest_industry_user_pool_var = anarchism_tendency_interest_industry_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_interest_industry_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -7.5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -50 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_interest_industry_var < 1 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_prepare_competition_for_best_manufacturers = {
+		icon = generic_decision
+		available = {
+			NOT = { has_country_flag = { flag = generic_prepare_competition_for_best_manufacturers_flag value > 0 } }
+			num_of_civilian_factories_available_for_projects > 0
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 5 }
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_prepare_competition_for_best_manufacturers"
+			set_country_flag = { flag = generic_prepare_competition_for_best_manufacturers_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_interest_industry_user_pool_temp = 20 }
+			add_to_variable = { anarchism_tendency_interest_industry_user_pool_var = anarchism_tendency_interest_industry_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_interest_industry_user_pool_tt
+			random_owned_controlled_state = {
+				limit = { industrial_complex > 0 }
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -7.5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -5 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_interest_industry_var > 99 }
+			}
+			modifier = {
+				factor = 15
+				num_of_civilian_factories_available_for_projects > 5
+				check_variable = { anarchism_tendency_interest_industry_var < 50 }
+			}
+			modifier = {
+				factor = 20
+				num_of_civilian_factories_available_for_projects > 15
+				check_variable = { anarchism_tendency_interest_industry_var < 90 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_call_for_development_of_industry = {
+		icon = generic_construction
+		available = {
+			NOT = { has_country_flag = { flag = generic_call_for_development_of_industry_flag value > 0 } }
+		}
+	
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_call_for_development_of_industry"
+			set_country_flag = { flag = generic_call_for_development_of_industry_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_interest_industry_user_pool_temp = 10 }
+			add_to_variable = { anarchism_tendency_interest_industry_user_pool_var = anarchism_tendency_interest_industry_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_interest_industry_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_interest_industry_var > 90 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_set_an_example_for_rural_workers = {
+		icon = generic_political_discourse
+		available = {
+			NOT = { has_country_flag = { flag = generic_set_an_example_for_rural_workers_flag value > 0 } }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_set_an_example_for_rural_workers"
+			set_country_flag = { flag = generic_set_an_example_for_rural_workers_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_interest_industry_user_pool_temp = -10 }
+			add_to_variable = { anarchism_tendency_interest_industry_user_pool_var = anarchism_tendency_interest_industry_user_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_interest_industry_user_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_interest_industry_var < 1 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_create_image_of_external_enemy = {
+		icon = recruit_operative
+		available = {
+			NOT = { has_country_flag = { flag = generic_create_image_of_external_enemy_flag value > 0 } }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_create_image_of_external_enemy"
+			set_country_flag = { flag = generic_create_image_of_external_enemy_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_sense_of_danger_pool_temp = 10 }
+			add_to_variable = { anarchism_tendency_sense_of_danger_pool_var = anarchism_tendency_sense_of_danger_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_sense_of_danger_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_sense_of_danger_var > 99 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_promote_external_friendliness = {
+		icon = hol_exchange_intelligence_data
+		available = {
+			NOT = { has_country_flag = { flag = generic_promote_external_friendliness_flag value > 0 } }
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_promote_external_friendliness"
+			set_country_flag = { flag = generic_promote_external_friendliness_flag days = 30 value = 1 }
+			set_temp_variable = { anarchism_tendency_sense_of_danger_pool_temp = -10 }
+			add_to_variable = { anarchism_tendency_sense_of_danger_pool_var = anarchism_tendency_sense_of_danger_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_sense_of_danger_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_sense_of_danger_var < 1 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_spread_boulevard_military_novels = {
+		icon = ger_mefo_bills
+		available = {
+			NOT = { has_country_flag = { flag = generic_spread_boulevard_military_novels_flag value > 0 } }
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 50 }
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		days_remove = 14
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_spread_boulevard_military_novels"
+			set_country_flag = { flag = generic_spread_boulevard_military_novels_flag days = 30 value = 1 }
+			add_war_support = 0.05
+			set_temp_variable = { anarchism_tendency_sense_of_danger_pool_temp = 20 }
+			add_to_variable = { anarchism_tendency_sense_of_danger_pool_var = anarchism_tendency_sense_of_danger_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_sense_of_danger_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -7.5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -50 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_sense_of_danger_var > 99 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_spread_pacifist_literature = {
+		icon = hol_war_on_pacifism
+		available = {
+			NOT = { has_country_flag = { flag = generic_spread_pacifist_literature_flag value > 0 } }
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost_pp = 25 }
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+			has_political_power > custom_cost_pp
+		}
+		custom_cost_text = custom_cost_anarcho_unity_and_pp
+		days_remove = 14
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_spread_pacifist_literature"
+			set_country_flag = { flag = generic_spread_pacifist_literature_flag days = 30 value = 1 }
+			add_war_support = -0.05
+			set_temp_variable = { anarchism_tendency_sense_of_danger_pool_temp = -20 }
+			add_to_variable = { anarchism_tendency_sense_of_danger_pool_var = anarchism_tendency_sense_of_danger_pool_temp }
+			custom_effect_tooltip = anarchism_tendency_sense_of_danger_pool_tt
+			hidden_effect = {
+				add_to_variable = { anarchism_unity_var = -7.5 tooltip = anarchism_unity_add_effect }
+				set_var_generic_anarchism_tendency = yes
+				set_temp_variable = { custom_cost_pp_zero = -25 }
+				add_political_power = custom_cost_pp_zero
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				check_variable = { anarchism_tendency_sense_of_danger_var < 1 }
+			}
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+}
+
+generic_anarchism_category = {
+
+	generic_development_concept_anarchism = {
+		icon = generic_civil_support
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = no
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = generic_development_concept_anarchism_trigger_tt
+				has_country_flag = generic_anarchism_flag_1
+				has_country_flag = generic_anarchism_flag_2
+				has_country_flag = generic_anarchism_flag_3
+				has_country_flag = generic_anarchism_flag_4
+				has_country_flag = generic_anarchism_flag_5
+			}
+		}
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			NOT = {
+				has_country_flag = generic_anarchism_flag_1
+				has_country_flag = generic_anarchism_flag_2
+				has_country_flag = generic_anarchism_flag_3
+				has_country_flag = generic_anarchism_flag_4
+				has_country_flag = generic_anarchism_flag_5
+			}
+		}
+		is_good = no
+		days_mission_timeout = 80
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout decision generic_development_concept_anarchism"
+			country_event = { id = NWgeneric.108 hours = 1 }
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_development_concept_anarchism"
+			country_event = { id = NWgeneric.107 days = 1 }
+		}
+	}
+}
+
+generic_anarchism_creating_model_of_company_category = {
+
+	generic_create_printing_house = {
+		icon = ger_mefo_bills
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		cost = 20
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_create_printing_house"
+			set_country_flag = generic_create_printing_house_flag
+			custom_effect_tooltip = generic_create_printing_house_tt
+			set_variable = { administrative_efficiency_var = 0 }
+			clamp_variable = { var = administrative_efficiency_var min = 0 max = 2 }
+			set_variable = { administrative_efficiency_var_total = administrative_efficiency_var }
+			multiply_variable = { administrative_efficiency_var_total = 50 }
+			hidden_effect = { activate_decision = generic_attracting_public_attention_to_our_company }
+		}
+		ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+	
+	generic_create_commune = {
+		icon = eng_install_government
+		allowed = {
+			always = no
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		cost = 20
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_create_commune"
+			set_country_flag = generic_create_commune_flag
+			custom_effect_tooltip = generic_create_commune_tt
+		}
+		ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+}
+
+generic_create_printing_house_category = {
+	
+	generic_attracting_public_attention_to_our_company = {
+		icon = generic_political_rally
+		available = {
+		}
+		visible = {
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		days_remove = 365
+		is_good = yes
+		fire_only_once = yes
+		complete_effect = {
+			set_country_flag = generic_attracting_public_attention_to_our_company_flag
+			hidden_effect = { country_event = { id = NWgeneric.113 days = 729 } }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_attracting_public_attention_to_our_company"
+			clr_country_flag = generic_attracting_public_attention_to_our_company_flag
+			if = {
+				limit = { has_government = anarchism }
+				custom_effect_tooltip = generic_attracting_public_attention_to_our_company_tt
+				if = {
+					limit = { has_country_flag = NWgeneric_110_a }
+					effect_tooltip = { add_war_support = 0.05 }
+					custom_effect_tooltip = NWgeneric_110_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_110_b }
+					effect_tooltip = { add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_110_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_110_c }
+					effect_tooltip = { add_war_support = 0.03 add_to_variable = { anarchism_unity_var = 2 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_110_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_111_a }
+					effect_tooltip = { add_war_support = 0.06 add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_111_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_111_b }
+					effect_tooltip = { add_to_variable = { anarchism_unity_var = 4 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_111_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_111_c }
+					effect_tooltip = { add_war_support = 0.08 }
+					custom_effect_tooltip = NWgeneric_111_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_112_a }
+					effect_tooltip = { add_war_support = 0.1 }
+					custom_effect_tooltip = NWgeneric_112_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_112_b }
+					effect_tooltip = { add_to_variable = { anarchism_unity_var = 5 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_112_tt
+				}
+				if = {
+					limit = { has_country_flag = NWgeneric_112_c }
+					effect_tooltip = { add_war_support = 0.05 add_to_variable = { anarchism_unity_var = 3 tooltip = anarchism_unity_add_effect } }
+					custom_effect_tooltip = NWgeneric_112_tt
+				}
+				
+				set_temp_variable = { reward_multiplier_total = administrative_efficiency_var_total }
+				add_to_temp_variable = { reward_multiplier_total = n_multiplier }
+				custom_effect_tooltip = generic_attracting_public_attention_to_our_company_tt2
+				set_temp_variable = { anarchism_unity_add_temp_var = anarchism_unity_add_dec_var }
+				set_temp_variable = { add_war_support_temp_var = add_war_support_dec_var }
+				multiply_temp_variable = { anarchism_unity_add_temp_var = reward_multiplier_total }
+				multiply_temp_variable = { add_war_support_temp_var = reward_multiplier_total }
+				
+				if = {
+					limit = {
+						OR = {
+							has_variable = anarchism_unity_add_dec_var
+							has_variable = add_war_support_dec_var
+						}
+					}
+					custom_effect_tooltip = generic_attracting_public_attention_to_our_company_tt3
+				}
+				if = {
+					limit = { has_variable = anarchism_unity_add_dec_var }
+					set_temp_variable = { anarchism_unity_add_var = anarchism_unity_add_temp_var }
+					add_to_variable = { anarchism_unity_var = anarchism_unity_add_var tooltip = anarchism_unity_add_effect }
+				}
+				if = {
+					limit = { has_variable = add_war_support_dec_var }
+					add_war_support = add_war_support_temp_var
+				}
+				
+				clr_country_flag = NWgeneric_110_a
+				clr_country_flag = NWgeneric_110_b
+				clr_country_flag = NWgeneric_110_c
+				clr_country_flag = NWgeneric_111_a
+				clr_country_flag = NWgeneric_111_b
+				clr_country_flag = NWgeneric_111_c
+				clr_country_flag = NWgeneric_112_a
+				clr_country_flag = NWgeneric_112_b
+				clr_country_flag = NWgeneric_112_c
+				
+				clear_variable = administrative_efficiency_var_total
+				clear_variable = administrative_efficiency_var
+				clear_variable = reward_multiplier_total
+				clear_variable = anarchism_unity_add_effect
+				clear_variable = add_war_support_dec_var
+				clear_variable = youth_solution_var
+				clear_variable = middle_solution_var
+				clear_variable = ultimatum_solution_var
+			}
+		}
+	}
+	
+	generic_hire_employees_for_printing_house = {
+		icon = generic_political_discourse
+		available = {
+		}
+		visible = {
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		cost = 20
+		days_remove = 90
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { country_event = { id = NWgeneric.109 days = 50 } }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_employees_for_printing_house"
+			set_country_flag = generic_hire_employees_for_printing_house_flag
+			set_temp_variable = { administrative_efficiency_temp_var = 0.3 }
+			add_to_variable = { administrative_efficiency_var = administrative_efficiency_temp_var }
+			clamp_variable = { var = administrative_efficiency_var min = 0 max = 2 }
+			set_variable = { administrative_efficiency_var_total = administrative_efficiency_var }
+			multiply_variable = { administrative_efficiency_var_total = 50 }
+			custom_effect_tooltip = administrative_efficiency_effect
+			unlock_decision_tooltip = generic_start_distributing_ads
+			unlock_decision_tooltip = generic_launch_newspapers_and_journal
+		}
+		ai_will_do = {
+			factor = 25
+		}
+	}
+	
+	generic_start_distributing_ads = {
+		icon = generic_political_discourse
+		available = {
+			hidden_trigger = {
+				has_country_flag = generic_hire_employees_for_printing_house_flag
+			}
+		}
+		visible = {
+			has_country_flag = generic_hire_employees_for_printing_house_flag
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		cost = 40
+		days_remove = 100
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { country_event = { id = NWgeneric.111 days = 20 } }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_start_distributing_ads"
+			set_temp_variable = { administrative_efficiency_temp_var = 0.1 }
+			add_to_variable = { administrative_efficiency_var = administrative_efficiency_temp_var }
+			clamp_variable = { var = administrative_efficiency_var min = 0 max = 2 }
+			set_variable = { administrative_efficiency_var_total = administrative_efficiency_var }
+			multiply_variable = { administrative_efficiency_var_total = 50 }
+			custom_effect_tooltip = administrative_efficiency_effect
+		}
+		ai_will_do = {
+			factor = 25
+		}
+	}
+	
+	generic_launch_newspapers_and_journal = {
+		icon = ger_mefo_bills
+		available = {
+			hidden_trigger = {
+				has_country_flag = generic_hire_employees_for_printing_house_flag
+			}
+		}
+		visible = {
+			has_country_flag = generic_hire_employees_for_printing_house_flag
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		cost = 40
+		days_remove = 100
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = { country_event = { id = NWgeneric.112 days = 20 } }
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_launch_newspapers_and_journal"
+			set_temp_variable = { administrative_efficiency_temp_var = 0.1 }
+			add_to_variable = { administrative_efficiency_var = administrative_efficiency_temp_var }
+			clamp_variable = { var = administrative_efficiency_var min = 0 max = 2 }
+			set_variable = { administrative_efficiency_var_total = administrative_efficiency_var }
+			multiply_variable = { administrative_efficiency_var_total = 50 }
+			custom_effect_tooltip = administrative_efficiency_effect
+		}
+		ai_will_do = {
+			factor = 25
+		}
+	}
+}
+
+generic_anarchism_private_army_category = {
+	
+	###  MANPOWER
+	
+	generic_sign_contracts_with_volunteers = {
+		icon = speech
+		available = {
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			if = {
+				limit = { has_focus_tree = generic_anarchism_focus }
+				has_government = anarchism
+				OR = {
+					has_completed_focus = brutality_is_bringing_people_together_focus
+					has_completed_focus = contract_slavery_focus
+					has_completed_focus = contract_society_focus
+					has_completed_focus = voluntarism_focus
+				}
+			}
+			else = {
+				has_government = anarchism
+			}
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		remove_trigger = {
+			OR = {
+				NOT = {
+					has_government = anarchism
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+				has_political_power < 0
+				custom_trigger_tooltip = {
+					tooltip = generic_sign_contracts_tt
+					OR = {
+						has_country_flag = generic_sign_contracts_with_private_security_company_flag
+						has_country_flag = generic_sign_contracts_with_mercenary_flag
+						has_country_flag = generic_sign_contracts_with_private_military_corporations_flag
+					}
+				}
+			}
+		}
+		cost = 10
+		days_remove = -1
+		modifier = {
+			conscription = 0.025
+			political_power_cost = 0.15
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_sign_contracts_with_volunteers"
+			set_country_flag = generic_sign_contracts_with_volunteers_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_sign_contracts_with_volunteers"
+			clr_country_flag = generic_sign_contracts_with_volunteers_flag
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				political_power_daily < 0.15
+			}
+			modifier = {
+				#Prio if low on manpower
+				factor = 2
+				manpower_per_military_factory < 1000
+			}
+		}
+	}
+	
+	generic_sign_contracts_with_private_security_company = {
+		icon = eng_blackshirt_march
+		available = {
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			if = {
+				limit = { has_focus_tree = generic_anarchism_focus }
+				has_government = anarchism
+				OR = {
+					has_completed_focus = brutality_is_bringing_people_together_focus
+					has_completed_focus = contract_slavery_focus
+					has_completed_focus = contract_society_focus
+					has_completed_focus = voluntarism_focus
+				}
+			}
+			else = {
+				has_government = anarchism
+			}
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		remove_trigger = {
+			OR = {
+				NOT = {
+					has_government = anarchism
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+				has_political_power < 0
+				custom_trigger_tooltip = {
+					tooltip = generic_sign_contracts_tt		
+					OR = {
+						has_country_flag = generic_sign_contracts_with_volunteers_flag
+						has_country_flag = generic_sign_contracts_with_mercenary_flag
+						has_country_flag = generic_sign_contracts_with_private_military_corporations_flag
+					}
+				}
+			}
+		}
+		cost = 20
+		days_remove = -1
+		modifier = {
+			conscription = 0.055
+			political_power_cost = 0.25
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_sign_contracts_with_private_security_company"
+			set_country_flag = generic_sign_contracts_with_private_security_company_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_sign_contracts_with_private_security_company"
+			clr_country_flag = generic_sign_contracts_with_private_security_company_flag
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				political_power_daily < 0.25
+			}
+			modifier = {
+				#Prio if low on manpower
+				factor = 5
+				manpower_per_military_factory < 900
+			}
+		}
+	}
+	
+	generic_sign_contracts_with_mercenary = {
+		icon = generic_prepare_civil_war
+		available = {
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			if = {
+				limit = { has_focus_tree = generic_anarchism_focus }
+				has_government = anarchism
+				OR = {
+					has_completed_focus = brutality_is_bringing_people_together_focus
+					has_completed_focus = contract_slavery_focus
+					has_completed_focus = contract_society_focus
+					has_completed_focus = voluntarism_focus
+				}
+			}
+			else = {
+				has_government = anarchism
+			}
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		remove_trigger = {
+			OR = {
+				NOT = {
+					has_government = anarchism
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+				has_political_power < 0
+				custom_trigger_tooltip = {
+					tooltip = generic_sign_contracts_tt		
+					OR = {
+						has_country_flag = generic_sign_contracts_with_volunteers_flag
+						has_country_flag = generic_sign_contracts_with_private_security_company_flag
+						has_country_flag = generic_sign_contracts_with_private_military_corporations_flag
+					}
+				}
+			}
+		}
+		cost = 30
+		days_remove = -1
+		modifier = {
+			conscription = 0.075
+			political_power_cost = 0.35
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_sign_contracts_with_mercenary"
+			set_country_flag = generic_sign_contracts_with_mercenary_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_sign_contracts_with_mercenary"
+			clr_country_flag = generic_sign_contracts_with_mercenary_flag
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				political_power_daily < 0.35
+			}
+			modifier = {
+				#Prio if low on manpower
+				factor = 10
+				manpower_per_military_factory < 800
+			}
+		}
+	}
+	
+	generic_sign_contracts_with_private_military_corporations = {
+		icon = generic_industry
+		available = {
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			if = {
+				limit = { has_focus_tree = generic_anarchism_focus }
+				has_government = anarchism
+				OR = {
+					has_completed_focus = brutality_is_bringing_people_together_focus
+					has_completed_focus = contract_slavery_focus
+					has_completed_focus = contract_society_focus
+					has_completed_focus = voluntarism_focus
+				}
+			}
+			else = {
+				has_government = anarchism
+			}
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		remove_trigger = {
+			OR = {
+				NOT = {
+					has_government = anarchism
+					has_idea = mercenary_soldiers
+					has_idea = monopolized_private_armies
+					has_idea = thriving_private_army_market
+				}
+				has_political_power < 0
+				custom_trigger_tooltip = {
+					tooltip = generic_sign_contracts_tt		
+					OR = {
+						has_country_flag = generic_sign_contracts_with_volunteers_flag
+						has_country_flag = generic_sign_contracts_with_private_security_company_flag
+						has_country_flag = generic_sign_contracts_with_mercenary_flag
+					}
+				}
+			}
+		}
+		cost = 40
+		days_remove = -1
+		modifier = {
+			conscription = 0.1
+			political_power_cost = 0.5
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_sign_contracts_with_private_military_corporations"
+			set_country_flag = generic_sign_contracts_with_private_military_corporations_flag
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_sign_contracts_with_private_military_corporations"
+			clr_country_flag = generic_sign_contracts_with_private_military_corporations_flag
+		}
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				political_power_daily < 0.5
+			}
+			modifier = {
+				#Prio if low on manpower
+				factor = 20
+				manpower_per_military_factory < 700
+			}
+		}
+	}
+	
+	
+	###  DIVISIONS
+	
+	generic_hire_infantry_division_mercenary_soldiers = {
+		icon = generic_assassination
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 4000
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cost = 10
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_infantry_division_mercenary_soldiers"
+			add_manpower = -4000
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Squad of Mercenaries" } }
+					division_template = {
+						name = "Squad of Mercenaries"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Squad of Mercenaries\" division_template = \"Squad of Mercenaries\" start_experience_factor = 0.1" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = monopolized_private_armies
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = thriving_private_army_market
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_infantry_division_monopolized_private_armies = {
+		icon = generic_prepare_civil_war
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 7100
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		visible = {
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cost = 25
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_infantry_division_monopolized_private_armies"
+			add_manpower = -7100
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Mercenary Division" } }
+					division_template = {
+						name = "Mercenary Division"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+						support = {
+							engineer = { x = 0 y = 0 }
+							artillery = { x = 0 y = 1 }
+							sniper_squad = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Mercenary Division\" division_template = \"Mercenary Division\" start_experience_factor = 0.2" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = thriving_private_army_market
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_fire_infantry_division_monopolized_private_armies = {
+		icon = generic_fire
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 5800
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+			has_tech = tech_shocktroops
+		}
+		visible = {
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cost = 35
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_infantry_division_monopolized_private_armies"
+			add_manpower = -5800
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Mercenary Shock Troops" } }
+					division_template = {
+						name = "Mercenary Shock Troops"
+						is_locked = no
+						regiments = {
+							shocktroops = { x = 0 y = 0 }
+							shocktroops = { x = 0 y = 1 }
+							shocktroops = { x = 0 y = 2 }
+							shocktroops = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+						}
+						support = {
+							engineer = { x = 0 y = 0 }
+							sniper_squad = { x = 0 y = 1 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Mercenary Shock Troops\" division_template = \"Mercenary Shock Troops\" start_experience_factor = 0.2" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 30
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = thriving_private_army_market
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_tank_division_monopolized_private_armies = {
+		icon = generic_tank
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 13800
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+			has_tech = motorised_infantry
+			OR = {
+				has_tech = basic_light_tank
+				has_tech = basic_light_tank_chassis
+			}
+		}
+		visible = {
+			OR = {
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		cost = 50
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_tank_division_monopolized_private_armies"
+			add_manpower = -13800
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Mercenary Tank Division" } }
+					division_template = {
+						name = "Mercenary Tank Division"
+						is_locked = no
+						regiments = {
+							light_armor = { x = 0 y = 0 }
+							light_armor = { x = 0 y = 1 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							motorized = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							maintenance_company = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Mercenary Tank Division\" division_template = \"Mercenary Tank Division\" start_experience_factor = 0.2" 
+					owner = ROOT
+					count = 2
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				factor = 0.5
+				has_idea = thriving_private_army_market
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_infantry_division_thriving_private_army_market = {
+		icon = generic_concern_red_inf
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 22200
+			has_idea = thriving_private_army_market
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 45
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_infantry_division_thriving_private_army_market"
+			add_manpower = -22200
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Corpus of Mercenaries with artillery" } }
+					division_template = {
+						name = "Corpus of Mercenaries with artillery"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+							artillery_brigade = { x = 2 y = 2 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							sniper_squad = { x = 0 y = 3 }
+							field_hospital = { x = 0 y = 4 }
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_template = "Corpus of Mercenaries" } }
+					division_template = {
+						name = "Corpus of Mercenaries"
+						is_locked = no
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							infantry = { x = 2 y = 1 }
+							infantry = { x = 2 y = 2 }
+							infantry = { x = 3 y = 0 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							anti_tank = { x = 0 y = 2 }
+							sniper_squad = { x = 0 y = 3 }
+							field_hospital = { x = 0 y = 4 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Corpus of Mercenaries with artillery\" division_template = \"Corpus of Mercenaries with artillery\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+				create_unit = {
+					division = "name = \"Corpus of Mercenaries\" division_template = \"Corpus of Mercenaries\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_fire_infantry_division_thriving_private_army_market = {
+		icon = generic_fire_red
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 10500
+			has_idea = thriving_private_army_market
+			has_tech = tech_shocktroops
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 45
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_infantry_division_thriving_private_army_market"
+			add_manpower = -10500
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Corpus of Shock Troops" } }
+					division_template = {
+						name = "Corpus of Shock Troops"
+						is_locked = no
+						regiments = {
+							shocktroops = { x = 0 y = 0 }
+							shocktroops = { x = 0 y = 1 }
+							shocktroops = { x = 0 y = 2 }
+							shocktroops = { x = 1 y = 0 }
+							shocktroops = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 2 y = 0 }
+							infantry = { x = 2 y = 1 }
+							infantry = { x = 2 y = 2 }
+							infantry = { x = 3 y = 0 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							flamethrower_support = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Corpus of Shock Troops\" division_template = \"Corpus of Shock Troops\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 1
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_tank_division_thriving_private_army_market = {
+		icon = generic_concern_red_tank
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 27300
+			has_idea = thriving_private_army_market
+			has_tech = motorised_infantry
+			OR = {
+				AND = {
+					has_tech = basic_light_tank
+					has_tech = basic_medium_tank
+				}
+				AND = {
+					has_tech = basic_light_tank_chassis
+					has_tech = basic_medium_tank_chassis
+				}
+			}
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 75
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_tank_division_monopolized_private_armies"
+			add_manpower = -27300
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Tank Corpus Of Mercenary" } }
+					division_template = {
+						name = "Tank Corpus Of Mercenary"
+						is_locked = no
+						regiments = {
+							medium_armor = { x = 0 y = 0 }
+							medium_armor = { x = 0 y = 1 }
+							medium_armor = { x = 0 y = 2 }
+							light_armor = { x = 1 y = 0 }
+							light_armor = { x = 1 y = 1 }
+							light_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							motorized = { x = 2 y = 2 }
+							motorized = { x = 2 y = 3 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							maintenance_company = { x = 0 y = 2 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Tank Corpus Of Mercenary\" division_template = \"Tank Corpus Of Mercenary\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 3
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+	
+	generic_hire_fire_tank_division_thriving_private_army_market = {
+		icon = generic_concern_red_tank
+		#highlight_state_targets = {
+		#	state = var:capital_var
+		#}
+		available = {
+			has_manpower > 20100
+			has_idea = thriving_private_army_market
+			has_tech = motorised_infantry
+			has_tech = basic_medium_tank_chassis
+			# OR = {
+				# has_tech = basic_medium_fire
+				# AND = {
+					# has_tech = tech_flamethrower_support
+					# has_tech = basic_medium_tank_chassis
+				# }
+			# }
+		}
+		visible = {
+			has_idea = thriving_private_army_market
+		}
+		cost = 85
+		days_remove = 1
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_hire_fire_tank_division_thriving_private_army_market"
+			add_manpower = -20100
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_template = "Fire Tank Corpus Of Mercenary" } }
+					division_template = {
+						name = "Fire Tank Corpus Of Mercenary"
+						is_locked = no
+						regiments = {
+							medium_armor = { x = 0 y = 0 }
+							medium_armor = { x = 0 y = 1 }
+							medium_armor = { x = 0 y = 2 }
+							medium_armor = { x = 1 y = 0 }
+							medium_armor = { x = 1 y = 1 }
+							medium_armor = { x = 1 y = 2 }
+							motorized = { x = 2 y = 0 }
+							motorized = { x = 2 y = 1 }
+							motorized = { x = 2 y = 2 }
+							motorized = { x = 2 y = 3 }
+						}
+						support = {
+							recon = { x = 0 y = 0 }
+							engineer = { x = 0 y = 1 }
+							medium_flame_tank = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+							maintenance_company = { x = 0 y = 4 }
+						}
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Fire Tank Corpus Of Mercenary\" division_template = \"Fire Tank Corpus Of Mercenary\" start_experience_factor = 0.4" 
+					owner = ROOT
+					count = 2
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 50
+				ai_wants_divisions > 0
+			}
+			modifier = {
+				add = 50
+				enemies_strength_ratio > 1
+			}
+			modifier = {
+				add = -500
+				has_game_rule = { rule = ai_division_limiter_status option = AI_DIVISION_LIMITER_DYNAMIC }
+				check_variable = { num_divisions > ai_upper_limit }
+			}
+			modifier = {
+				add = -500
+				NOT = { has_game_rule = { rule = ai_division_total_limiter_status option = DEFAULT } }
+				check_variable = { global.total_division > global.total_division_limit }
+				num_divisions > 0
+			}
+		}
+	}
+}
+
+generic_anarchism_solve_management_question_category = {
+
+	generic_create_federation_of_communities = {
+		icon = hol_exchange_intelligence_data
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = selfgovernment_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_create_federation_of_communities"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_collectivism_score_var = 1 }
+				custom_effect_tooltip = anarcho_collectivism_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = federation_of_communities
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	generic_create_of_self_governing_territorial_communes = {
+		icon = generic_nationalism
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = selfgovernment_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_create_of_self_governing_territorial_communes"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_communism_score_var = 1 }
+				custom_effect_tooltip = anarcho_communism_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = self_governing_communes
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	generic_management_of_general_meetings_of_workers = {
+		icon = generic_political_rally
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = selfgovernment_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_management_of_general_meetings_of_workers"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_syndicalism_score_var = 1 }
+				custom_effect_tooltip = anarcho_syndicalism_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = meetings_of_workers
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	generic_self_government_of_small_owners = {
+		icon = hol_exchange_intelligence_data
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = autonomy_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_self_government_of_small_owners"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_egoism_score_var = 1 }
+				custom_effect_tooltip = anarcho_egoism_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = self_government_of_owners
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	generic_individual_sovereignty_in_free_market = {
+		icon = generic_civil_support
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = autonomy_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_individual_sovereignty_in_free_market"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_libertarian_score_var = 1 }
+				custom_effect_tooltip = anarcho_libertarian_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = individual_sovereignty
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	generic_rejection_of_political_and_electoral_systems = {
+		icon = generic_political_rally
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = autonomy_focus
+			NOT = { has_country_flag = generic_anarchism_solve_management_question_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_management_question_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_rejection_of_political_and_electoral_systems"
+			clr_country_flag = generic_anarchism_solve_management_question_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_agorism_score_var = 1 }
+				custom_effect_tooltip = anarcho_agorism_score_tt
+			}
+			remove_ideas = collapse_of_state_apparatus
+			add_ideas = apolitical_strategy
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+}
+
+generic_anarchism_solve_question_of_freedoms_and_laws_category = {
+
+	generic_everyone_has_their_own_freedom_and_their_own_law = {
+		icon = generic_political_rally
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = freedom_through_equality_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_everyone_has_their_own_freedom_and_their_own_law"
+			clr_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_collectivism_score_var = 1 }
+				custom_effect_tooltip = anarcho_collectivism_score_tt
+			}
+			remove_ideas = legislative_anarchy
+			add_ideas = personal_laws_and_freedoms
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	generic_full_freedom_from_state_and_finance = {
+		icon = hol_attract_foreign_investors
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = freedom_through_equality_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_full_freedom_from_state_and_finance"
+			clr_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_communism_score_var = 1 }
+				custom_effect_tooltip = anarcho_communism_score_tt
+			}
+			remove_ideas = legislative_anarchy
+			add_ideas = freedom_from_finance_and_government
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	generic_free_personal_development = {
+		icon = generic_civil_support
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = freedom_through_equality_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_free_personal_development"
+			clr_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_syndicalism_score_var = 1 }
+				custom_effect_tooltip = anarcho_syndicalism_score_tt
+			}
+			remove_ideas = legislative_anarchy
+			add_ideas = free_personal_development
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	generic_human_right_dispose_of_oneself = {
+		icon = generic_civil_support
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = equality_through_freedom_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_human_right_dispose_of_oneself"
+			clr_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_egoism_score_var = 1 }
+				custom_effect_tooltip = anarcho_egoism_score_tt
+				add_to_variable = { anarcho_agorism_score_var_var = 1 }
+				custom_effect_tooltip = anarcho_agorism_score_tt
+			}
+			remove_ideas = legislative_anarchy
+			add_ideas = full_freedom_of_individual
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	generic_freedom_of_person_and_property = {
+		icon = eng_install_government
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = equality_through_freedom_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_freedom_of_person_and_property"
+			clr_country_flag = generic_anarchism_solve_question_of_freedoms_and_laws_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_libertarian_score_var = 1 }
+				custom_effect_tooltip = anarcho_libertarian_score_tt
+			}
+			remove_ideas = legislative_anarchy
+			add_ideas = only_personal_only_negotiated
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
+generic_anarchism_solve_question_of_property_and_economy_category = {
+
+	generic_create_an_organization_of_free_associations = {
+		icon = generic_political_rally
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = abolition_of_private_property_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_create_an_organization_of_free_associations"
+			clr_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_collectivism_score_var = 1 }
+				add_to_variable = { anarcho_syndicalism_score_var = 1 }
+				custom_effect_tooltip = anarcho_collectivism_score_tt
+				custom_effect_tooltip = anarcho_syndicalism_score_tt
+			}
+			remove_ideas = economic_degradation
+			add_ideas = free_association
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	generic_abandonment_of_wage_system = {
+		icon = generic_political_discourse
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = abolition_of_private_property_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_abandonment_of_wage_system"
+			clr_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_communism_score_var = 1 }
+				custom_effect_tooltip = anarcho_communism_score_tt
+			}
+			remove_ideas = economic_degradation
+			add_ideas = abandonment_of_wage_system
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	generic_emphasis_on_small_owners = {
+		icon = hol_exchange_intelligence_data
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = approval_of_private_property_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_emphasis_on_small_owners"
+			clr_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_egoism_score_var = 1 }
+				custom_effect_tooltip = anarcho_egoism_score_tt
+			}
+			remove_ideas = economic_degradation
+			add_ideas = privileges_for_small_owners
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	generic_introduction_of_market_anarchism = {
+		icon = hol_attract_foreign_investors
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = approval_of_private_property_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_introduction_of_market_anarchism"
+			clr_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_libertarian_score_var = 1 }
+				custom_effect_tooltip = anarcho_libertarian_score_tt
+			}
+			remove_ideas = economic_degradation
+			add_ideas = market_competition_of_private_organizations
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+	generic_establishing_counter_economics = {
+		icon = recruit_operative
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = approval_of_private_property_focus
+			NOT = { has_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_establishing_counter_economics"
+			clr_country_flag = generic_anarchism_solve_question_of_property_and_economy_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_agorism_score_var = 1 }
+				custom_effect_tooltip = anarcho_agorism_score_tt
+			}
+			remove_ideas = economic_degradation
+			add_ideas = counter_economics
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+}
+
+generic_anarchism_solving_question_of_social_interaction_category = {
+
+	generic_workers_and_peasants = {
+		icon = generic_political_discourse
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = mutual_aid_focus
+			NOT = { has_country_flag = generic_anarchism_solving_question_of_social_interaction_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_workers_and_peasants"
+			clr_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_collectivism_score_var = 1 }
+				custom_effect_tooltip = anarcho_collectivism_score_tt
+			}
+			remove_ideas = generic_social_crisis
+			add_ideas = support_for_lower_layers
+		}
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 10
+				has_war = yes
+			}
+		}
+	}
+	
+	generic_public_solidarity_for_everyone = {
+		icon = hol_exchange_intelligence_data
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = mutual_aid_focus
+			NOT = { has_country_flag = generic_anarchism_solving_question_of_social_interaction_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_public_solidarity_for_everyone"
+			clr_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_communism_score_var = 1 }
+				add_to_variable = { anarcho_syndicalism_score_var = 1 }
+				custom_effect_tooltip = anarcho_communism_score_tt
+				custom_effect_tooltip = anarcho_syndicalism_score_tt
+			}
+			remove_ideas = generic_social_crisis
+			add_ideas = social_solidarity
+		}
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 10
+				has_war = yes
+			}
+		}
+	}
+	
+	generic_personality_is_higher_than_society = {
+		icon = generic_civil_support
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = voluntariness_focus
+			NOT = { has_country_flag = generic_anarchism_solving_question_of_social_interaction_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_personality_is_higher_than_society"
+			clr_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_egoism_score_var = 1 }
+				custom_effect_tooltip = anarcho_egoism_score_tt
+			}
+			remove_ideas = generic_social_crisis
+			add_ideas = personality_above_all_else
+		}
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 10
+				has_war = yes
+			}
+		}
+	}
+	
+	generic_voluntary_relationships = {
+		icon = hol_exchange_intelligence_data
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = voluntariness_focus
+			NOT = { has_country_flag = generic_anarchism_solving_question_of_social_interaction_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_voluntary_relationships"
+			clr_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_libertarian_score_var = 1 }
+				custom_effect_tooltip = anarcho_libertarian_score_tt
+			}
+			remove_ideas = generic_social_crisis
+			add_ideas = generic_voluntary_relationships
+		}
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 10
+				has_war = yes
+			}
+		}
+	}
+	
+	generic_anonymity = {
+		icon = recruit_operative
+		cancel_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		visible = {
+			has_completed_focus = voluntariness_focus
+			NOT = { has_country_flag = generic_anarchism_solving_question_of_social_interaction_flag }
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				set_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_anonymity"
+			clr_country_flag = generic_anarchism_solving_question_of_social_interaction_flag
+			if = {
+				limit = { is_neutrality_anarchist = no }
+				add_to_variable = { anarcho_agorism_score_var = 1 }
+				custom_effect_tooltip = anarcho_agorism_score_tt
+			}
+			remove_ideas = generic_social_crisis
+			add_ideas = generic_anonymity
+		}
+		ai_will_do = {
+			factor = 50
+			modifier = {
+				factor = 10
+				has_war = yes
+			}
+		}
+	}
+}
+
+generic_expand_anarchism_commune_category = {
+	
+	generic_expand_anarchism_commune_in_region = {
+		icon = eng_trade_unions_support
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				if = {
+					limit = {
+						OR = {
+							is_in_home_area = yes
+							any_neighbor_state = { is_core_of = ROOT }
+						}
+					}
+					any_neighbor_state = { is_core_of = ROOT }
+				}
+				else = { is_coastal = yes }
+			}
+		}
+		visible = {
+			FROM = {
+				impassable = no
+				NOT = { is_core_of = ROOT }
+				is_fully_controlled_by = ROOT
+				if = {
+					limit = {
+						OR = {
+							is_in_home_area = yes
+							any_neighbor_state = { is_core_of = ROOT }
+						}
+					}
+					any_neighbor_state = { is_core_of = ROOT }
+				}
+				else = { is_coastal = yes }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				NOT = { is_core_of = ROOT }
+				is_fully_controlled_by = ROOT
+				if = {
+					limit = {
+						OR = {
+							is_in_home_area = yes
+							any_neighbor_state = { is_core_of = ROOT }
+						}
+					}
+					any_neighbor_state = { is_core_of = ROOT }
+				}
+				else = { is_coastal = yes }
+			}
+		}
+		target_array = ROOT.controlled_states
+		target_root_trigger = {
+			if = {
+				limit = { has_focus_tree = generic_anarchism_focus }
+				has_government = anarchism
+				OR = {
+					has_completed_focus = anarcho_collectivism_focus
+					has_completed_focus = anarcho_communism_focus
+					has_completed_focus = anarcho_syndicalism_focus
+					has_completed_focus = synthetic_anarchism_focus
+					has_completed_focus = mutualism_focus
+					has_completed_focus = anarcho_egoism_focus
+					has_completed_focus = libertarian_focus
+					has_completed_focus = agorism_focus
+				}
+			}
+			else_if = {
+				limit = { tag = ARA }
+				has_completed_focus = SPR_global_defense_council
+			}
+			else = {
+				NOT = { tag = BPL }
+				has_government = anarchism
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 60
+		cancel_trigger = {
+			hidden_trigger = {
+				OR = {
+					NOT = { FROM = { is_fully_controlled_by = ROOT } }
+					FROM = { is_core_of = ROOT }
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 7.5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_expand_anarchism_commune_category [From.GetName] [From.GetID]"
+			add_state_core = FROM
+			if = {
+				limit = {
+					OR = {
+						has_completed_focus = anarcho_egoism_focus
+						has_completed_focus = libertarian_focus
+						has_completed_focus = agorism_focus
+					}
+					FROM = { NOT = { has_dynamic_modifier = { modifier = private_state_dyn } } }
+				}
+				FROM = {
+					add_dynamic_modifier = { modifier = private_state_dyn }
+					set_variable = { recruitable_population_factor_state_var = -0.5 }
+					set_variable = { state_resources_factor_state_var = -0.5 }
+					set_variable = { local_building_slots_factor_state_var = -0.25 }
+					set_variable = { state_production_speed_buildings_factor_state_var = -0.25 }
+				}
+			}
+			hidden_effect = {
+				FROM = { set_state_flag = is_core_of_anarchist_flag }
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_idea = collapse_of_state_apparatus
+					has_idea = legislative_anarchy
+					has_idea = economic_degradation
+					has_idea = generic_social_crisis
+				}
+			}
+		}
+	}
+}
+
+generic_freedom_of_experimentation_focus_category = {
+
+	generic_exemplary_commune_individualism = {
+		icon = eng_trade_unions_support
+		cost = 5
+		available = {
+			NOT = { has_country_flag = { flag = generic_exemplary_commune_flag value > 0 } }
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_exemplary_commune_individualism"
+			set_country_flag = { flag = generic_exemplary_commune_flag days = 365 value = 1 }
+			set_temp_variable = { freedom_of_experimentation_temp_var = -2 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_right_tt
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_exemplary_commune_socialism = {
+		icon = eng_trade_unions_support
+		cost = 5
+		available = {
+			NOT = { has_country_flag = { flag = generic_exemplary_commune_flag value > 0 } }
+		}
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_exemplary_commune_socialism"
+			set_country_flag = { flag = generic_exemplary_commune_flag days = 365 value = 1 }
+			set_temp_variable = { freedom_of_experimentation_temp_var = 2 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_left_tt
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_invite_council_of_commune_of_socialists = {
+		icon = generic_political_rally
+		cost = 60
+		available = {
+			NOT = { has_country_flag = generic_invite_council_of_commune_of_capitalists_flag }
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.075
+		}
+		days_remove = 90
+		complete_effect = {
+			set_country_flag = generic_invite_council_of_commune_of_socialists_flag
+			set_temp_variable = { freedom_of_experimentation_temp_var = 1 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_left_tt
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_invite_council_of_commune_of_socialists"
+			clr_country_flag = generic_invite_council_of_commune_of_socialists_flag
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_invite_council_of_commune_of_capitalists = {
+		icon = hol_attract_foreign_investors
+		cost = 60
+		available = {
+			NOT = { has_country_flag = generic_invite_council_of_commune_of_socialists_flag }
+		}
+		modifier = {
+			industrial_capacity_factory = 0.055
+			industrial_capacity_dockyard = 0.055
+		}
+		days_remove = 90
+		complete_effect = {
+			set_country_flag = generic_invite_council_of_commune_of_capitalists_flag
+			set_temp_variable = { freedom_of_experimentation_temp_var = -1 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_right_tt
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_invite_council_of_commune_of_capitalists"
+			clr_country_flag = generic_invite_council_of_commune_of_capitalists_flag
+		}
+		remove_trigger = {
+			NOT = { has_government = anarchism }
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_use_peoples_militia_in_occupied_territories = {
+		icon = eng_blackshirt_march
+		cost = 50
+		available = {
+			has_war = yes
+			OR = {
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+			}
+		}
+		modifier = {
+			compliance_growth = 0.15
+		}
+		days_remove = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_use_peoples_militia_in_occupied_territories"
+			set_temp_variable = { freedom_of_experimentation_temp_var = 1 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_left_tt
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+				has_idea = peoples_squads
+				has_idea = peoples_police
+				has_idea = peoples_militia
+			}
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_use_mercenaries_in_occupied_territories = {
+		icon = oppression
+		cost = 50
+		available = {
+			has_war = yes
+			OR = {
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		modifier = {
+			resistance_growth = -0.15
+		}
+		days_remove = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_use_mercenaries_in_occupied_territories"
+			set_temp_variable = { freedom_of_experimentation_temp_var = -1 }
+			add_to_variable = { freedom_of_experimentation_var = freedom_of_experimentation_temp_var }
+			set_var_for_freedom_of_experimentation_dyn = yes
+			custom_effect_tooltip = freedom_of_experimentation_var_right_tt
+		}
+		remove_trigger = {
+			NOT = {
+				has_government = anarchism
+				has_idea = mercenary_soldiers
+				has_idea = monopolized_private_armies
+				has_idea = thriving_private_army_market
+			}
+		}
+		ai_will_do = {
+			factor = 15
+		}
+	}
+	
+	generic_connections_with_businessman_for_project = {
+		icon = hol_exchange_intelligence_data
+		cost = 20
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = generic_connections_with_businessman_for_project_tt		
+				check_variable = { freedom_of_experimentation_var < -4 }
+			}
+		}
+		modifier = {
+			production_speed_buildings_factor = 0.1
+		}
+		days_remove = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_connections_with_businessman_for_project"
+		}
+		remove_trigger = {
+			check_variable = { freedom_of_experimentation_var > 4 }
+		}
+		ai_will_do = {
+			factor = 20
+		}
+	}
+	
+	generic_encourage_trade_unions_implement_project = {
+		icon = generic_construction
+		cost = 20
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = generic_encourage_trade_unions_implement_project_tt		
+				check_variable = { freedom_of_experimentation_var > 4 }
+			}
+		}
+		modifier = {
+			industrial_capacity_factory = 0.085
+			industrial_capacity_dockyard = 0.085
+		}
+		days_remove = 100
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_encourage_trade_unions_implement_project"
+		}
+		remove_trigger = {
+			check_variable = { freedom_of_experimentation_var < -4 }
+		}
+		ai_will_do = {
+			factor = 20
+		}
+	}
+}
+
+generic_peoples_bank_category = {
+	
+	generic_create_peoples_bank_in_region = {
+		icon = generic_form_nation
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+		}
+		visible = {
+			FROM = {
+				impassable = no
+				NOT = { has_state_flag = has_peoples_bank_flag }
+				is_fully_controlled_by = ROOT
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_fully_controlled_by = ROOT
+			}
+		}
+		target_array = ROOT.controlled_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = peoples_bank_focus
+				has_completed_focus = POR_achieving_mutualism
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { has_government = anarchism }
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		modifier = {
+			political_power_cost = 0.15
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_create_peoples_bank_in_region [From.GetName] [From.GetID]"
+			custom_effect_tooltip = generic_create_peoples_bank_in_region_tt
+			if = {
+				limit = {
+					FROM = {
+						free_building_slots = {
+							building = hospital
+							size > 0
+						}
+					}
+				}
+				FROM = {
+					add_building_construction = {
+						type = hospital
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						free_building_slots = {
+							building = infrastructure
+							size > 0
+						}
+					}
+				}
+				FROM = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+				}
+				FROM = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			hidden_effect = {
+				FROM = { set_state_flag = has_peoples_bank_flag }
+				set_actual_peoples_bank_idea = yes
+			}
+		}
+		ai_will_do = {
+			factor = 30
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+			modifier = {
+				factor = 0.5
+				check_variable = { anarchism_unity_var < 10 }
+			}
+			modifier = {
+				factor = 0
+				political_power_daily < 0.2
+			}
+		}
+	}
+}
+
+generic_private_tribunals_category = {
+
+	fabricate_goal_against = {
+		icon = eng_propaganda_campaigns
+		
+		visible = {
+			has_completed_focus = private_tribunals_focus
+		}
+		available = {
+			set_temp_variable = { anarchism_unity_trigger_var = 25 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
+			any_neighbor_country = {
+				NOT = { has_war_with = ROOT }
+			}
+		}
+		
+		cost = 75
+		days_remove = 30
+		days_re_enable = 60
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision fabricate_goal_against"
+			set_country_flag = { flag = fabricate_goal_against_process_flag days = 50 value = 1 }
+			hidden_effect = { activate_decision = generic_there_is_court_session }
+		}
+	
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision fabricate_goal_against"
+			add_to_variable = { anarchism_unity_var = -10 tooltip = anarchism_unity_add_effect }
+			random_list = {
+				50 = {
+					modifier = {
+						add = chance_of_success
+						has_variable = chance_of_success
+					}
+					country_event = NWgeneric.126
+					hidden_effect = { event_target:fabricate_goal_against_target_@ROOT = { country_event = NWgeneric.127 } }
+				}
+				25 = {
+					modifier = {
+						add = chance_of_fail
+						has_variable = chance_of_fail
+					}
+					country_event = NWgeneric.128
+				}
+				25 = {
+					modifier = {
+						add = chance_of_critical_fail
+						has_variable = chance_of_critical_fail
+					}
+					country_event = NWgeneric.129
+					hidden_effect = { event_target:fabricate_goal_against_target_@ROOT = { country_event = NWgeneric.130 } }
+				}
+			}
+			clear_variable = chance_of_success
+			clear_variable = chance_of_fail
+			clear_variable = chance_of_critical_fail
+			custom_effect_tooltip = fabricate_goal_against_tt
+			event_target:fabricate_goal_against_target_@ROOT = { custom_effect_tooltip = fabricate_goal_against_tt2 }
+		}
+		
+		cancel_trigger = {
+			NOT = { country_exists = event_target:fabricate_goal_against_target_@ROOT }
+		}
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				all_neighbor_country = {
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			modifier = {
+				add = 10
+				enemies_strength_ratio < 1
+			}
+			modifier = {
+				add = 10
+				num_divisions > 50
+			}
+			modifier = {
+				add = 10
+				num_divisions > 100
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					any_neighbor_country = {
+						has_war_with = ROOT
+					}
+					num_divisions < 1
+				}
+			}
+		}
+	}
+	
+	generic_there_is_court_session = {
+		icon = generic_political_discourse
+		available = {
+			has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 }
+		}
+		visible = {
+			always = no
+		}
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_there_is_court_session"
+			random_list = {
+				50 = {
+					set_temp_variable = { chance_of_success_temp = 5 }
+					add_to_variable = { chance_of_success = chance_of_success_temp }
+					custom_effect_tooltip = chance_of_success_tt
+				}
+				50 = {
+					set_temp_variable = { chance_of_fail_temp = 5 }
+					add_to_variable = { chance_of_fail = chance_of_fail_temp }
+					custom_effect_tooltip = chance_of_fail_tt
+				}
+				50 = {
+					set_temp_variable = { chance_of_critical_fail_temp = 5 }
+					add_to_variable = { chance_of_critical_fail = chance_of_critical_fail_temp }
+					custom_effect_tooltip = chance_of_critical_fail_tt
+				}
+			}
+			hidden_effect = { activate_decision = generic_there_is_court_session }
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 } }
+				NOT = { country_exists = event_target:fabricate_goal_against_target_@ROOT }
+			}
+		}
+	}
+	
+	generic_falsify_evidence = {
+		icon = eng_trade_unions_support
+		cost = 15
+		available = {
+			has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 }
+		}
+		days_remove = 7
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_falsify_evidence"
+			set_temp_variable = { chance_of_success_temp = 7.5 }
+			add_to_variable = { chance_of_success = chance_of_success_temp }
+			custom_effect_tooltip = chance_of_success_tt
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 } }
+				NOT = { country_exists = event_target:fabricate_goal_against_target_@ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 days < 7 }
+			}
+		}
+	}
+	
+	generic_give_up_dirt = {
+		icon = eng_trade_unions_demand
+		cost = 15
+		available = {
+			has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 }
+			OR = {
+				any_owned_state = {
+					OR = {
+						is_core_of = event_target:fabricate_goal_against_target_@ROOT
+						is_claimed_by = event_target:fabricate_goal_against_target_@ROOT
+					}
+				}
+				event_target:fabricate_goal_against_target_@ROOT = {
+					any_owned_state = {
+						OR = {
+							is_core_of = ROOT
+							is_claimed_by = ROOT
+						}
+					}
+				}
+			}
+		}
+		days_remove = 14
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_give_up_dirt"
+			set_temp_variable = { chance_of_success_temp = 15 }
+			add_to_variable = { chance_of_success = chance_of_success_temp }
+			custom_effect_tooltip = chance_of_success_tt
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 } }
+				NOT = { country_exists = event_target:fabricate_goal_against_target_@ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0
+				has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 days < 14 }
+			}
+		}
+	}
+	
+	generic_make_an_emotional_speech = {
+		icon = speech
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		available = {
+			has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 }
+		}
+		days_remove = 7
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision generic_make_an_emotional_speech"
+			set_temp_variable = { chance_of_success_temp = 5 }
+			add_to_variable = { chance_of_success = chance_of_success_temp }
+			custom_effect_tooltip = chance_of_success_tt
+		}
+		cancel_trigger = {
+			OR = {
+				NOT = { has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 } }
+				NOT = { country_exists = event_target:fabricate_goal_against_target_@ROOT }
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0
+				has_country_flag = { flag = fabricate_goal_against_process_flag value > 0 days < 7 }
+			}
+		}
+	}
+}
+
+generic_negotiate_with_private_owners_category = {
+
+	### LEFT
+	
+	generic_left_build_slot_in_region = {
+		icon = infiltrate_state
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = perfect_worker_focus
+				has_completed_focus = collective_ownership_focus
+				has_completed_focus = union_of_communes_focus
+				has_completed_focus = syndicalist_economy_focus
+				is_other_syndicalist = yes
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = perfect_worker_focus
+				has_completed_focus = collective_ownership_focus
+				has_completed_focus = union_of_communes_focus
+				has_completed_focus = syndicalist_economy_focus
+				is_other_syndicalist = yes
+			}
+		}
+		
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 10 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 60
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 10 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_left_build_slot_in_region [From.GetName] [From.GetID]"
+			FROM = { add_extra_state_shared_building_slots = 1 }
+		}
+		ai_will_do = {
+			factor = 12
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_left_infrastructure_in_region = {
+		icon = hol_draw_up_staff_plans
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = hospital
+					size > 0
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = collective_ownership_focus
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = hospital
+					size > 0
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = hospital
+					size > 0
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			has_completed_focus = collective_ownership_focus
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 7.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 60
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = {
+					FROM = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = hospital
+							size > 0
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 7.5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_left_infrastructure_in_region [From.GetName] [From.GetID]"
+			FROM = {
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 12
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_left_expand_syndicat_in_region = {
+		icon = generic_syndicalism
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = federation_of_syndicates_focus
+				is_other_syndicalist = yes
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = federation_of_syndicates_focus
+				is_other_syndicalist = yes
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 15 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = {
+					FROM = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 15 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_left_expand_syndicat_in_region [From.GetName] [From.GetID]"
+			FROM = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	
+	#RIGHT
+	
+	generic_right_of_assignment_in_region = {
+		icon = generic_resources
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_resources_factor_state_temp = 0.5 }
+						check_variable = { state_resources_factor_state_var < state_resources_factor_state_temp }
+						tooltip = state_resources_factor_state_trigger
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_resources_factor_state_temp = 0 }
+						check_variable = { state_resources_factor_state_var < state_resources_factor_state_temp }
+						tooltip = state_resources_factor_state_trigger
+					}
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = right_of_assignment_focus
+				has_completed_focus = homestead_principle_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					has_resources_amount = { resource = oil amount > 0 }
+					has_resources_amount = { resource = aluminium amount > 0 }
+					has_resources_amount = { resource = rubber amount > 0 }
+					has_resources_amount = { resource = tungsten amount > 0 }
+					has_resources_amount = { resource = steel amount > 0 }
+					has_resources_amount = { resource = chromium amount > 0 }
+				}
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					check_variable = { state_resources_factor_state_var < 0.5 }
+				}
+				else = { check_variable = { state_resources_factor_state_var < 0 } }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					has_resources_amount = { resource = oil amount > 0 }
+					has_resources_amount = { resource = aluminium amount > 0 }
+					has_resources_amount = { resource = rubber amount > 0 }
+					has_resources_amount = { resource = tungsten amount > 0 }
+					has_resources_amount = { resource = steel amount > 0 }
+					has_resources_amount = { resource = chromium amount > 0 }
+				}
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					check_variable = { state_resources_factor_state_var < 0.5 }
+				}
+				else = { check_variable = { state_resources_factor_state_var < 0 } }
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = right_of_assignment_focus
+				has_completed_focus = homestead_principle_focus
+			}
+		}
+		cost = 10
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_right_of_assignment_in_region [From.GetName] [From.GetID]"
+			hidden_effect = {
+				FROM = {
+					set_temp_variable = { temp_var = 0.25 }
+					add_to_variable = { state_resources_factor_state_var = temp_var }
+				}
+			}
+			custom_effect_tooltip = state_resources_factor_state_tt
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_sovereignty_of_individual_in_region = {
+		icon = eng_blackshirt_march
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					custom_trigger_tooltip = {
+						set_temp_variable = { recruitable_population_factor_state_temp = 0.5 }
+						check_variable = { recruitable_population_factor_state_var < recruitable_population_factor_state_temp }
+						tooltip = recruitable_population_factor_state_trigger
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { recruitable_population_factor_state_temp = 0 }
+						check_variable = { recruitable_population_factor_state_var < recruitable_population_factor_state_temp }
+						tooltip = recruitable_population_factor_state_trigger
+					}
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = sovereignty_of_individual_focus
+				has_completed_focus = voluntarism_focus
+				has_completed_focus = individual_independence_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					check_variable = { recruitable_population_factor_state_var < 0.5 }
+				}
+				else = { check_variable = { recruitable_population_factor_state_var < 0 } }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					check_variable = { recruitable_population_factor_state_var < 0.5 }
+				}
+				else = { check_variable = { recruitable_population_factor_state_var < 0 } }
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = sovereignty_of_individual_focus
+				has_completed_focus = voluntarism_focus
+				has_completed_focus = individual_independence_focus
+			}
+		}
+		cost = 10
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_sovereignty_of_individual_in_region [From.GetName] [From.GetID]"
+			hidden_effect = {
+				FROM = {
+					set_temp_variable = { temp_var = 0.25 }
+					add_to_variable = { recruitable_population_factor_state_var = temp_var }
+				}
+			}
+			custom_effect_tooltip = recruitable_population_factor_state_tt
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_take_property_by_force_in_region = {
+		icon = generic_civil_support
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				state_population_k > 5
+				OR = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { recruitable_population_factor_state_temp = 0.65 }
+						check_variable = { recruitable_population_factor_state_var < recruitable_population_factor_state_temp }
+						tooltip = recruitable_population_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { local_building_slots_factor_state_temp = 0.65 }
+						check_variable = { local_building_slots_factor_state_var < local_building_slots_factor_state_temp }
+						tooltip = local_building_slots_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_resources_factor_state_temp = 0.65 }
+						check_variable = { state_resources_factor_state_var < state_resources_factor_state_temp }
+						tooltip = state_resources_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_production_speed_buildings_factor_state_temp = 0.65 }
+						check_variable = { state_production_speed_buildings_factor_state_var < state_production_speed_buildings_factor_state_temp }
+						tooltip = state_production_speed_buildings_factor_state_trigger
+					}
+				}
+			}
+			set_temp_variable = { anarchism_unity_trigger_var = 5 }
+			custom_trigger_tooltip = {
+				check_variable = { anarchism_unity_var > anarchism_unity_trigger_var }
+				tooltip = anarchism_unity_trigger_more
+			}
+		}
+		visible = {
+			has_completed_focus = power_is_source_of_law_focus
+			FROM = {
+				impassable = no
+				state_population_k > 5
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					OR = {
+						check_variable = { recruitable_population_factor_state_var < 0.65 }
+						check_variable = { local_building_slots_factor_state_var < 0.65 }
+						check_variable = { state_resources_factor_state_var < 0.65 }
+						has_resources_amount = { resource = oil amount > 0 }
+						has_resources_amount = { resource = aluminium amount > 0 }
+						has_resources_amount = { resource = rubber amount > 0 }
+						has_resources_amount = { resource = tungsten amount > 0 }
+						has_resources_amount = { resource = steel amount > 0 }
+						has_resources_amount = { resource = chromium amount > 0 }
+						check_variable = { state_production_speed_buildings_factor_state_var < 0.65 }
+					}
+				}
+				else = {
+					OR = {
+						check_variable = { recruitable_population_factor_state_var < 0.15 }
+						check_variable = { local_building_slots_factor_state_var < 0.15 }
+						check_variable = { state_resources_factor_state_var < 0.15 }
+						has_resources_amount = { resource = oil amount > 0 }
+						has_resources_amount = { resource = aluminium amount > 0 }
+						has_resources_amount = { resource = rubber amount > 0 }
+						has_resources_amount = { resource = tungsten amount > 0 }
+						has_resources_amount = { resource = steel amount > 0 }
+						has_resources_amount = { resource = chromium amount > 0 }
+						check_variable = { state_production_speed_buildings_factor_state_var < 0.15 }
+					}
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				state_population_k > 5
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				if = {
+					limit = { ROOT = { has_idea = union_of_egoists_focus } }
+					OR = {
+						check_variable = { recruitable_population_factor_state_var < 0.65 }
+						check_variable = { local_building_slots_factor_state_var < 0.65 }
+						check_variable = { state_resources_factor_state_var < 0.65 }
+						has_resources_amount = { resource = oil amount > 0 }
+						has_resources_amount = { resource = aluminium amount > 0 }
+						has_resources_amount = { resource = rubber amount > 0 }
+						has_resources_amount = { resource = tungsten amount > 0 }
+						has_resources_amount = { resource = steel amount > 0 }
+						has_resources_amount = { resource = chromium amount > 0 }
+						check_variable = { state_production_speed_buildings_factor_state_var < 0.65 }
+					}
+				}
+				else = {
+					OR = {
+						check_variable = { recruitable_population_factor_state_var < 0.15 }
+						check_variable = { local_building_slots_factor_state_var < 0.15 }
+						check_variable = { state_resources_factor_state_var < 0.15 }
+						has_resources_amount = { resource = oil amount > 0 }
+						has_resources_amount = { resource = aluminium amount > 0 }
+						has_resources_amount = { resource = rubber amount > 0 }
+						has_resources_amount = { resource = tungsten amount > 0 }
+						has_resources_amount = { resource = steel amount > 0 }
+						has_resources_amount = { resource = chromium amount > 0 }
+						check_variable = { state_production_speed_buildings_factor_state_var < 0.15 }
+					}
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			has_completed_focus = power_is_source_of_law_focus
+		}
+		cost = 15
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_take_property_by_force_in_region [From.GetName] [From.GetID]"
+			random_list = {
+				25 = {
+					add_to_variable = { anarchism_unity_var = -5 tooltip = anarchism_unity_add_effect }
+					FROM = {
+						add_manpower = -5000
+					}
+				}
+				75 = {
+					add_to_variable = { anarchism_unity_var = -1 tooltip = anarchism_unity_add_effect }
+				}
+			}
+			custom_effect_tooltip = space_effect
+			random_list = {
+				25 = {
+					modifier = {
+						factor = 0
+						if = {
+							limit = { ROOT = { has_idea = union_of_egoists_focus } }
+							FROM = { check_variable = { recruitable_population_factor_state_var > 0.64 } }
+						}
+						else = {
+							FROM = { check_variable = { recruitable_population_factor_state_var > 0.14 } }
+						}
+					}
+					hidden_effect = {
+						FROM = {
+							set_temp_variable = { temp_var = 0.1 }
+							add_to_variable = { recruitable_population_factor_state_var = temp_var }
+						}
+					}
+					custom_effect_tooltip = recruitable_population_factor_state_tt
+				}
+				25 = {
+					modifier = {
+						factor = 0
+						if = {
+							limit = { ROOT = { has_idea = union_of_egoists_focus } }
+							FROM = { check_variable = { local_building_slots_factor_state_var > 0.64 } }
+						}
+						else = {
+							FROM = { check_variable = { local_building_slots_factor_state_var > 0.14 } }
+						}
+					}
+					hidden_effect = {
+						FROM = {
+							set_temp_variable = { temp_var = 0.1 }
+							add_to_variable = { local_building_slots_factor_state_var = temp_var }
+						}
+					}
+					custom_effect_tooltip = local_building_slots_factor_state_tt
+				}
+				25 = {
+					modifier = {
+						factor = 0
+						if = {
+							limit = { ROOT = { has_idea = union_of_egoists_focus } }
+							FROM = {
+								OR = {
+									check_variable = { state_resources_factor_state_var > 0.64 }
+									AND = {
+										has_resources_amount = { resource = oil amount < 1 }
+										has_resources_amount = { resource = aluminium amount < 1 }
+										has_resources_amount = { resource = rubber amount < 1 }
+										has_resources_amount = { resource = tungsten amount < 1 }
+										has_resources_amount = { resource = steel amount < 1 }
+										has_resources_amount = { resource = chromium amount < 1 }
+									}
+								}
+							}
+						}
+						else = {
+							FROM = {
+								OR = {
+									check_variable = { state_resources_factor_state_var > 0.14 }
+									AND = {
+										has_resources_amount = { resource = oil amount < 1 }
+										has_resources_amount = { resource = aluminium amount < 1 }
+										has_resources_amount = { resource = rubber amount < 1 }
+										has_resources_amount = { resource = tungsten amount < 1 }
+										has_resources_amount = { resource = steel amount < 1 }
+										has_resources_amount = { resource = chromium amount < 1 }
+									}
+								}
+							}
+						}
+					}
+					hidden_effect = {
+						FROM = {
+							set_temp_variable = { temp_var = 0.1 }
+							add_to_variable = { state_resources_factor_state_var = temp_var }
+						}
+					}
+					custom_effect_tooltip = state_resources_factor_state_tt
+				}
+				25 = {
+					modifier = {
+						factor = 0
+						if = {
+							limit = { ROOT = { has_idea = union_of_egoists_focus } }
+							FROM = { check_variable = { state_production_speed_buildings_factor_state_var > 0.64 } }
+						}
+						else = {
+							FROM = { check_variable = { state_production_speed_buildings_factor_state_var > 0.14 } }
+						}
+					}
+					hidden_effect = {
+						FROM = {
+							set_temp_variable = { temp_var = 0.1 }
+							add_to_variable = { state_production_speed_buildings_factor_state_var = temp_var }
+						}
+					}
+					custom_effect_tooltip = state_production_speed_buildings_factor_state_tt
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_barter_resources_in_region = {
+		icon = generic_resources
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				custom_trigger_tooltip = {
+					set_temp_variable = { state_resources_factor_state_temp = 0 }
+					check_variable = { state_resources_factor_state_var < state_resources_factor_state_temp }
+					tooltip = state_resources_factor_state_trigger
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = barter_economy_focus
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					has_resources_amount = { resource = oil amount > 0 }
+					has_resources_amount = { resource = aluminium amount > 0 }
+					has_resources_amount = { resource = rubber amount > 0 }
+					has_resources_amount = { resource = tungsten amount > 0 }
+					has_resources_amount = { resource = steel amount > 0 }
+					has_resources_amount = { resource = chromium amount > 0 }
+				}
+				check_variable = { state_resources_factor_state_var < 0 }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					has_resources_amount = { resource = oil amount > 0 }
+					has_resources_amount = { resource = aluminium amount > 0 }
+					has_resources_amount = { resource = rubber amount > 0 }
+					has_resources_amount = { resource = tungsten amount > 0 }
+					has_resources_amount = { resource = steel amount > 0 }
+					has_resources_amount = { resource = chromium amount > 0 }
+				}
+				check_variable = { state_resources_factor_state_var < 0 }
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			has_completed_focus = barter_economy_focus
+		}
+		cost = 10
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_barter_resources_in_region [From.GetName] [From.GetID]"
+			hidden_effect = {
+				FROM = {
+					set_temp_variable = { temp_var = 0.25 }
+					add_to_variable = { state_resources_factor_state_var = temp_var }
+				}
+			}
+			custom_effect_tooltip = state_resources_factor_state_tt
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_turn_agora_into_fortress_in_region = {
+		icon = eng_install_government
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				OR = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_production_speed_buildings_factor_state_temp = 0.25 }
+						check_variable = { state_production_speed_buildings_factor_state_var < state_production_speed_buildings_factor_state_temp }
+						tooltip = state_production_speed_buildings_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_production_speed_bunker_factor_state_temp = 0.25 }
+						check_variable = { state_production_speed_bunker_factor_state_var < state_production_speed_bunker_factor_state_temp }
+						tooltip = state_production_speed_bunker_factor_state_trigger
+					}
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = market_is_source_of_security_focus
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { state_production_speed_buildings_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_bunker_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { state_production_speed_buildings_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_bunker_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			has_completed_focus = market_is_source_of_security_focus
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 2.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 2.5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_turn_agora_into_fortress_in_region [From.GetName] [From.GetID]"
+			if = {
+				limit = { check_variable = { state_production_speed_buildings_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.1 }
+						add_to_variable = { state_production_speed_buildings_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = state_production_speed_buildings_factor_state_tt
+			}
+			if = {
+				limit = { check_variable = { state_production_speed_bunker_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.05 }
+						add_to_variable = { state_production_speed_bunker_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = state_production_speed_bunker_factor_state_tt
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_attach_production_facilities_agora_in_region = {
+		icon = generic_industrial
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				OR = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { local_building_slots_factor_state_temp = 0.25 }
+						check_variable = { local_building_slots_factor_state_var < local_building_slots_factor_state_temp }
+						tooltip = local_building_slots_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_production_speed_factory_factor_state_temp = 0.25 }
+						check_variable = { state_production_speed_factory_factor_state_var < state_production_speed_factory_factor_state_temp }
+						tooltip = state_production_speed_factory_factor_state_trigger
+					}
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = market_is_source_of_life_focus
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { local_building_slots_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_factory_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { local_building_slots_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_factory_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			has_completed_focus = market_is_source_of_life_focus
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 2.5 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 2.5 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_attach_production_facilities_agora_in_region [From.GetName] [From.GetID]"
+			if = {
+				limit = { check_variable = { local_building_slots_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.1 }
+						add_to_variable = { local_building_slots_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = local_building_slots_factor_state_tt
+			}
+			if = {
+				limit = { check_variable = { state_production_speed_factory_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.05 }
+						add_to_variable = { state_production_speed_factory_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = state_production_speed_factory_factor_state_tt
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_contracts_with_local_construction_companies_in_region = {
+		icon = generic_construction
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				custom_trigger_tooltip = {
+					set_temp_variable = { state_production_speed_buildings_factor_state_temp = 0.25 }
+					check_variable = { state_production_speed_buildings_factor_state_var < state_production_speed_buildings_factor_state_temp }
+					tooltip = state_production_speed_buildings_factor_state_trigger
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = government_is_night_watchman_focus
+				has_completed_focus = private_money_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				check_variable = { state_production_speed_buildings_factor_state_var < 0.25 }
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				check_variable = { state_production_speed_buildings_factor_state_var < 0.25 }
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = government_is_night_watchman_focus
+				has_completed_focus = private_money_focus
+			}
+		}
+		cost = 10
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_contracts_with_local_construction_companies_in_region [From.GetName] [From.GetID]"
+			hidden_effect = {
+				FROM = {
+					set_temp_variable = { temp_var = 0.1 }
+					add_to_variable = { state_production_speed_buildings_factor_state_var = temp_var }
+				}
+			}
+			custom_effect_tooltip = state_production_speed_buildings_factor_state_tt
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_contracts_with_local_management_companies_in_region = {
+		icon = generic_decision
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				OR = {
+					custom_trigger_tooltip = {
+						set_temp_variable = { local_building_slots_factor_state_temp = 0.25 }
+						check_variable = { local_building_slots_factor_state_var < local_building_slots_factor_state_temp }
+						tooltip = local_building_slots_factor_state_trigger
+					}
+					custom_trigger_tooltip = {
+						set_temp_variable = { state_production_speed_factory_factor_state_temp = 0.25 }
+						check_variable = { state_production_speed_factory_factor_state_var < state_production_speed_factory_factor_state_temp }
+						tooltip = state_production_speed_factory_factor_state_trigger
+					}
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = subsidiarity_focus
+				has_completed_focus = private_military_company_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { local_building_slots_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_factory_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				has_dynamic_modifier = { modifier = private_state_dyn }
+				OR = {
+					check_variable = { local_building_slots_factor_state_var < 0.25 }
+					check_variable = { state_production_speed_factory_factor_state_var < 0.25 }
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = subsidiarity_focus
+				has_completed_focus = private_military_company_focus
+			}
+		}
+		cost = 10
+		days_remove = 30
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { FROM = { is_fully_controlled_by = ROOT } }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_contracts_with_local_management_companies_in_region [From.GetName] [From.GetID]"
+			if = {
+				limit = { check_variable = { local_building_slots_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.1 }
+						add_to_variable = { local_building_slots_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = local_building_slots_factor_state_tt
+			}
+			if = {
+				limit = { check_variable = { state_production_speed_factory_factor_state_var < 0.25 } }
+				hidden_effect = {
+					FROM = {
+						set_temp_variable = { temp_var = 0.05 }
+						add_to_variable = { state_production_speed_factory_factor_state_var = temp_var }
+					}
+				}
+				custom_effect_tooltip = state_production_speed_factory_factor_state_tt
+			}
+		}
+		ai_will_do = {
+			factor = 20
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+		}
+	}
+	
+	generic_finance_construction_of_factories_in_region = {
+		icon = generic_industrial
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = contract_slavery_focus
+				has_completed_focus = contract_society_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = industrial_complex
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = contract_slavery_focus
+				has_completed_focus = contract_society_focus
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 15 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		modifier = {
+			political_power_cost = 0.35
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = {
+					FROM = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 15 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_finance_construction_of_factories_in_region [From.GetName] [From.GetID]"
+			FROM = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+			modifier = {
+				factor = 0
+				political_power_daily < 0.35
+			}
+		}
+	}
+	
+	generic_finance_construction_of_military_factories_in_region = {
+		icon = generic_war_industrial
+		on_map_mode = map_only
+		state_target = yes
+		available = {
+			FROM = {
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = arms_factory
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		visible = {
+			OR = {
+				has_completed_focus = contract_slavery_focus
+				has_completed_focus = contract_society_focus
+			}
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = arms_factory
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				impassable = no
+				is_core_of = ROOT
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = arms_factory
+					size > 0
+					include_locked = no
+				}
+			}
+		}
+		target_array = ROOT.core_states
+		target_root_trigger = {
+			OR = {
+				has_completed_focus = contract_slavery_focus
+				has_completed_focus = contract_society_focus
+			}
+		}
+		custom_cost_trigger = {
+			set_temp_variable = { custom_cost = 15 }
+			check_variable = { anarchism_unity_var > custom_cost }
+		}
+		modifier = {
+			political_power_cost = 0.35
+		}
+		custom_cost_text = custom_cost_anarcho_unity
+		days_remove = 90
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = {
+					FROM = {
+						is_fully_controlled_by = ROOT
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+					}
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { custom_cost = 15 }
+				subtract_from_variable = { anarchism_unity_var = custom_cost }
+			}
+		}
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision generic_finance_construction_of_military_factories_in_region [From.GetName] [From.GetID]"
+			FROM = {
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = { factor = 0.2 FROM = { distance_to = { value < 900 target = capital } } }
+			modifier = { factor = 0.3 FROM = { distance_to = { value < 800 target = capital } } }
+			modifier = { factor = 0.4 FROM = { distance_to = { value < 700 target = capital } } }
+			modifier = { factor = 0.5 FROM = { distance_to = { value < 600 target = capital } } }
+			modifier = { factor = 0.6 FROM = { distance_to = { value < 500 target = capital } } }
+			modifier = { factor = 0.7 FROM = { distance_to = { value < 400 target = capital } } }
+			modifier = { factor = 0.8 FROM = { distance_to = { value < 300 target = capital } } }
+			modifier = { factor = 0.9 FROM = { distance_to = { value < 200 target = capital } } }
+			modifier = { factor = 1 FROM = { distance_to = { value < 100 target = capital } } }
+			modifier = {
+				factor = 0
+				political_power_daily < 0.35
+			}
+		}
+	}
+}

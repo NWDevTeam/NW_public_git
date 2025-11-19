@@ -1,0 +1,793 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### Иран стартпак
+				PER = {
+					country_event = { id = NWpersian.91 days = 7 }
+					country_event = { id = NWpersian.153 days = 60 random_days = 10 }
+				}
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			# Нефтянка Ирана для ВБ	413 / 1187
+			if = {
+				limit = {
+					FROM.FROM = {
+						has_state_flag = resource_rights_state_flag
+					}
+					ROOT = {
+						NOT = { original_tag = PER }
+					}
+				}
+				FROM.FROM = {
+					clr_state_flag = resource_rights_state_flag
+					set_state_flag = ex_resource_rights_state_flag
+				}
+				ENG = { remove_resource_rights = FROM.FROM }
+			}
+			if = {
+				limit = {
+					FROM.FROM = {
+						has_state_flag = ex_resource_rights_state_flag
+						NOT = { has_state_flag = resource_rights_state_flag }
+					}
+					ROOT = {
+						original_tag = PER
+						NOT = {
+							is_left_ideology = yes
+							has_completed_focus = PER_nationalize_oil_industry
+						}
+					}
+				}
+				FROM.FROM = {
+					clr_state_flag = ex_resource_rights_state_flag
+					set_state_flag = resource_rights_state_flag
+				}
+				ROOT = {
+					if = {
+						limit = { has_completed_focus = PER_coup_progerman_officers }
+						give_resource_rights = { receiver = GFA state = FROM.FROM }
+					}
+					else = {
+						give_resource_rights = { receiver = ENG state = FROM.FROM }
+					}
+				}
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = PER
+					has_dynamic_modifier = { modifier = PER_influence_of_clergy_dynamic_modifier }
+				}
+				set_opinion_with_clergy_var = yes
+				set_influence_clergy_Value = yes
+			}
+		}
+	}
+	
+	#ROOT is subject FROM is previous overlord
+	on_subject_free = {
+		effect = {
+			if = {
+				limit = {
+					tag = PER
+					FROM = { original_tag = ENG }
+				}
+				every_country = {
+					limit = { has_country_flag = PER_integration_south_azerbaijan_flag }
+					clr_country_flag = PER_integration_south_azerbaijan_flag
+				}
+				if = {
+					limit = {
+						original_tag = PER
+					}
+					if = {
+						limit = {
+							country_exists = QAS
+							NOT = { has_war_with = QAS }
+							NOT = { has_country_flag = NWpersian_74_flag }
+						}
+						country_event = { id = NWpersian.74 hours = 6 }
+					}
+				}
+			}
+		}
+	}
+	
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = PER
+					has_country_leader = { ruling_only = yes character = PER_khalil_maleki }
+					FROM = {
+						OR = {
+						    AND = {
+						   	    tag = SOV
+								has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+							}	
+					  		AND = {
+						 	    tag = TUR
+								has_country_leader = { ruling_only = yes character = TUR_sefik_husnu }
+							}
+						}
+					}
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_iraj_eskandari
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = stalinism
+							traits = {
+								staunch_stalinist
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					original_tag = PER
+					NOT = { has_country_leader = { ruling_only = yes character = PER_khalil_maleki }}
+					FROM = {
+						tag = TUR
+						has_country_leader = { ruling_only = yes character = TUR_sevket_aydemir }
+					}
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_khalil_maleki
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = national_communism
+							traits = {
+								hater_of_ussr
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					original_tag = PER
+					has_country_leader = { ruling_only = yes character = PER_abu_l_hasan_al_isfahani }
+					FROM = {
+						has_government = fascism
+					}	
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_habiballah_nowbakt
+						country_leader = {
+							desc="POLITICS_HABIB_ALLAH_NOWBAKT_DESC"
+							expire = "1965.1.1"
+							ideology = nationalism_ideology
+							traits = {
+								knave
+							}	
+						}
+						promote_leader = yes	
+					}
+				}
+				if = {
+					limit = { has_completed_focus = PER_islamic_revolution }
+					uncomplete_national_focus = {
+						focus = PER_islamic_revolution
+						uncomplete_children = yes
+					}
+					unlock_national_focus = PER_concessions_for_germanophiles
+				}
+				set_party_name = { ideology = fascism long_name = PER_nazi_faction name = PER_nazi_faction }
+			}
+		}
+	}
+	
+	#used when puppeting through the occupied territories menu during peace time (or when releasing from non-core but owned territory, f.e. Britain releasing Egypt)
+	#ROOT = nation being released, FROM = overlord
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = PER
+					has_country_leader = { ruling_only = yes character = PER_khalil_maleki }
+					FROM = {
+						OR = {
+						    AND = {
+						   	    tag = SOV
+								has_country_leader = { ruling_only = yes character = SOV_iosif_stalin }
+							}	
+					  		AND = {
+						 	    tag = TUR
+								has_country_leader = { ruling_only = yes character = TUR_sefik_husnu }
+							}
+						}
+					}
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_iraj_eskandari
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = stalinism
+							traits = {
+								staunch_stalinist
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					original_tag = PER
+					NOT = { has_country_leader = { ruling_only = yes character = PER_khalil_maleki }}
+					FROM = {
+						tag = TUR
+						has_country_leader = { ruling_only = yes character = TUR_sevket_aydemir }
+					}
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_khalil_maleki
+						country_leader ={
+							expire = "1965.1.1"
+							ideology = national_communism
+							traits = {
+								hater_of_ussr
+							}
+						}
+						promote_leader = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					original_tag = PER
+					has_country_leader = { ruling_only = yes character = PER_abu_l_hasan_al_isfahani }
+					FROM = {
+						has_government = fascism
+					}	
+				}
+				PER = { 
+					add_country_leader_role = {
+						character = PER_habiballah_nowbakt
+						country_leader = {
+							desc="POLITICS_HABIB_ALLAH_NOWBAKT_DESC"
+							expire = "1965.1.1"
+							ideology = nationalism_ideology
+							traits = {
+								knave
+							}	
+						}
+						promote_leader = yes	
+					}
+				}
+				if = {
+					limit = { has_completed_focus = PER_islamic_revolution }
+					uncomplete_national_focus = {
+						focus = PER_islamic_revolution
+						uncomplete_children = yes
+					}
+					unlock_national_focus = PER_concessions_for_germanophiles
+				}
+				set_party_name = { ideology = fascism long_name = PER_nazi_faction name = PER_nazi_faction }
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			#Привлечение германских советников // PER
+			if = {
+				limit = {
+					PER = {
+						has_completed_focus = PER_involvement_german_advisers
+						NOT = { has_country_flag = PER_involvement_german_advisers_once_flag }
+					}
+					OR = {
+						AND = {
+							FROM = { tag = GFA }
+							ROOT = { tag = PER }
+						}
+						AND = {
+							FROM = { tag = PER }
+							ROOT = { tag = GFA }
+						}
+					}
+				}
+				PER = {
+					set_country_flag = PER_involvement_german_advisers_once_flag
+					every_owned_state = {
+						remove_building = {
+							type = infrastructure
+							level = 1
+						}
+					}
+				}
+			}
+			
+			#Последствия советско-персидского договора
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = SOV
+							tag = PER
+						}
+					}
+					ROOT = {
+						OR = {
+							tag = SOV
+							tag = PER
+						}
+					}
+					PER = { OR = { has_idea = PER_soviet_persian_treaty has_idea = PER_soviet_persian_treaty_1 has_idea = PER_soviet_persian_treaty_11 } }
+				}
+				PER = {
+					remove_ideas = {
+						PER_soviet_persian_treaty
+						PER_soviet_persian_treaty_1
+						PER_soviet_persian_treaty_11
+					}
+					add_timed_idea = { idea = PER_soviet_persian_treaty_2 days = 180 }
+				}
+			}
+			
+			# азерское восстание?
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							tag = SOV
+							tag = PER
+						}
+					}
+					ROOT = {
+						OR = {
+							tag = SOV
+							tag = PER
+						}
+					}
+					PER = {
+						OR = {
+							has_country_flag = PER_organize_an_uprising_in_tajikistan_complete_flag
+							has_country_flag = PER_organize_an_uprising_in_azerbaijan_complete_flag
+						}
+					}
+				}
+				if = {
+					limit = { PER = { has_country_flag = PER_organize_an_uprising_in_tajikistan_complete_flag } }
+					PER = {
+						clr_country_flag = PER_organize_an_uprising_in_tajikistan_complete_flag
+						load_oob = "PER_soviet_rise_taj"
+					}
+				}
+				if = {
+					limit = { PER = { has_country_flag = PER_organize_an_uprising_in_azerbaijan_complete_flag } }
+					PER = {
+						clr_country_flag = PER_organize_an_uprising_in_azerbaijan_complete_flag
+						load_oob = "PER_soviet_rise_azr"
+					}
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			#Нефтяные концессии ВБ
+			if = {
+				limit = {
+					tag = ENG
+					FROM = {
+						tag = PER
+						OR = {
+							owns_state = 413
+							owns_state = 1187
+						}
+					}
+				}
+				ENG = {
+					remove_resource_rights = 413
+					remove_resource_rights = 1187
+				}
+				PER = {
+					if = {
+						limit = { NOT = { has_completed_focus = PER_nationalize_oil_industry } }
+						unlock_national_focus = PER_nationalize_oil_industry
+					}
+					if = {
+						limit = { has_idea = PER_payments_from_oil_sales }
+						remove_ideas = PER_payments_from_oil_sales
+					}
+				}
+			}
+		}
+	}
+	
+	# FROM is war target
+	# THIS is country that has just gotten into a war.
+	on_war = {
+		# Крупная война в Европе // PER
+		effect = {
+			if = {
+				limit = {
+					SOV = { has_war = yes }
+					ENG = { has_war = yes }
+					GER = { has_war = yes }
+					NOT = { has_global_flag = NWpersian_28_flag }
+				}
+				set_global_flag = NWpersian_28_flag
+				PER = { country_event = { id = NWpersian.28 days = 1 } }
+			}
+		}
+		
+		# Предложить Советскому Союзу устроить вторжение в Иран // ENG	(OLD)
+		# effect = {
+			# if = {
+				# limit = {
+					# ENG = { has_war_with = GER NOT = { has_war_with = SOV } }
+					# GER = { has_war_with = SOV }
+					# PER = {
+						# OR = {
+							# has_completed_focus = PER_involvement_german_advisers
+							# NOT = { has_idea = neutrality_idea }
+						# }
+						# OR = {
+							# is_in_faction = no
+							# is_faction_leader = no
+						# }
+						# OR = {
+							# has_government = monarchy
+							# has_government = neutrality
+							# has_government = fascism
+							# has_government = democratic
+						# }
+						# NOT = {
+							# is_in_faction_with = SOV
+							# is_in_faction_with = ENG
+							# has_war_with = GER
+							# is_subject_of = SOV
+							# is_subject_of = ENG
+						# }
+					# }
+					# NOT = { has_global_flag = NWpersian_29_flag }
+				# }
+				# set_global_flag = NWpersian_29_flag
+				# ENG = { country_event = { id = NWpersian.29 days = 1 } }
+			# }
+		# }
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			# Капитуляция Пробританского Ирана = Мир с Союзниками
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = PER
+						is_subject_of = ENG
+					}
+					FROM = {
+						original_tag = PER
+					}
+					NOT = { has_global_flag = PER_peace_with_allies_flag }
+				}
+				set_global_flag = PER_peace_with_allies_flag
+				FROM = {
+					every_enemy_country = {
+						limit = {
+							is_subject = no
+							OR = { has_subject = ROOT is_in_faction_with = ROOT }
+							OR = { is_faction_leader = yes is_in_faction = no }
+							NOT = { original_tag = PREV }
+						}
+						FROM = {
+							white_peace = {
+								tag = PREV
+								message = PER_peace_with_allies_flag
+							}
+						}
+					}
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+			}
+			# Капитуляция Прогерманского Ирана = Мир с Осью
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = PER
+						is_subject_of = GER
+					}
+					FROM = {
+						original_tag = PER
+					}
+					NOT = { has_global_flag = PER_peace_with_axis_flag }
+				}
+				set_global_flag = PER_peace_with_axis_flag
+				FROM = {
+					every_enemy_country = {
+						limit = {
+							is_subject = no
+							OR = { has_subject = ROOT is_in_faction_with = ROOT }
+							OR = { is_faction_leader = yes is_in_faction = no }
+							NOT = { original_tag = PREV }
+						}
+						FROM = {
+							white_peace = {
+								tag = PREV
+								message = PER_peace_with_axis_flag
+							}
+						}
+					}
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+			}
+		}
+		
+		effect = {
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+							original_tag = PER
+						}
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+				}
+				hidden_effect = {
+					add_to_variable = { global.var_unity_of_islamic_union = 1 }
+					clamp_temp_variable = { var = global.var_unity_of_islamic_union min = 1 max = 10 }
+					set_temp_variable = { var_unity_of_islamic_union_conscription_temp = 0.005 }
+					multiply_temp_variable = { var_unity_of_islamic_union_conscription_temp = global.var_unity_of_islamic_union }
+					set_temp_variable = { var_unity_of_islamic_union_war_support_temp = 0.02 }
+					multiply_temp_variable = { var_unity_of_islamic_union_war_support_temp = global.var_unity_of_islamic_union }
+					set_variable = { global.var_unity_of_islamic_union_conscription = var_unity_of_islamic_union_conscription_temp }
+					set_variable = { global.var_unity_of_islamic_union_war_support = var_unity_of_islamic_union_war_support_temp }
+				}
+				every_country = {
+					limit = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+							original_tag = PER
+						}
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+	}
+	
+	#FROM is invited guest, ROOT is faction leader.
+	on_offer_join_faction = {
+		effect = {
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = PER
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					FROM = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+						}
+						NOT = { has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn } }
+					}
+				}
+				FROM = {
+					add_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+	}
+	
+	#FROM is faction leader on join faction requests. THIS DOES NOT FIRE ON ADD_TO_FACTION EFFECT! USE ON_OFFER_JOIN_FACTION!
+	on_join_faction = {
+		effect = {
+			#Единство Исламского Мира
+			if = {
+				limit = {
+					FROM = {
+						original_tag = PER
+						has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					}
+					ROOT = {
+						OR = {
+							original_tag = TUR
+							original_tag = SYR
+							original_tag = IRQ
+							original_tag = AFG
+							original_tag = JOR
+							original_tag = BPL
+							original_tag = EGY
+							original_tag = SAU
+							original_tag = YEM
+						}
+						NOT = { has_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn } }
+					}
+				}
+				ROOT = {
+					add_dynamic_modifier = { modifier = PER_unity_of_islamic_union_dyn }
+					force_update_dynamic_modifier = yes
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		effect = {
+			#Антибританские протесты в Тегеране
+			if = {
+				limit = {
+					original_tag = PER
+					has_government = neutrality
+					has_country_flag = PER_NWpersian_3a_flag
+					FROM = {
+						has_government = fascism
+					}
+				}
+				country_event = { id = NWpersian.27 days = 14 }
+			}
+			if = {
+				limit = {
+					original_tag = PER
+					country_exists = KHU
+					NOT = { has_country_flag = arabistan_flag }
+				}
+				if = {
+					limit = { KHU = { is_in_faction = yes } }
+					KHU = { leave_faction = yes }
+				}
+				country_event = { id = NWpersian.67 days = 1 }
+			}
+			if = {
+				limit = {
+					original_tag = PER
+				}
+				if = {
+					limit = {
+						country_exists = QAS
+						ROOT = { NOT = { has_war_with = QAS } }
+						NOT = { has_country_flag = NWpersian_74_flag }
+					}
+					country_event = { id = NWpersian.74 hours = 6 }
+				}
+			}
+			#Исламисты победили в Иранской гражданской войне
+			if = {
+				limit = {
+					original_tag = PER
+					has_government = fascism
+				}
+				news_event = { id = trworldnews.95 hours = 6 }
+			}
+			#Реформисты победили в Иранской гражданской войне
+			if = {
+				limit = {
+					original_tag = PER
+					NOT = { has_government = fascism }
+					FROM = { has_government = fascism }
+				}
+				news_event = { id = trworldnews.96 hours = 6 }
+			}
+		}
+	}
+	
+	on_daily_SOV = {
+		effect = {
+			#Армянские спецслужбы // Решения PER
+			if = {
+				limit = { has_idea = PER_armenian_special_services }
+				subtract_from_variable = { level_integration_south_azerbaijan = 0.01 }
+			}
+		}
+	}
+	
+	on_daily_PER = {
+		effect = {
+			#PER_growth_of_suspicion_among_officers
+			if = {
+				limit = {
+					has_idea = PER_growth_of_suspicion_among_officers
+				}
+				add_to_variable = { PER_army_tension_var = 0.1 }
+				clamp_variable = { var = PER_army_tension_var min = 0 max = 100 }
+			}
+			#PER_dissatisfaction_due_decrease_in_salary
+			if = {
+				limit = {
+					has_idea = PER_dissatisfaction_due_decrease_in_salary
+				}
+				add_to_variable = { PER_army_tension_var = 0.1 }
+				clamp_variable = { var = PER_army_tension_var min = 0 max = 100 }
+			}
+			#ЧЕК 100% НАПРЯГИ ГЕНЕРАЛИТЕТА PER
+			if = {
+				limit = {
+					tag = PER
+					has_variable = PER_army_tension_var
+					check_variable = { PER_army_tension_var = 100 }
+					NOT = { has_country_flag = PER_army_tension_var_end_flag }
+				}
+				set_country_flag = PER_army_tension_var_end_flag
+				country_event = { id = NWpersian.90 }
+			}
+			#PER_organize_an_uprising_in_tajikistan // PER
+			if = {
+				limit = {
+					has_country_flag = PER_organize_an_uprising_in_tajikistan_flag
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -10
+				}
+			}
+			#PER_organize_an_uprising_in_azerbaijan // PER
+			if = {
+				limit = {
+					has_country_flag = PER_organize_an_uprising_in_azerbaijan_flag
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = -10
+				}
+			}
+		}
+	}
+}

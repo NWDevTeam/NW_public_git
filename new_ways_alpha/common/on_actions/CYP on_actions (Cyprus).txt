@@ -1,0 +1,63 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### Кипр стартпак
+				CYP = {
+					country_event = { id = NWcyprus.501 days = 122 }	#3 мая
+					country_event = { id = NWcyprus.2 days = 141 }		#22 мая
+					country_event = { id = NWcyprus.3 days = 831 }		#12.04.1938
+				}
+			}
+		}
+	}
+	
+	#ROOT is subject FROM is previous overlord
+	on_subject_free = {
+		effect = {
+			if = {
+				limit = {
+					has_cosmetic_tag = CYP_UK
+				}
+				drop_cosmetic_tag = yes
+			}
+			if = {
+				limit = {
+					ROOT = { tag = CYP }
+					FROM = { original_tag = ENG }
+				}
+				ROOT = { news_event = { id = trworldnews.166 hours = 6 } }
+			}
+		}
+	}
+	
+	on_weekly_CYP = {
+		effect = { #Изменение поддержки
+			if = {
+				limit = {
+					check_variable = { modifier@weekly_greek_support > 0 }
+				}
+				add_to_variable = { greek_support_total = modifier@weekly_greek_support }
+				subtract_from_variable = { turkish_support_total = modifier@weekly_greek_support }
+				clamp_variable = { var = turkish_support_total min = 0 max = 100 }
+				clamp_variable = { var = greek_support_total min = 0 max = 100 }
+			}
+			if = {
+				limit = {
+					check_variable = { modifier@weekly_turkish_support > 0 }
+				}
+				add_to_variable = { turkish_support_total = modifier@weekly_turkish_support }
+				subtract_from_variable = { greek_support_total = modifier@weekly_turkish_support }
+				clamp_variable = { var = turkish_support_total min = 0 max = 100 }
+				clamp_variable = { var = greek_support_total min = 0 max = 100 }
+			}
+			set_variable = { weekly_greek_support_total = modifier@weekly_greek_support }
+			subtract_from_variable = { weekly_greek_support_total = modifier@weekly_turkish_support }
+			
+			set_variable = { weekly_turkish_support_total = modifier@weekly_turkish_support }
+			subtract_from_variable = { weekly_turkish_support_total = modifier@weekly_greek_support }
+		}
+	}
+}

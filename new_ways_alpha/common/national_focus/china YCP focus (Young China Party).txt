@@ -1,0 +1,2675 @@
+focus_tree = {
+	id = NW_YCP_focus
+	
+	country = {
+		factor = 0
+		# modifier = {
+			# add = 10
+			# tag = YCP
+		# }
+	}
+	default = no
+	
+	continuous_focus_position = { x = 100 y = 850 }
+	
+	focus = {
+		id = YCP_heirs_of_miao_kexiu
+		icon = GFX_z_goal_YCP_heirs_of_miao_kexiu
+		cost = 2.2
+		ai_will_do = {
+			factor = 1
+			modifier = { # на историке YCP не будет изучать фокусы
+				factor = 0
+				is_historical_focus_on = yes
+				has_war_with = MAN
+			}
+		}
+		x = 8
+		y = 0
+		offset = {
+			x = 0
+			y = 10
+			trigger = {
+				has_completed_focus = YCP_first_ycp_government
+			}
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_heirs_of_miao_kexiu"
+			add_ideas = YCP_heirs_of_miao_kexiu_idea
+			
+			custom_effect_tooltip = empty_line_tooltip
+			custom_effect_tooltip = YCP_additional_events_tt # ycp.1 and ycp.2
+		}
+	}
+	focus = {
+		id = YCP_volunteers_from_new_territories
+		icon = GFX_z_goal_YCP_volunteers_from_new_territories
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		available = {
+			OR = {
+				controls_province = 11771 # Mukden
+				controls_province = 9873 # Chengde
+			}
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 1
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_volunteers_from_new_territories"
+			add_to_variable = { YCP_ycp_size = 4000 tooltip = YCP_ycp_size_tooltip }
+			add_to_variable = { YCP_ycp_political_power_gain = 0.04 tooltip = political_power_gain_tooltip }
+			add_to_variable = { YCP_ycp_command_power_gain_mult = 0.04 tooltip = command_power_gain_mult_tooltip }
+			add_to_variable = { YCP_ycp_industrial_capacity_factory = 0.04 tooltip = industrial_capacity_factory_tooltip }
+			add_to_variable = { YCP_ycp_army_attack_factor = 0.04 tooltip = army_attack_factor_tooltip }
+			add_to_variable = { YCP_ycp_army_defence_factor = 0.04 tooltip = army_defence_factor_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			if = {
+				limit = { NOT = { has_template = "Renmin Jundui" } }
+				division_template = {
+					name = "Renmin Jundui"
+					
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" 
+					owner = PREV
+					count = 4
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_coast_control # TODO переделать фокус
+		icon = GFX_z_goal_YCP_coast_control
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = YCP_coast_control_available
+				controls_province = 11764
+				NOT = { has_country_flag = YCP_coast_control_available_flag } 
+			}
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 3
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_coast_control"
+			716 = {
+				add_province_modifier = { # TODO удалять после войны	TODO иконку
+					static_modifiers = { YCP_defense_of_coastal }
+					province = {
+						id = 11764
+					}
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = {
+						id = 11764
+						id = 964
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_help_from_grandma
+		icon = GFX_z_goal_YCP_help_from_grandma
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_volunteers_from_new_territories
+			focus = YCP_coast_control
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 2
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_help_from_grandma"
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = YCP_zhao_hong_wengo
+			unlock_decision_category_tooltip = YCP_the_grandma_two_guns
+		}
+	}
+	focus = {
+		id = YCP_storm_mukden
+		icon = GFX_z_goal_YCP_storm_mukden
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		mutually_exclusive = {
+			focus = YCP_retreat_to_beijing
+			focus = YCP_concentrate_of_forces_in_north
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 5
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_storm_mukden"
+			# add_timed_idea = { idea = YCP_storm_mukden_idea days = 120 }
+			716 = {
+				add_dynamic_modifier = {
+					modifier = YCP_storm_mukden_idea
+					days = 120
+					scope = YCP
+				}
+			}
+			custom_effect_tooltip = empty_line_tooltip
+			IF = {
+				limit = {
+					NOT = { has_tech = tech_shocktroops }
+				}
+				set_technology = { 
+					tech_shocktroops = 1
+					popup = yes
+				}
+			}
+			if = {
+				limit = { NOT = { has_template = "Gansidui" } }
+				division_template = {
+					name = "Gansidui"
+					regiments = {
+						shocktroops = { x = 0 y = 0 }
+						shocktroops = { x = 0 y = 1 }
+						shocktroops = { x = 0 y = 2 }
+						shocktroops = { x = 1 y = 0 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Gansidui\" division_template = \"Gansidui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" 
+					owner = PREV
+					count = 2
+				}
+			}
+			
+			custom_effect_tooltip = YCP_storm_mukden_tooltip
+			effect_tooltip = {
+				MAN = {
+					if = {
+						limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+						custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+						add_to_variable = { MAN_strength_of_partisan_movement_var = -0.1 tooltip = stability_factor_tooltip }
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_defence_mukden
+		icon = GFX_z_goal_YCP_defence_mukden
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_storm_mukden
+		}
+		available = {
+			controls_province = 11771
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 5
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_defence_mukden"
+			# add_timed_idea = { idea = YCP_defence_mukden_idea days = 120 }
+			716 = {
+				add_dynamic_modifier = {
+					modifier = YCP_defence_mukden_idea
+					days = 120
+					scope = YCP
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes
+					province = {
+						id = 11771
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_capture_of_railways
+		icon = GFX_z_goal_YCP_capture_of_railways
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_defence_mukden
+		}
+		available = {
+			controls_province = 11771
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 5
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_capture_of_railways"
+			if = { # TODO without dlc?
+				limit = { NOT = { has_tech = armored_train } }
+				set_technology = { 
+					armored_train = 1 
+					popup = yes
+				}
+			}
+			add_equipment_to_stockpile = { # TODO tooltip
+				type = train_equipment_3
+				amount = 10
+			}
+			add_ideas = YCP_capture_of_railways_idea
+		}
+	}
+	focus = {
+		id = YCP_retreat_to_beijing
+		icon = GFX_z_goal_YCP_retreat_to_beijing
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		mutually_exclusive = {
+			focus = YCP_storm_mukden
+			focus = YCP_concentrate_of_forces_in_north
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 7
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_retreat_to_beijing"
+			# add_timed_idea = { idea = YCP_retreat_to_beijing_idea days = 210 }
+			610 = {
+				add_dynamic_modifier = {
+					modifier = YCP_retreat_to_beijing_idea
+					days = 210
+					scope = YCP
+				}
+			}
+			custom_effect_tooltip = YCP_retreat_to_beijing_tt # TODO а зач он нам?
+		}
+	}
+	focus = {
+		id = YCP_contact_with_EHB
+		icon = GFX_z_goal_YCP_contact_with_EHB
+		cost = 4.4
+		prerequisite = {
+			focus = YCP_retreat_to_beijing
+		}
+		available = {
+			is_neighbor_of = EHB
+			EHB = { has_country_leader = { character = EHB_yin_jukeng } }
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 7
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_contact_with_EHB"
+			EHB = {
+				country_event = ycp.8
+			}
+			custom_effect_tooltip = YCP_contact_with_EHB_tooltip
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = if_they_accept
+			event_option_tooltip = ycp.8.a
+		}
+	}
+	focus = {
+		id = YCP_beijing_cell_of_ycp
+		icon = GFX_z_goal_YCP_beijing_cell_of_ycp
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_contact_with_EHB
+		}
+		available = {
+			any_neighbor_country = {
+				hidden_trigger = { is_literally_china = yes }
+				NOT = { is_subject_of = JAP } # not japan bitches (MAN CSR EHB)
+				OR = { controls_state = 608 controls_state = 609 } 
+			} 
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 7
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_beijing_cell_of_ycp"
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.1
+			}
+			if = {
+				limit = { NOT = { has_template = "Renmin Jundui" } }
+				division_template = {
+					name = "Renmin Jundui"
+					
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+						irregular_infantry = { x = 1 y = 1 }
+						irregular_infantry = { x = 1 y = 2 }
+					}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.95" 
+					owner = PREV
+					count = 3
+				}
+			}
+			custom_effect_tooltip = empty_line_tooltip
+			
+			multiply_variable = { YCP_ycp_casualties_percent = 2 tooltip = YCP_ycp_casualties_percent_tooltip }
+			custom_effect_tooltip = YCP_beijing_cell_of_ycp_tooltip
+		}
+	}
+	focus = {
+		id = YCP_concentrate_of_forces_in_north
+		icon = GFX_z_goal_YCP_concentrate_of_forces_in_north
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		mutually_exclusive = {
+			focus = YCP_storm_mukden
+			focus = YCP_retreat_to_beijing
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 9
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_concentrate_of_forces_in_north"
+			add_timed_idea = { idea = YCP_concentrate_of_forces_in_north_idea days = 210 }
+		}
+	}
+	focus = {
+		id = YCP_guerrilla_tactics
+		icon = GFX_z_goal_YCP_guerrilla_tactics
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_concentrate_of_forces_in_north
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 9
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_guerrilla_tactics"
+			army_experience = 15
+			add_doctrine_cost_reduction = {
+				name = YCP_guerrilla_tactics
+				cost_reduction = 0.5
+				uses = 2
+				category = cat_asymmetric_warfare
+			}
+			swap_ideas = {
+				remove_idea = YCP_antijapanese_uprising
+				add_idea = YCP_guerrilla_tactics_idea
+			}
+		}
+	}
+	focus = {
+		id = YCP_destroy_the_japanese
+		icon = GFX_z_goal_YCP_destroy_the_japanese
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_guerrilla_tactics
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = 9
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_destroy_the_japanese"
+			add_timed_idea = { idea = YCP_destroy_the_japanese_idea days = 270 }
+		}
+	}
+	
+	focus = {
+		id = YCP_maintain_anticommunist_policy
+		icon = GFX_z_goal_YCP_maintain_anticommunist_policy
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		mutually_exclusive = {
+			focus = YCP_united_antijapanese_front
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -2
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_maintain_anticommunist_policy"
+			add_war_support = -0.07
+			add_popularity = {
+				ideology = communism
+				popularity = -0.07
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.07
+			}
+			add_ideas = YCP_anticommunism_of_iron_blood_army
+		}
+	}
+	focus = {
+		id = YCP_take_communist_partisans
+		icon = GFX_z_goal_YCP_take_communist_partisans
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_maintain_anticommunist_policy
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -2
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_take_communist_partisans"
+			add_to_variable = { YCP_ycp_size = 3000 tooltip = YCP_ycp_size_tooltip }
+			add_to_variable = { YCP_ycp_political_power_gain = 0.03 tooltip = political_power_gain_tooltip }
+			add_to_variable = { YCP_ycp_command_power_gain_mult = 0.03 tooltip = command_power_gain_mult_tooltip }
+			add_to_variable = { YCP_ycp_industrial_capacity_factory = 0.03 tooltip = industrial_capacity_factory_tooltip }
+			add_to_variable = { YCP_ycp_army_attack_factor = 0.03 tooltip = army_attack_factor_tooltip }
+			add_to_variable = { YCP_ycp_army_defence_factor = 0.03 tooltip = army_defence_factor_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_popularity = {
+				ideology = communism
+				popularity = 0.04
+			}
+			if = {
+				limit = { NOT = { has_template = "Renmin Jundui" } }
+				division_template = {
+					name = "Renmin Jundui"
+					
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+					}
+				}
+			}
+			MAN = { # TODO а если не воюем?
+				if = {
+					limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+					custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+					add_to_variable = { MAN_strength_of_partisan_movement_var = 0.05 tooltip = stability_factor_tooltip }
+					custom_effect_tooltip = empty_line_tooltip
+					custom_effect_tooltip = empty_line_tooltip
+				}
+				random_owned_controlled_state = { # TODO tooltip
+					prioritize = { 714 717 610 }
+					create_unit = {
+						division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" 
+						owner = ROOT
+						allow_spawning_on_enemy_provs = yes
+						count = 3 # 2
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_anticommunism_politics
+		icon = GFX_z_goal_YCP_anticommunism_politics
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_take_communist_partisans
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -1
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_anticommunism_politics"
+			add_political_power = 250
+			every_other_country = {
+				limit = { 
+					OR = {
+						tag = SOV
+						tag = MON
+						is_literally_china = yes
+					}
+					is_left_ideology = yes
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = YCP_anticommunism_politics_negative
+				}
+				# reverse_add_opinion_modifier = {
+					# target = ROOT
+					# modifier = YCP_anticommunism_politics_negative
+				# }
+			}
+			every_other_country = {
+				limit = { 
+					OR = {
+						tag = CHI
+						tag = JAP
+					}
+					is_left_ideology = no
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = YCP_anticommunism_politics_positive
+				}
+				# reverse_add_opinion_modifier = {
+					# target = ROOT
+					# modifier = YCP_anticommunism_politics_positive
+				# }
+			}
+			add_ideas = YCP_anticommunism_politics_idea
+		}
+	}
+	focus = {
+		id = YCP_united_antijapanese_front
+		icon = GFX_z_goal_YCP_united_antijapanese_front
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		mutually_exclusive = {
+			focus = YCP_maintain_anticommunist_policy
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 15
+				country_exists = CMA
+			}
+		}
+		x = -6
+		y = 1
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_united_antijapanese_front"
+			add_to_variable = { YCP_ycp_size = 1000 tooltip = YCP_ycp_size_tooltip }
+			add_to_variable = { YCP_ycp_political_power_gain = 0.02 tooltip = political_power_gain_tooltip }
+			add_to_variable = { YCP_ycp_command_power_gain_mult = 0.02 tooltip = command_power_gain_mult_tooltip }
+			add_to_variable = { YCP_ycp_industrial_capacity_factory = 0.02 tooltip = industrial_capacity_factory_tooltip }
+			add_to_variable = { YCP_ycp_army_attack_factor = 0.02 tooltip = army_attack_factor_tooltip }
+			add_to_variable = { YCP_ycp_army_defence_factor = 0.02 tooltip = army_defence_factor_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_popularity = {
+				ideology = communism
+				popularity = 0.07
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.07
+			}
+			MAN = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = MAN_banditry } }
+					custom_effect_tooltip = MAN_strength_of_partisan_movement_tooltip
+					add_to_variable = { MAN_strength_of_partisan_movement_var = -0.05 tooltip = stability_factor_tooltip }
+					custom_effect_tooltip = empty_line_tooltip
+				}
+			}
+			custom_effect_tooltip = YCP_united_antijapanese_front_of_northeast_tt
+			# hidden_effect = {
+				random_country = { # TODO ??
+					limit = { tag = CMA }
+					PREV = { 
+						create_faction = YCP_united_antijapanese_front_of_northeast 
+						add_to_faction = PREV
+					}
+					add_ai_strategy = {
+						type = alliance
+						id = PREV
+						value = 200
+					}
+					# hidden_effect = { news_event = { id = news.289 hours = 12 } }
+				}
+			# }
+		}
+	}
+	focus = {
+		id = YCP_communist_logistic
+		icon = GFX_z_goal_YCP_communist_logistic
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_united_antijapanese_front
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -6
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_communist_logistic"
+			add_popularity = {
+				ideology = communism
+				popularity = 0.1
+			}
+			add_ideas = YCP_communist_logistic_idea
+		}
+	}
+	focus = {
+		id = YCP_communist_methods
+		icon = GFX_z_goal_YCP_communist_methods
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_communist_logistic
+		}
+		available = {
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -7
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_communist_methods"
+			add_popularity = {
+				ideology = communism
+				popularity = 0.1
+			}
+			add_doctrine_cost_reduction = {
+				name = YCP_communist_methods
+				cost_reduction = 0.99
+				uses = 1
+				category = cat_asymmetric_warfare
+			}
+		}
+	}
+	focus = {
+		id = YCP_introduction_to_manchukuo_army
+		icon = GFX_z_goal_YCP_introduction_to_manchukuo_army
+		cost = 4.4
+		prerequisite = {
+			focus = YCP_united_antijapanese_front
+			focus = YCP_maintain_anticommunist_policy
+		}
+		available = {
+			has_manpower > 10000
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -4
+		y = 2
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_introduction_to_manchukuo_army"
+			add_command_power = 50
+			add_manpower = -10000
+			add_ideas = YCP_informants_in_manchukuo_army
+			unlock_decision_category_tooltip = YCP_escalation_in_manchuria_category
+		}
+	}
+	focus = {
+		id = YCP_uprising_in_manchuria
+		icon = GFX_z_goal_YCP_uprising_in_manchuria
+		cost = 4.4
+		prerequisite = {
+			focus = YCP_introduction_to_manchukuo_army
+		}
+		available = {
+			has_war_with = MAN
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -5
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_uprising_in_manchuria"
+			if = {
+				limit = { NOT = { has_template = "Renmin Jundui" } }
+				division_template = {
+					name = "Renmin Jundui"
+					
+					regiments = {
+						irregular_infantry = { x = 0 y = 0 }
+						irregular_infantry = { x = 0 y = 1 }
+						irregular_infantry = { x = 0 y = 2 }
+						irregular_infantry = { x = 1 y = 0 }
+					}
+				}
+			}
+			custom_effect_tooltip = YCP_uprising_in_manchuria_tt
+			MAN = {
+				every_country_division = {
+					random_select_amount = 5
+					destroy_unit = yes
+				}
+				every_controlled_state = {
+					random_select_amount = 5
+					create_unit = {
+						division = "name = \"Renmin Jundui\" division_template = \"Renmin Jundui\" start_experience_factor = 0.1 start_equipment_factor = 0.65" 
+						owner = ROOT
+						allow_spawning_on_enemy_provs = yes
+						count = 1 # 2
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_use_of_manchurian_information
+		icon = GFX_z_goal_YCP_use_of_manchurian_information
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_introduction_to_manchukuo_army
+		}
+		available = {
+			has_war_with = MAN
+			NOT = { has_completed_focus = YCP_first_ycp_government }
+		}
+		x = -3
+		y = 3
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_use_of_manchurian_information"
+			unlock_decision_category_tooltip = YCP_the_deal_with_manchukuo_army
+		}
+	}
+	
+	focus = {
+		id = YCP_wonder_in_the_northeast
+		icon = GFX_z_goal_YCP_wonder_in_the_northeast
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_heirs_of_miao_kexiu
+		}
+		available = {
+			has_war = no
+			OR = {
+				NOT = { country_exists = MAN } # ?
+				AND = {
+					country_exists = MAN
+					MAN = { has_government = communism } # country_exists = CMA
+				}
+			}
+		}
+		x = 0
+		y = 4
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_wonder_in_the_northeast"
+			add_to_variable = { YCP_ycp_size = 5000 tooltip = YCP_ycp_size_tooltip }
+			add_to_variable = { YCP_ycp_political_power_gain = 0.05 tooltip = political_power_gain_tooltip }
+			add_to_variable = { YCP_ycp_command_power_gain_mult = 0.05 tooltip = command_power_gain_mult_tooltip }
+			add_to_variable = { YCP_ycp_industrial_capacity_factory = 0.05 tooltip = industrial_capacity_factory_tooltip }
+			add_to_variable = { YCP_ycp_army_attack_factor = 0.05 tooltip = army_attack_factor_tooltip }
+			add_to_variable = { YCP_ycp_army_defence_factor = 0.05 tooltip = army_defence_factor_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = news_event_ycp.11
+			hidden_effect = { news_event = ycp.11 }
+			every_controlled_state = {
+				limit = { NOT = { is_core_of = ROOT } }
+				add_compliance = 60
+			}
+		}
+	}
+	focus = {
+		id = YCP_loyalty_to_communists
+		icon = GFX_z_goal_YCP_loyalty_to_communists
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_wonder_in_the_northeast
+		}
+		mutually_exclusive = {
+			focus = YCP_first_ycp_government
+		}
+		available = {
+			communism > party_popularity@neutrality
+			# OR = {
+				# country_exists = PRC
+				# country_exists = CMA # TODO tooltip
+			# }
+		}
+		x = -2
+		y = 5
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_loyalty_to_communists"
+			if = {
+				limit = { country_exists = CMA }
+				every_character = { # TODO ??
+					set_nationality = CMA
+					log = "[GetDateText]: [THIS.GetName]: character set_nationality = [CMA.GetTag]"
+				}
+				CMA = {
+					inherit_technology = ROOT
+					annex_country = {
+						target = ROOT
+						transfer_troops = yes
+					}
+					if = {
+						limit = { is_ai = yes }
+						change_tag_from = ROOT
+					}
+				}
+			}
+			else = {
+				every_character = { 
+					set_nationality = PRC
+					log = "[GetDateText]: [THIS.GetName]: character set_nationality = [PRC.GetTag]"
+				}
+				PRC = {
+					inherit_technology = ROOT
+					annex_country = {
+						target = ROOT
+						transfer_troops = yes
+					}
+					if = {
+						limit = { is_ai = yes }
+						change_tag_from = ROOT
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_first_ycp_government
+		icon = GFX_z_goal_YCP_first_ycp_government
+		cost = 2.2
+		prerequisite = {
+			focus = YCP_wonder_in_the_northeast
+		}
+		mutually_exclusive = {
+			focus = YCP_loyalty_to_communists
+		}
+		available = {
+			neutrality > party_popularity@communism
+		}
+		x = 2
+		y = 5
+		relative_position_id = YCP_heirs_of_miao_kexiu
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_first_ycp_government"
+			effect_tooltip = {
+				unlock_national_focus = YCP_government_of_third_party
+			}
+			custom_effect_tooltip = news_event_ycp.12
+			hidden_effect = { news_event = ycp.12 }
+			remove_ideas = { #?
+				YCP_antijapanese_uprising
+				YCP_heirs_of_miao_kexiu_idea
+				# YCP_storm_mukden_idea
+				# YCP_defence_mukden_idea
+				# YCP_retreat_to_beijing_idea
+				YCP_capture_of_railways_idea
+				YCP_concentrate_of_forces_in_north_idea
+				YCP_guerrilla_tactics_idea
+				YCP_destroy_the_japanese_idea
+				# YCP_anticommunism_of_iron_blood_army
+				# YCP_anticommunism_politics
+				YCP_communist_logistic_idea
+				YCP_informants_in_manchukuo_army
+			}
+			if = {
+				limit = { is_faction_leader = yes }
+				dismantle_faction  = yes
+				# TODO ивент, что теперь сремся с коммунистами вплоть до войны?
+			}
+			
+			set_temp_variable = { YCP_wsa_conscription_factor = -0.6 }
+			set_temp_variable = { YCP_wsa_consumer_goods_factor = 0.3 }
+			set_temp_variable = { YCP_wsa_local_resources_factor = -0.5 }
+			add_dynamic_modifier = { modifier = YCP_weak_state_apparatus }
+			set_variable = { YCP_wsa_conscription_factor = -0.6 }
+			set_variable = { YCP_wsa_consumer_goods_factor = 0.3 }
+			set_variable = { YCP_wsa_local_resources_factor = -0.5 }
+			
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	
+	# Основное дерево
+	
+	focus = {
+		id = YCP_government_of_third_party
+		icon = GFX_z_goal_YCP_government_of_third_party
+		cost = 8
+		x = 18
+		y = 9
+		offset = {
+			x = 0
+			y = -9
+			trigger = {
+				has_completed_focus = YCP_first_ycp_government
+			}
+		}
+		available = {
+			has_completed_focus = YCP_first_ycp_government
+		}
+		select_effect = {
+			country_event = { id = ycp.44 days = 30 }
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_government_of_third_party"
+			clr_country_flag = nw_political_actions_block_flag
+			clr_country_flag = generic_block_political_actions
+			
+			hidden_effect = {
+				remove_dynamic_modifier = { modifier = YCP_young_chinese_party }
+				add_dynamic_modifier = { modifier = YCP_chinese_democracy }
+				set_temp_variable = { size = YCP_ycp_size }
+				YCP_chinese_democracy_update = yes
+			}
+			set_temp_variable = { YCP_cd_power_balance_weekly = size }
+			add_timed_idea = { idea = YCP_chinese_democracy_dummy days = 512 }
+			custom_effect_tooltip = YCP_chinese_democracy_tooltip
+			custom_effect_tooltip = empty_line_tooltip
+			
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = no
+			}
+			if = {
+				limit = { has_character = YCP_zeng_qi }
+				promote_character = YCP_zeng_qi
+			}
+			
+			set_country_flag = china_declare_government_flag # TODO ?
+			every_controlled_state = {
+				limit = { is_in_array = { global.chinese_state = THIS } NOT = { is_core_of = ROOT } }
+				add_core_of = ROOT
+			}
+			activate_china_integrate_province = yes
+			set_country_flag = chinese_reunification_flag
+			unlock_decision_category_tooltip = chinese_reunification
+			
+			hidden_effect = {
+				set_cosmetic_tag = YCP_constitutional_government_of_china
+				# custom_effect_tooltip = available_political_advisor
+				if = {
+					limit = { has_character = YCP_li_huan }
+					show_ideas_tooltip = YCP_li_huan
+				}
+				show_ideas_tooltip = YCP_chen_qitian
+				if = {
+					limit = { has_character = YCP_zuo_shunsheng }
+					show_ideas_tooltip = YCP_zuo_shunsheng
+				}
+				show_ideas_tooltip = YCP_yu_jiaju
+				random_country = {
+					limit = { has_character = HCP_zhang_zizhong }
+					HCP_zhang_zizhong = { set_nationality = ROOT }
+				}
+				random_country = { # TODO
+					limit = { has_character = GXC_sun_fo }
+					GXC_sun_fo = { set_nationality = ROOT }
+				}
+				show_ideas_tooltip = YCP_hu_govei
+				show_ideas_tooltip = YCP_liu_penjiu
+				show_ideas_tooltip = YCP_li_wangjiu
+				show_ideas_tooltip = YCP_he_luzhi
+				show_ideas_tooltip = YCP_zhang_bolong
+				
+				# В качестве генералов станут доступны Вэнь Чжаоюань (он может быть у CHI/GND/GXC, надо это проверять и передавать YCP) TODO
+			}
+			
+			set_power_balance = {
+				id = YCP_power_balance
+				set_value = -0.6
+			}
+			
+			country_event = { id = ycp.13 }
+			hidden_effect = {
+				country_event = { id = ycp.14 days = 50 }
+			}
+		}
+	}
+	
+	# focus = {
+		# id = YCP_constitutional_reform
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_government_of_third_party
+		# }
+		# x = 0
+		# y = 1
+		# relative_position_id = YCP_government_of_third_party
+		# select_effect = {
+			# country_event = { id = ycp.15 days = 10 }
+			# country_event = { id = ycp.16 days = 25 }
+			# country_event = { id = ycp.17 days = 40 }
+		# }
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_constitutional_reform"
+			# add_political_power = 50
+			# custom_effect_tooltip = YCP_constitutional_reform_tt
+		# }
+	# }
+	focus = {
+		id = YCP_unwritten_constitutionalism
+		icon = GFX_z_goal_YCP_unwritten_constitutionalism
+		cost = 8
+		prerequisite = {
+			focus = YCP_government_of_third_party
+		}
+		x = 0
+		y = 1
+		relative_position_id = YCP_government_of_third_party
+		select_effect = {
+			country_event = { id = ycp.15 days = 10 }
+			country_event = { id = ycp.16 days = 25 }
+			country_event = { id = ycp.17 days = 40 }
+		}
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_unwritten_constitutionalism"
+			add_political_power = 80
+			custom_effect_tooltip = YCP_constitutional_reform_tt
+			activate_targeted_decision = { decision = YCP_nationwide_revolution target = ROOT } # TODO норм тултип или unlock_decision_tooltip
+			activate_targeted_decision = { decision = YCP_local_government_from_controlled_cities target = ROOT }
+			activate_targeted_decision = { decision = YCP_compulsory_education target = ROOT }
+			
+			set_temp_variable = { add_days = 210 }
+			YCP_chinese_democracy_dummy_update = yes
+		}
+	}
+	# focus = {
+		# id = YCP_nationwide_revolution
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_unwritten_constitutionalism
+		# }
+		# x = -3
+		# y = 2
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_nationwide_revolution"
+			# add_popularity = {
+				# ideology = democratic
+				# popularity = 0.12
+			# }
+			# custom_effect_tooltip = YCP_nationwide_revolution_tt
+		# }
+	# }
+	focus = {
+		id = YCP_follow_lead_of_ataturk
+		icon = GFX_z_goal_YCP_follow_lead_of_ataturk
+		cost = 8
+		prerequisite = {
+			focus = YCP_unwritten_constitutionalism
+		}
+		x = -1
+		y = 1
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_follow_lead_of_ataturk"
+			add_stability = 0.06
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+			add_opinion_modifier = { # TODO ?
+				target = TUR
+				modifier = YCP_follow_lead_of_ataturk
+			}
+			country_event = ycp.18
+		}
+	}
+	# focus = {
+		# id = YCP_local_government_from_controlled_cities
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_unwritten_constitutionalism
+		# }
+		# x = 1
+		# y = 2
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_local_government_from_controlled_cities"
+			# add_power_balance_value = {
+				# id = YCP_power_balance
+				# value = 0.15
+			# }
+			# add_to_variable = { china_integration_of_province_cost_var = -0.25 tooltip = china_integration_of_province_cost_tooltip }
+		# }
+	# }
+	# focus = {
+		# id = YCP_compulsory_education
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_unwritten_constitutionalism
+		# }
+		# x = 3
+		# y = 2
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_compulsory_education"
+			# add_research_slot = 1
+		# }
+	# }
+	focus = {
+		id = YCP_liberal_education
+		icon = GFX_z_goal_YCP_liberal_education
+		cost = 8
+		prerequisite = {
+			focus = YCP_unwritten_constitutionalism
+		}
+		available = {
+			has_country_flag = YCP_compulsory_education_flag
+		}
+		x = 3
+		y = 1
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_liberal_education"
+			add_ideas = YCP_liberal_education_idea
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_liberal_education_tt
+		}
+	}
+	focus = {
+		id = YCP_school_reform
+		icon = GFX_z_goal_YCP_school_reform
+		cost = 8
+		prerequisite = {
+			focus = YCP_liberal_education
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.15
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		x = 3
+		y = 2
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_school_reform"
+			every_other_country = {
+				limit = {
+					OR = {
+						tag = USA
+						tag = FRA
+						tag = ITA
+					}
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = YCP_school_reform_op
+				}
+			}
+			add_timed_idea = { idea = YCP_school_reform_idea days = 400 }
+		}
+	}
+	focus = {
+		id = YCP_nationwide_government
+		icon = GFX_z_goal_YCP_nationwide_government
+		cost = 8
+		prerequisite = {
+			focus = YCP_unwritten_constitutionalism
+		}
+		available = {
+			has_country_flag = YCP_nationwide_revolution_flag
+		}
+		x = -3
+		y = 1
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_nationwide_government"
+			add_political_power = 56
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+			set_temp_variable = { add_days = 120 }
+			YCP_chinese_democracy_dummy_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_nationwide_government_tt
+		}
+	}
+	focus = {
+		id = YCP_institute_of_democracy
+		icon = GFX_z_goal_YCP_institute_of_democracy
+		cost = 8
+		prerequisite = {
+			focus = YCP_nationwide_government
+		}
+		x = 0
+		y = 1
+		relative_position_id = YCP_nationwide_government
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_institute_of_democracy"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.15
+			}
+			add_to_variable = { china_integration_of_province_cost_var = -0.15 tooltip = china_integration_of_province_cost_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_institute_of_democracy_tt
+		}
+	}
+	focus = {
+		id = YCP_written_constitutionalism
+		icon = GFX_z_goal_YCP_written_constitutionalism
+		cost = 8
+		# prerequisite = {
+			# focus = YCP_nationwide_revolution
+		# }
+		prerequisite = {
+			focus = YCP_unwritten_constitutionalism
+		}
+		# prerequisite = {
+			# focus = YCP_local_government_from_controlled_cities
+		# }
+		# prerequisite = {
+			# focus = YCP_compulsory_education
+		# }
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.8
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		x = 0
+		y = 2
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_written_constitutionalism"
+			activate_targeted_decision = { decision = YCP_controlled_opposition target = ROOT }
+			activate_targeted_decision = { decision = YCP_system_of_checks_and_balances target = ROOT }
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.2
+			}
+			set_temp_variable = { add_days = 210 }
+			YCP_chinese_democracy_dummy_update = yes
+		}
+	}
+	# focus = {
+		# id = YCP_controlled_opposition
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_follow_lead_of_ataturk
+		# }
+		# available = {
+			# power_balance_value = {
+				# id = YCP_power_balance
+				# value > -0.25
+			# }
+		# }
+		# x = -1
+		# y = 4
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_controlled_opposition"
+			# add_ideas = YCP_controlled_opposition_idea
+			# custom_effect_tooltip = available_political_advisor
+			# show_ideas_tooltip = YCP_zhang_junmai
+		# }
+	# }
+	focus = {
+		id = YCP_reward_controlled_opposition
+		icon = GFX_z_goal_YCP_reward_controlled_opposition
+		cost = 8
+		prerequisite = {
+			focus = YCP_follow_lead_of_ataturk
+		}
+		prerequisite = {
+			focus = YCP_written_constitutionalism
+		}
+		available = {
+			has_country_flag = YCP_controlled_opposition_flag
+		}
+		x = -2
+		y = 3
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_reward_controlled_opposition"
+			swap_ideas = {
+				remove_idea = YCP_controlled_opposition_idea
+				add_idea = YCP_controlled_opposition_idea_2
+			}
+			YCP_weak_state_apparatus_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+			YCP_provisional_parliament_party_joins_opposition = yes
+		}
+	}
+	focus = {
+		id = YCP_moderate_decentralization_of_provinces
+		icon = GFX_z_goal_YCP_moderate_decentralization_of_provinces
+		cost = 8
+		prerequisite = {
+			focus = YCP_unwritten_constitutionalism
+		}
+		available = {
+			has_country_flag = YCP_local_government_from_controlled_cities_flag
+		}
+		x = 1
+		y = 1
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_moderate_decentralization_of_provinces"
+			add_to_variable = { china_integration_of_province_time_var = -0.15 tooltip = china_integration_of_province_time_tooltip }
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.12
+				tooltip_side = YCP_parliament_side
+			}
+			YCP_weak_state_apparatus_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_party_joins_opposition = yes # TODO вот рофл будет, если это сделают федералисты
+		}
+	}
+	focus = {
+		id = YCP_abandoning_traditional_ties
+		icon = GFX_z_goal_YCP_abandoning_traditional_ties
+		cost = 8
+		prerequisite = {
+			focus = YCP_moderate_decentralization_of_provinces
+		}
+		prerequisite = {
+			focus = YCP_written_constitutionalism
+		}
+		x = 2
+		y = 3
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_abandoning_traditional_ties"
+			add_to_variable = { china_integration_of_province_cost_var = 0.15 tooltip = china_integration_of_province_cost_tooltip }
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.21
+			}
+			set_temp_variable = { add_days = 120 }
+			YCP_chinese_democracy_dummy_update = yes
+			YCP_weak_state_apparatus_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_every_capital_state_of_province_after_integrate
+			effect_tooltip = {
+				YCP_abandoning_traditional_ties_effect = yes # TODO error log
+			}
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+		}
+	}
+	# focus = {		TODO найти применения бонусам?
+		# id = YCP_democratic_tradition
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_written_constitutionalism
+		# }
+		# available = {
+			# power_balance_value = {
+				# id = YCP_power_balance
+				# value > 0.25
+			# }
+		# }
+		# x = 0
+		# y = 5
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_democratic_tradition"
+			# add_power_balance_value = {
+				# id = YCP_power_balance
+				# value = 0.1
+			# }
+			# if = {
+				# limit = { has_idea = YCP_chinese_democracy_dummy }
+				# modify_timed_idea = {
+					# idea = YCP_chinese_democracy_dummy
+					# days = 210 # 250
+				# }
+			# }
+			# else = {
+				# add_timed_idea = { idea = YCP_chinese_democracy_dummy days = 210 }
+			# }
+		# }
+	# }
+	focus = {
+		id = YCP_rule_of_law
+		icon = GFX_z_goal_YCP_rule_of_law
+		cost = 8
+		prerequisite = {
+			focus = YCP_written_constitutionalism
+		}
+		available = {
+			# OR = { # TODO ?
+				# power_balance_value = {
+					# id = YCP_power_balance
+					# value > 0.32
+				# }
+				# custom_trigger_tooltip = {
+					# tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					# check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				# }
+			# }
+			has_country_flag = YCP_system_of_checks_and_balances_flag
+		}
+		x = 0
+		y = 3
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_rule_of_law"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.1
+			}
+			set_temp_variable = { add_days = 100 }
+			YCP_chinese_democracy_dummy_update = yes
+			YCP_weak_state_apparatus_update = yes
+			add_ideas = YCP_rule_of_law_idea
+			custom_effect_tooltip = empty_line_tooltip
+			
+			YCP_provisional_parliament_increase_opposition = yes
+		}
+	}
+	# focus = {
+		# id = YCP_system_of_checks_and_balances
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_reward_controlled_opposition
+		# }
+		# prerequisite = {
+			# focus = YCP_rule_of_law
+		# }
+		# prerequisite = {
+			# focus = YCP_abandoning_traditional_ties
+		# }
+		# available = {
+			# power_balance_value = {
+				# id = YCP_power_balance
+				# value > 0.4
+			# }
+		# }
+		# x = 0
+		# y = 7
+		# relative_position_id = YCP_unwritten_constitutionalism
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_system_of_checks_and_balances"
+			# add_power_balance_value = {
+				# id = YCP_power_balance
+				# value = 0.2
+			# }
+			# add_popularity = {
+				# ideology = democratic
+				# popularity = 0.15
+			# }
+		# }
+	# }
+	focus = {
+		id = YCP_new_democratic_china
+		icon = GFX_z_goal_YCP_new_democratic_china
+		cost = 8
+		prerequisite = {
+			focus = YCP_rule_of_law
+		}
+		prerequisite = {
+			focus = YCP_reward_controlled_opposition
+			focus = YCP_abandoning_traditional_ties
+		}
+		available = {
+			# Недоступен для выполнения, будет автоматически выполнен, когда не будет больше ни одного китайского тега на карте кроме YCP, TIB, MON, KAS, KUM, TNG, DZH, SIK, MEN, CSR
+			# has_country_flag = china_declare_government_flag
+			owns_state = 608
+			set_temp_variable = { var_for_check = 0.6 }
+			controls_chinese_states = yes
+		}
+		x = 0
+		y = 4
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_new_democratic_china"
+			country_event = ycp.19
+			set_capital = { state = 608 }
+			set_province_name = { id = 9843 name = YSC_beijing }
+			hidden_effect = {
+				608 = { set_state_name = YSC_beijing }
+			}
+			
+			custom_effect_tooltip = YCP_new_democratic_china_tooltip # TODO несколько версий
+			if = {
+				limit = { 
+					power_balance_value = {
+						id = YCP_power_balance
+						value < -0.15
+					}
+				}
+				country_event = ycp.20
+			}
+			else_if = {
+				limit = { 
+					power_balance_value = {
+						id = YCP_power_balance
+						value > 0.5 # TODO balance
+					}
+				}
+				country_event = ycp.21
+			}
+			else = {
+				country_event = ycp.22
+			}
+		}
+	}
+	focus = {
+		id = YCP_presidential_elections
+		icon = GFX_z_goal_YCP_presidential_elections
+		cost = 4
+		prerequisite = {
+			focus = YCP_new_democratic_china
+		}
+		x = -1
+		y = 5
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_presidential_elections"
+			custom_effect_tooltip = YCP_presidential_elections_tt
+			if = {
+				limit = { 
+					if = {
+						limit = { has_country_flag = YCP_largest_democracy_in_world }
+						check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_ssp_party:YCP_num_deputies }
+						check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_kdu_party:YCP_num_deputies }
+					}
+					has_character = YCP_zeng_qi
+				}
+				country_event = ycp.23
+			}
+			else_if = {
+				limit = { 
+					if = {
+						limit = { has_country_flag = YCP_largest_democracy_in_world }
+						check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_ssp_party:YCP_num_deputies }
+						check_variable = { var:YCP_ycp_party:YCP_num_deputies > var:YCP_kdu_party:YCP_num_deputies }
+					}
+					NOT = { has_character = YCP_zeng_qi }
+				}
+				country_event = ycp.24
+			}
+			else_if = {
+				limit = { 
+					if = {
+						limit = { has_country_flag = YCP_largest_democracy_in_world }
+						check_variable = { var:YCP_ssp_party:YCP_num_deputies > var:YCP_ycp_party:YCP_num_deputies }
+					}
+					check_variable = { var:YCP_ssp_party:YCP_num_deputies > var:YCP_kdu_party:YCP_num_deputies }
+				}
+				country_event = ycp.25
+			}
+			else_if = { # TODO интересно, а они вообще могут победть?
+				limit = { 
+					if = {
+						limit = { has_country_flag = YCP_largest_democracy_in_world }
+						check_variable = { var:YCP_kdu_party:YCP_num_deputies > var:YCP_ycp_party:YCP_num_deputies }
+					}
+					check_variable = { var:YCP_kdu_party:YCP_num_deputies > var:YCP_ssp_party:YCP_num_deputies }
+				}
+				country_event = ycp.26
+			}
+			# TODO секретку для коммунистов
+		}
+	}
+	focus = {
+		id = YCP_convocation_of_national_assembly
+		icon = GFX_z_goal_YCP_convocation_of_national_assembly
+		cost = 4
+		prerequisite = {
+			focus = YCP_new_democratic_china
+		}
+		x = 1
+		y = 5
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_convocation_of_national_assembly"
+			custom_effect_tooltip = YCP_convocation_of_national_assembly_tt
+			# remove_ideas = YCP_chinese_democracy_dummy 		TODO hmmm...
+			# hidden_effect = {
+				# remove_ideas = YCP_chinese_democracy_dummy_no_effects
+				# remove_dynamic_modifier = { modifier = YCP_chinese_democracy }
+			# }
+		}
+	}
+	focus = {
+		id = YCP_awakening_of_the_lion
+		icon = GFX_z_goal_YCP_awakening_of_the_lion
+		cost = 8
+		prerequisite = {
+			focus = YCP_presidential_elections
+		}
+		prerequisite = {
+			focus = YCP_convocation_of_national_assembly
+		}
+		x = 0
+		y = 6
+		relative_position_id = YCP_unwritten_constitutionalism
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_awakening_of_the_lion"
+			remove_ideas = chine_clique
+			add_ideas = YCP_awakening_of_the_lion_idea
+		}
+	}
+	# focus = { # TODO !!
+		# id = альянс
+		# icon = GFX_goal_unknown
+		# cost = 10
+		# x = -2
+		# y = 10
+		# relative_position_id = YCP_unwritten_constitutionalism
+
+	# }
+	
+	focus = {
+		id = YCP_nationwide_welfare
+		icon = GFX_z_goal_YCP_nationwide_welfare
+		cost = 8
+		prerequisite = {
+			focus = YCP_government_of_third_party
+		}
+		x = -7
+		y = 1
+		relative_position_id = YCP_government_of_third_party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_nationwide_welfare"
+			add_stability = 0.03
+			activate_targeted_decision = { decision = YCP_protectionist_tariffs target = ROOT }
+			activate_targeted_decision = { decision = YCP_progressive_income_tax target = ROOT }
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = YCP_zhao_yousong
+			show_ideas_tooltip = YCP_ding_tingbiao
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_nationwide_welfare_tt
+		}
+	}
+	focus = {
+		id = YCP_class_cooperation
+		icon = GFX_z_goal_YCP_class_cooperation
+		cost = 8
+		prerequisite = {
+			focus = YCP_nationwide_welfare
+		}
+		x = -1
+		y = 1
+		relative_position_id = YCP_nationwide_welfare
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_class_cooperation"
+			add_timed_idea = { idea = YCP_class_cooperation_idea days = 400 }
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = YCP_chen_zuyi
+		}
+	}
+	focus = {
+		id = YCP_control_of_economy_by_society
+		icon = GFX_z_goal_YCP_control_of_economy_by_society
+		cost = 8
+		prerequisite = {
+			focus = YCP_class_cooperation
+		}
+		available = {
+			has_country_flag = YCP_protectionist_tariffs_flag
+		}
+		x = 2
+		y = 2
+		relative_position_id = YCP_nationwide_welfare
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_control_of_economy_by_society"
+			add_political_power = 100
+			add_stability = 0.03
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			add_popularity = { # TODO ?
+				ideology = communism
+				popularity = -0.05
+			}
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.1
+			}
+			# Станет доступен в качестве министра Чжан Инхуа (Министр финансов: Фабрики ТНП -5 %) TODO
+			# саня IДI НАХУЙ я не буду твоих крипочков делать
+		}
+	}
+	focus = {
+		id = YCP_stimulate_national_business
+		icon = GFX_z_goal_YCP_stimulate_national_business
+		cost = 8
+		prerequisite = {
+			focus = YCP_nationwide_welfare
+		}
+		x = 1
+		y = 1
+		relative_position_id = YCP_nationwide_welfare
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_stimulate_national_business"
+			add_stability = 0.03
+			add_timed_idea = { idea = YCP_stimulate_national_business_idea days = 365 }
+		}
+	}
+	focus = {
+		id = YCP_creating_middle_class
+		icon = GFX_z_goal_YCP_creating_middle_class
+		cost = 8
+		prerequisite = {
+			focus = YCP_class_cooperation
+		}
+		prerequisite = {
+			focus = YCP_stimulate_national_business
+		}
+		available = {
+			has_country_flag = YCP_progressive_income_tax_flag
+		}
+		x = 0
+		y = 2
+		relative_position_id = YCP_nationwide_welfare
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_creating_middle_class"
+			add_stability = 0.06
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.15
+			}
+			every_controlled_state = {
+				random_select_amount = 4
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_creating_middle_class_tt
+		}
+	}
+	# focus = {
+		# id = YCP_protectionist_tariffs
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_stimulate_national_business
+		# }
+		# x = 2
+		# y = 2
+		# relative_position_id = YCP_nationwide_welfare
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_protectionist_tariffs"
+			# custom_effect_tooltip = YCP_protectionist_tariffs_tt
+			# add_ideas = YCP_protectionist_tariffs_idea
+		# }
+	# }
+	# focus = {
+		# id = YCP_progressive_income_tax
+		# icon = GFX_z_goal_
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_control_of_economy_by_society
+		# }
+		# prerequisite = {
+			# focus = YCP_creating_middle_class
+		# }
+		# prerequisite = {
+			# focus = YCP_protectionist_tariffs
+		# }
+		# x = 0
+		# y = 3
+		# relative_position_id = YCP_nationwide_welfare
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_protectionist_tariffs"
+			# custom_effect_tooltip = YCP_progressive_income_tax_tt
+			# add_ideas = YCP_progressive_income_tax_idea
+			# # Независимые депутаты перестанут быть частью правящей коалиции TODO
+		# }
+	# }
+	
+	focus = {
+		id = YCP_social_evolution
+		icon = GFX_z_goal_YCP_social_evolution
+		cost = 8
+		prerequisite = {
+			focus = YCP_government_of_third_party
+		}
+		x = 7
+		y = 1
+		relative_position_id = YCP_government_of_third_party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_social_evolution"
+			add_political_power = 120
+			set_temp_variable = { add_days = 100 }
+			YCP_chinese_democracy_dummy_update = yes
+		}
+	}
+	focus = {
+		id = YCP_use_scientific_methods
+		icon = GFX_z_goal_YCP_use_scientific_methods
+		cost = 8
+		prerequisite = {
+			focus = YCP_social_evolution
+		}
+		x = -1
+		y = 1
+		relative_position_id = YCP_social_evolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_use_scientific_methods"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.12
+			}
+			add_to_variable = { china_integration_of_province_time_var = -0.1 tooltip = china_integration_of_province_time_tooltip }
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_use_scientific_methods_tt
+		}
+	}
+	focus = {
+		id = YCP_replace_disorganization_with_discipline
+		icon = GFX_z_goal_YCP_replace_disorganization_with_discipline
+		cost = 8
+		prerequisite = {
+			focus = YCP_social_evolution
+		}
+		x = 1
+		y = 1
+		relative_position_id = YCP_social_evolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_replace_disorganization_with_discipline"
+			add_to_variable = { china_integration_of_province_time_var = -0.15 tooltip = china_integration_of_province_time_tooltip }
+			YCP_weak_state_apparatus_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_replace_disorganization_with_discipline_tt
+		}
+	}
+	focus = {
+		id = YCP_synthesis_of_liberalism_and_confucianism
+		icon = GFX_z_goal_YCP_synthesis_of_liberalism_and_confucianism
+		cost = 8
+		prerequisite = {
+			focus = YCP_use_scientific_methods
+		}
+		prerequisite = {
+			focus = YCP_replace_disorganization_with_discipline
+		}
+		x = 0
+		y = 2
+		relative_position_id = YCP_social_evolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_synthesis_of_liberalism_and_confucianism"
+			add_political_power = 45
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			set_temp_variable = { add_days = 75 }
+			YCP_chinese_democracy_dummy_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_synthesis_of_liberalism_and_confucianism_tt
+		}
+	}
+	focus = {
+		id = YCP_support_republic_of_five_nations
+		icon = GFX_z_goal_YCP_support_republic_of_five_nations
+		cost = 8
+		prerequisite = {
+			focus = YCP_replace_disorganization_with_discipline
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.74
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		x = -2
+		y = 2
+		relative_position_id = YCP_social_evolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_support_republic_of_five_nations"
+			add_political_power = 56 # 50
+			add_stability = 0.05
+			add_war_support = 0.07
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_support_republic_of_five_nations_tt
+		}
+	}
+	focus = {
+		id = YCP_moral_society
+		icon = GFX_z_goal_YCP_moral_society
+		cost = 8
+		prerequisite = {
+			focus = YCP_synthesis_of_liberalism_and_confucianism
+		}
+		x = 0
+		y = 3
+		relative_position_id = YCP_social_evolution
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_moral_society"
+			add_stability = 0.05
+			set_temp_variable = { add_days = 210 }
+			YCP_chinese_democracy_dummy_update = yes
+			country_event = ycp.27
+		}
+	}
+	
+	focus = {
+		id = YCP_destroy_internal_traitors
+		icon = GFX_z_goal_YCP_destroy_internal_traitors
+		cost = 8
+		prerequisite = {
+			focus = YCP_government_of_third_party
+		}
+		available = {
+			set_temp_variable = { size = 25000 }
+			custom_trigger_tooltip = {
+				tooltip = YCP_ycp_size_greater_than
+				check_variable = { YCP_ycp_size > size }
+			}
+		}
+		x = 12
+		y = 1
+		relative_position_id = YCP_government_of_third_party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_destroy_internal_traitors"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.08
+			}
+			add_timed_idea = { idea = YCP_destroy_internal_traitors_idea days = 300 }
+		}
+	}
+	focus = {
+		id = YCP_support_for_ycp_branches_in_china
+		icon = GFX_z_goal_YCP_support_for_ycp_branches_in_china
+		cost = 8
+		prerequisite = {
+			focus = YCP_destroy_internal_traitors
+		}
+		x = 0
+		y = 1
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_support_for_ycp_branches_in_china"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.15
+			}
+			add_to_variable = { YCP_ycp_size = 10000 tooltip = YCP_ycp_size_tooltip }
+			set_temp_variable = { size = YCP_ycp_size } # for loc
+			add_to_temp_variable = { size = 10000 } # TODO баг, лока нормально не отображается
+			YCP_chinese_democracy_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			add_timed_idea = { idea = YCP_support_for_ycp_branches_in_china_idea days = 300 }
+		}
+	}
+	focus = {
+		id = YCP_old_connections
+		icon = GFX_z_goal_YCP_old_connections
+		cost = 8
+		prerequisite = {
+			focus = YCP_destroy_internal_traitors
+		}
+		available = {
+			set_temp_variable = { size = 30000 }
+			custom_trigger_tooltip = {
+				tooltip = YCP_ycp_size_greater_than
+				check_variable = { YCP_ycp_size > size }
+			}
+		}
+		x = 2
+		y = 1
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_old_connections"
+			unlock_decision_category_tooltip = YCP_old_connections_category
+		}
+	}
+	# focus = {
+		# id = Снять_плоды_взращённых_деревьев
+		# icon = GFX_goal_unknown
+		# cost = 8
+		# prerequisite = {
+			# focus = YCP_support_for_ycp_branches_in_china
+		# }
+		# prerequisite = {
+			# focus = YCP_old_connections
+		# }
+		# x = 1
+		# y = 2
+		# relative_position_id = YCP_destroy_internal_traitors
+		# completion_reward = {
+			# log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus Снять_плоды_взращённых_деревьев"
+			# # //ЭТОТ ФОКУС ПОКА НЕ ДЕЛАТЬ TODO
+		# }
+	# }
+	focus = {
+		id = YCP_youth_branches_of_ycp
+		icon = GFX_z_goal_YCP_youth_branches_of_ycp
+		cost = 8
+		prerequisite = {
+			focus = YCP_support_for_ycp_branches_in_china
+		}
+		x = -1
+		y = 2
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_youth_branches_of_ycp"
+			add_political_power = 150 # заглушка
+			# Станут доступны в качестве министров Ся Эркан (Преподаватель и член парламента: Ежедневный баланс сил -0.001, Темпы исследования +1 %), У Цзунхань (Глава партии в Шанхае: Скорость пополнения +5 %, Улучшает мнение +5 %), Ленг Пэн (Бюрократ министерства сельского хозяйства: Ежемесячный прирост населения +20 %) TODO
+		}
+	}
+	focus = {
+		id = YCP_update_bureaucratic_apparatus
+		icon = GFX_z_goal_YCP_update_bureaucratic_apparatus
+		cost = 8
+		prerequisite = {
+			focus = YCP_support_for_ycp_branches_in_china
+		}
+		x = 0
+		y = 3
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_update_bureaucratic_apparatus"
+			add_to_variable = { china_integration_of_province_cost_var = 0.15 tooltip = china_integration_of_province_cost_tooltip }
+			YCP_weak_state_apparatus_update = yes
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_every_capital_state_of_province_after_integrate
+			effect_tooltip = {
+				YCP_update_bureaucratic_apparatus_effect = yes # TODO error log
+			}
+		}
+	}
+	focus = {
+		id = YCP_take_benefits_of_baojia_system
+		icon = GFX_z_goal_YCP_take_benefits_of_baojia_system
+		cost = 8
+		prerequisite = {
+			focus = YCP_update_bureaucratic_apparatus
+		}
+		available = {
+			set_temp_variable = { size = 45000 }
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = YCP_ycp_size_greater_than
+					check_variable = { YCP_ycp_size > size }
+				}
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.88
+				}
+			}
+		}
+		x = 0
+		y = 4
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_take_benefits_of_baojia_system"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.12
+			}
+			add_ideas = YCP_baojia_system
+			YCP_weak_state_apparatus_update = yes # TODO ??
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_take_benefits_of_baojia_system_tt
+		}
+	}
+	focus = {
+		id = YCP_fight_against_party_dictatorships
+		icon = GFX_z_goal_YCP_fight_against_party_dictatorships
+		cost = 8
+		prerequisite = {
+			focus = YCP_destroy_internal_traitors
+		}
+		x = -2
+		y = 1
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_fight_against_party_dictatorships"
+			add_timed_idea = { idea = YCP_fight_against_party_dictatorships_idea days = 500 }
+		}
+	}
+	focus = {
+		id = YCP_democratic_breakaway_of_kuomintang
+		icon = GFX_z_goal_YCP_democratic_breakaway_of_kuomintang
+		cost = 8
+		prerequisite = {
+			focus = YCP_fight_against_party_dictatorships
+		}
+		available = {
+			OR = { # TODO?
+				NOT = { country_exists = CHI }
+				AND = {
+					country_exists = CHI
+					CHI = { surrender_progress > 0.35 }
+				}
+			}
+		}
+		x = -2
+		y = 3
+		relative_position_id = YCP_destroy_internal_traitors
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_democratic_breakaway_of_kuomintang"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = 0.17
+			}
+			country_event = ycp.37
+			custom_effect_tooltip = empty_line_tooltip
+			
+			custom_effect_tooltip = YCP_democratic_breakaway_of_kuomintang_tt
+		}
+	}
+	
+	focus = {
+		id = YCP_true_national_army
+		icon = GFX_z_goal_YCP_true_national_army
+		cost = 8
+		prerequisite = {
+			focus = YCP_government_of_third_party
+		}
+		x = -13
+		y = 1
+		relative_position_id = YCP_government_of_third_party
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_true_national_army"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.12
+			}
+			add_ideas = YCP_true_national_army_idea
+		}
+	}
+	focus = {
+		id = YCP_wen_zhaoyuan_plan # name?
+		icon = GFX_z_goal_YCP_wen_zhaoyuan_plan
+		cost = 8
+		prerequisite = {
+			focus = YCP_true_national_army
+		}
+		x = -3
+		y = 1
+		bypass = {
+			always = yes
+		}
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_wen_zhaoyuan_plan"
+			# Вэнь Чжаоюань станет доступен в качестве Главнокомандующего ВВС (Наземная поддержка – мастер) TODO
+		}
+	}
+	focus = {
+		id = YCP_flight_school
+		icon = GFX_z_goal_YCP_flight_school
+		cost = 8
+		prerequisite = {
+			focus = YCP_wen_zhaoyuan_plan
+		}
+		x = -4
+		y = 2
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_flight_school"
+			air_experience = 25
+			add_doctrine_cost_reduction = {
+				uses = 1
+				cost_reduction = 0.99
+				category = air_doctrine
+				name = YCP_flight_school
+			}
+			add_doctrine_cost_reduction = {
+				uses = 1
+				cost_reduction = 0.5
+				category = air_doctrine
+				name = YCP_flight_school
+			}
+		}
+	}
+	focus = {
+		id = YCP_organization_of_air_defense_system
+		icon = GFX_z_goal_YCP_organization_of_air_defense_system
+		cost = 8
+		prerequisite = {
+			focus = YCP_wen_zhaoyuan_plan
+		}
+		x = -2
+		y = 2
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_organization_of_air_defense_system"
+			add_timed_idea = { idea = YCP_organization_of_air_defense_system_idea days = 400 }
+			capital_scope = {
+				add_building_construction = {
+					type = anti_air_building
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_first_aviation_plant
+		icon = GFX_z_goal_YCP_first_aviation_plant
+		cost = 8
+		prerequisite = {
+			focus = YCP_flight_school
+			focus = YCP_organization_of_air_defense_system
+		}
+		x = -3
+		y = 3
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_first_aviation_plant"
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				name = YCP_first_aviation_plant
+				bonus = 1
+				uses = 2
+				category = air_equipment
+			}
+		}
+	}
+	focus = {
+		id = YCP_party_military_school
+		icon = GFX_z_goal_YCP_party_military_school
+		cost = 8
+		prerequisite = {
+			focus = YCP_true_national_army
+		}
+		mutually_exclusive = {
+			focus = YCP_nonparty_nature_of_army
+		}
+		x = -1
+		y = 1
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_party_military_school"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.2
+			}
+			if = {
+				limit = { has_idea = YCP_true_national_army_idea_1 } 
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea_1
+					add_idea = YCP_true_national_army_idea_2
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea
+					add_idea = YCP_true_national_army_idea_2
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_nonparty_nature_of_army
+		icon = GFX_z_goal_YCP_nonparty_nature_of_army
+		cost = 8
+		prerequisite = {
+			focus = YCP_true_national_army
+		}
+		mutually_exclusive = {
+			focus = YCP_party_military_school
+		}
+		available = {
+			NOT = { has_country_flag = YCP_integrate_army_of_iron_blood_into_ycp_flag }
+		}
+		x = 1
+		y = 1
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_nonparty_nature_of_army"
+			if = {
+				limit = { has_idea = YCP_true_national_army_idea_1 } 
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea_1
+					add_idea = YCP_true_national_army_idea_2_alt
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea
+					add_idea = YCP_true_national_army_idea_2_alt
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_purge_of_left_wing_officers
+		icon = GFX_z_goal_YCP_purge_of_left_wing_officers
+		cost = 8
+		prerequisite = {
+			focus = YCP_party_military_school
+			focus = YCP_nonparty_nature_of_army
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.8
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		x = 0
+		y = 2
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_purge_of_left_wing_officers"
+			add_stability = 0.05
+			add_war_support = -0.08
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.2
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = -0.05
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.05
+			}
+			
+			YCP_bai_junshi = {
+				remove_unit_leader_role = yes
+			}
+			YCP_gao_peng = { # TODO?
+				remove_unit_leader_role = yes
+			}
+			YCP_song_mingao = {
+				remove_unit_leader_role = yes
+			}
+			YCP_tang_wanning = {
+				remove_unit_leader_role = yes
+			}
+			effect_tooltip = {
+				remove_ideas = YCP_ji_tingseh
+			}
+		}
+	}
+	focus = {
+		id = YCP_own_intelligence_agency
+		icon = GFX_z_goal_YCP_own_intelligence_agency
+		cost = 8
+		prerequisite = {
+			focus = YCP_purge_of_left_wing_officers
+		}
+		x = -1
+		y = 3
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_own_intelligence_agency"
+			add_power_balance_value = {
+				id = YCP_power_balance
+				value = -0.12
+			}
+			if = {
+				limit = {
+					has_dlc = "La Resistance"
+					has_intelligence_agency = no
+				}
+				create_intelligence_agency = yes
+			}
+			else = {
+				add_political_power = 50
+				add_war_support = 0.12
+			}
+		}
+	}
+	focus = {
+		id = YCP_young_officers
+		icon = GFX_z_goal_YCP_young_officers
+		cost = 8
+		prerequisite = {
+			focus = YCP_purge_of_left_wing_officers
+		}
+		x = 0
+		y = 4
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_young_officers"
+			# TODO Идея на макс команд рес
+			add_corps_commander_role = {
+				character = YCP_fu_jiliang
+				traits = { }
+				skill = 1
+				attack_skill = 2
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			}
+			add_corps_commander_role = {
+				character = YCP_zhao_lianzhong
+				traits = { media_personality commando }
+				skill = 1
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 1
+				logistics_skill = 1
+			}
+			add_corps_commander_role = {
+				character = YCP_zhao_lili
+				traits = { media_personality trickster }
+				skill = 1
+				attack_skill = 1
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 1
+			}
+		}
+	}
+	focus = {
+		id = YCP_improve_financial_situation_of_military
+		icon = GFX_z_goal_YCP_improve_financial_situation_of_military
+		cost = 8
+		prerequisite = {
+			focus = YCP_true_national_army
+		}
+		available = {
+			OR = {
+				power_balance_value = {
+					id = YCP_power_balance
+					value < -0.65
+				}
+				custom_trigger_tooltip = {
+					tooltip = YCP_ruling_coalition_deputies_greater_than_opposition
+					check_variable = { YCP_ruling_coalition_deputies > YCP_opposition_deputies }
+				}
+			}
+		}
+		x = 3
+		y = 1
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_improve_financial_situation_of_military"
+			if = {
+				limit = { has_idea = YCP_true_national_army_idea } 
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea
+					add_idea = YCP_true_national_army_idea_1
+				}
+			}
+			else_if = {
+				limit = { has_idea = YCP_true_national_army_idea_2_alt }
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea_2_alt
+					add_idea = YCP_true_national_army_idea_3_alt
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = YCP_true_national_army_idea_2
+					add_idea = YCP_true_national_army_idea_3
+				}
+			}
+		}
+	}
+	focus = {
+		id = YCP_modernization_of_combat_structure
+		icon = GFX_z_goal_YCP_modernization_of_combat_structure
+		cost = 8
+		prerequisite = {
+			focus = YCP_improve_financial_situation_of_military
+		}
+		x = 2
+		y = 2
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_modernization_of_combat_structure"
+			add_tech_bonus = {
+				name = YCP_modernization_of_combat_structure
+				bonus = 0.75
+				uses = 2
+				category = support_tech # maintenance_company_tech
+			}
+		}
+	}
+	focus = {
+		id = YCP_guerrilla_style_doctrine
+		icon = GFX_z_goal_YCP_guerrilla_style_doctrine
+		cost = 8
+		prerequisite = {
+			focus = YCP_modernization_of_combat_structure
+		}
+		mutually_exclusive = {
+			focus = YCP_modern_warfare_doctrine
+		}
+		x = 1
+		y = 3
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_guerrilla_style_doctrine"
+			add_doctrine_cost_reduction = {
+				name = YCP_guerrilla_style_doctrine
+				cost_reduction = 0.99
+				uses = 1
+				category = cat_asymmetric_warfare
+			}
+			add_doctrine_cost_reduction = {
+				name = YCP_guerrilla_style_doctrine
+				cost_reduction = 0.5
+				uses = 1
+				category = cat_asymmetric_warfare
+			}
+		}
+	}
+	focus = {
+		id = YCP_modern_warfare_doctrine
+		icon = GFX_z_goal_YCP_modern_warfare_doctrine
+		cost = 8
+		prerequisite = {
+			focus = YCP_modernization_of_combat_structure
+		}
+		mutually_exclusive = {
+			focus = YCP_guerrilla_style_doctrine
+		}
+		available = {
+			NOT = { has_country_flag = YCP_integrate_army_of_iron_blood_into_ycp_flag }
+		}
+		x = 3
+		y = 3
+		relative_position_id = YCP_true_national_army
+		completion_reward = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): Focus YCP_modern_warfare_doctrine"
+			add_doctrine_cost_reduction = {
+				name = YCP_modern_warfare_doctrine
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+}

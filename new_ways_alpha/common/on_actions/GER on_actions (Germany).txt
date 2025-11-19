@@ -1,0 +1,756 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### Германия стартпак
+				GER = {
+					country_event = { id = NWgermany.1 days = 30 }
+					country_event = { id = NWgermany.750 days = 1354 }
+					country_event = { id = NWgermany.760 days = 1607 }
+				}
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			# GER_cornered_dyn
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = GER
+						OR = {
+							has_dynamic_modifier = { modifier = GER_cornered_dyn }
+							has_dynamic_modifier = { modifier = GER_battle_glory_dyn }
+						}
+					}
+					FROM.FROM = {
+						is_core_of = ROOT
+					}
+				}
+				ROOT = {
+					if = {
+						limit = { has_dynamic_modifier = { modifier = GER_cornered_dyn } }
+						set_variable = { var_cornered = num_core_states }
+						subtract_from_variable = { var_cornered = num_controlled_states }
+						divide_variable = { var_cornered = 1.85 }
+						round_variable = var_cornered
+						clamp_variable = { var = var_cornered	min = 0	max = 20 }
+						set_variable = { var_cornered_2 = var_cornered }
+						divide_variable = { var_cornered_2 = 2 }
+						set_variable = { var_cornered_100 = var_cornered_2 }
+						divide_variable = { var_cornered_100 = 50 }
+						force_update_dynamic_modifier = yes
+					}
+					else_if = {
+						limit = { has_dynamic_modifier = { modifier = GER_battle_glory_dyn } }
+						set_variable = { var_battle_glory = num_controlled_states }
+						divide_variable = { var_battle_glory = 1.85 }
+						round_variable = var_battle_glory
+						clamp_variable = { var = var_battle_glory	min = 0	max = 50 }
+						divide_variable = { var_battle_glory = 100 }
+						force_update_dynamic_modifier = yes
+					}
+				}
+			}
+		}
+	}
+	
+	#used when puppeting in a peace conference
+	#ROOT = nation being puppeted, FROM = overlord
+	on_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = GER
+					NOT = { has_government = communism }
+					FROM = {
+						has_government = communism
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_oppose_hitler }
+				    	uncomplete_national_focus = {
+							focus = GER_oppose_hitler
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_commie_ideas = yes
+					unlock_national_focus = GER_where_thalmann
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					NOT = { has_government = fascism }
+					FROM = {
+						has_government = fascism
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_oppose_hitler }
+				    	uncomplete_national_focus = {
+							focus = GER_oppose_hitler
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_fascist_ideas = yes
+					unlock_national_focus = GER_rhineland
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					NOT = { has_government = neutrality }
+					FROM = {
+						has_government = neutrality
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_return_of_the_kaiser }
+				    	uncomplete_national_focus = {
+							focus = GER_return_of_the_kaiser
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_imperial_constitution }
+				    	uncomplete_national_focus = {
+							focus = GER_imperial_constitution
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_neutral_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_start_implementing_wehrstaat
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					NOT = { has_government = democratic }
+					FROM = {
+						has_government = democratic
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_return_of_the_kaiser }
+				    	uncomplete_national_focus = {
+							focus = GER_return_of_the_kaiser
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_start_implementing_wehrstaat }
+				    	uncomplete_national_focus = {
+							focus = GER_start_implementing_wehrstaat
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_wehrmacht_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_imperial_constitution
+				}
+			}		
+			if = {
+				limit = {
+					original_tag = GER
+					NOT = { has_government = monarchy }
+					FROM = {
+						has_government = monarchy
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_imperial_constitution }
+				    	uncomplete_national_focus = {
+							focus = GER_imperial_constitution
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_start_implementing_wehrstaat }
+				    	uncomplete_national_focus = {
+							focus = GER_start_implementing_wehrstaat
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_wehrmacht_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_return_of_the_kaiser
+				}
+			}
+		}
+	}
+	
+	#used when puppeting through the occupied territories menu during peace time (or when releasing from non-core but owned territory, f.e. Britain releasing Egypt)
+	#ROOT = nation being released, FROM = overlord
+	on_release_as_puppet = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = {
+						has_government = communism
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_oppose_hitler }
+				    	uncomplete_national_focus = {
+							focus = GER_oppose_hitler
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_commie_ideas = yes
+					unlock_national_focus = GER_where_thalmann
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = {
+						has_government = fascism
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_oppose_hitler }
+				    	uncomplete_national_focus = {
+							focus = GER_oppose_hitler
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_fascist_ideas = yes
+					unlock_national_focus = GER_rhineland
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = {
+						has_government = neutrality
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_return_of_the_kaiser }
+				    	uncomplete_national_focus = {
+							focus = GER_return_of_the_kaiser
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_imperial_constitution }
+				    	uncomplete_national_focus = {
+							focus = GER_imperial_constitution
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_neutral_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_start_implementing_wehrstaat
+				}
+			}	
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = {
+						has_government = democratic
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_return_of_the_kaiser }
+				    	uncomplete_national_focus = {
+							focus = GER_return_of_the_kaiser
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_start_implementing_wehrstaat }
+				    	uncomplete_national_focus = {
+							focus = GER_start_implementing_wehrstaat
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_wehrmacht_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_imperial_constitution
+				}
+			}		
+			if = {
+				limit = {
+					original_tag = GER
+					FROM = {
+						has_government = monarchy
+					}	
+				}
+				GER = { 
+					if = {
+					    limit = { has_completed_focus = GER_where_thalmann }
+				    	uncomplete_national_focus = {
+							focus = GER_where_thalmann
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_rhineland }
+				    	uncomplete_national_focus = {
+							focus = GER_rhineland
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_imperial_constitution }
+				    	uncomplete_national_focus = {
+							focus = GER_imperial_constitution
+							uncomplete_children = yes
+						}
+					}		
+					if = {
+					    limit = { has_completed_focus = GER_start_implementing_wehrstaat }
+				    	uncomplete_national_focus = {
+							focus = GER_start_implementing_wehrstaat
+							uncomplete_children = yes
+						}
+					}	
+					if = {
+					    limit = { has_completed_focus = GER_alternative_government_of_nsdap }
+				    	uncomplete_national_focus = {
+							focus = GER_alternative_government_of_nsdap
+							uncomplete_children = yes
+						}
+					}
+					remove_german_non_wehrmacht_ideas = yes
+					if = {
+					    limit = { NOT = { has_completed_focus = GER_oppose_hitler }}
+					    unlock_national_focus = GER_oppose_hitler
+					}	
+					unlock_national_focus = GER_return_of_the_kaiser
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			# barbarossa
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							original_tag = GER
+							is_in_faction_with = GER
+						}
+						any_allied_country = { is_neighbor_of = FROM }
+					}
+					FROM = { original_tag = SOV }
+				}
+
+				hidden_effect = {
+					set_country_flag = { flag = NW_barbarossa_blitz value = 1 days = 30 }
+					FROM = { set_country_flag = { flag = NW_barbarossa_defensive value = 1 days = 270 } }
+				}
+			}
+			# GER wardec on SOV
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = GER 
+					}
+					FROM = {
+						original_tag = SOV
+					}
+				}
+
+				if = { # fin continuation war
+					limit = {
+						FROM = {
+							OR = {
+								owns_state = 146
+								owns_state = 147
+							}
+						}
+					}
+					FIN = {
+						set_country_flag = { flag = NW_fin_continuation_war_flag_timeout value = 1 days = 6 }
+						set_country_flag = NW_fin_continuation_war_flag
+					}
+					if = {
+						limit = {
+							is_faction_leader = yes
+							OR = {
+								has_government = fascism
+								has_government = monarchy
+								has_government = neutrality
+							}
+							FIN = {
+								OR = {
+									has_government = fascism
+									has_government = monarchy
+									has_government = neutrality
+									has_government = democratic
+								}
+							}
+						}
+						FIN = { country_event = { id = generic.5 days = 3 } }
+					}
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#ГВ GER-передача флота
+			if = {
+				limit = {
+					FROM = { original_tag = GER }
+					ROOT = { original_tag = GER }
+				}
+				ROOT = { transfer_navy = { target = FROM } }
+			}
+			
+			#Второй шанс для Германии // Я совсем был мудак, чтоль?
+			#if = {
+			#	limit = {
+			#		tag = GER
+			#		has_civil_war = no
+			#	}
+			#	set_country_flag = ger_second_chance_nazi
+			#	if = {
+			#		limit = { has_government = fascism }
+			#		complete_national_focus = GER_oppose_hitler
+			#	}
+			#	if = {
+			#		limit = { NOT = { has_government = fascism } }
+			#		complete_national_focus = GER_rhineland
+			#	}
+			#}
+		}
+		effect = {
+			# Раздел Югославии
+			if = {
+				limit = {
+					ROOT = { tag = YUG }
+					FROM = {
+						num_faction_members > 1
+						OR = {
+							original_tag = GER
+							is_in_faction_with = GER
+						}
+					}
+					NOT = { has_global_flag = axis_divid_yug_flag }
+				}
+				GER = { country_event = { id = NWYugoslavia.1 days = 1 } }
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		#Жор Пшека
+		effect = {
+			if = {
+				limit = {
+					has_global_flag = sov_yes_pact
+					ROOT = { OR = { tag = SOV tag = GER } }
+					FROM = { tag = POL }
+					SOV = { is_ai = yes }
+					GER = { is_ai = yes }
+				}
+				every_state = {
+					limit = {
+						owner = {
+							OR = {
+								tag = POL
+								tag = GER
+								is_subject_of = GER
+								is_in_faction_with = GER
+							}
+						}
+						OR = {
+							state = 96
+							state = 95
+							state = 94
+							state = 93
+							state = 91
+							state = 97
+							state = 89
+							state = 771
+							state = 774
+							state = 837
+							state = 908
+							state = 939
+							state = 997
+							state = 1023
+							state = 1029
+						}
+					}
+					SOV = { transfer_state = PREV }
+				}
+				every_state = {
+					limit = {
+						owner = {
+							OR = {
+								tag = POL
+								tag = SOV
+								is_subject_of = SOV
+								is_in_faction_with = SOV
+							}
+						}
+						OR = {
+							state = 98
+							state = 10
+							state = 899
+							state = 92
+							state = 88
+							state = 988
+							state = 90
+							state = 937
+							state = 768
+							state = 72
+							state = 86
+							state = 85
+							state = 798
+						}
+					}
+					GER = { transfer_state = PREV }
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM gets annexed - This will also fire on_annex
+	on_civil_war_end = {
+		### ROM
+		effect = {
+			if = {
+				limit = {
+					original_tag = ROM
+					has_government = fascism
+					has_country_leader = { character = ROM_horia_sima ruling_only = yes }
+					has_global_flag = ROM_civil_war	# TODO ??
+				}
+				country_event = { id = NWgermany.10 days = 1 }
+			}
+		}
+	}
+	
+	## Локоть
+#	on_state_control_changed = {
+#		effect = {
+#			if = {
+#				limit = {
+#					NOT = { country_exists = LKT }
+#					ROOT = { tag = GER has_government = fascism }
+#					FROM = { tag = SOV has_government = communism }
+#					FROM.FROM = { state = 1096 } 
+#				}
+#				ROOT = {
+#					country_event = { id = NWgermany.1999 days = 10 }
+#				}
+#			}
+#		}
+#	}
+#	on_capitulation_immediate = {
+#		effect = { 
+#			if = {
+#				limit = {
+#					country_exists = LKT
+#					NOT = { 1096 = { is_core_of = LKT } }
+#					ROOT = { tag = SOV }
+#				}
+#				1096 = { add_core_of = LKT }
+#				LKT = { remove_ideas = LKT_colonial_things }
+#			}
+#		}
+#	}
+}

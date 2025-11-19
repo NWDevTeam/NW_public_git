@@ -1,0 +1,199 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				### Палестина стартпак
+				BPL = {
+					country_event = { id = NWpalestine.8 days = 792 }
+					country_event = { id = NWpalestine.65 days = 229 }
+				}
+			}
+		}
+	}
+	
+	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
+	on_state_control_changed = {
+		effect = {
+			#Подчинение для BPL
+			if = {
+				limit = {
+					FROM.FROM = {
+						OR = {
+							state = 455
+							state = 1053
+							state = 1054
+						}
+						NOT = { is_core_of = ROOT }
+					}
+					ROOT = { tag = BPL }
+				}
+				FROM.FROM = { set_compliance = 80 }
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			if = {
+				limit = {
+					has_idea = BPL_anti_semitic_riots
+					FROM = { tag = BPL }
+				}
+				swap_ideas = {
+					remove_idea = BPL_anti_semitic_riots
+					add_idea = BPL_anti_semitic_riots_2
+				}
+				hidden_effect = {
+					if = {
+						limit = { FROM = { NOT = { has_country_flag = NWpalestine_81_flag } } }
+						FROM = {
+							set_country_flag = NWpalestine_81_flag
+							country_event = { id = NWpalestine.81 }
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#ЖОР BPL = PAL/ISR
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							original_tag = PAL
+							original_tag = ISR
+						}
+					}
+					OR = {
+						BPL = { is_subject_of = FROM }
+						FROM = {
+							OR = {
+								original_tag = BPL
+								is_in_faction_with = BPL
+								is_subject_of = BPL
+							}
+						}
+					}
+				}
+				ROOT = {
+					every_core_state = {
+						add_core_of = BPL
+						remove_core_of = PREV
+					}
+				}
+				BPL = {
+					annex_country = {
+						target = ROOT
+						transfer_troops = yes
+					}
+				}
+			}
+		}
+	}
+	
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		effect = {
+			#ЖОР BPL = PAL/ISR
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = PAL
+							original_tag = ISR
+						}
+					}
+					OR = {
+						BPL = { is_subject_of = ROOT }
+						ROOT = {
+							OR = {
+								original_tag = BPL
+								is_in_faction_with = BPL
+								is_subject_of = BPL
+							}
+						}
+					}
+				}
+				BPL = {
+					annex_country = {
+						target = FROM
+						transfer_troops = yes
+					}
+				}
+				every_state = {
+					limit = { is_core_of = FROM }
+					add_core_of = BPL
+					remove_core_of = FROM
+				}
+			}
+		}
+	}
+	
+	on_daily_BPL = {
+		effect = {
+			#СБРОС ПРИРОСТА НАПРЯГИ
+			if = {
+				limit = { has_variable = BPL_arab_tensions_total }
+				set_variable = { BPL_arab_tensions_chance = modifier@arab_tensions_bonus }
+			}
+			if = {
+				limit = { has_variable = BPL_jews_tensions_total }
+				set_variable = { BPL_jews_tensions_chance = modifier@jews_tensions_bonus }
+			}
+			
+			#Стремление к компромиссу // BPL
+			if = {
+				limit = {
+					OR = {
+						has_variable = BPL_arab_tensions_total
+						has_variable = BPL_jews_tensions_total
+					}
+					has_idea = BPL_striving_for_compromise
+				}
+				if = {
+					limit = {
+						has_variable = BPL_arab_tensions_total
+						check_variable = { BPL_arab_tensions_chance > 0 }
+					}
+					divide_variable = { BPL_arab_tensions_chance = 2 }
+				}
+				if = {
+					limit = {
+						has_variable = BPL_jews_tensions_total
+						check_variable = { BPL_jews_tensions_chance > 0 }
+					}
+					divide_variable = { BPL_jews_tensions_chance = 2 }
+				}
+			}
+			if = {
+				limit = { has_variable = BPL_arab_tensions_total }
+				add_to_variable = { BPL_arab_tensions_total = BPL_arab_tensions_chance }
+				clamp_variable = { var = BPL_arab_tensions_total min = 0 max = 100 }
+			}
+			if = {
+				limit = { has_variable = BPL_jews_tensions_total }
+				add_to_variable = { BPL_jews_tensions_total = BPL_jews_tensions_chance }
+				clamp_variable = { var = BPL_jews_tensions_total min = 0 max = 100 }
+			}
+			
+			#BPL_legalize_arms_supplies_from_europe_idea // BPL
+			if = {
+				limit = {
+					has_idea = BPL_legalize_arms_supplies_from_europe_idea
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 2
+				}
+			}
+		}
+	}
+}

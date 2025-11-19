@@ -1,0 +1,2650 @@
+mobilization_laws_up = {
+	if = {
+		limit = { has_idea = disarmed_nation }
+		swap_ideas = {	
+			remove_idea = disarmed_nation
+			add_idea = volunteer_only
+		}
+	}
+	else_if = {
+		limit = { has_idea = volunteer_only }
+		swap_ideas = {	
+			remove_idea = volunteer_only
+			add_idea = limited_conscription
+		}
+	}
+	else_if = {
+		limit = { has_idea = limited_conscription }
+		swap_ideas = {	
+			remove_idea = limited_conscription
+			add_idea = extensive_conscription
+		}
+	}
+	else_if = {
+		limit = { has_idea = extensive_conscription }
+		swap_ideas = {	
+			remove_idea = extensive_conscription
+			add_idea = service_by_requirement
+		}
+	}
+	else_if = {
+		limit = { has_idea = service_by_requirement }
+		swap_ideas = {	
+			remove_idea = service_by_requirement
+			add_idea = all_adults_serve
+		}
+	}
+	else_if = {
+		limit = { has_idea = all_adults_serve }
+		swap_ideas = {	
+			remove_idea = all_adults_serve
+			add_idea = scraping_the_barrel
+		}
+	}
+}
+
+mobilization_laws_down = {
+	if = {
+		limit = { has_idea = scraping_the_barrel }
+		swap_ideas = {	
+			remove_idea = scraping_the_barrel
+			add_idea = all_adults_serve
+		}
+	}
+	else_if = {
+		limit = { has_idea = all_adults_serve }
+		swap_ideas = {	
+			remove_idea = all_adults_serve
+			add_idea = service_by_requirement
+		}
+	}
+	else_if = {
+		limit = { has_idea = service_by_requirement }
+		swap_ideas = {	
+			remove_idea = service_by_requirement
+			add_idea = extensive_conscription
+		}
+	}
+	else_if = {
+		limit = { has_idea = extensive_conscription }
+		swap_ideas = {	
+			remove_idea = extensive_conscription
+			add_idea = limited_conscription
+		}
+	}
+	else_if = {
+		limit = { has_idea = limited_conscription }
+		swap_ideas = {	
+			remove_idea = limited_conscription
+			add_idea = volunteer_only
+		}
+	}
+	else_if = {
+		limit = { has_idea = volunteer_only }
+		swap_ideas = {	
+			remove_idea = volunteer_only
+			add_idea = disarmed_nation
+		}
+	}
+}
+
+
+
+
+add_var_manpower = {
+	set_variable = { var_statistic@ROOT = 0 }
+	every_state = { 							# Набивается количество насселения на оккупированной территории
+		limit = {
+			is_owned_by = ROOT
+			is_core_of = ROOT
+			NOT = { is_controlled_by = ROOT }
+		}
+		ROOT = { add_to_variable = { var_statistic@ROOT = PREV.state_population_k } }
+	}
+	round_variable = var_statistic@ROOT			# Заокругление
+	multiply_variable = { var = var_statistic@ROOT value = 0.2 }	# Уменьшение полученного числа в необходимые рамки
+	multiply_variable = { var = var_statistic@ROOT value = has_war_support@ROOT }
+	clamp_variable = {
+		var = var_statistic@ROOT
+		min = 220
+		max = 7206
+	}
+	set_variable = { var_second = 0 }			# Немного рандомного разброса
+	set_variable = { var_third = 0 }
+	every_state = { 							
+		limit = {
+			is_owned_by = ROOT
+			is_core_of = ROOT
+			NOT = { is_controlled_by = ROOT }
+		}
+		add_to_variable = { var_second = THIS.resistance }
+		add_to_variable = { var_third = 1 }
+	}
+	multiply_variable = { var = var_second value = var_third }
+	multiply_variable = { var = var_second value = 0.3 } # Чтобы не слишком было читорно в отдельных случаях
+	add_to_variable = { var_statistic@ROOT = var_second }
+	
+	round_variable = var_statistic@ROOT       # Фиксируем прибыль
+}
+
+OFFICER_KILL = {
+	# Убийство генерала
+	set_variable = { del_exp@ROOT = 0 }
+	set_variable = { var_second = 0 }			# Немного рандомного разброса
+	set_variable = { var_third = 0 }
+	every_state = {		
+		limit = {
+			is_owned_by = FROM
+			is_core_of = FROM
+			is_controlled_by = ROOT
+		}
+		add_to_variable = { var_second = THIS.resistance }
+		add_to_variable = { var_third = 1 }
+	}
+	multiply_variable = { var = var_second value = var_third }
+	
+	if = {
+		limit = { check_variable = { var_second < 0.05 } }
+		set_variable = { del_exp@ROOT = -2 }
+		if = {
+			limit = {
+				NOT = {
+					FROM = { has_country_flag = kill_to_boss }
+					#has_game_rule = { rule = kill_general option = FORBIDDEN_TO_KILL }
+				}
+			}
+			random_list = {
+				1 = {
+					FROM = { set_country_flag = kill_to_boss }
+					set_country_flag = i_kill_you
+				}
+				99 = {
+					
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = { check_variable = { var_second < 0.1 } }
+		set_variable = { del_exp@ROOT = -5 }
+		if = {
+			limit = {
+				NOT = {
+					FROM = { has_country_flag = kill_to_boss }
+					#has_game_rule = { rule = kill_general option = FORBIDDEN_TO_KILL }
+				}
+			}
+			random_list = {
+				1 = {
+					FROM = { set_country_flag = kill_to_boss }
+					set_country_flag = i_kill_you
+				}
+				29 = {
+					
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = { check_variable = { var_second < 0.2 } }
+		set_variable = { del_exp@ROOT = -10 }
+		if = {
+			limit = {
+				NOT = {
+					FROM = { has_country_flag = kill_to_boss }
+					#has_game_rule = { rule = kill_general option = FORBIDDEN_TO_KILL }
+				}
+			}
+			random_list = {
+				1 = {
+					FROM = { set_country_flag = kill_to_boss }
+					set_country_flag = i_kill_you
+				}
+				9 = {
+					
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = { check_variable = { var_second < 0.4 } }
+		set_variable = { del_exp@ROOT = -20 }
+		if = {
+			limit = {
+				NOT = {
+					FROM = { has_country_flag = kill_to_boss }
+					#has_game_rule = { rule = kill_general option = FORBIDDEN_TO_KILL }
+				}
+			}
+			random_list = {
+				1 = {
+					FROM = { set_country_flag = kill_to_boss }
+					set_country_flag = i_kill_you
+				}
+				3 = {
+					
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = { 
+			NOT = { check_variable = { var_second < 0.4 } } 
+			NOT = { FROM = { has_country_flag = kill_to_boss } }
+			#NOT = { has_game_rule = { rule = kill_general option = FORBIDDEN_TO_KILL } }
+		}
+		FROM = { set_country_flag = kill_to_boss }
+		set_country_flag = i_kill_you
+		set_variable = { del_exp@ROOT = -25 }
+	}
+	else = {
+		set_variable = { del_exp@ROOT = -25 }
+	}
+}
+
+GENERAL_STRIKE = {
+	if = {
+		limit = { check_variable = { THIS.resistance < 0.05 } }
+		random_list = {
+			1 = { country_event = { id = resistance.2 } }
+			1 = { country_event = { id = resistance.3 } }
+			1 = { country_event = { id = resistance.4 } }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { THIS.resistance < 0.1 } }
+		random_list = {
+			2 = { country_event = { id = resistance.2 } }
+			4 = { country_event = { id = resistance.3 } }
+			3 = { country_event = { id = resistance.4 } }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { THIS.resistance < 0.2 } }
+		random_list = {
+			3 = { country_event = { id = resistance.2 } }
+			4 = { country_event = { id = resistance.3 } }
+			5 = { country_event = { id = resistance.4 } }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { THIS.resistance < 0.4 } }
+		random_list = {
+			1 = { country_event = { id = resistance.2 } }
+			4 = { country_event = { id = resistance.3 } }
+			8 = { country_event = { id = resistance.4 } }
+		}
+	}
+	else = {
+		random_list = {
+			2 = { country_event = { id = resistance.3 } }
+			8 = { country_event = { id = resistance.4 } }
+		}
+	}
+}
+
+# Механика подсчёта необходимого количества дней для решений Сопротивления в зависимости от уровня развития средств шифрования и дешифрования
+ITS_TIME_TO_DIE = {
+	set_variable = { var_second@THIS = 0 }
+				
+	if = { limit = { has_tech = basic_encryption } add_to_variable = { var = var_second@THIS value = 1 } }
+	if = { limit = { has_tech = improved_encryption } add_to_variable = { var = var_second@THIS value = 1 } }
+	if = { limit = { has_tech = advanced_encryption } add_to_variable = { var = var_second@THIS value = 1 } }
+	if = { limit = { has_tech = basic_decryption } add_to_variable = { var = var_second@THIS value = 1 } }
+	if = { limit = { has_tech = improved_decryption } add_to_variable = { var = var_second@THIS value = 1 } }
+	if = { limit = { has_tech = advanced_decryption } add_to_variable = { var = var_second@THIS value = 1 } }
+}
+
+ITS_TIME_TO_DIE_SET = {
+	if = {
+		limit = { check_variable = { var_second@ROOT = -6 } }
+		set_variable = { var_first@ROOT = 80 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = -5 } }
+		set_variable = { var_first@ROOT = 77 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = -4 } }
+		set_variable = { var_first@ROOT = 72 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = -3 } }
+		set_variable = { var_first@ROOT = 65 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = -2 } }
+		set_variable = { var_first@ROOT = 55 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = -1 } }
+		set_variable = { var_first@ROOT = 48 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 0 } }
+		set_variable = { var_first@ROOT = 35 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 1 } }
+		set_variable = { var_first@ROOT = 25 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 2 } }
+		set_variable = { var_first@ROOT = 18 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 3 } }
+		set_variable = { var_first@ROOT = 12 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 4 } }
+		set_variable = { var_first@ROOT = 8 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 5 } }
+		set_variable = { var_first@ROOT = 5 }
+	}
+	else_if = {
+		limit = { check_variable = { var_second@ROOT = 6 } }
+		set_variable = { var_first@ROOT = 3 }
+	}
+}
+
+clr_flags = {
+	if = {
+		limit = { FROM = { has_country_flag = strike_to_infrastructure } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_infrastructure_flag
+			}
+			clr_state_flag = undermining_the_infrastructure_flag
+			save_event_target_as = infrastructure_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_infrastructure }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_dockyard } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_dockyard_flag
+			}
+			clr_state_flag = undermining_the_dockyard_flag
+			save_event_target_as = dockyard_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_dockyard }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_arms_factory } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_arms_factory
+			}
+			clr_state_flag = undermining_the_arms_factory
+			save_event_target_as = arms_factory_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_arms_factory }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_industrial_complex } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_industrial_complex
+			}
+			clr_state_flag = undermining_the_industrial_complex
+			save_event_target_as = industrial_complex_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_industrial_complex }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_anti_air_building } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_anti_air_building
+			}
+			clr_state_flag = undermining_the_anti_air_building
+			save_event_target_as = anti_air_building_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_anti_air_building }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_synthetic_refinery } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_synthetic_refinery
+			}
+			clr_state_flag = undermining_the_synthetic_refinery
+			save_event_target_as = synthetic_refinery_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_synthetic_refinery }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_fuel_silo } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_fuel_silo
+			}
+			clr_state_flag = undermining_the_fuel_silo
+			save_event_target_as = fuel_silo_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_fuel_silo }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_radar_station } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_radar_station
+			}
+			clr_state_flag = undermining_the_radar_station
+			save_event_target_as = radar_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_radar_station }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_rocket_site } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_rocket_site
+			}
+			clr_state_flag = undermining_the_rocket_site
+			save_event_target_as = rocket_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_rocket_site }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_nuclear } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_nuclear_flag
+			}
+			clr_state_flag = undermining_the_nuclear_flag
+			save_event_target_as = nuclear_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_nuclear }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_aviabase } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_aviabase_flag
+			}
+			clr_state_flag = undermining_the_aviabase_flag
+			save_event_target_as = aviabase_flag_target
+		}
+		FROM = { clr_country_flag = strike_to_aviabase }
+	}
+}
+
+attack_to = {
+	log = "[GetDateText]: [Root.GetName]: okay"
+	if = {
+		limit = { FROM = { has_country_flag = strike_to_infrastructure } }
+		log = "[GetDateText]: [Root.GetName]: okay 2"
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_infrastructure_flag
+			}
+			log = "[GetDateText]: [Root.GetName]: okay 3"
+			clr_state_flag = undermining_the_infrastructure_flag
+			# damage_building = {
+			#	type = infrastructure
+			#	damage = 1
+			# }
+			remove_building = {
+				type = infrastructure
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_infrastructure }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_dockyard } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_dockyard_flag
+			}
+			clr_state_flag = undermining_the_dockyard_flag
+			# damage_building = {
+			#	type = dockyard
+			#	damage = 1
+			# }
+			remove_building = {
+				type = dockyard
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_dockyard }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_arms_factory } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_arms_factory
+			}
+			clr_state_flag = undermining_the_arms_factory
+			# damage_building = {
+			#	type = arms_factory
+			#	damage = 1
+			# }
+			remove_building = {
+				type = arms_factory
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_arms_factory }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_industrial_complex } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_industrial_complex
+			}
+			clr_state_flag = undermining_the_industrial_complex
+			# damage_building = {
+			# 	type = industrial_complex
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = industrial_complex
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_industrial_complex }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_anti_air_building } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_anti_air_building
+			}
+			clr_state_flag = undermining_the_anti_air_building
+			# damage_building = {
+			# 	type = anti_air_building
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = anti_air_building
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_anti_air_building }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_synthetic_refinery } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_synthetic_refinery
+			}
+			clr_state_flag = undermining_the_synthetic_refinery
+			# damage_building = {
+			# 	type = synthetic_refinery
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = synthetic_refinery
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_synthetic_refinery }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_fuel_silo } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_fuel_silo
+			}
+			clr_state_flag = undermining_the_fuel_silo
+			# damage_building = {
+			# 	type = fuel_silo
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = fuel_silo
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_fuel_silo }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_radar_station } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_radar_station
+			}
+			clr_state_flag = undermining_the_radar_station
+			# damage_building = {
+			# 	type = radar_station
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = radar_station
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_radar_station }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_rocket_site } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_rocket_site
+			}
+			clr_state_flag = undermining_the_rocket_site
+			# damage_building = {
+			# 	type = rocket_site
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = rocket_site
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_rocket_site }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_nuclear } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_nuclear_flag
+			}
+			the_nuclear_attack = yes
+			clr_state_flag = undermining_the_nuclear_flag
+			# damage_building = {
+			# 	type = nuclear_reactor
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = nuclear_reactor
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_nuclear }
+	}
+	else_if = {
+		limit = { FROM = { has_country_flag = strike_to_aviabase } }
+		random_state = {
+			limit = {
+				is_owned_by = FROM
+				NOT = { is_controlled_by = FROM }
+				has_state_flag = undermining_the_aviabase_flag
+			}
+			clr_state_flag = undermining_the_aviabase_flag
+			# damage_building = {
+			# 	type = air_base
+			# 	damage = 1
+			# }
+			remove_building = {
+				type = air_base
+				level = 1
+			}
+		}
+		FROM = { clr_country_flag = strike_to_aviabase }
+	}
+}
+ 
+clr_losses = {
+	if = {
+		limit = { has_country_flag = losses_1 }
+		clr_country_flag = losses_1
+	
+		custom_effect_tooltip = losses_1_tt
+		add_to_variable = { var = rebel_manpower@ROOT value = -635 }
+		add_to_variable = { var = rebel_infantry_equipment@ROOT value = -210 }
+		add_to_variable = { var = rebel_support_equipment@ROOT value = -24 }
+	}
+	else_if = {
+		limit = { has_country_flag = losses_2 }
+		clr_country_flag = losses_2
+		
+		custom_effect_tooltip = losses_2_tt
+		add_to_variable = { var = rebel_manpower@ROOT value = -312 }
+		add_to_variable = { var = rebel_infantry_equipment@ROOT value = -105 }
+		add_to_variable = { var = rebel_support_equipment@ROOT value = -12 }
+	}
+	else_if = {
+		limit = { has_country_flag = losses_3 }
+		clr_country_flag = losses_3
+		
+		custom_effect_tooltip = losses_3_tt
+		add_to_variable = { var = rebel_manpower@ROOT value = -151 }
+		add_to_variable = { var = rebel_infantry_equipment@ROOT value = -51 }
+		add_to_variable = { var = rebel_support_equipment@ROOT value = -4 }
+	}
+	else_if = {
+		limit = { has_country_flag = losses_4 }
+		clr_country_flag = losses_4
+		
+		custom_effect_tooltip = losses_4_tt
+		add_to_variable = { var = rebel_manpower@ROOT value = -34 }
+		add_to_variable = { var = rebel_infantry_equipment@ROOT value = -12 }
+		add_to_variable = { var = rebel_support_equipment@ROOT value = -2 }
+	}
+	else_if = {
+		limit = { has_country_flag = losses_5 }
+		clr_country_flag = losses_5
+		
+		custom_effect_tooltip = losses_5_tt
+		add_to_variable = { var = rebel_manpower@ROOT value = -8 }
+		add_to_variable = { var = rebel_infantry_equipment@ROOT value = -6 }
+		add_to_variable = { var = rebel_support_equipment@ROOT value = -1 }
+	}
+}
+delete_rebel_template = {
+	if = {
+		limit = { has_template = "Rebel Division" }
+		delete_unit_template_and_units = { division_template = "Rebel Division" }
+	}
+	else_if = {
+		limit = { has_template = "Light Rebel Division" }
+		delete_unit_template_and_units = { division_template = "Light Rebel Division" }
+	}
+	else_if = {
+		limit = { has_template = "Dywizja Armii Krajowej" }
+		delete_unit_template_and_units = { division_template = "Dywizja Armii Krajowej" }
+	}
+	else_if = {
+		limit = { has_template = "Lekka Dywizja Armii Krajowej" }
+		delete_unit_template_and_units = { division_template = "Lekka Dywizja Armii Krajowej" }
+	}
+	else_if = {
+		limit = { has_template = "Dywizja Armii Ludowej" }
+		delete_unit_template_and_units = { division_template = "Dywizja Armii Ludowej" }
+	}
+	else_if = {
+		limit = { has_template = "Lekka Dywizja Armii Ludowej" }
+		delete_unit_template_and_units = { division_template = "Lekka Dywizja Armii Ludowej" }
+	}
+}
+
+SET_REBEL_DIVISION = {
+	if = {
+		limit = { ROOT = { has_template = "Rebel Division" } }
+		if = {
+			limit = { ROOT = { check_variable = { num_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Rebel Division\" division_template = \"Rebel Division\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Rebel Division\" division_template = \"Rebel Division\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Rebel Division\" division_template = \"Rebel Division\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+	else_if = {
+		limit = { ROOT = { has_template = "Dywizja Armii Krajowej" } }
+		if = {
+			limit = { ROOT = { check_variable = { num_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Dywizja Armii Krajowej\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Dywizja Armii Krajowej\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Dywizja Armii Krajowej\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+	else_if = {
+		limit = { ROOT = { has_template = "Dywizja Armii Ludowej" } }
+		log = "[GetDateText]: [Root.GetName]: event resistance.7 AK" 
+		if = {
+			limit = { ROOT = { check_variable = { num_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Ludowej\" division_template = \"Dywizja Armii Ludowej\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Ludowej\" division_template = \"Dywizja Armii Ludowej\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Ludowej\" division_template = \"Dywizja Armii Ludowej\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+}
+
+SET_SMALL_REBEL_DIVISION = {
+	if = {
+		limit = { ROOT = { has_template = "Light Rebel Division" } }
+		if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Light Rebel Division\" division_template = \"Light Rebel Division\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Light Rebel Division\" division_template = \"Light Rebel Division\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Light Rebel Division\" division_template = \"Light Rebel Division\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+	else_if = {
+		limit = { ROOT = { has_template = "Lekka Dywizja Armii Krajowej" } }
+		if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Lekka Dywizja Armii Krajowej\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Lekka Dywizja Armii Krajowej\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Dywizja Armii Krajowej\" division_template = \"Lekka Dywizja Armii Krajowej\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+	else_if = {
+		limit = { ROOT = { has_template = "Lekka Dywizja Armii Ludowej" } }
+		if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_2@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_2@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Lekka Dywizja Armii Ludowej\" division_template = \"Lekka Dywizja Armii Ludowej\" start_experience_factor = 0.4" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division_trained_1@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division_trained_1@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Lekka Dywizja Armii Ludowej\" division_template = \"Lekka Dywizja Armii Ludowej\" start_experience_factor = 0.2" owner = ROOT }
+		}
+		else_if = {
+			limit = { ROOT = { check_variable = { num_small_division@ROOT > 0 } } }
+			OWNER = { subtract_from_variable = { var = num_small_division@ROOT value = 1 } subtract_from_variable = { var = num_all_division@ROOT value = 1 } }
+			create_unit = { division = "name = \"Lekka Dywizja Armii Ludowej\" division_template = \"Lekka Dywizja Armii Ludowej\" start_experience_factor = 0.05" owner = ROOT }
+		}
+	}
+}
+
+set_var_for_troz_threat_dyn = {
+	clamp_variable = { var = global.troz_threat_var min = 0 max = 100 }
+	set_variable = { global.troz_threat_main_Value = global.troz_threat_var }
+	set_variable = { global.troz_threat_main_2_Value = global.troz_threat_var }
+	divide_variable = { global.troz_threat_main_Value = 1000 }
+	divide_variable = { global.troz_threat_main_2_Value = 100 }
+	###
+	if = {
+		limit = { check_variable = { global.troz_threat_var < 10 } }
+		set_variable = { current_troz_threat_icon_frame = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 9.999 }
+			check_variable = { global.troz_threat_var < 20 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 19.999 }
+			check_variable = { global.troz_threat_var < 30 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 3 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 29.999 }
+			check_variable = { global.troz_threat_var < 40 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 4 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 39.999 }
+			check_variable = { global.troz_threat_var < 50 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 5 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 49.999 }
+			check_variable = { global.troz_threat_var < 60 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 6 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 59.999 }
+			check_variable = { global.troz_threat_var < 70 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 7 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 69.999 }
+			check_variable = { global.troz_threat_var < 80 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 8 }
+	}
+	if = {
+		limit = {
+			check_variable = { global.troz_threat_var > 79.999 }
+			check_variable = { global.troz_threat_var < 90 }
+		}
+		set_variable = { current_troz_threat_icon_frame = 9 }
+	}
+	if = {
+		limit = { check_variable = { global.troz_threat_var > 89.999 } }
+		set_variable = { current_troz_threat_icon_frame = 10 }
+	}
+}
+
+get_best_alliance_match_trozkism_international_effect = { #ONLY FOR 4 inter
+	if = {
+		limit = {
+			any_of_scopes = {
+				array = global.is_trozkism
+				NOT = { tag = PREV }
+				is_subject = no
+				not_is_really_trozkist = yes
+				NOT = {
+					has_country_flag = looser_flag
+					has_country_flag = NOT_WANT_LEADER_FLAG
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+					tag = event_target:no_invite_leon_trotsky_scope
+				}
+			}
+		}
+		random_other_country = {
+			limit = {
+				has_government = trozkism
+				is_subject = no
+				not_is_really_trozkist = yes
+				NOT = {
+					has_country_flag = looser_flag
+					has_country_flag = NOT_WANT_LEADER_FLAG
+					has_country_leader = { name = "Leon Trotsky" ruling_only = yes }
+					tag = event_target:no_invite_leon_trotsky_scope
+				}
+			}
+			set_temp_variable = { current_tag = num_of_factories }
+			add_to_temp_variable = { current_tag = num_battalions }
+			if = {
+				limit = {
+					check_variable = { global.current_leader < current_tag }
+				}
+				country_event = NWgeneric.20001
+			}
+			else = {
+				set_country_flag = looser_flag
+				ROOT = { country_event = NWgeneric.20001 }
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { has_global_flag = NO_INVITE_LEON_TROTSKY_FLAG }
+			country_event = NWgeneric.208
+		}
+		else = {
+			country_event = NWgeneric.201
+		}
+	}
+}
+
+sync_factories = {
+	hidden_effect = {
+		add_offsite_building = { type = industrial_complex level = 1 }
+		add_offsite_building = { type = industrial_complex level = -1 }
+	}
+}
+
+reset_all_land_doctrine = {
+	if = {
+		limit = { has_tech = mobile_warfare }
+		set_technology = { mobile_warfare = 0 }
+	}
+	if = {
+		limit = { has_tech = delay }
+		set_technology = { delay = 0 }
+	}
+	if = {
+		limit = { has_tech = elastic_defence }
+		set_technology = { elastic_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = mobile_infantry }
+		set_technology = { mobile_infantry = 0 }
+	}
+	if = {
+		limit = { has_tech = mass_motorization }
+		set_technology = { mass_motorization = 0 }
+	}
+	if = {
+		limit = { has_tech = mechanised_offensive }
+		set_technology = { mechanised_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = armored_spearhead }
+		set_technology = { armored_spearhead = 0 }
+	}
+	if = {
+		limit = { has_tech = schwerpunk }
+		set_technology = { schwerpunk = 0 }
+	}
+	if = {
+		limit = { has_tech = blitzkrieg }
+		set_technology = { blitzkrieg = 0 }
+	}
+	if = {
+		limit = { has_tech = kampfgruppe }
+		set_technology = { kampfgruppe = 0 }
+	}
+	if = {
+		limit = { has_tech = firebrigades }
+		set_technology = { firebrigades = 0 }
+	}
+	if = {
+		limit = { has_tech = backhand_blow }
+		set_technology = { backhand_blow = 0 }
+	}
+	if = {
+		limit = { has_tech = modern_blitzkrieg }
+		set_technology = { modern_blitzkrieg = 0 }
+	}
+	if = {
+		limit = { has_tech = volkssturm }
+		set_technology = { volkssturm = 0 }
+	}
+	if = {
+		limit = { has_tech = nd_conscription }
+		set_technology = { nd_conscription = 0 }
+	}
+	if = {
+		limit = { has_tech = werwolf_guerillas }
+		set_technology = { werwolf_guerillas = 0 }
+	}
+	if = {
+		limit = { has_tech = superior_firepower }
+		set_technology = { superior_firepower = 0 }
+	}
+	if = {
+		limit = { has_tech = sup_delay }
+		set_technology = { sup_delay = 0 }
+	}
+	if = {
+		limit = { has_tech = mobile_defence }
+		set_technology = { mobile_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = intergrated_support }
+		set_technology = { intergrated_support = 0 }
+	}
+	if = {
+		limit = { has_tech = regimental_combat_teams }
+		set_technology = { regimental_combat_teams = 0 }
+	}
+	if = {
+		limit = { has_tech = dispersed_support }
+		set_technology = { dispersed_support = 0 }
+	}
+	if = {
+		limit = { has_tech = overwhelming_firepower }
+		set_technology = { overwhelming_firepower = 0 }
+	}
+	if = {
+		limit = { has_tech = sup_mechanized_offensive }
+		set_technology = { sup_mechanized_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = concentrated_fire_plans }
+		set_technology = { concentrated_fire_plans = 0 }
+	}
+	if = {
+		limit = { has_tech = combined_arms }
+		set_technology = { combined_arms = 0 }
+	}
+	if = {
+		limit = { has_tech = tactical_control }
+		set_technology = { tactical_control = 0 }
+	}
+	if = {
+		limit = { has_tech = air_land_battle }
+		set_technology = { air_land_battle = 0 }
+	}
+	if = {
+		limit = { has_tech = centralized_fire_control }
+		set_technology = { centralized_fire_control = 0 }
+	}
+	if = {
+		limit = { has_tech = forward_observers }
+		set_technology = { forward_observers = 0 }
+	}
+	if = {
+		limit = { has_tech = advanced_firebases }
+		set_technology = { advanced_firebases = 0 }
+	}
+	if = {
+		limit = { has_tech = shock_and_awe }
+		set_technology = { shock_and_awe = 0 }
+	}
+	if = {
+		limit = { has_tech = trench_warfare }
+		set_technology = { trench_warfare = 0 }
+	}
+	if = {
+		limit = { has_tech = grand_battle_plan }
+		set_technology = { grand_battle_plan = 0 }
+	}
+	if = {
+		limit = { has_tech = prepared_defense }
+		set_technology = { prepared_defense = 0 }
+	}
+	if = {
+		limit = { has_tech = grand_assault }
+		set_technology = { grand_assault = 0 }
+	}
+	if = {
+		limit = { has_tech = grand_mechanized_offensive }
+		set_technology = { grand_mechanized_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = assault_concentration }
+		set_technology = { assault_concentration = 0 }
+	}
+	if = {
+		limit = { has_tech = branch_interoperation }
+		set_technology = { branch_interoperation = 0 }
+	}
+	if = {
+		limit = { has_tech = assault_breakthrough }
+		set_technology = { assault_breakthrough = 0 }
+	}
+	if = {
+		limit = { has_tech = central_planning }
+		set_technology = { central_planning = 0 }
+	}
+	if = {
+		limit = { has_tech = c3i_theory }
+		set_technology = { c3i_theory = 0 }
+	}
+	if = {
+		limit = { has_tech = infantry_offensive }
+		set_technology = { infantry_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = armored_operations }
+		set_technology = { armored_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = infiltration_assault }
+		set_technology = { infiltration_assault = 0 }
+	}
+	if = {
+		limit = { has_tech = night_assault_tactics }
+		set_technology = { night_assault_tactics = 0 }
+	}
+	if = {
+		limit = { has_tech = attritional_containment }
+		set_technology = { attritional_containment = 0 }
+	}
+	if = {
+		limit = { has_tech = infiltration_in_depth }
+		set_technology = { infiltration_in_depth = 0 }
+	}
+	if = {
+		limit = { has_tech = mass_assault }
+		set_technology = { mass_assault = 0 }
+	}
+	if = {
+		limit = { has_tech = pocket_defence }
+		set_technology = { pocket_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = defence_in_depth }
+		set_technology = { defence_in_depth = 0 }
+	}
+	if = {
+		limit = { has_tech = large_front_operations }
+		set_technology = { large_front_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = deep_operations }
+		set_technology = { deep_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = operational_concentration }
+		set_technology = { operational_concentration = 0 }
+	}
+	if = {
+		limit = { has_tech = vast_offensives }
+		set_technology = { vast_offensives = 0 }
+	}
+	if = {
+		limit = { has_tech = breakthrough_priority }
+		set_technology = { breakthrough_priority = 0 }
+	}
+	if = {
+		limit = { has_tech = mechanized_wave }
+		set_technology = { mechanized_wave = 0 }
+	}
+	if = {
+		limit = { has_tech = continuous_offensive }
+		set_technology = { continuous_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = peoples_army }
+		set_technology = { peoples_army = 0 }
+	}
+	if = {
+		limit = { has_tech = human_infantry_offensive }
+		set_technology = { human_infantry_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = large_front_offensive }
+		set_technology = { large_front_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = human_wave_offensive }
+		set_technology = { human_wave_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = guerilla_warfare }
+		set_technology = { guerilla_warfare = 0 }
+	}
+	
+	### NW
+	
+	if = {
+		limit = { has_tech = peoples_army_asy }
+		set_technology = { peoples_army_asy = 0 }
+		remove_dynamic_modifier = { modifier = asymmetric_warfare_doctrine_dyn }
+	}
+	if = {
+		limit = { has_tech = use_of_terrain }
+		set_technology = { use_of_terrain = 0 }
+	}
+	if = {
+		limit = { has_tech = guerrilla_war }
+		set_technology = { guerrilla_war = 0 }
+	}
+	if = {
+		limit = { has_tech = special_teams }
+		set_technology = { special_teams = 0 }
+	}
+	if = {
+		limit = { has_tech = lightning_attacks }
+		set_technology = { lightning_attacks = 0 }
+	}
+	if = {
+		limit = { has_tech = thorough_filtering }
+		set_technology = { thorough_filtering = 0 }
+	}
+	if = {
+		limit = { has_tech = national_war }
+		set_technology = { national_war = 0 }
+	}
+	if = {
+		limit = { has_tech = military_police_doctrine }
+		set_technology = { military_police_doctrine = 0 }
+	}
+	if = {
+		limit = { has_tech = subversion }
+		set_technology = { subversion = 0 }
+	}
+	if = {
+		limit = { has_tech = psychological_operation }
+		set_technology = { psychological_operation = 0 }
+	}
+	if = {
+		limit = { has_tech = air_disguise_detachments }
+		set_technology = { air_disguise_detachments = 0 }
+	}
+	if = {
+		limit = { has_tech = improvised_attack }
+		set_technology = { improvised_attack = 0 }
+	}
+	if = {
+		limit = { has_tech = interaction_with_civilian_population }
+		set_technology = { interaction_with_civilian_population = 0 }
+	}
+	if = {
+		limit = { has_tech = ambushes }
+		set_technology = { ambushes = 0 }
+	}
+	if = {
+		limit = { has_tech = homemade_weapons }
+		set_technology = { homemade_weapons = 0 }
+	}
+	
+	if = {
+		limit = { has_tech = armed_people }
+		set_technology = { armed_people = 0 }
+	}
+	if = {
+		limit = { has_tech = soldier_citizen }
+		set_technology = { soldier_citizen = 0 }
+	}
+	if = {
+		limit = { has_tech = support_for_morale }
+		set_technology = { support_for_morale = 0 }
+	}
+	if = {
+		limit = { has_tech = controlled_battle }
+		set_technology = { controlled_battle = 0 }
+	}
+	if = {
+		limit = { has_tech = continuous_front }
+		set_technology = { continuous_front = 0 }
+	}
+	if = {
+		limit = { has_tech = tyranny_of_technique }
+		set_technology = { tyranny_of_technique = 0 }
+	}
+	if = {
+		limit = { has_tech = fabian_strategy }
+		set_technology = { fabian_strategy = 0 }
+	}
+	if = {
+		limit = { has_tech = scorched_earth }
+		set_technology = { scorched_earth = 0 }
+	}
+	if = {
+		limit = { has_tech = coercion_and_retention }
+		set_technology = { coercion_and_retention = 0 }
+	}
+	if = {
+		limit = { has_tech = fanatical_loyalty }
+		set_technology = { fanatical_loyalty = 0 }
+	}
+	if = {
+		limit = { has_tech = code_of_honor }
+		set_technology = { code_of_honor = 0 }
+	}
+	if = {
+		limit = { has_tech = feat_of_spirit }
+		set_technology = { feat_of_spirit = 0 }
+	}
+	if = {
+		limit = { has_tech = unbending_will }
+		set_technology = { unbending_will = 0 }
+	}
+	if = {
+		limit = { has_tech = violent_attack }
+		set_technology = { violent_attack = 0 }
+	}
+	if = {
+		limit = { has_tech = strategic_bombing }
+		set_technology = { strategic_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = special_strike_teams }
+		set_technology = { special_strike_teams = 0 }
+	}
+	if = {
+		limit = { has_tech = battle_of_annihilation }
+		set_technology = { battle_of_annihilation = 0 }
+	}
+	# if = {
+		# limit = { has_tech = masterful_blitz }
+		# set_technology = { masterful_blitz = 0 }
+	# }
+	
+	NW_remove_land_doctrine_stuff = yes
+}
+
+reset_all_air_doctrine = {
+	if = {
+		limit = { has_tech = air_superiority }
+		set_technology = { air_superiority = 0 }
+	}
+	if = {
+		limit = { has_tech = infrastructure_destruction }
+		set_technology = { infrastructure_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = home_defence }
+		set_technology = { home_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = naval_strike_tactics }
+		set_technology = { naval_strike_tactics = 0 }
+	}
+	if = {
+		limit = { has_tech = fighter_sweeps }
+		set_technology = { fighter_sweeps = 0 }
+	}
+	if = {
+		limit = { has_tech = dogfighting_experience }
+		set_technology = { dogfighting_experience = 0 }
+	}
+	if = {
+		limit = { has_tech = multialtitude_flying }
+		set_technology = { multialtitude_flying = 0 }
+	}
+	if = {
+		limit = { has_tech = logistical_bombing }
+		set_technology = { logistical_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = night_bombing }
+		set_technology = { night_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = day_bombing }
+		set_technology = { day_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = massed_bomber_formations }
+		set_technology = { massed_bomber_formations = 0 }
+	}
+	if = {
+		limit = { has_tech = air_offense }
+		set_technology = { air_offense = 0 }
+	}
+	if = {
+		limit = { has_tech = flying_fortress }
+		set_technology = { flying_fortress = 0 }
+	}
+	if = {
+		limit = { has_tech = offensive_formations }
+		set_technology = { offensive_formations = 0 }
+	}
+	if = {
+		limit = { has_tech = mass_destruction }
+		set_technology = { mass_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = formation_flying }
+		set_technology = { formation_flying = 0 }
+	}
+	if = {
+		limit = { has_tech = dive_bombing }
+		set_technology = { dive_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = direct_ground_support }
+		set_technology = { direct_ground_support = 0 }
+	}
+	if = {
+		limit = { has_tech = formation_fighting }
+		set_technology = { formation_fighting = 0 }
+	}
+	if = {
+		limit = { has_tech = fighter_ace_initiative }
+		set_technology = { fighter_ace_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = hunt_and_destroy }
+		set_technology = { hunt_and_destroy = 0 }
+	}
+	if = {
+		limit = { has_tech = combat_unit_destruction }
+		set_technology = { combat_unit_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = battlefield_support }
+		set_technology = { battlefield_support = 0 }
+	}
+	if = {
+		limit = { has_tech = keypoint_bombing }
+		set_technology = { keypoint_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = ground_support_integration }
+		set_technology = { ground_support_integration = 0 }
+	}
+	if = {
+		limit = { has_tech = naval_strike_torpedo_tactics }
+		set_technology = { naval_strike_torpedo_tactics = 0 }
+	}
+	if = {
+		limit = { has_tech = strategic_destruction }
+		set_technology = { strategic_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = forward_interception }
+		set_technology = { forward_interception = 0 }
+	}
+	if = {
+		limit = { has_tech = force_rotation }
+		set_technology = { force_rotation = 0 }
+	}
+	if = {
+		limit = { has_tech = fighter_baiting }
+		set_technology = { fighter_baiting = 0 }
+	}
+	if = {
+		limit = { has_tech = low_echelon_support }
+		set_technology = { low_echelon_support = 0 }
+	}
+	if = {
+		limit = { has_tech = dispersed_fighting }
+		set_technology = { dispersed_fighting = 0 }
+	}
+	if = {
+		limit = { has_tech = operational_destruction }
+		set_technology = { operational_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = fighter_veteran_initiative }
+		set_technology = { fighter_veteran_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = naval_strike_torpedo_tactics_oi }
+		set_technology = { naval_strike_torpedo_tactics_oi = 0 }
+	}
+	if = {
+		limit = { has_tech = cas_veteran_initiative }
+		set_technology = { cas_veteran_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = carousel_bombing }
+		set_technology = { carousel_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = infiltration_bombing }
+		set_technology = { infiltration_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = air_skirmish }
+		set_technology = { air_skirmish = 0 }
+	}
+	if = {
+		limit = { has_tech = high_level_bombing }
+		set_technology = { high_level_bombing = 0 }
+	}
+	
+	### NW
+	
+	if = {
+		limit = { has_tech = training_schools }
+		set_technology = { training_schools = 0 }
+	}
+	if = {
+		limit = { has_tech = strategic_air_command }
+		set_technology = { strategic_air_command = 0 }
+	}
+	if = {
+		limit = { has_tech = pathfinder_groups }
+		set_technology = { pathfinder_groups = 0 }
+	}
+	if = {
+		limit = { has_tech = cas_ace_initiative }
+		set_technology = { cas_ace_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = high_level_bombing }
+		set_technology = { high_level_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = battlefield_destruction }
+		set_technology = { battlefield_destruction = 0 }
+	}
+	if = {
+		limit = { has_tech = air_defence }
+		set_technology = { air_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = escort_relay_system }
+		set_technology = { escort_relay_system = 0 }
+	}
+	if = {
+		limit = { has_tech = transport_backbone }
+		set_technology = { transport_backbone = 0 }
+	}
+	if = {
+		limit = { has_tech = dead_reckoning_bombing }
+		set_technology = { dead_reckoning_bombing = 0 }
+	}
+	if = {
+		limit = { has_tech = bomber_veteran_initiative }
+		set_technology = { bomber_veteran_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = ground_coordination_effort }
+		set_technology = { ground_coordination_effort = 0 }
+	}
+	if = {
+		limit = { has_tech = bomber_ace_initiative }
+		set_technology = { bomber_ace_initiative = 0 }
+	}
+	if = {
+		limit = { has_tech = taking_care_of_planes }
+		set_technology = { taking_care_of_planes = 0 }
+	}
+	if = {
+		limit = { has_tech = sea_hunting }
+		set_technology = { sea_hunting = 0 }
+	}
+}
+
+reset_all_naval_doctrine = {
+	if = {
+		limit = { has_tech = fleet_in_being }
+		set_technology = { fleet_in_being = 0 }
+	}
+	if = {
+		limit = { has_tech = battlefleet_concentration }
+		set_technology = { battlefleet_concentration = 0 }
+	}
+	if = {
+		limit = { has_tech = subsidiary_carrier_role }
+		set_technology = { subsidiary_carrier_role = 0 }
+	}
+	if = {
+		limit = { has_tech = hunter_killer_groups }
+		set_technology = { hunter_killer_groups = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_fortress }
+		set_technology = { floating_fortress = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_airfield }
+		set_technology = { floating_airfield = 0 }
+	}
+	if = {
+		limit = { has_tech = grand_battlefleet }
+		set_technology = { grand_battlefleet = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_sailing }
+		set_technology = { convoy_sailing = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_escorts }
+		set_technology = { convoy_escorts = 0 }
+	}
+	if = {
+		limit = { has_tech = escort_carriers }
+		set_technology = { escort_carriers = 0 }
+	}
+	if = {
+		limit = { has_tech = integrated_convoy_defence }
+		set_technology = { integrated_convoy_defence = 0 }
+	}
+	if = {
+		limit = { has_tech = submarine_operations }
+		set_technology = { submarine_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = undersea_blockade }
+		set_technology = { undersea_blockade = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_interdiction }
+		set_technology = { convoy_interdiction = 0 }
+	}
+	if = {
+		limit = { has_tech = submarine_offensive }
+		set_technology = { submarine_offensive = 0 }
+	}
+	if = {
+		limit = { has_tech = trade_interdiction }
+		set_technology = { trade_interdiction = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_interdiction_ti }
+		set_technology = { convoy_interdiction_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = unrestricted_submarine_warfare }
+		set_technology = { unrestricted_submarine_warfare = 0 }
+	}
+	if = {
+		limit = { has_tech = wolfpacks }
+		set_technology = { wolfpacks = 0 }
+	}
+	if = {
+		limit = { has_tech = advanced_submarine_warfare }
+		set_technology = { advanced_submarine_warfare = 0 }
+	}
+	if = {
+		limit = { has_tech = combined_operations_raiding }
+		set_technology = { combined_operations_raiding = 0 }
+	}
+	if = {
+		limit = { has_tech = raider_patrols }
+		set_technology = { raider_patrols = 0 }
+	}
+	if = {
+		limit = { has_tech = capital_ship_raiders }
+		set_technology = { capital_ship_raiders = 0 }
+	}
+	if = {
+		limit = { has_tech = battlefleet_concentration_ti }
+		set_technology = { battlefleet_concentration_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_fortress_ti }
+		set_technology = { floating_fortress_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_airfield_ti }
+		set_technology = { floating_airfield_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = carrier_operations }
+		set_technology = { carrier_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_sailing_ti }
+		set_technology = { convoy_sailing_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = subsidiary_carrier_role_ti }
+		set_technology = { subsidiary_carrier_role_ti = 0 }
+	}
+	if = {
+		limit = { has_tech = naval_air_operations }
+		set_technology = { naval_air_operations = 0 }
+	}
+	if = {
+		limit = { has_tech = carrier_primacy }
+		set_technology = { carrier_primacy = 0 }
+	}
+	if = {
+		limit = { has_tech = carrier_task_forces }
+		set_technology = { carrier_task_forces = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_airfield_bs }
+		set_technology = { floating_airfield_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = massed_strikes }
+		set_technology = { massed_strikes = 0 }
+	}
+	if = {
+		limit = { has_tech = floating_fortress_bs }
+		set_technology = { floating_fortress_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = carrier_battlegroups }
+		set_technology = { carrier_battlegroups = 0 }
+	}
+	if = {
+		limit = { has_tech = submarine_operations_bs }
+		set_technology = { submarine_operations_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = undersea_blockade_bs }
+		set_technology = { undersea_blockade_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_interdiction_bs }
+		set_technology = { convoy_interdiction_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = submarine_offensive_bs }
+		set_technology = { submarine_offensive_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = convoy_escorts_bs }
+		set_technology = { convoy_escorts_bs = 0 }
+	}
+	if = {
+		limit = { has_tech = escort_patrols }
+		set_technology = { escort_patrols = 0 }
+	}
+	if = {
+		limit = { has_tech = integrated_convoy_defence_bs }
+		set_technology = { integrated_convoy_defence_bs = 0 }
+	}
+}
+
+NW_asymmetric_warfare_doctrine_effect_TOOLTIP = {
+	effect_tooltip = {
+		if = {
+			limit = { has_variable = NW_awd_num_battalions_limit }
+			add_to_temp_variable = { add = NW_awd_num_battalions_limit }
+		}
+		else = {
+			add_to_temp_variable = { add = 300 }
+		}
+		set_temp_variable = { NW_awd_num_battalions_limit = add }
+		NW_asymmetric_warfare_doctrine_effect = yes
+	}
+}
+
+NW_asymmetric_warfare_doctrine_effect = {
+	if = {
+		limit = { check_variable = { num_battalions > NW_awd_num_battalions_limit } }
+		set_temp_variable = { over = num_battalions }
+		subtract_from_temp_variable = { over = NW_awd_num_battalions_limit }
+		if = {
+			limit = { check_variable = { over < 50 } }
+			set_variable = { NW_awd_army_attack_factor = -0.15 tooltip = army_attack_factor_tooltip } # TODO добавить тултип, который объясняет как даются штрафы
+			set_variable = { NW_awd_army_defence_factor = -0.15 tooltip = army_defence_factor_tooltip } 
+			set_variable = { NW_awd_terrain_penalty_reduction = -0.05 tooltip = modifier_terrain_penalty_reduction_tooltip } 
+			set_variable = { NW_awd_army_org_factor = -0.1 tooltip = army_org_factor_tooltip } 
+		}
+		else_if = {
+			limit = { check_variable = { over < 100 } }
+			set_variable = { NW_awd_army_attack_factor = -0.3 tooltip = army_attack_factor_tooltip } 
+			set_variable = { NW_awd_army_defence_factor = -0.3 tooltip = army_defence_factor_tooltip } 
+			set_variable = { NW_awd_terrain_penalty_reduction = -0.1 tooltip = modifier_terrain_penalty_reduction_tooltip } 
+			set_variable = { NW_awd_army_org_factor = -0.2 tooltip = army_org_factor_tooltip } 
+		}
+		else_if = {
+			limit = { check_variable = { over > 100 } }
+			set_variable = { NW_awd_army_attack_factor = -0.5 tooltip = army_attack_factor_tooltip } 
+			set_variable = { NW_awd_army_defence_factor = -0.5 tooltip = army_defence_factor_tooltip } 
+			set_variable = { NW_awd_terrain_penalty_reduction = -0.15 tooltip = modifier_terrain_penalty_reduction_tooltip } 
+			set_variable = { NW_awd_army_org_factor = -0.3 tooltip = army_org_factor_tooltip } 
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		log = "NW_asymmetric_warfare_doctrine_effect: num_battalions - [?num_battalions] | NW_awd_num_battalions_limit - [?NW_awd_num_battalions_limit] | over - [?over]"
+	}
+}
+
+NW_remove_land_doctrine_stuff = {
+	# clr_country_flag = guerrilla_war_flag
+	# clr_country_flag = national_war_flag
+	# every_army_leader = {
+		# remove_unit_leader_trait = guerrilla_war_trait
+		# remove_unit_leader_trait = national_war_trait
+	# }
+	# clr_country_flag = homemade_weapons_flag
+	# remove_ideas = homemade_weapons_idea
+	
+### ИСТОЩЕНИЕ (подветка fanatical_loyalty)
+	clr_country_flag = ability_heroic_defense_flag
+	clr_country_flag = ability_kamikaze_attack_flag
+	if = {
+		limit = { has_country_flag = fanatical_loyalty_flag }
+		clr_country_flag = fanatical_loyalty_flag
+		set_rule = { can_use_kamikaze_pilots = no }
+	}
+}
+
+set_anarchism_party_name = {
+	set_country_flag = set_anarchism_party_name_flag
+	set_party_name = { ideology = democratic name = anarchism_party_banned }
+	set_party_name = { ideology = communism name = anarchism_party_banned }
+	set_party_name = { ideology = fascism name = anarchism_party_banned }
+	set_party_name = { ideology = neutrality name = anarchism_party_banned }
+	set_party_name = { ideology = technocracy name = anarchism_party_banned }
+	set_party_name = { ideology = trozkism name = anarchism_party_banned }
+	set_party_name = { ideology = monarchy name = anarchism_party_banned }
+}
+
+reset_anarchism_party_name = {
+	clr_country_flag = set_anarchism_party_name_flag
+	### FASCISM
+	if = {
+		limit = {
+			OR = { original_tag = GER original_tag = POL original_tag = ENG original_tag = ITA original_tag = JAP original_tag = USA original_tag = FRA original_tag = SOV original_tag = AUS original_tag = CHI original_tag = SPR original_tag = SPA original_tag = POR original_tag = GRE original_tag = LIT original_tag = LAT original_tag = EST original_tag = IRQ original_tag = SWE original_tag = FIN original_tag = DEN original_tag = CAN original_tag = AST original_tag = ARG original_tag = BRA original_tag = TUR original_tag = HUN original_tag = YUG original_tag = SER original_tag = BUL original_tag = SAF original_tag = NZL original_tag = NOR original_tag = HOL original_tag = BEL original_tag = SWI original_tag = RAJ original_tag = PER original_tag = CZE original_tag = ALB original_tag = NIC original_tag = COS original_tag = VEN original_tag = IRE original_tag = LUX original_tag = SLO original_tag = PHI original_tag = YEM original_tag = KOR original_tag = ICE original_tag = SYR original_tag = LEB original_tag = JOR original_tag = EGY original_tag = PAL original_tag = ISR original_tag = VIN original_tag = CAM original_tag = INS original_tag = MAL original_tag = LAO original_tag = MNT original_tag = UKR original_tag = GEO original_tag = KAZ original_tag = AZR original_tag = ARM original_tag = MAN original_tag = SIB original_tag = SOR original_tag = DNZ original_tag = PRE original_tag = POM original_tag = SLE original_tag = SAR original_tag = BAY original_tag = REI original_tag = BRD original_tag = VST original_tag = SLZ original_tag = KLN original_tag = ESN original_tag = MGB original_tag = BRU original_tag = LIE original_tag = KPR original_tag = CYP tag = RUS original_tag = SMA original_tag = CRO original_tag = TEX original_tag = CLF original_tag = QUB original_tag = MEX original_tag = CUB original_tag = ELS original_tag = DOM original_tag = URG original_tag = BRM original_tag = PAR original_tag = CHL original_tag = PRU original_tag = BLR original_tag = MAC original_tag = MEN original_tag = CAT original_tag = GLC original_tag = BAS original_tag = BLP original_tag = CRE original_tag = EMA original_tag = ASU original_tag = SNT original_tag = RSI original_tag = CAS original_tag = NAV original_tag = SEU original_tag = AND original_tag = SCP original_tag = FLA original_tag = WLN original_tag = COG original_tag = FRR original_tag = FRC original_tag = FIC original_tag = PFS original_tag = FRF tag = PEN original_tag = QAS original_tag = SRL original_tag = BPL original_tag = LIB original_tag = NMB original_tag = BMD }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag1
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = fascism name = [TAG]_fascism_party }
+					}
+					TAG = "[true_tag1.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = fascism name = fascism }
+		}
+	}
+	### COMMUNISM
+	if = {
+		limit = {
+			OR = { original_tag = GER original_tag = POL original_tag = ENG original_tag = ITA original_tag = JAP original_tag = USA original_tag = FRA original_tag = SOV original_tag = AUS original_tag = CHI original_tag = XSM original_tag = SPR original_tag = SPA original_tag = POR original_tag = GRE original_tag = LIT original_tag = LAT original_tag = EST original_tag = IRQ original_tag = SWE original_tag = FIN original_tag = DEN original_tag = CAN original_tag = AST original_tag = ARG original_tag = BRA original_tag = TUR original_tag = HUN original_tag = ROM original_tag = YUG original_tag = SER original_tag = BUL original_tag = SAF original_tag = NZL original_tag = NOR original_tag = HOL original_tag = BEL original_tag = SWI original_tag = RAJ original_tag = PER original_tag = COL original_tag = CZE original_tag = ALB original_tag = COS original_tag = VEN original_tag = IRE original_tag = LUX original_tag = SLO original_tag = ECU original_tag = PAN original_tag = PHI original_tag = SIK original_tag = TIB original_tag = PRC original_tag = SHX original_tag = GXC original_tag = YUN original_tag = YUL original_tag = HCP original_tag = MON original_tag = TAN original_tag = HAI original_tag = KOR original_tag = ICE original_tag = SYR original_tag = LEB original_tag = JOR original_tag = EGY original_tag = PAL original_tag = ISR original_tag = VIN original_tag = CAM original_tag = INS original_tag = MAL original_tag = LAO original_tag = MNT original_tag = UKR original_tag = GEO original_tag = KAZ original_tag = AZR original_tag = ARM original_tag = PAK original_tag = FER original_tag = SIB original_tag = YAK original_tag = DNZ original_tag = PRE original_tag = POM original_tag = SLE original_tag = SAR original_tag = BAY original_tag = REI original_tag = BRD original_tag = VST original_tag = SLZ original_tag = KLN original_tag = ESN original_tag = MGB original_tag = BRU original_tag = SUD original_tag = TJK original_tag = UZB original_tag = MDA original_tag = CRI original_tag = LIE original_tag = KPR tag = RUS original_tag = MEM original_tag = SMA original_tag = TEX original_tag = CLF original_tag = QUB original_tag = MEX original_tag = BOL original_tag = CUB original_tag = HON original_tag = ELS original_tag = DOM original_tag = URG original_tag = BRM original_tag = PAR original_tag = CHL original_tag = PRU original_tag = BLR original_tag = MAC original_tag = MOL original_tag = MAN original_tag = MEN original_tag = CAT original_tag = GLC original_tag = BAS original_tag = BLP original_tag = CRE original_tag = EMA original_tag = ASU original_tag = SNT original_tag = CAS original_tag = NAV original_tag = SEU original_tag = AND original_tag = SCP original_tag = FLA original_tag = WLN original_tag = FRR original_tag = FRC original_tag = MOR original_tag = FIC original_tag = MHB original_tag = GIL original_tag = APG original_tag = PFS original_tag = FRF tag = PEN original_tag = SRL original_tag = BPL original_tag = ZIM original_tag = NMB original_tag = BMD original_tag = ERB original_tag = ROJ original_tag = KAS original_tag = DZN }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag2
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = communism name = [TAG]_communism_party }
+					}
+					TAG = "[true_tag2.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = communism name = communism }
+		}
+	}
+	### DEMOCRATIC
+	if = {
+		limit = {
+			OR = { original_tag = GER original_tag = POL original_tag = ENG original_tag = ITA original_tag = JAP original_tag = USA original_tag = FRA original_tag = SOV original_tag = AUS original_tag = CHI original_tag = SPR original_tag = SPA original_tag = POR original_tag = GRE original_tag = LIT original_tag = LAT original_tag = EST original_tag = IRQ original_tag = SWE original_tag = FIN original_tag = DEN original_tag = CAN original_tag = AST original_tag = ARG original_tag = BRA original_tag = HUN original_tag = ROM original_tag = YUG original_tag = SER original_tag = BUL original_tag = SAF original_tag = NZL original_tag = NOR original_tag = HOL original_tag = BEL original_tag = SWI original_tag = RAJ original_tag = PER original_tag = COL original_tag = CZE original_tag = ETH original_tag = NIC original_tag = COS original_tag = GUA original_tag = VEN original_tag = IRE original_tag = LUX original_tag = ECU original_tag = NEP original_tag = PAN original_tag = PHI original_tag = YEM original_tag = TIB original_tag = PRC original_tag = TAN original_tag = HAI original_tag = KOR original_tag = ICE original_tag = SYR original_tag = LEB original_tag = JOR original_tag = EGY original_tag = PAL original_tag = ISR original_tag = VIN original_tag = CAM original_tag = INS original_tag = MAL original_tag = LAO original_tag = MNT original_tag = UKR original_tag = GEO original_tag = KAZ original_tag = AZR original_tag = ARM original_tag = PAK original_tag = FER original_tag = SIB original_tag = SOR original_tag = DNZ original_tag = SUD original_tag = MDA original_tag = CRI original_tag = SCO original_tag = WLS original_tag = LIE original_tag = KPR original_tag = CYP tag = RUS original_tag = MEM original_tag = ADR original_tag = MNC original_tag = SMA original_tag = TEX original_tag = CLF original_tag = QUB original_tag = MEX original_tag = CUB original_tag = HON original_tag = URG original_tag = BRM original_tag = PAR original_tag = CHL original_tag = PRU original_tag = BLR original_tag = MAC original_tag = MOL original_tag = MEN original_tag = CAT original_tag = GLC original_tag = BAS original_tag = ARA original_tag = BLP original_tag = CRE original_tag = EMA original_tag = ASU original_tag = SNT original_tag = CAS original_tag = NAV original_tag = SEU original_tag = AND original_tag = SCP original_tag = VLA original_tag = FLA original_tag = WLN original_tag = FRR original_tag = FRC original_tag = MOR original_tag = TUN original_tag = FIC original_tag = TNR original_tag = MHB original_tag = APG original_tag = PFS original_tag = FRF tag = PEN original_tag = QAS original_tag = SRL original_tag = BPL original_tag = LIB original_tag = ZIM original_tag = NMB original_tag = BMD original_tag = BMD original_tag = NFL original_tag = KRD }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag3
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = democratic name = [TAG]_democratic_party }
+					}
+					TAG = "[true_tag3.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = democratic name = democratic }
+		}
+	}
+	### NEUTRALITY
+	if = {
+		limit = {
+			OR = { original_tag = GER original_tag = POL original_tag = FRA original_tag = SOV original_tag = SOV original_tag = AUS original_tag = CHI original_tag = XSM original_tag = SPR original_tag = SPA original_tag = POR original_tag = GRE original_tag = LIT original_tag = LAT original_tag = EST original_tag = IRQ original_tag = SWE original_tag = FIN original_tag = DEN original_tag = CAN original_tag = AST original_tag = ARG original_tag = BRA original_tag = TUR original_tag = BUL original_tag = SAF original_tag = NZL original_tag = NOR original_tag = HOL original_tag = BEL original_tag = SWI original_tag = RAJ original_tag = PER original_tag = COL original_tag = NIC original_tag = SIA original_tag = VEN original_tag = IRE original_tag = BHU original_tag = ECU original_tag = NEP original_tag = IOM original_tag = SIK original_tag = TIB original_tag = KUM original_tag = UYG original_tag = SHX original_tag = GXC original_tag = YUN original_tag = YUL original_tag = HCP original_tag = ICE original_tag = LEB original_tag = EGY original_tag = PAL original_tag = ISR original_tag = VIN original_tag = CAM original_tag = INS original_tag = MAL original_tag = MNT original_tag = UKR original_tag = GEO original_tag = AZR original_tag = ARM original_tag = PAK original_tag = FER original_tag = SOR original_tag = DNZ original_tag = CRI original_tag = KPR original_tag = SOV original_tag = SOV original_tag = MEM original_tag = VAT original_tag = TEX original_tag = CLF original_tag = QUB original_tag = MEX original_tag = CUB original_tag = HON original_tag = URG original_tag = BRM original_tag = PAR original_tag = CHL original_tag = PRU original_tag = BLR original_tag = MAC original_tag = MOL original_tag = MAN original_tag = MEN original_tag = CAT original_tag = GLC original_tag = BAS original_tag = BLP original_tag = HEL original_tag = CRE original_tag = SEU original_tag = FLA original_tag = COG original_tag = FRR original_tag = FRC original_tag = MOR original_tag = TUN original_tag = FIC original_tag = PFS original_tag = FRF tag = PEN original_tag = SRL original_tag = BPL original_tag = LIB original_tag = SYR original_tag = NMB original_tag = NFL original_tag = ERB original_tag = KAS original_tag = OMA }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag4
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = neutrality name = [TAG]_neutrality_party }
+					}
+					TAG = "[true_tag4.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = neutrality name = neutrality }
+		}
+	}
+	### MONARCHY
+	if = {
+		limit = {
+			OR = { original_tag = ITA original_tag = SPR original_tag = SPA original_tag = IRQ original_tag = HUN original_tag = ROM original_tag = YUG original_tag = SER original_tag = BUL original_tag = SAF original_tag = PER original_tag = CZE original_tag = ETH original_tag = ALB original_tag = AFG original_tag = BHU original_tag = NEP original_tag = SAU original_tag = YEM original_tag = OMA original_tag = IOM original_tag = TIB original_tag = KUM original_tag = KOR original_tag = SYR original_tag = JOR original_tag = EGY original_tag = PAL original_tag = LAO original_tag = GEO original_tag = KAZ original_tag = ARM original_tag = LIE original_tag = VAT original_tag = ADR original_tag = MNC original_tag = CRO original_tag = SLV original_tag = CZE original_tag = AUS original_tag = SLO original_tag = KRA original_tag = KPR tag = RUS original_tag = SOV original_tag = GER original_tag = TUR original_tag = ENG original_tag = FRA original_tag = POR original_tag = MAN original_tag = NOR original_tag = DAN original_tag = GRE original_tag = SWE original_tag = BEL original_tag = HOL original_tag = MNT original_tag = JAP original_tag = LUX original_tag = BAS original_tag = CAT original_tag = GLC original_tag = MAC original_tag = MEN original_tag = BLP original_tag = ASU original_tag = SNT original_tag = CAS original_tag = NAV original_tag = SEU original_tag = AND original_tag = SCP original_tag = COG original_tag = MOR original_tag = TUN original_tag = PFS original_tag = FRF tag = PEN original_tag = QAS original_tag = SRL original_tag = BPL original_tag = LIB original_tag = NMB original_tag = red original_tag = KRD original_tag = SKM original_tag = POL }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag5
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = monarchy name = [TAG]_monarchy_party }
+					}
+					TAG = "[true_tag5.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = monarchy name = monarchy }
+		}
+	}
+	### TROZKISM
+	if = {
+		limit = {
+			OR = { original_tag = GER original_tag = FRA original_tag = SOV original_tag = SPR original_tag = SPR original_tag = SPA original_tag = SPA original_tag = GRE original_tag = CAN original_tag = CAN original_tag = AST original_tag = AST original_tag = TUR original_tag = TUR original_tag = TUR original_tag = SAF original_tag = SAF original_tag = PAN original_tag = PAN original_tag = TIB original_tag = TAN original_tag = EGY original_tag = PRU original_tag = PRU original_tag = MAN original_tag = MAN original_tag = MEN original_tag = MEN original_tag = CAT original_tag = CAT original_tag = GLC original_tag = GLC original_tag = BAS original_tag = BAS original_tag = BLP original_tag = BLP original_tag = PAL original_tag = PAL original_tag = ISR original_tag = ISR original_tag = CRE original_tag = ASU original_tag = ASU original_tag = SNT original_tag = SNT original_tag = CAS original_tag = CAS original_tag = NAV original_tag = NAV original_tag = SEU original_tag = SEU original_tag = AND original_tag = AND original_tag = SCP original_tag = SCP original_tag = FRR original_tag = FRC original_tag = FIC original_tag = PFS original_tag = PFS original_tag = FRF original_tag = SRL original_tag = SRL original_tag = POL }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag6
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = trozkism name = [TAG]_trozkism_party }
+					}
+					TAG = "[true_tag6.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = trozkism name = trozkism }
+		}
+	}
+	### TECHNOCRACY
+	if = {
+		limit = {
+			OR = { original_tag = USA original_tag = FRA original_tag = PER original_tag = POL }
+		}
+		random_country_with_original_tag = {
+			original_tag_to_check = PREV
+			limit = {
+				original_tag = PREV
+				is_dynamic_tag = no
+			}
+			save_event_target_as = true_tag7
+			PREV = {
+				meta_effect = {
+					text = {
+						set_party_name = { ideology = technocracy name = [TAG]_technocracy_party }
+					}
+					TAG = "[true_tag7.GetTag]"
+				}
+			}
+		}
+		else = {
+			set_party_name = { ideology = technocracy name = technocracy }
+		}
+	}
+	
+	#SPECIAL BLOCK
+	if = {
+		limit = { has_focus_tree = hbbrg_focus }
+		set_party_name = { ideology = democratic name = habsburg_democratic_party }
+		set_party_name = { ideology = communism name = habsburg_communism_party }
+		set_party_name = { ideology = monarchy name = habsburg_monarchy_party }
+		if = {
+			limit = { has_country_leader = { ruling_only = yes name = "Josef Franz von Österreich" } }
+			set_party_name = { ideology = fascism name = habsburg_josef_franz_fascism_party }
+			
+			else = {
+				set_party_name = { ideology = fascism name = habsburg_fascism_party }
+			}
+		}
+	}
+	if = {
+		limit = { has_focus_tree = hohenberg_focus }
+		set_party_name = { ideology = neutrality name = hhnbrg_neutrality_party }
+		set_party_name = { ideology = monarchy name = hhnbrg_monarchy_party }
+	}
+}
+
+add_isolate_ai_strategy = {
+	add_ai_strategy = { type = alliance id = PREV value = -999 }
+	add_ai_strategy = { type = befriend id = PREV value = -200 }
+	add_ai_strategy = { type = support id = PREV value = -999 }
+	add_ai_strategy = { type = protect id = PREV value = -999 }
+	add_ai_strategy = { type = send_volunteers_desire id = PREV value = -999 }
+	add_ai_strategy = { type = send_lend_lease_desire id = PREV value = -999 }
+}
+add_special_com_tro_ai_strategy = {
+	add_ai_strategy = { type = antagonize id = PREV value = 200 }
+	add_ai_strategy = { type = prepare_for_war id = PREV value = 100 }
+	add_ai_strategy = { type = declare_war id = PREV value = 75 }
+}
+remove_isolate_ai_strategy = {
+	add_ai_strategy = { type = alliance id = PREV value = 999 }
+	add_ai_strategy = { type = befriend id = PREV value = 200 }
+	add_ai_strategy = { type = support id = PREV value = 999 }
+	add_ai_strategy = { type = protect id = PREV value = 999 }
+	add_ai_strategy = { type = send_volunteers_desire id = PREV value = 999 }
+	add_ai_strategy = { type = send_lend_lease_desire id = PREV value = 999 }
+}
+remove_special_com_tro_ai_strategy = {
+	add_ai_strategy = { type = antagonize id = PREV value = -200 }
+	add_ai_strategy = { type = prepare_for_war id = PREV value = -100 }
+	add_ai_strategy = { type = declare_war id = PREV value = -75 }
+}
+
+remove_from_all_ideology_arrays = {
+	log = "============================================================"
+	if = {
+		limit = { is_in_array = { global.is_communism = THIS } }
+		every_other_country = {
+			limit = {
+				has_government = trozkism
+			}
+			remove_isolate_ai_strategy = yes
+			remove_special_com_tro_ai_strategy = yes
+			PREV = {
+				remove_isolate_ai_strategy = yes
+				remove_special_com_tro_ai_strategy = yes
+			}
+		}
+		remove_from_array = { global.is_communism = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_trozkism = THIS } }
+		every_other_country = {
+			limit = {
+				has_government = communism
+			}
+			remove_isolate_ai_strategy = yes
+			remove_special_com_tro_ai_strategy = yes
+			PREV = {
+				remove_isolate_ai_strategy = yes
+				remove_special_com_tro_ai_strategy = yes
+			}
+		}
+		remove_from_array = { global.is_trozkism = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_anarchism = THIS } }
+		every_other_country = {
+			limit = {
+				NOT = { has_government = anarchism }
+			}
+			remove_isolate_ai_strategy = yes
+		}
+		remove_from_array = { global.is_anarchism = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_democratic = THIS } }
+		remove_from_array = { global.is_democratic = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_fascism = THIS } }
+		remove_from_array = { global.is_fascism = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_neutrality = THIS } }
+		remove_from_array = { global.is_neutrality = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_technocracy = THIS } }
+		remove_from_array = { global.is_technocracy = THIS }
+	}
+	if = {
+		limit = { is_in_array = { global.is_monarchy = THIS } }
+		remove_from_array = { global.is_monarchy = THIS }
+	}
+	log = "[This.GetName] ([This.GetTag]): REMOVE FROM ALL IDEOLOGY ARRAYS"
+	log = "============================================================"
+}
+
+add_to_ideology_array = {
+	if = {
+		limit = {
+			has_government = democratic
+		}
+		add_to_array = { global.is_democratic = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_democratic"
+	}
+	if = {
+		limit = {
+			has_government = communism
+		}
+		add_to_array = { global.is_communism = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_communism"
+		every_other_country = {
+			limit = {
+				has_government = trozkism
+				NOT = { is_in_faction_with = PREV }
+			}
+			add_isolate_ai_strategy = yes
+			add_special_com_tro_ai_strategy = yes
+			PREV = {
+				add_isolate_ai_strategy = yes
+				add_special_com_tro_ai_strategy = yes
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_government = fascism
+		}
+		add_to_array = { global.is_fascism = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_fascism"
+	}
+	if = {
+		limit = {
+			has_government = neutrality
+		}
+		add_to_array = { global.is_neutrality = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_neutrality"
+	}
+	if = {
+		limit = {
+			has_government = technocracy
+		}
+		add_to_array = { global.is_technocracy = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_technocracy"
+	}
+	if = {
+		limit = {
+			has_government = trozkism
+		}
+		add_to_array = { global.is_trozkism = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_trozkism"
+		every_other_country = {
+			limit = {
+				has_government = communism
+				NOT = { is_in_faction_with = PREV }
+			}
+			add_isolate_ai_strategy = yes
+			add_special_com_tro_ai_strategy = yes
+			PREV = {
+				add_isolate_ai_strategy = yes
+				add_special_com_tro_ai_strategy = yes
+			}
+		}
+	}
+	if = {
+		limit = {
+			has_government = monarchy
+		}
+		add_to_array = { global.is_monarchy = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_monarchy"
+	}
+	if = {
+		limit = {
+			has_government = anarchism
+		}
+		add_to_array = { global.is_anarchism = THIS }
+		log = "[This.GetName] ([This.GetTag]): ADD IN ARRAY global.is_anarchism"
+		every_other_country = {
+			limit = {
+				NOT = {
+					has_government = anarchism
+					is_in_faction_with = PREV
+				}
+			}
+			add_isolate_ai_strategy = yes
+		}
+	}
+	log = "============================================================"
+}
+
+
+copy_tank_school_by_root = {
+	if = {
+		limit = { ROOT = { has_idea = SOV_tank_school_spirit } }
+		add_ideas = SOV_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = SOV_tank_school_spirit_2 } }
+		add_ideas = SOV_tank_school_spirit_2
+	}
+	if = {
+		limit = { ROOT = { has_idea = GER_tank_school_spirit } }
+		add_ideas = GER_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = GER_tank_school_spirit_2 } }
+		add_ideas = GER_tank_school_spirit_2
+	}
+	if = {
+		limit = { ROOT = { has_idea = FRA_tank_school_spirit } }
+		add_ideas = FRA_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = ENG_tank_school_spirit } }
+		add_ideas = ENG_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = USA_tank_school_spirit } }
+		add_ideas = USA_tank_school_spirit
+	}
+#	if = {
+#		limit = { ROOT = { has_idea = USA_tank_school_spirit_2 } }
+#		add_ideas = USA_tank_school_spirit_2
+#	}
+	if = {
+		limit = { ROOT = { has_idea = JAP_tank_school_spirit } }
+		add_ideas = JAP_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = ITA_tank_school_spirit } }
+		add_ideas = ITA_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = CZE_tank_school_spirit } }
+		add_ideas = CZE_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = POL_tank_school_spirit } }
+		add_ideas = POL_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = BEL_tank_school_spirit } }
+		add_ideas = BEL_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = SWE_tank_school_spirit } }
+		add_ideas = SWE_tank_school_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = own_tank_school_spirit } }
+		add_ideas = own_tank_school_spirit
+	}
+	
+	if = {
+		limit = { ROOT = { has_idea = tank_school_1_spirit } }
+		add_ideas = tank_school_1_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = tank_school_2_spirit } }
+		add_ideas = tank_school_2_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = tank_school_3_spirit } }
+		add_ideas = tank_school_3_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = tank_school_4_spirit } }
+		add_ideas = tank_school_4_spirit
+	}
+	if = {
+		limit = { ROOT = { has_idea = tank_school_5_spirit } }
+		add_ideas = tank_school_5_spirit
+	}
+}
+
+
+copy_tank_school_by_from = {
+	if = {
+		limit = { FROM = { has_idea = SOV_tank_school_spirit } }
+		add_ideas = SOV_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = SOV_tank_school_spirit_2 } }
+		add_ideas = SOV_tank_school_spirit_2
+	}
+	if = {
+		limit = { FROM = { has_idea = GER_tank_school_spirit } }
+		add_ideas = GER_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = GER_tank_school_spirit_2 } }
+		add_ideas = GER_tank_school_spirit_2
+	}
+	if = {
+		limit = { FROM = { has_idea = FRA_tank_school_spirit } }
+		add_ideas = FRA_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = ENG_tank_school_spirit } }
+		add_ideas = ENG_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = USA_tank_school_spirit } }
+		add_ideas = USA_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = USA_tank_school_spirit_2 } }
+		add_ideas = USA_tank_school_spirit_2
+	}
+	if = {
+		limit = { FROM = { has_idea = JAP_tank_school_spirit } }
+		add_ideas = JAP_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = ITA_tank_school_spirit } }
+		add_ideas = ITA_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = CZE_tank_school_spirit } }
+		add_ideas = CZE_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = POL_tank_school_spirit } }
+		add_ideas = POL_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = BEL_tank_school_spirit } }
+		add_ideas = BEL_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = SWE_tank_school_spirit } }
+		add_ideas = SWE_tank_school_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = own_tank_school_spirit } }
+		add_ideas = own_tank_school_spirit
+	}
+	
+	if = {
+		limit = { FROM = { has_idea = tank_school_1_spirit } }
+		add_ideas = tank_school_1_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = tank_school_2_spirit } }
+		add_ideas = tank_school_2_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = tank_school_3_spirit } }
+		add_ideas = tank_school_3_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = tank_school_4_spirit } }
+		add_ideas = tank_school_4_spirit
+	}
+	if = {
+		limit = { FROM = { has_idea = tank_school_5_spirit } }
+		add_ideas = tank_school_5_spirit
+	}
+}
+
+start_conversion_universal_factory_mission = {
+	hidden_effect = {
+		if = {
+			limit = {
+				universal_factory > 0		# тут должно быть на 1 меньше, чем цифра в названии миссии
+				NOT = {
+					any_controlled_state = {
+						has_state_flag = conversion_universal_factory_mission_1_flag
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					OR = {
+						arms_factory > 0
+						industrial_complex > 0
+					}
+					NOT = { has_state_flag = conversion_universal_factory_mission }
+				}
+				add_to_variable = { PREV.conversion_universal_factory_mission_1_target = This.id }
+				set_state_flag = conversion_universal_factory_mission
+				set_state_flag = conversion_universal_factory_mission_1_flag
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): start decision conversion_universal_factory_mission_1"
+			}
+			if = {
+				limit = { any_controlled_state = { has_state_flag = conversion_universal_factory_mission_1_flag } }
+				activate_mission = conversion_universal_factory_mission_1
+			}
+		}
+		if = {
+			limit = {
+				universal_factory > 1
+				NOT = {
+					any_controlled_state = {
+						has_state_flag = conversion_universal_factory_mission_2_flag
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					OR = {
+						arms_factory > 0
+						industrial_complex > 0
+					}
+					NOT = { has_state_flag = conversion_universal_factory_mission }
+				}
+				add_to_variable = { PREV.conversion_universal_factory_mission_2_target = This.id }
+				set_state_flag = conversion_universal_factory_mission
+				set_state_flag = conversion_universal_factory_mission_2_flag
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): start decision conversion_universal_factory_mission_2"
+			}
+			if = {
+				limit = { any_controlled_state = { has_state_flag = conversion_universal_factory_mission_2_flag } }
+				activate_mission = conversion_universal_factory_mission_2
+			}
+		}
+		if = {
+			limit = {
+				universal_factory > 2
+				NOT = {
+					any_controlled_state = {
+						has_state_flag = conversion_universal_factory_mission_3_flag
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					OR = {
+						arms_factory > 0
+						industrial_complex > 0
+					}
+					NOT = { has_state_flag = conversion_universal_factory_mission }
+				}
+				add_to_variable = { PREV.conversion_universal_factory_mission_3_target = This.id }
+				set_state_flag = conversion_universal_factory_mission
+				set_state_flag = conversion_universal_factory_mission_3_flag
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): start decision conversion_universal_factory_mission_3"
+			}
+			if = {
+				limit = { any_controlled_state = { has_state_flag = conversion_universal_factory_mission_3_flag } }
+				activate_mission = conversion_universal_factory_mission_3
+			}
+		}
+		if = {
+			limit = {
+				universal_factory > 3
+				NOT = {
+					any_controlled_state = {
+						has_state_flag = conversion_universal_factory_mission_4_flag
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					OR = {
+						arms_factory > 0
+						industrial_complex > 0
+					}
+					NOT = { has_state_flag = conversion_universal_factory_mission }
+				}
+				add_to_variable = { PREV.conversion_universal_factory_mission_4_target = This.id }
+				set_state_flag = conversion_universal_factory_mission
+				set_state_flag = conversion_universal_factory_mission_4_flag
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): start decision conversion_universal_factory_mission_4"
+			}
+			if = {
+				limit = { any_controlled_state = { has_state_flag = conversion_universal_factory_mission_4_flag } }
+				activate_mission = conversion_universal_factory_mission_4
+			}
+		}
+		if = {
+			limit = {
+				universal_factory > 4
+				NOT = {
+					any_controlled_state = {
+						has_state_flag = conversion_universal_factory_mission_5_flag
+					}
+				}
+			}
+			random_controlled_state = {
+				limit = {
+					OR = {
+						arms_factory > 0
+						industrial_complex > 0
+					}
+					NOT = { has_state_flag = conversion_universal_factory_mission }
+				}
+				add_to_variable = { PREV.conversion_universal_factory_mission_5_target = This.id }
+				set_state_flag = conversion_universal_factory_mission
+				set_state_flag = conversion_universal_factory_mission_5_flag
+				log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): [This.GetName] ([This.GetID]): start decision conversion_universal_factory_mission_5"
+			}
+			if = {
+				limit = { any_controlled_state = { has_state_flag = conversion_universal_factory_mission_5_flag } }
+				activate_mission = conversion_universal_factory_mission_5
+			}
+		}
+		sync_factories = yes
+		set_variable = { tot_industrial_complex = 0 }
+		set_variable = { tot_arms_factory = 0 }
+		every_controlled_state = {
+			add_to_variable = { PREV.tot_industrial_complex = building_level@industrial_complex }
+			add_to_variable = { PREV.tot_arms_factory = building_level@arms_factory }
+		}
+	}
+}
+
+drop_all_major = {
+	every_country = { set_major = no }
+}
+set_standart_major = {
+	drop_all_major = yes
+	USA = { set_major = yes }
+	ENG = { set_major = yes }
+	FRA = { set_major = yes }
+	GER = { set_major = yes }
+	ITA = { set_major = yes }
+	SOV = { set_major = yes }
+	JAP = { set_major = yes }
+}
+
+set_WOS_major = {
+	drop_all_major = yes
+	SOV = { set_major = yes }
+	CHI = { set_major = yes }
+	PRC = { set_major = yes }
+	USA = { set_major = yes }
+	CAN = { set_major = yes }
+	MEX = { set_major = yes }
+	JAP = { set_major = yes }
+	ENG = { set_major = yes }
+	FRA = { set_major = yes }
+	HOL = { set_major = yes }
+	GER = { set_major = yes }
+	PRE = { set_major = yes }
+}

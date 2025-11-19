@@ -1,0 +1,157 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				# Greece стартпак
+				GRE = {
+					country_event = { id = nw_greece.1 days = 26 }
+					country_event = { id = nw_greece.14 days = 730 }
+				}
+			}
+		}
+	}
+	
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					tag = GRE
+					NOT = { has_government = fascism }
+				}
+				if = {
+					limit = { has_idea = GRE_antiparliamentarism }
+					remove_ideas = GRE_antiparliamentarism
+				}
+				if = {
+					limit = { has_idea = GRE_right_parliament }
+					remove_ideas = GRE_right_parliament
+				}
+			}
+		}
+	}
+	
+	#FROM is war target
+	on_declare_war = {
+		effect = {
+			# Потеря Грецией нацдуха в случае британской агрессии
+			if = { 
+				limit = { 
+					ROOT = { original_tag = ENG } 
+					FROM = { original_tag = GRE }
+					GRE = { has_idea = GRE_idea_pro_british_king }
+				} 
+				GRE = { 
+					swap_ideas = {
+						remove_idea = GRE_idea_pro_british_king
+						add_idea = GRE_idea_georg_ii
+					}
+				}
+			}
+		}
+	}
+	
+	# THIS is country that has just gotten into a war.
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+			#Образование Эллинского государства
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							tag = GRE
+							tag = CRE
+						}
+					}
+					GER = { has_war_with = ROOT }
+					has_global_flag = ger_form_hel_flag
+					NOT = { has_global_flag = ger_form_hel_end_flag }
+				}
+				GER = { country_event = { id = NWgreece_hel.1 days = 1 } }
+			}
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							tag = GRE
+							tag = CRE
+						}
+					}
+					GER = {
+						has_war_with = ROOT
+						has_government = fascism
+					}
+					ITA = {
+						has_government = fascism
+						is_in_faction_with = GER
+					}
+					NOT = { has_global_flag = ger_form_hel_flag }
+					NOT = { has_global_flag = ger_form_hel_end_flag }
+				}
+				random_country = {
+					limit = {
+						NOT = { tag = ROOT }
+						has_war_with = ROOT
+					}
+					country_event = { id = NWgreece_hel.999 }
+				}
+			}
+			
+			#Падение марионеточной Греции
+			if = {
+				limit = {
+					ROOT = { tag = HEL }
+					FROM = {
+						OR = {
+							OR = {
+								tag = GRE
+								is_in_faction_with = GRE
+							}
+							OR = {
+								tag = CRE
+								is_in_faction_with = CRE
+							}
+						}
+					}
+					NOT = { has_global_flag = ger_form_hel_flag }
+					NOT = { has_global_flag = ger_form_hel_end_flag }
+				}
+				FROM = { country_event = { id = NWgreece_hel.7 days = 1 } }
+			}
+			
+			#Сопротивление Греции
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							tag = GRE
+							AND = {
+								tag = CRE
+								NOT = {
+									has_government = communism
+									has_government = trozkism
+								}
+							}
+						}
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							NOT = {
+								tag = HEL
+								has_idea = HEL_illegitimate_government
+							}
+						}
+					}
+					FROM = {
+						set_variable = { resistance_score = 48 }
+						country_event = { id = NWgreece_hel.8 days = 1 }
+					}
+				}
+			}
+		}
+	}
+}

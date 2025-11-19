@@ -1,0 +1,1835 @@
+#	THIS FILE IS FOR effects SPECIFICALLY FOR THE chinese TAGs
+
+china_integrate_province_Example = { # README
+	# активация механики для страны
+	activate_china_integrate_province = yes
+	set_country_flag = chinese_reunification_flag # решения на завоевания клик (опционально)
+	unlock_decision_category_tooltip = chinese_reunification # базовый тултип (опционально)
+	
+	# изменение параметров, примеры
+	add_to_variable = { china_integration_of_province_cost_var = 0.25 tooltip = china_integration_of_province_cost_tooltip } # увеличить стоимость интеграции на 25%, с тултипом
+	add_to_variable = { china_integration_of_province_time_var = -0.15 tooltip = china_integration_of_province_time_tooltip } # уменьшить время интеграции на 15%, с тултипом
+	
+	multiply_variable = { china_integrate_province_cost_array^1 = 0.75 } # уменьшить стоимость интеграции провинции Цинхай на 25% (1-0.25)
+	multiply_variable = { china_integrate_province_cost_array^3 = 1.75 } # увеличить стоимость интеграции провинции Нинся на 75% (1+0.75)
+	multiply_variable = { china_integrate_province_cost_array^2 = 1.25 } # увеличить стоимость интеграции провинции Ганьсу на 25% (1+0.25)
+	# тултип для этого делайте сами
+	# индексы ищите в china_integrate_province_set_cost_array в этом же файле
+	
+	add_to_variable = { china_integrate_province_time_array^0 = 0.25 } # увеличить время интеграции провинции Синьцзянь на 25%
+	add_to_variable = { china_integrate_province_time_array^7 = -0.5 } # уменьшить время интеграции провинции Чахар на 50%
+	add_to_variable = { china_integrate_province_time_array^35 = 0.3 } # увеличить время интеграции провинции Шанхай на 30%
+	# тултип для этого делайте сами
+	# обратите внимание, время определяется иначе, чем стоимость!!
+}
+
+### MAN ###
+
+# add - значение которое добавиться в переменную
+MAN_ayukawa_vs_matsuoka_add_var = {
+	add_to_variable = { MAN.MAN_ayukawa_vs_matsuoka_var = add }
+	
+	set_temp_variable = { right = MAN.MAN_ayukawa_vs_matsuoka_var }
+	add_to_temp_variable = { right = add }
+	
+	if = {
+		limit = { check_variable = { right > 50 } }
+		set_temp_variable = { leader = token:JAP_Yosuke_Matsuoka }
+		subtract_from_temp_variable = { right = 50 }
+		multiply_temp_variable = { right = 2 }
+	}
+	else = {
+		set_temp_variable = { leader = token:MAN_yoshisuke_aikawa }
+		subtract_from_temp_variable = { right = 50 }
+		multiply_temp_variable = { right = -2 }
+	}
+	
+	if = {
+		limit = { check_variable = { add > 0 } }
+		set_temp_variable = { side = token:JAP_Yosuke_Matsuoka } 
+		multiply_temp_variable = { add = 2 }
+	}
+	else = {
+		set_temp_variable = { side = token:MAN_yoshisuke_aikawa }
+		multiply_temp_variable = { add = -2 }
+	}
+	
+	custom_effect_tooltip = {
+		localization_key = MAN_ayukawa_vs_matsuoka_tooltip
+		ADD = "+[?add]%"
+		RIGHT = "[?right]%"
+		SIDE = "[?side.GetTokenLocalizedKey]"
+		LEADER = "[?leader.GetTokenLocalizedKey]"
+	}
+	
+	hidden_effect = { # TODO в этом нет необходимости
+		if = {
+			limit = { check_variable = { MAN.MAN_ayukawa_vs_matsuoka_var > 99 } }
+			MAN = { set_country_flag = MAN_ayukawa_vs_matsuoka_total_win }
+			country_event = manchukou.132
+			if = {
+				limit = { tag = MAN }
+				JAP = { country_event = manchukou.132 }
+			}
+			else = {
+				MAN = { country_event = manchukou.132 }
+			}
+		}
+		else_if = {
+			limit = { check_variable = { MAN.MAN_ayukawa_vs_matsuoka_var < 1 } }
+			MAN = { set_country_flag = MAN_ayukawa_vs_matsuoka_total_win }
+			country_event = manchukou.127
+			if = {
+				limit = { tag = MAN }
+				JAP = { country_event = manchukou.127 }
+			}
+			else = {
+				MAN = { country_event = manchukou.127 }
+			}
+		}
+	}
+}
+
+MAN_set_puyi_idea = {	
+	if = { # alt with trait
+		limit = { 
+			has_country_flag = MAN_manchurian_revolt_flag 
+			MAN_aisin_gioro_puyi = { has_trait = the_god_emperor } # TODO а нужны ли эти проверки теперь?
+		}
+		add_ideas = MAN_aisin_gyoro_puyi_the_god_emperor_alt
+	}
+	else_if = { # alt
+		limit = { 
+			has_country_flag = MAN_manchurian_revolt_flag 
+		}
+		add_ideas = MAN_aisin_gyoro_puyi_alt
+	}
+	else_if = { # with trait
+		limit = { 
+			MAN_aisin_gioro_puyi = { has_trait = the_god_emperor } 
+		}
+		add_ideas = MAN_aisin_gyoro_puyi_the_god_emperor
+	}
+	else = {
+		add_ideas = MAN_aisin_gyoro_puyi
+	}
+}
+MAN_remove_puyi_idea = { # TODO а надо ли вообще?
+	if = {
+		limit = { has_idea = MAN_aisin_gyoro_puyi_the_god_emperor_alt }
+		remove_ideas = MAN_aisin_gyoro_puyi_the_god_emperor_alt
+	}
+	else_if = {
+		limit = { has_idea = MAN_aisin_gyoro_puyi_alt }
+		remove_ideas = MAN_aisin_gyoro_puyi_alt
+	}
+	else_if = {
+		limit = { has_idea = MAN_aisin_gyoro_puyi_the_god_emperor }
+		remove_ideas = MAN_aisin_gyoro_puyi_the_god_emperor
+	}
+	else_if = {
+		limit = { has_idea = MAN_aisin_gyoro_puyi }
+		remove_ideas = MAN_aisin_gyoro_puyi
+	}
+}
+
+# MGM
+MGM_clear_psB_variables = {
+	set_variable = { MAN_psB_command_power_gain_mult = 0 } 
+	set_variable = { MAN_psB_production_speed_buildings_factor = 0 } 
+	set_variable = { MAN_psB_conscription_factor = 0 } 
+	set_variable = { MAN_psB_resistance_growth = 0 }
+	set_variable = { MAN_psB_compliance_growth = 0 } 
+	set_variable = { MAN_psB_political_power_factor = 0 } 
+}
+MGM_clear_psG_variables = {
+	set_variable = { MAN_psG_defensive_war_stability_factor = 0 }
+	set_variable = { MAN_psG_party_popularity_stability_factor = 0 } 
+	set_variable = { MAN_psG_monthly_population = 0 } 
+	set_variable = { MAN_psG_max_command_power_mult = 0 } 
+	set_variable = { MAN_psG_agency_upgrade_time = 0 } 
+	set_variable = { MAN_psG_civilian_factory_use = 0 } 
+}
+MGM_clear_psM_variables = {
+	set_variable = { MAN_psM_army_core_attack_factor = 0 } 
+	set_variable = { MAN_psM_army_core_defence_factor = 0 }
+	set_variable = { MAN_psM_army_morale = 0 } 
+	set_variable = { MAN_psM_army_org = 0 } 
+	set_variable = { MAN_psM_special_forces_cap = 0 } 
+	set_variable = { MAN_psM_special_forces_training_time_factor = 0 } 
+}
+
+### YCP ###
+
+YCP_integrate_province_state_effect = {
+	if = {
+		limit = { 
+			state = var:china_capital_of_province
+			ROOT = { has_completed_focus = YCP_update_bureaucratic_apparatus } 
+		}
+		YCP_update_bureaucratic_apparatus_effect = yes
+	}
+	if = {
+		limit = { 
+			state = var:china_capital_of_province
+			ROOT = { has_completed_focus = YCP_abandoning_traditional_ties } 
+		}
+		YCP_abandoning_traditional_ties_effect = yes
+	}
+}
+YCP_abandoning_traditional_ties_effect = {
+	add_extra_state_shared_building_slots = 1
+}
+YCP_update_bureaucratic_apparatus_effect = {
+	random_list = {
+		1 = { 
+			add_building_construction = {
+				type = infrastructure
+				level = 1 # TODO bug?
+				instant_build = yes
+			}
+		}
+		1 = {
+			add_building_construction = {
+				type = hospital
+				level = 1
+				instant_build = yes
+			}
+		}
+		1 = {
+			ROOT = {
+				add_stability = 0.02
+				add_political_power = 50 # 75
+			}
+		}
+	}
+}
+
+### EHB-YSC ###
+
+EHB_summon_YSC = {
+	hidden_effect = {
+		YSC = {
+			transfer_state = 816
+			add_state_core = 816 
+			add_state_core = 609 
+			set_politics = {
+				ruling_party = monarchy
+				elections_allowed = no
+			}
+			add_popularity = {
+				ideology = monarchy
+				popularity = 1.0
+			}
+			promote_character = YSC_chang_yin_tang
+			division_template = {
+				name = "Großyellowsand"
+				priority = 1
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 0 y = 3 }
+				}
+			}
+			816 = {
+				create_unit = {
+					division = "name = \"Yellow sand 1\" division_template = \"Großyellowsand\" start_experience_factor = 0.1 start_equipment_factor = 0.75"
+					owner = YSC
+				}
+				create_unit = {
+					division = "name = \"Yellow sand 2\" division_template = \"Großyellowsand\" start_experience_factor = 0.1 start_equipment_factor = 0.75"
+					owner = YSC
+				}
+				create_unit = {
+					division = "name = \"Yellow sand 3\" division_template = \"Großyellowsand\" start_experience_factor = 0.1 start_equipment_factor = 0.65"
+					owner = YSC
+				}
+				create_unit = {
+					division = "name = \"Yellow sand 4\" division_template = \"Großyellowsand\" start_experience_factor = 0.1 start_equipment_factor = 0.65"
+					owner = YSC
+				}
+				create_unit = {
+					division = "name = \"Yellow sand 5\" division_template = \"Großyellowsand\" start_experience_factor = 0.1 start_equipment_factor = 0.55"
+					owner = YSC
+				}
+			}
+		}
+		declare_war_on = {
+			target = YSC
+			type = civil_war
+		}
+		add_civil_war_target = YSC
+	}
+	if = {
+		limit = { is_subject = yes }
+		YSC = {
+			set_variable = { china_intervention_timer_timeout = 90 }
+			activate_targeted_decision = { decision = china_intervention_timer target = PREV.overlord }
+		}
+	}
+}
+
+### Mechanics
+
+activate_china_integrate_province = {
+	hidden_effect = {
+		set_country_flag = chinese_integration_of_province_flag
+		add_dynamic_modifier = { modifier = china_integration_of_province_dyn }
+		china_integrate_province_set_cost_array = yes
+	}
+}
+
+china_integrate_province_effect = {
+	if = {
+		limit = { original_tag = CHI }
+		if = {
+			limit = { has_completed_focus = CHI_support_reliance_on_landowners_and_financiers }
+			add_stability = -0.05
+		}
+		if = {
+			limit = { check_variable = { var = CHI_unity_of_the_party_var_for_integration value = 0 compare = not_equals } }
+			add_to_variable = { CHI_unity_of_the_party_var = CHI_unity_of_the_party_var_for_integration tooltip = CHI_unity_of_the_party_var_tt }
+			CHI_unity_of_the_party_effect = yes
+		}
+	}
+	every_state = {
+		limit = {
+			#is_in_array = { global.chinese_state = THIS }
+			check_variable = { china_capital_of_province = FROM.china_capital_of_province }
+			NOT = { is_core_of = ROOT }
+		}
+		add_core_of = ROOT
+		meta_effect = {
+			text = { 
+				NW_china_integrate_[PROVINCE]_state_effect = yes
+			}
+			PROVINCE = "[FROM.ChinaGetProvinceName]"
+		}
+	}
+	custom_effect_tooltip = empty_line_tooltip # TODO убрать
+	meta_effect = {
+		text = { 
+			set_country_flag = NW_china_integrate_[PROVINCE] 
+			NW_china_integrate_[PROVINCE]_effect = yes
+		}
+		PROVINCE = "[FROM.ChinaGetProvinceName]"
+	}
+	hidden_effect = {
+		if = {
+			limit = { is_in_array = { chinese_integrate_province_state_map = FROM.FROM:china_capital_of_province.id } }
+			for_each_loop = {
+				array = FROM.FROM.china_capital_of_province:chinese_province
+				value = state
+				
+				remove_from_array = { chinese_integrate_province_state_map = state }
+			}
+		}
+	}
+}
+
+YCP_add_enemy_party_deputies = {
+	if = {
+		limit = { has_country_flag = YCP_ssp_is_new_enemy_flag }
+		add_to_variable = { YCP_ssp_party:YCP_num_deputies = deputies tooltip = YCP_add_ssp_deputies }
+	}
+	else = {
+		add_to_variable = { YCP_cpc_party:YCP_num_deputies = deputies tooltip = YCP_add_cpc_deputies }
+	}
+}
+
+# README: сейчас здесь представлены не все провинции, по мере необходимости добавляйте (меняйте в названии провинцию)
+NW_china_integrate_xinjiang_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 8
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 3 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 1 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 1 }
+			# add_to_variable = { YCP_independent_party:YCP_num_deputies = 0 tooltip = YCP_add_independent_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 2 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		set_temp_variable = { deputies = 4 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_xinjiang_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_outer_mongolia_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 2
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			# add_to_variable = { YCP_independent_party:YCP_num_deputies = 0 tooltip = YCP_add_independent_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		set_temp_variable = { deputies = 1 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_outer_mongolia_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_tibet_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 6
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 2 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+		set_temp_variable = { deputies = 3 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_tibet_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_suiyuan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 3
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		set_temp_variable = { deputies = 1 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_suiyuan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_chahar_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 3
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		set_temp_variable = { deputies = 1 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_chahar_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_ningxia_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 2
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+	}
+}
+NW_china_integrate_ningxia_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_hebei_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 66
+			limit = { has_completed_focus = YCP_liberal_education has_completed_focus = YCP_synthesis_of_liberalism_and_confucianism }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 21 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 5 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 5 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 17 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 7 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 7 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 6 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 6 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+		}
+		set_temp_variable = { deputies = 20 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_hebei_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_yunnan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 24
+			limit = { has_completed_focus = YCP_institute_of_democracy }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 8 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 2 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 2 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 3 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 2 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 4 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 4 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 5 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 5 }
+		}
+		set_temp_variable = { deputies = 10 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_yunnan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_jiangxi_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 30
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 14 tooltip = YCP_add_kdu_deputies }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 3 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 3 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 3 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 3 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+			
+			set_temp_variable = { deputies = 5 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 2 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 4 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 4 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 4 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 8 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 8 }
+			
+			set_temp_variable = { deputies = 12 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+	}
+}
+NW_china_integrate_jiangxi_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_jiangsu_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 60
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 20 tooltip = YCP_add_kdu_deputies }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 10 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 3 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 3 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 7 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 7 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+			
+			set_temp_variable = { deputies = 6 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 10 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 4 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 4 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 7 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 7 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 6 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 6 }
+			
+			set_temp_variable = { deputies = 23 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+	}
+}
+NW_china_integrate_jiangsu_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_hubei_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 50
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 25 tooltip = YCP_add_kdu_deputies }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 7 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 4 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+			
+			set_temp_variable = { deputies = 10 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 15 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 8 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 5 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 5 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 5 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 5 }
+			
+			set_temp_variable = { deputies = 17 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+	}
+}
+NW_china_integrate_hubei_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_shandong_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 78
+			limit = { has_completed_focus = YCP_use_scientific_methods }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 21 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 12 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 12 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 5 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 5 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 5 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 5 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 17 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 10 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 10 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 13 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 7 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 7 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 6 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 6 }
+		}
+		set_temp_variable = { deputies = 25 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_shandong_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_henan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 68
+			limit = { has_completed_focus = YCP_nationwide_welfare }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 20 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 8 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 8 }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 8 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 8 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 12 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 12 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 12 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 10 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 10 }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 10 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 10 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 16 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 16 }
+		}
+		set_temp_variable = { deputies = 20 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_henan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_shansi_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 22
+			limit = { has_completed_focus = YCP_nationwide_welfare }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 12 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 1 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 8 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 4 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 4 }
+		}
+		set_temp_variable = { deputies = 8 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_shansi_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_shensi_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 18
+			limit = { has_completed_focus = YCP_nationwide_welfare }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 7 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 3 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 3 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 3 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+		}
+		set_temp_variable = { deputies = 6 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_shensi_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_hunan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 68
+			limit = { has_completed_focus = YCP_written_constitutionalism }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 22 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 6 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 6 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 8 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 8 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 2 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 12 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 5 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 5 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 11 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 15 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 5 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 5 }
+		}
+		set_temp_variable = { deputies = 20 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_hunan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_sichuan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 106
+			limit = { has_completed_focus = YCP_nationwide_government }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 60 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 5 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 6 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 40 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 10 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 10 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 8 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 10 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 3 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 3 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+		set_temp_variable = { deputies = 32 } 
+		YCP_add_enemy_party_deputies = yes
+		
+		custom_effect_tooltip = available_political_advisor
+		if = {
+			limit = { has_character = YCP_li_gongquan }
+			show_ideas_tooltip = YCP_li_gongquan
+		}
+		if = {
+			limit = { has_character = YCP_mu_zibing }
+			show_ideas_tooltip = YCP_mu_zibing
+		}
+	}
+}
+NW_china_integrate_sichuan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_sikan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 2
+			limit = { has_completed_focus = YCP_nationwide_government }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			# add_to_variable = { YCP_independent_party:YCP_num_deputies = 0 tooltip = YCP_add_independent_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		set_temp_variable = { deputies = 1 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_sikan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_fujian_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 24
+			limit = { has_completed_focus = YCP_nationwide_welfare }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 8 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 4 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 1 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 5 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 6 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 2 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		set_temp_variable = { deputies = 9 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_fujian_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_anhui_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 46
+			limit = { has_completed_focus = YCP_nationwide_welfare }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 16 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 11 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 10 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 15 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+		}
+		set_temp_variable = { deputies = 15 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_anhui_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_zhejiang_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 53 / 42
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 9 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 20 tooltip = YCP_add_kdu_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 11 tooltip = YCP_add_ssp_deputies }
+			# add_to_variable = { YCP_independent_party:YCP_num_deputies = 0 tooltip = YCP_add_independent_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 14 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 6 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 5 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 5 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 5 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 5 }
+		}
+		set_temp_variable = { deputies = 12 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_zhejiang_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_shanghai_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 6
+			limit = { has_completed_focus = YCP_creating_middle_class }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 2 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 2 tooltip = YCP_add_ssp_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 2 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 1 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		set_temp_variable = { deputies = 2 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_shanghai_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_hong_kong_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_progressive_income_tax }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 3 tooltip = YCP_add_federalist_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 2 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 1 tooltip = YCP_add_ssp_deputies }
+		}
+	}
+}
+NW_china_integrate_hong_kong_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_qinghai_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_support_republic_of_five_nations }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		else = {
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+	}
+}
+NW_china_integrate_qinghai_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_gansu_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 11
+			limit = { has_completed_focus = YCP_replace_disorganization_with_discipline }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 4 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 1 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 1 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+		}
+		set_temp_variable = { deputies = 5 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_gansu_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_guizhou_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 18
+			limit = { has_completed_focus = YCP_take_benefits_of_baojia_system }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 10 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 2 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 2 }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 3 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 2 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 7 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 7 }
+		}
+		set_temp_variable = { deputies = 5 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_guizhou_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_guangxi_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 30
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 5 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 3 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 3 }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 12 tooltip = YCP_add_kdu_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 9 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 2 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 2 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 5 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+		}
+		set_temp_variable = { deputies = 10 } 
+		YCP_add_enemy_party_deputies = yes
+	}
+}
+NW_china_integrate_guangxi_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_guangdong_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = { # 70
+			limit = { has_completed_focus = YCP_democratic_breakaway_of_kuomintang }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 20 tooltip = YCP_add_ycp_deputies }
+			# add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 0 tooltip = YCP_add_professional_groups_deputies }
+			add_to_variable = { YCP_kdu_party:YCP_num_deputies = 40 tooltip = YCP_add_kdu_deputies }
+			
+			set_temp_variable = { deputies = 10 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+		else = {
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 10 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 9 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 9 }
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 10 tooltip = YCP_add_ssp_deputies }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 8 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_other_parties_party:YCP_num_deputies = 6 tooltip = YCP_add_other_parties_deputies } add_to_variable = { YCP_other_parties_party:YCP_num_non_aligned_deputies = 6 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 4 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 4 }
+			
+			set_temp_variable = { deputies = 23 } 
+			YCP_add_enemy_party_deputies = yes
+		}
+	}
+}
+NW_china_integrate_guangdong_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_taiwan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_rule_of_law }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 5 tooltip = YCP_add_ycp_deputies }
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+		else = {
+			add_to_variable = { YCP_professional_groups_party:YCP_num_deputies = 1 tooltip = YCP_add_professional_groups_deputies } add_to_variable = { YCP_professional_groups_party:YCP_num_non_aligned_deputies = 1 }
+			add_to_variable = { YCP_federalist_party:YCP_num_deputies = 5 tooltip = YCP_add_federalist_deputies }
+			add_to_variable = { YCP_independent_party:YCP_num_deputies = 3 tooltip = YCP_add_independent_deputies } add_to_variable = { YCP_independent_party:YCP_num_non_aligned_deputies = 3 }
+		}
+	}
+}
+NW_china_integrate_taiwan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_guangzhouwan_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_protectionist_tariffs }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 1 tooltip = YCP_add_ssp_deputies }
+		}
+	}
+}
+NW_china_integrate_guangzhouwan_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_macau_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_protectionist_tariffs }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 1 tooltip = YCP_add_ssp_deputies }
+		}
+	}
+}
+NW_china_integrate_macau_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+NW_china_integrate_dalian_effect = {
+	if = {
+		limit = { original_tag = YCP }
+		if = {
+			limit = { has_completed_focus = YCP_protectionist_tariffs }
+			add_to_variable = { YCP_ycp_party:YCP_num_deputies = 1 tooltip = YCP_add_ycp_deputies }
+		}
+		else = {
+			add_to_variable = { YCP_ssp_party:YCP_num_deputies = 1 tooltip = YCP_add_ssp_deputies }
+		}
+	}
+}
+NW_china_integrate_dalian_state_effect = {
+	if = {
+		limit = { ROOT = { original_tag = YCP } }
+		YCP_integrate_province_state_effect = yes
+	}
+}
+
+china_integrate_province_set_cost_array = {
+	add_to_array = { china_integrate_province_cost_array = 250 } # xinjiang ^0
+	add_to_array = { china_integrate_province_cost_array = 25 } # qinghai ^1
+	add_to_array = { china_integrate_province_cost_array = 25 } # gansu ^2
+	add_to_array = { china_integrate_province_cost_array = 25 } # ningxia ^3
+	add_to_array = { china_integrate_province_cost_array = 50 } # shensi ^4
+	add_to_array = { china_integrate_province_cost_array = 50 } # shansi ^5
+	add_to_array = { china_integrate_province_cost_array = 100 } # suiyuan ^6
+	add_to_array = { china_integrate_province_cost_array = 100 } # chahar ^7
+	add_to_array = { china_integrate_province_cost_array = 75 } # hebei ^8
+	add_to_array = { china_integrate_province_cost_array = 75 } # shandong ^9
+	add_to_array = { china_integrate_province_cost_array = 50 } # henan ^10
+	add_to_array = { china_integrate_province_cost_array = 100 } # jiangsu ^11
+	add_to_array = { china_integrate_province_cost_array = 50 } # anhui ^12
+	add_to_array = { china_integrate_province_cost_array = 50 } # zhejiang ^13
+	add_to_array = { china_integrate_province_cost_array = 75 } # fujian ^14
+	add_to_array = { china_integrate_province_cost_array = 75 } # jiangxi ^15
+	add_to_array = { china_integrate_province_cost_array = 50 } # hubei ^16
+	add_to_array = { china_integrate_province_cost_array = 50 } # hunan ^17
+	add_to_array = { china_integrate_province_cost_array = 50 } # guizhou ^18
+	add_to_array = { china_integrate_province_cost_array = 100 } # guangxi ^19
+	add_to_array = { china_integrate_province_cost_array = 125 } # guangdong ^20
+	add_to_array = { china_integrate_province_cost_array = 125 } # yunnan ^21
+	add_to_array = { china_integrate_province_cost_array = 125 } # sichuan ^22
+	add_to_array = { china_integrate_province_cost_array = 100 } # sikan ^23
+	add_to_array = { china_integrate_province_cost_array = 50 } # zhehe ^24
+	add_to_array = { china_integrate_province_cost_array = 50 } # girin ^25
+	add_to_array = { china_integrate_province_cost_array = 50 } # heilongjiang ^26
+	add_to_array = { china_integrate_province_cost_array = 50 } # fengtian ^27
+	add_to_array = { china_integrate_province_cost_array = 200 } # tibet ^28
+	add_to_array = { china_integrate_province_cost_array = 250 } # outer_mongolia ^29
+	add_to_array = { china_integrate_province_cost_array = 150 } # taiwan ^30
+	add_to_array = { china_integrate_province_cost_array = 150 } # hong_kong ^31
+	add_to_array = { china_integrate_province_cost_array = 25 } # guangzhouwan ^32
+	add_to_array = { china_integrate_province_cost_array = 25 } # macau ^33
+	add_to_array = { china_integrate_province_cost_array = 25 } # dalian ^34
+	add_to_array = { china_integrate_province_cost_array = 50 } # shanghai ^35
+	
+	resize_array = { china_integrate_province_time_array = 36 } # индексация аналогична
+}
+
+china_set_province_arrays = {
+	
+	# xinjiang ^0
+	every_state = {
+		limit = { OR = { state = 287 state = 617 state = 618 state = 619 state = 759 state = 760 state = 1047 state = 1120 state = 1121 state = 1122 state = 1046 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 617 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 287 state = 617 state = 618 state = 619 state = 759 state = 760 state = 1047 state = 1120 state = 1121 state = 1122 state = 1046 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 0 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# qinghai ^1
+	every_state = {
+		limit = { OR = { state = 755 state = 754 state = 1166 state = 1177 state = 604 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 754 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 755 state = 754 state = 1166 state = 1177 state = 604 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 1 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# gansu ^2
+	every_state = {
+		limit = { OR = { state = 756 state = 1126 state = 1125 state = 283 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 283 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 756 state = 1126 state = 1125 state = 283 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 2 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# ningxia ^3
+	every_state = {
+		limit = { OR = { state = 1133 state = 616 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 616 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 1133 state = 616 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 3 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# shensi ^4
+	every_state = {
+		limit = { OR = { state = 744 state = 622 state = 1123 state = 1124 state = 1127 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 744 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 744 state = 622 state = 1123 state = 1124 state = 1127 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 4 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# shansi ^5
+	every_state = {
+		limit = { OR = { state = 1154 state = 1060 state = 615 state = 1134 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 615 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 1154 state = 1060 state = 615 state = 1134 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 5 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# suiyuan ^6
+	every_state = {
+		limit = { OR = { state = 621 state = 746 state = 1161 state = 1136 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 621 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 621 state = 746 state = 1161 state = 1136 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 6 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# chahar ^7
+	every_state = {
+		limit = { OR = { state = 611 state = 612 state = 1132 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 611 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 611 state = 612 state = 1132 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 7 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# hebei ^8
+	every_state = {
+		limit = { OR = { state = 608 state = 609 state = 614 state = 816 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 608 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 608 state = 609 state = 614 state = 816 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 8 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# shandong ^9
+	every_state = {
+		limit = { OR = { state = 597 state = 743 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 597 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 597 state = 743 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 9 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# henan ^10
+	every_state = {
+		limit = { OR = { state = 607 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 607 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 607 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 10 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# jiangsu ^11
+	every_state = {
+		limit = { OR = { state = 598 state = 613 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 598 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 598 state = 613 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 11 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# anhui ^12
+	every_state = {
+		limit = { OR = { state = 749 state = 606 state = 1192 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 606 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 749 state = 606 state = 1192 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 12 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# zhejiang ^13
+	every_state = {
+		limit = { OR = { state = 596 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 596 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 596 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 13 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# fujian ^14
+	every_state = {
+		limit = { OR = { state = 595 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 595 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 595 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 14 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# jiangxi ^15
+	every_state = {
+		limit = { OR = { state = 600 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 600 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 600 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 15 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# hubei ^16
+	every_state = {
+		limit = { OR = { state = 620 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 620 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 620 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 16 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# hunan ^17
+	every_state = {
+		limit = { OR = { state = 602 state = 750 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 602 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 602 state = 750 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 17 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# guizhou ^18
+	every_state = {
+		limit = { OR = { state = 748 state = 603 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 603 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 748 state = 603 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 18 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# guangxi ^19
+	every_state = {
+		limit = { OR = { state = 599 state = 594 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 599 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 599 state = 594 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 19 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# guangdong ^20
+	every_state = {
+		limit = { OR = { state = 591 state = 592 state = 593 state = 1129 state = 1130 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 592 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 591 state = 592 state = 593 state = 1129 state = 1130 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 20 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# yunnan ^21
+	every_state = {
+		limit = { OR = { state = 325 state = 747 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 325 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 325 state = 747 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 21 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# sichuan ^22
+	every_state = {
+		limit = { OR = { state = 605 state = 852 state = 1131 state = 753 state = 1182 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 605 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 605 state = 852 state = 1131 state = 753 state = 1182 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 22 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# sikan ^23
+	every_state = {
+		limit = { OR = { state = 751 state = 752 state = 601 state = 994 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 751 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 751 state = 752 state = 601 state = 994 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 23 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# zhehe ^24
+	every_state = {
+		limit = { OR = { state = 610 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 610 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 610 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 24 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# girin ^25
+	every_state = {
+		limit = { OR = { state = 328 state = 717 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 328 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 328 state = 717 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 25 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# heilongjiang ^26
+	every_state = {
+		limit = { OR = { state = 714 state = 761 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 714 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 714 state = 761 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 26 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# fengtian ^27
+	every_state = {
+		limit = { OR = { state = 715 state = 716 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 716 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 715 state = 716 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 27 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# tibet ^28
+	every_state = {
+		limit = { OR = { state = 757 state = 758 state = 322 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 757 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 757 state = 758 state = 322 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 28 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# outer_mongolia ^29
+	every_state = {
+		limit = { OR = { state = 953 state = 954 state = 955 state = 957 state = 330 state = 1135 state = 956 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 957 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 953 state = 954 state = 955 state = 957 state = 330 state = 1135 state = 956 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 29 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# taiwan ^30
+	every_state = {
+		limit = { OR = { state = 524 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 524 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 524 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 30 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# hong_kong ^31
+	every_state = {
+		limit = { OR = { state = 326 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 326 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+			limit = { OR = { state = 326 } }
+			add_to_array = { PREV.chinese_province = This.id }
+		}
+			set_variable = { china_capital_of_province_index = 31 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# guangzhouwan ^32
+	every_state = {
+		limit = { OR = { state = 728 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 728 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 728 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 32 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# macau ^33
+	every_state = {
+		limit = { OR = { state = 729 state = 1162 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 729 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 729 state = 1162 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 33 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# dalian ^34
+	every_state = {
+		limit = { OR = { state = 745 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 745 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 745 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 34 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	# shanghai ^35
+	every_state = {
+		limit = { OR = { state = 1145 state = 1031 state = 1117 } }
+		add_to_array = { global.chinese_state = This.id }
+		set_variable = { china_capital_of_province = 1145 }
+		if = {
+			limit = { state = var:china_capital_of_province }
+			every_state = {
+				limit = { OR = { state = 1145 state = 1031 state = 1117 } }
+				add_to_array = { PREV.chinese_province = This.id }
+			}
+			set_variable = { china_capital_of_province_index = 35 } # обязателен для столиц провинций
+		}
+		log = "[This.GetName] ([This.GetID]): ADD IN ARRAY global.chinese_state"
+	}
+	
+	for_each_loop = {
+		array = global.chinese_state
+		add_to_variable = { global.num_chinese_states = 1 }
+	}
+	
+	#log = "[This.GetName] ([This.GetID]): NOT ADD IN ARRAY !!!"
+}
+
+# устанавливает бонус к атаке против коммунистического противника
+set_attack_against_communists_bonus = { # во временной перемнной enemy должна содержаться коммунистическая страна, с которой началась война
+	set_temp_variable = { bonus = NW_attack_against_communists }
+	while_loop_effect = { # 10%
+		limit = { check_variable = { var = bonus value = 0.1 } }
+		meta_effect = {
+			text = {
+				add_relation_modifier = {
+					target = [ENEMY]
+					modifier = NW_attack_against_communists_10_percent
+				}
+			}
+			ENEMY = "[?enemy.GetTag]"
+		}
+		subtract_from_temp_variable = { bonus = 0.1 }
+		add_to_temp_variable = { count_10 = 1 } # for loc
+	}
+	while_loop_effect = { # 5%
+		limit = { check_variable = { var = bonus value = 0.05 } }
+		meta_effect = {
+			text = {
+				add_relation_modifier = {
+					target = [ENEMY]
+					modifier = NW_attack_against_communists_5_percent
+				}
+			}
+			ENEMY = "[?enemy.GetTag]"
+		}
+		subtract_from_temp_variable = { bonus = 0.05 }
+		add_to_temp_variable = { count_5 = 1 } # for loc
+	}
+	while_loop_effect = { # 1%
+		limit = { check_variable = { var = bonus value = 0.01 } }
+		meta_effect = {
+			text = {
+				add_relation_modifier = {
+					target = [ENEMY]
+					modifier = NW_attack_against_communists_1_percent
+				}
+			}
+			ENEMY = "[?enemy.GetTag]"
+		}
+		subtract_from_temp_variable = { bonus = 0.01 }
+		add_to_temp_variable = { count_1 = 1 } # for loc
+	}
+	log = "[GetDateText]: [ROOT.GetName] ([ROOT.GetTag]): set_attack_against_communists_bonus | enemy: [?enemy.GetName] [?enemy.GetTag], count10: [?count_10], count5: [?count_5], count1: [?count_1] ([?NW_attack_against_communists|%]) debug: [?bonus] = 0"
+}
