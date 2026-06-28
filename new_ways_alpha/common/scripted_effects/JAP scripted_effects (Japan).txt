@@ -365,7 +365,7 @@ JAP_new_genro_effect = {
 
 JAP_Machid_Chunji_office_effect = {
 	
-	hidden_effect = { # TODO JAP_innovation_alliance_chart??
+	hidden_effect = {
 		if = {
 			limit = { has_variable = JAP_rikken_sayukai_popularity }
 			clamp_variable = { var = JAP_rikken_sayukai_popularity min = 0 max = 100 }
@@ -390,6 +390,72 @@ JAP_Machid_Chunji_office_effect = {
 		else = {
 			clamp_variable = { var = JAP_rikken_minseito_popularity min = 0 max = 100 }
 		}
+		
+		if = {
+			limit = { has_variable = JAP_innovation_alliance_popularity }
+			clamp_variable = { var = JAP_innovation_alliance_popularity min = 0 max = 100 }
+		}
+		
+		###
+		
+		clear_temp_array = pops
+		add_to_temp_array = { pops = JAP_shinshinto_popularity }
+		add_to_temp_array = { pops = JAP_rikken_minseito_popularity }
+		add_to_temp_array = { pops = JAP_kakushin_shinto_popularity }
+		add_to_temp_array = { pops = JAP_shakai_taishuto_popularity }
+		add_to_temp_array = { pops = JAP_tohokai_popularity }
+		add_to_temp_array = { pops = JAP_rikken_sayukai_popularity }
+		add_to_temp_array = { pops = JAP_innovation_alliance_popularity }
+		add_to_temp_array = { pops = JAP_sayukai_reformists_popularity }
+		add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity }
+		add_to_temp_array = { pops = JAP_small_parties_popularity }
+		
+		set_temp_variable = { sum = 0 }
+		for_each_loop = { array = pops value = v add_to_temp_variable = { sum = v } }
+
+		if = {
+			limit = { NOT = { check_variable = { sum = 0 } } }
+			set_temp_variable = { scale = 100 }
+			divide_temp_variable = { scale = sum }
+
+			for_each_loop = {
+				array = pops
+				value = v
+				index = i
+
+				set_temp_variable = { tmp = v }
+				multiply_temp_variable = { tmp = scale }
+				set_temp_variable = { pops^i = tmp } # TODO меняю коллекцию в цикле, опасненько?
+				round_temp_variable = pops^i
+
+				add_to_temp_variable = { used = pops^i }
+			}
+
+			set_temp_variable = { diff = 100 }
+			subtract_from_temp_variable = { diff = used }
+			if = {
+				limit = { NOT = { check_variable = { diff = 0 } } }
+				find_highest_in_array = { array = pops index = largest }
+				add_to_temp_variable = { pops^largest = diff }
+			}
+		}
+		else = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): TODO_BUG JAP_Machid_Chunji_office_effect: сумма партий ([?sum]%)%! (а должно быть 100%!)"
+		}
+		
+		if = { limit = { check_variable = { pops^0 > 0 } } set_variable = { JAP_shinshinto_popularity = pops^0 } }
+		if = { limit = { check_variable = { pops^1 > 0 } } set_variable = { JAP_rikken_minseito_popularity = pops^1 } }
+		if = { limit = { check_variable = { pops^2 > 0 } } set_variable = { JAP_kakushin_shinto_popularity = pops^2 } }
+		if = { limit = { check_variable = { pops^3 > 0 } } set_variable = { JAP_shakai_taishuto_popularity = pops^3 } }
+		if = { limit = { check_variable = { pops^4 > 0 } } set_variable = { JAP_tohokai_popularity = pops^4 } }
+		if = { limit = { check_variable = { pops^5 > 0 } } set_variable = { JAP_rikken_sayukai_popularity = pops^5 } }
+		if = { limit = { check_variable = { pops^6 > 0 } } set_variable = { JAP_innovation_alliance_popularity = pops^6 } }
+		if = { limit = { check_variable = { pops^7 > 0 } } set_variable = { JAP_sayukai_reformists_popularity = pops^7 } }
+		if = { limit = { check_variable = { pops^8 > 0 } } set_variable = { JAP_sayukai_ortodox_popularity = pops^8 } }
+		if = { limit = { check_variable = { pops^9 > 0 } } set_variable = { JAP_small_parties_popularity = pops^9 } }
+		
+		###
+		
 		JAP_Machid_Chunji_office_ui_update = yes
 	}
 }
@@ -427,6 +493,407 @@ JAP_Machid_Chunji_office_ui_update = {
 	if = {
 		limit = { check_variable = { JAP_small_parties_popularity_pie > 100 } }
 		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): TODO_BUG JAP_Machid_Chunji_office_ui_update: сумма партий больше 100%! ([?JAP_small_parties_popularity_pie]%)"
+	}
+}
+
+JAP_new_parliamentary_elections_effect = {
+	
+	effect_tooltip = { # только для тултипа
+		if = {
+			limit = {
+				# check_variable = { var = JAP_shinshinto_popularity value = JAP_rikken_minseito_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_tohokai_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_rikken_sayukai_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_shinshinto_popularity value = JAP_small_parties_popularity }
+			}
+			country_event = NW_JAP.239
+		}
+		else_if = {
+			limit = {
+				# check_variable = { var = JAP_rikken_minseito_popularity value = JAP_shinshinto_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_tohokai_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_rikken_sayukai_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_rikken_minseito_popularity value = JAP_small_parties_popularity }
+			}
+			country_event = NW_JAP.369
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_tohokai_popularity }
+				# check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_rikken_sayukai_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_rikken_minseito_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_sayukai_reformists_popularity value = JAP_small_parties_popularity }
+			}
+			country_event = NW_JAP.240
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_tohokai_popularity }
+				# check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_rikken_sayukai_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_rikken_minseito_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_sayukai_ortodox_popularity value = JAP_small_parties_popularity }
+			}
+			if = {
+				limit = { has_country_flag = NW_JAP_352_event_flag }	#Кухара возглавляет ортодоксальную Риккен Сэйюкай
+				country_event = NW_JAP.360
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_353_event_flag }	#Хатояма возглавляет ортодоксальную Риккен Сэйюкай
+				country_event = NW_JAP.363
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_tohokai_popularity }
+				# check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_sayukai_reformists_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_rikken_minseito_popularity }
+				# check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_sayukai_ortodox_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_rikken_sayukai_popularity value = JAP_small_parties_popularity }
+			}
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = NW_JAP_347_event_flag			#Накадзима – новый президент Риккен Сэйюкай
+						has_country_flag = NW_JAP_358_event_flag			#Хатояма уходит в отставку
+					}
+				}
+				country_event = NW_JAP.361
+			}
+			else_if = {
+				limit = {
+					NOT = { has_country_flag = NW_JAP_358_event_flag }		#Хатояма уходит в отставку
+					OR = {
+						has_country_flag = NW_JAP_346_event_flag			#Хатояма – новый президент Риккен Сэйюкай
+						has_country_flag = NW_JAP_356_event_flag			#Новый президент Риккен Сэйюкай
+					}
+				}
+				country_event = NW_JAP.362
+			}
+		}
+		else_if = { 
+			limit = { 
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_rikken_sayukai_popularity }
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_shakai_taishuto_popularity }
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_tohokai_popularity }
+				# check_variable = { var = JAP_innovation_alliance_popularity value = JAP_sayukai_reformists_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_kakushin_shinto_popularity }
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_rikken_minseito_popularity }
+				# check_variable = { var = JAP_innovation_alliance_popularity value = JAP_sayukai_ortodox_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_innovation_alliance_popularity value = JAP_small_parties_popularity }
+			}
+			country_event = NW_JAP.361
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_rikken_sayukai_popularity }
+				# check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_shakai_taishuto_popularity } при них этой партии уже не будет
+				# check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_tohokai_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_rikken_minseito_popularity }
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_kakushin_shinto_popularity value = JAP_small_parties_popularity }
+			}
+			if = {
+				limit = { has_country_flag = NW_JAP_325_event_flag }		#Новая обновленческая партия сформирована
+				country_event = NW_JAP.242
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_328_event_flag }		#Коллективное руководство новой партией
+				country_event = NW_JAP.241
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_330_event_flag }		#Коноэ возглавит Новую Обновленческую партию
+				country_event = NW_JAP.364
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_333_event_flag }		#Национальный фронт продолжается
+				country_event = NW_JAP.365
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_tohokai_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_rikken_sayukai_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_shakai_taishuto_popularity }
+				# check_variable = { var = JAP_tohokai_popularity value = JAP_kakushin_shinto_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_tohokai_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_rikken_minseito_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_tohokai_popularity value = JAP_small_parties_popularity }
+			}
+			country_event = NW_JAP.366
+		}
+		else_if = {
+			limit = {
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_shinshinto_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_rikken_sayukai_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_tohokai_popularity }
+				# check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_kakushin_shinto_popularity } при них этой партии уже не будет
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_sayukai_reformists_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_innovation_alliance_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_rikken_minseito_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_sayukai_ortodox_popularity }
+				check_variable = { var = JAP_shakai_taishuto_popularity value = JAP_small_parties_popularity }
+			}
+			if = {
+				limit = {
+					has_country_flag = NW_JAP_318_event_flag				#Новая идеология Шакай Тайшуто
+					NOT = { has_country_flag = NW_JAP_372_event_flag }		#Упадок национально-социалистической фракции Шакай Тайшуто
+				}
+				country_event = NW_JAP.367
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { has_country_flag = NW_JAP_318_event_flag }	#Новая идеология Шакай Тайшуто
+						has_country_flag = NW_JAP_372_event_flag			#Упадок национально-социалистической фракции Шакай Тайшуто
+					}
+				}
+				country_event = NW_JAP.368
+			}
+		}
+	}
+	
+	hidden_effect = {
+		add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+		add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+		add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+		add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+		add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+		add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+		add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 6 
+		add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 7
+		add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 8
+		# add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+		find_highest_in_array = { array = pops index = largest }
+		
+		if = { 
+			limit = { has_country_flag = JAP_minority_government_idea }
+			remove_ideas = JAP_minority_government_idea
+		}
+		
+		hidden_effect = { 
+			meta_effect = { 
+				text = { 
+					set_politics = {
+						ruling_party = var:current_party_ideology_group
+						elections_allowed = yes
+						last_election = [DATE]
+					}
+				}
+				DATE = "[GetDate]"
+			}
+		#	set_country_leader_ideology = social_liberalism оно уже не нужно так как это общий эффект и это прописано в ивентах победителей
+		}
+		
+		clr_country_flag = JAP_Tohokai_in_coalition
+		clr_country_flag = JAP_Shakai_Taishuto_in_coalition
+		clr_country_flag = JAP_Kakushin_Shinto_in_coalition
+		clr_country_flag = JAP_Minseito_in_coalition
+		clr_country_flag = JAP_Shinshinto_in_coalition
+		clr_country_flag = JAP_Seyukai_reformists_in_coalition
+		clr_country_flag = JAP_Seyukai_ortodox_in_coalition
+		clr_country_flag = JAP_Seyukai_in_coalition
+		clr_country_flag = JAP_Innovation_alliance_in_coalition
+		
+		set_variable = { JAP_ELECTED_shinshinto_pop = JAP_shinshinto_popularity }
+		set_variable = { JAP_ELECTED_rikken_minseito_pop = JAP_rikken_minseito_popularity }
+		set_variable = { JAP_ELECTED_kakushin_shinto_pop = JAP_kakushin_shinto_popularity }
+		set_variable = { JAP_ELECTED_shakai_taishuto_pop = JAP_shakai_taishuto_popularity }
+		set_variable = { JAP_ELECTED_tohokai_pop = JAP_tohokai_popularity }
+		set_variable = { JAP_ELECTED_rikken_sayukai_pop = JAP_rikken_sayukai_popularity }
+		set_variable = { JAP_ELECTED_innovation_alliance_pop = JAP_innovation_alliance_popularity }
+		set_variable = { JAP_ELECTED_sayukai_reformists_pop = JAP_sayukai_reformists_popularity }
+		set_variable = { JAP_ELECTED_sayukai_ortodox_pop = JAP_sayukai_ortodox_popularity }
+		
+			
+		if = {
+			limit = {
+				check_variable = { largest = 0 } # JAP_shinshinto_popularity
+				
+			}
+			country_event = NW_JAP.239
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+			
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+				
+			}
+			country_event = NW_JAP.369
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 7 } # JAP_sayukai_reformists_popularity
+				
+			}
+			country_event = NW_JAP.240
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 8 } # JAP_sayukai_ortodox_popularity
+				
+			}
+			if = {
+				limit = { has_country_flag = NW_JAP_352_event_flag }	#Кухара возглавляет ортодоксальную Риккен Сэйюкай
+				country_event = NW_JAP.360
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_353_event_flag }	#Хатояма возглавляет ортодоксальную Риккен Сэйюкай
+				country_event = NW_JAP.363
+			}
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 5 } # JAP_rikken_sayukai_popularity
+				
+			}
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = NW_JAP_347_event_flag			#Накадзима – новый президент Риккен Сэйюкай
+						has_country_flag = NW_JAP_358_event_flag			#Хатояма уходит в отставку
+					}
+				}
+				country_event = NW_JAP.361
+			}
+			else_if = {
+				limit = {
+					NOT = { has_country_flag = NW_JAP_358_event_flag }		#Хатояма уходит в отставку
+					OR = {
+						has_country_flag = NW_JAP_346_event_flag			#Хатояма – новый президент Риккен Сэйюкай
+						has_country_flag = NW_JAP_356_event_flag			#Новый президент Риккен Сэйюкай
+					}
+				}
+				country_event = NW_JAP.362
+			}
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = { 
+			limit = { check_variable = { largest = 6 } } # JAP_innovation_alliance_popularity
+			country_event = NW_JAP.701
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+			}
+			if = {
+				limit = { has_country_flag = NW_JAP_325_event_flag }		#Новая обновленческая партия сформирована
+				country_event = NW_JAP.242
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_328_event_flag }		#Коллективное руководство новой партией
+				country_event = NW_JAP.241
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_330_event_flag }		#Коноэ возглавит Новую Обновленческую партию
+				country_event = NW_JAP.364
+			}
+			else_if = {
+				limit = { has_country_flag = NW_JAP_333_event_flag }		#Национальный фронт продолжается
+				country_event = NW_JAP.365
+			}
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 4 } # JAP_tohokai_popularity
+			}
+			country_event = NW_JAP.366
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else_if = {
+			limit = {
+				check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+			}
+			if = {
+				limit = {
+					has_country_flag = NW_JAP_318_event_flag				#Новая идеология Шакай Тайшуто
+					NOT = { has_country_flag = NW_JAP_372_event_flag }		#Упадок национально-социалистической фракции Шакай Тайшуто
+				}
+				country_event = NW_JAP.367
+			}
+			else_if = {
+				limit = {
+					OR = {
+						NOT = { has_country_flag = NW_JAP_318_event_flag }	#Новая идеология Шакай Тайшуто
+						has_country_flag = NW_JAP_372_event_flag			#Упадок национально-социалистической фракции Шакай Тайшуто
+					}
+				}
+				country_event = NW_JAP.368
+			}
+			set_variable = { JAP_ELECTED_winner_pop = pops^largest }
+		}
+		else = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): TODO_BUG JAP_new_parliamentary_elections_effect: победила партия, которая не должна побеждать! (i = [?largest])"
+			# set_variable = { JAP_innovation_alliance_popularity = 0 } # TODO костыль, обнулять только largest партию
+			# set_variable = { JAP_small_parties_popularity = 0 }
+			# JAP_new_parliamentary_elections_effect = yes
+		}
+	}
+}
+
+JAP_cabinet_cleaning_effect = { 
+	clr_country_flag = JAP_cabinet_of_Seyukai
+	clr_country_flag = JAP_cabinet_of_Seyukai_ortodox
+	clr_country_flag = JAP_cabinet_of_Seyukai_reformists
+	clr_country_flag = JAP_cabinet_of_Innovation_alliance
+	clr_country_flag = JAP_cabinet_of_Shakai_Taishuto
+	clr_country_flag = JAP_cabinet_of_Minseito
+	clr_country_flag = JAP_cabinet_of_Shinshinto
+	clr_country_flag = JAP_cabinet_of_Kakushin_Shinto
+	clr_country_flag = JAP_cabinet_of_Tohokai
+}
+
+JAP_find_max_party_effect = {
+	hidden_effect = {
+		add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+		add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+		add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+		add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+		add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+		add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+		add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 6 (победить не могут)
+		add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 7
+		add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 8
+		add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+		find_highest_in_array = { array = pops index = largest }
+
 	}
 }
 
@@ -694,6 +1161,21 @@ JAP_reform_bureaucrats_effect = {
 			}
 			country_event = NW_JAP.720 
 			set_country_flag = JAP_fall_of_bureaucrats
+			JAP_Hiroya_Ino = { 
+				remove_trait = { slot = political_advisor trait = JAP_technocrat_minister }
+			}
+			JAP_Fumio_Goto = { 
+				remove_trait = { slot = political_advisor trait = JAP_technocrat_minister }
+			}
+			JAP_Naoki_Hoshino = { 
+				remove_trait = { slot = political_advisor trait = JAP_technocrat_minister }
+			}
+			MAN_nobusuke_kishi = { 
+				remove_trait = { slot = political_advisor trait = JAP_technocrat_minister }
+			}
+			JAP_Tadaatsu_Ishiguro = { 
+				remove_trait = { slot = political_advisor trait = JAP_technocrat_minister }
+			}
 		}
 	}
 }

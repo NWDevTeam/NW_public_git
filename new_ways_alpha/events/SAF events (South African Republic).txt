@@ -1,0 +1,2659 @@
+﻿add_namespace = NW_SAF
+add_namespace = NW_SAF_news
+add_namespace = tfv_south_africa
+add_namespace = news
+
+# Чернокожее население вышло на улицы
+country_event = {
+	id = NW_SAF.0
+	title = NW_SAF.0.t
+	desc = NW_SAF.0.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.0" }
+	option = {
+		name = NW_SAF.0.a
+		add_stability = -0.05
+		add_popularity = { ideology = communism popularity = 0.1 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = -10 }
+		SAF_tension_among_black_effect = yes
+	}
+	option = {
+		name = NW_SAF.0.b
+		add_stability = -0.02
+		add_popularity = { ideology = communism popularity = 0.1 }
+	}
+}
+
+# Племена бантустанов присоединились к бунту
+country_event = {
+	id = NW_SAF.1
+	title = NW_SAF.1.t
+	desc = NW_SAF.1.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.1" }
+	option = {
+		name = NW_SAF.1.a
+		add_stability = -0.05
+		add_popularity = { ideology = democratic popularity = 0.1 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = -10 }
+		SAF_tension_among_black_effect = yes
+	}
+	option = {
+		name = NW_SAF.1.b
+		add_stability = -0.03
+		add_popularity = { ideology = democratic popularity = 0.1 }
+	}
+}
+
+# Цветные начали организовываться для защиты своих прав
+country_event = {
+	id = NW_SAF.2
+	title = NW_SAF.2.t
+	desc = NW_SAF.2.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.2" }
+	option = {
+		name = NW_SAF.2.a
+		add_stability = -0.05
+		add_popularity = { ideology = trozkism popularity = 0.1 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = -10 }
+		SAF_tension_among_black_effect = yes
+	}
+	option = {
+		name = NW_SAF.2.b
+		add_stability = -0.03
+		add_popularity = { ideology = trozkism popularity = 0.1 }
+	}
+}
+
+# Чернокожие и цветные начали восстание
+country_event = {
+	id = NW_SAF.3
+	title = NW_SAF.3.t
+	desc = NW_SAF.3.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		if = {
+			limit = { is_ai = yes }
+			OR = {
+				has_country_flag = NW_SAF_AI_DEMOCRATIC_BLACK_COUP_FLAG
+				has_country_flag = NW_SAF_AI_TROZKISM_FLAG
+				has_country_flag = NW_SAF_AI_COMMUNIST_FLAG
+			}
+		}
+	}
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.3"
+		hidden_effect = {
+			set_country_flag = SAF_civil_war_flag
+			mark_focus_tree_layout_dirty = yes
+			SAB = {
+				PREV = {
+					random_owned_controlled_state = {
+						prioritize = { 1108 }
+						limit = { is_core_of = PREV }
+						transfer_state_to = PREV.PREV
+					}
+				}
+				promote_character = SAF_anc_joint_command
+				add_civil_war_target = PREV
+				PREV = {
+					every_core_state = { add_core_of = PREV.PREV }
+					add_civil_war_target = PREV
+				}
+				declare_war_on = { target = PREV type = civil_war }
+				every_enemy_country = {
+					every_state = {
+						limit = {
+							NOT = { is_fully_controlled_by = PREV }
+							controller = { tag = PREV.PREV }
+						}
+						teleport_armies = {
+							limit = { tag = PREV }
+							to_state_array = controlled_states
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_template = "Opposition Forces" } }
+					division_template = {
+						name = "Opposition Forces"	
+						is_locked = no
+						division_names_group = SAF_INF_01
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_template = "Peoples' Militia" } }
+					division_template = {
+						name = "Peoples' Militia"	
+						is_locked = no
+						division_names_group = SAF_INF_01
+						regiments = {
+							irregular_infantry = { x = 0 y = 0 }
+							irregular_infantry = { x = 0 y = 1 }
+							irregular_infantry = { x = 0 y = 2 }
+						}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"Peoples' Militia\" start_experience_factor = 0.0 start_equipment_factor = 0.2"
+						owner = PREV
+						count = 4
+					}
+					create_unit = {
+						division = "division_template = \"Opposition Forces\" start_experience_factor = 0.1 start_equipment_factor = 0.4"
+						owner = PREV
+						count = 2
+					}
+				}
+				inherit_technology = PREV
+				set_temp_variable = { SAF_num_research_slots_temp = PREV.amount_research_slots }
+				set_research_slots = SAF_num_research_slots_temp
+				add_research_slot = -1
+				set_temp_variable = { ideology = token:trozkism }
+				NW_add_to_coalition = yes
+				set_temp_variable = { ideology = token:communism }
+				NW_add_to_coalition = yes
+				mark_focus_tree_layout_dirty = yes
+				complete_national_focus = SAF_uprising_against_white_oppression
+				SAF_civil_war_check_effect = yes
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.3.a
+
+	}
+	option = {
+		name = NW_SAF.3.b
+		hidden_effect = {
+			if = {
+				limit = { num_divisions < 8 }
+				set_temp_variable = { num_divisions_temp_0 = num_divisions }
+				set_temp_variable = { num_divisions_temp_1 = 8 }
+				subtract_from_temp_variable = { num_divisions_temp_1 = num_divisions_temp_0 }
+				if = {
+					limit = { check_variable = { var = num_divisions_temp_1 value = 0 compare = greater_than_or_equals } }
+					if = {
+						limit = { NOT = { has_template = "Disctrict Force" } }
+						division_template = {
+							name = "Disctrict Force"	
+							is_locked = no
+							division_names_group = SAF_INF_01
+							regiments = {
+								infantry = { x = 0 y = 0 }
+								infantry = { x = 0 y = 1 }
+								infantry = { x = 0 y = 2 }
+								infantry = { x = 1 y = 0 }
+								infantry = { x = 1 y = 1 }
+								infantry = { x = 1 y = 2 }
+							}
+						}
+					}
+					while_loop_effect = {
+						limit = { check_variable = { num_divisions_temp_1 > 0 } }
+						add_to_temp_variable = { num_divisions_temp_1 = -1 }
+						random_owned_controlled_state = {
+							limit = { is_core_of = ROOT }
+							create_unit = {
+								division = "division_template = \"Disctrict Force\" start_experience_factor = 0.2 start_equipment_factor = 0.5"
+								owner = ROOT
+								count = 1
+							}
+						}
+					}
+				}
+			}
+		}
+		SAB = { change_tag_from = ROOT }
+		custom_effect_tooltip = empty_line_tooltip
+		unlock_decision_category_tooltip = SAF_fighting_the_tyranny_of_white_supremacy_category
+	}
+}
+
+# Служебный ивент
+country_event = {
+	id = NW_SAF.4
+	hidden = yes
+	is_triggered_only = yes
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.4"
+		set_temp_variable = { ideology = token:neutrality }
+		NW_add_to_coalition = yes
+		set_temp_variable = { SAF_tension_among_black_temp_var = 10 }
+		SAF_tension_among_black_effect = yes
+	}
+}
+
+# Очищенная Национальная Партия одерживает победу в ЮАС
+news_event = {
+	id = NW_SAF_news.0
+	title = NW_SAF_news.0.t
+	desc = NW_SAF_news.0.desc
+	picture = GFX_news_event_NW_JAP_news.0
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = NW_SAF_news.0.a
+		trigger = { original_tag = FROM }
+		complete_national_focus = SAF_parliamentary_elections
+		complete_national_focus = SAF_victory_of_the_purified_national_party
+		custom_effect_tooltip = empty_line_tooltip
+		add_popularity = { ideology = fascism popularity = 0.3 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_politics = { ruling_party = fascism elections_allowed = no }
+		custom_effect_tooltip = empty_line_tooltip
+		remove_ideas = SAF_coalition_government_of_afrikaners_and_anglophiles_idea
+	}
+	option = {
+		name = NW_SAF_news.0.b
+		trigger = { original_tag = ENG }
+	}
+	option = {
+		name = NW_SAF_news.0.c
+		trigger = {
+			NOT = { original_tag = FROM tag = ENG }
+			has_government = democratic
+		}
+	}
+	option = {
+		name = NW_SAF_news.0.d
+		trigger = { NOT = { original_tag = FROM tag = ENG has_government = democratic } }
+	}
+}
+
+# Партия Доминиона одерживает победу в ЮАС
+news_event = {
+	id = NW_SAF_news.1
+	title = NW_SAF_news.1.t
+	desc = NW_SAF_news.1.desc
+	picture = GFX_news_event_NW_JAP_news.0
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = NW_SAF_news.1.a
+		trigger = { original_tag = FROM }
+		complete_national_focus = SAF_parliamentary_elections
+		complete_national_focus = SAF_victory_of_the_dominion_party
+		custom_effect_tooltip = empty_line_tooltip
+		remove_ideas = SAF_coalition_government_of_afrikaners_and_anglophiles_idea
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { ideology = token:neutrality }
+		NW_remove_from_coalition = yes
+	}
+	option = {
+		name = NW_SAF_news.1.b
+		trigger = { original_tag = ENG }
+	}
+	option = {
+		name = NW_SAF_news.1.c
+		trigger = {
+			NOT = { original_tag = FROM tag = ENG }
+			has_government = democratic
+		}
+	}
+	option = {
+		name = NW_SAF_news.1.d
+		trigger = { NOT = { original_tag = FROM tag = ENG has_government = democratic } }
+	}
+}
+
+# Объединённая Партия одерживает победу в ЮАС
+news_event = {
+	id = NW_SAF_news.2
+	title = NW_SAF_news.2.t
+	desc = NW_SAF_news.2.desc
+	picture = GFX_news_event_NW_JAP_news.0
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = NW_SAF_news.2.a
+		trigger = { original_tag = FROM }
+		complete_national_focus = SAF_parliamentary_elections
+		complete_national_focus = SAF_victory_of_the_united_party
+	}
+	option = {
+		name = NW_SAF_news.2.b
+		trigger = { original_tag = ENG }
+	}
+	option = {
+		name = NW_SAF_news.2.c
+		trigger = {
+			NOT = { original_tag = FROM tag = ENG }
+			has_government = democratic
+		}
+	}
+	option = {
+		name = NW_SAF_news.2.d
+		trigger = { NOT = { original_tag = FROM tag = ENG has_government = democratic } }
+	}
+}
+
+# Имперская выставка
+country_event = {
+	id = NW_SAF.5
+	title = NW_SAF.5.t
+	desc = NW_SAF.5.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.5" }
+	option = {
+		name = NW_SAF.5.a
+		add_political_power = 20
+		add_stability = 0.02
+	}
+}
+
+# Южно-Африканский Союз отказал в проведении имперской выставки
+country_event = {
+	id = NW_SAF.6
+	title = NW_SAF.6.t
+	desc = NW_SAF.6.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.6" }
+	option = {
+		name = NW_SAF.6.a
+		add_stability = -0.01
+	}
+}
+
+# Патриотичные африканеры хотят организовать южноафриканскую выставку
+country_event = {
+	id = NW_SAF.7
+	title = NW_SAF.7.t
+	desc = NW_SAF.7.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.7" }
+	option = {
+		name = NW_SAF.7.a
+		add_political_power = 30
+		custom_effect_tooltip = empty_line_tooltip
+		every_other_country = {
+			limit = {
+				has_government = fascism
+				NOT = { has_war_with = ROOT }
+			}
+			country_event = { id = NW_SAF.8 days = 5 }
+		}
+	}
+	option = {
+		name = NW_SAF.7.b
+		ai_chance = { base = 0 }
+	}
+}
+
+# Африканеры приглашают нас на международную выставку
+country_event = {
+	id = NW_SAF.8
+	title = NW_SAF.8.t
+	desc = NW_SAF.8.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.8" }
+	option = {
+		name = NW_SAF.8.a
+		ai_chance = { base = 90 }
+		add_political_power = 10
+		custom_effect_tooltip = empty_line_tooltip
+		FROM = {
+			country_event = { id = NW_SAF.9 days = 4 random_days = 2 }
+			custom_effect_tooltip = empty_line_tooltip
+			add_opinion_modifier = {
+				modifier = SAF_holding_an_international_exhibition_op
+				target = ROOT
+			}
+			reverse_add_opinion_modifier = {
+				modifier = SAF_holding_an_international_exhibition_op
+				target = ROOT
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.8.b
+		ai_chance = { base = 10 }
+	}
+}
+
+# Прибытие [From.GetName] на африканерскую выставку
+country_event = {
+	id = NW_SAF.9
+	title = NW_SAF.9.t
+	desc = NW_SAF.9.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.9" }
+	option = {
+		name = NW_SAF.9.a
+		add_political_power = 5
+		add_popularity = { ideology = fascism popularity = 0.02 }
+		custom_effect_tooltip = empty_line_tooltip
+		effect_tooltip = {
+			FROM = {
+				add_opinion_modifier = {
+					modifier = SAF_holding_an_international_exhibition_op
+					target = ROOT
+				}
+				reverse_add_opinion_modifier = {
+					modifier = SAF_holding_an_international_exhibition_op
+					target = ROOT
+				}
+			}
+		}
+	}
+}
+
+# Недовольство среди цветных учителей
+country_event = {
+	id = NW_SAF.10
+	title = NW_SAF.10.t
+	desc = NW_SAF.10.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.10" }
+	option = {
+		name = NW_SAF.10.a
+		add_stability = -0.03
+		custom_effect_tooltip = empty_line_tooltip
+		add_popularity = { ideology = communism popularity = 0.03 }
+		add_popularity = { ideology = trozkism popularity = 0.03 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = 5 }
+		SAF_tension_among_black_effect = yes
+	}
+}
+
+# Нерезультативность закона о заработной плате
+country_event = {
+	id = NW_SAF.11
+	title = NW_SAF.11.t
+	desc = NW_SAF.11.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = {
+			has_country_flag = SAF_civil_war_flag
+#			has_completed_focus = 
+		}
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.11" }
+	option = {
+		name = NW_SAF.11.a
+		add_stability = -0.1
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = 10 }
+		SAF_tension_among_black_effect = yes
+	}
+}
+
+# Вопрос «Одной земли»
+country_event = {
+	id = NW_SAF.12
+	title = NW_SAF.12.t
+	desc = NW_SAF.12.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.12" }
+	option = {
+		name = NW_SAF.12.a
+		add_popularity = { ideology = communism popularity = 0.03 }
+		add_popularity = { ideology = trozkism popularity = 0.03 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable = { SAF_tension_among_black_temp_var = 10 }
+		SAF_tension_among_black_effect = yes
+	}
+}
+
+# Нерезультативность закона о туземном тресте и земле
+country_event = {
+	id = NW_SAF.13
+	title = NW_SAF.13.t
+	desc = NW_SAF.13.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = { has_country_flag = SAF_civil_war_flag }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.13" }
+	option = {
+		name = NW_SAF.13.a
+		add_stability = -0.05
+		custom_effect_tooltip = empty_line_tooltip
+		custom_effect_tooltip = SAF_problems_in_the_agricultural_sector_modifier_change_tt
+		add_to_variable = { SAF_political_power_factor_var = -0.05 tooltip = political_power_factor_tooltip }
+		add_to_variable = { SAF_stability_factor_var = -0.05 tooltip = stability_factor_tooltip }
+		add_to_variable = { SAF_global_building_slots_factor_var = -0.1 tooltip = global_building_slots_tooltip }
+		add_to_variable = { SAF_increase_in_tension_among_the_black_population_modifier_var_1 = 0.2 tooltip = SAF_increase_in_tension_among_the_black_population_modifier_var_tt }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+# Забастовка на Falkirk Iron Works
+country_event = {
+	id = NW_SAF.14
+	title = NW_SAF.14.t
+	desc = NW_SAF.14.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.14" }
+	option = {
+		name = NW_SAF.14.a
+		add_ideas = SAF_strikes_in_the_steel_industry_idea
+		hidden_effect = { country_event = { id = NW_SAF.15 days = 30 } }
+	}
+}
+
+# Продолжение забастовки на Falkirk Iron Works
+country_event = {
+	id = NW_SAF.15
+	title = NW_SAF.15.t
+	desc = NW_SAF.15.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = { has_country_flag = SAF_civil_war_flag }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.15" }
+	option = {
+		name = NW_SAF.15.a
+		swap_ideas = {
+			remove_idea = SAF_strikes_in_the_steel_industry_idea
+			add_idea = SAF_indian_and_black_strikes_idea
+		}
+		hidden_effect = { country_event = { id = NW_SAF.16 days = 30 } }
+	}
+	option = {
+		name = NW_SAF.15.b
+		swap_ideas = {
+			remove_idea = SAF_strikes_in_the_steel_industry_idea
+			add_idea = SAF_indian_and_black_strikes_idea
+		}
+		hidden_effect = { country_event = { id = NW_SAF.17 days = 30 } }
+	}
+}
+
+# Прекращение забастовки
+country_event = {
+	id = NW_SAF.16
+	title = NW_SAF.16.t
+	desc = NW_SAF.16.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = { has_country_flag = SAF_civil_war_flag }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.16" }
+	option = {
+		name = NW_SAF.16.a
+		hidden_effect = { country_event = { id = NW_SAF.17 days = 30 } }
+	}
+}
+
+# Увольнение недовольных рабочих
+country_event = {
+	id = NW_SAF.17
+	title = NW_SAF.17.t
+	desc = NW_SAF.17.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = { has_country_flag = SAF_civil_war_flag }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.17" }
+	option = {
+		name = NW_SAF.17.a
+		remove_ideas = SAF_indian_and_black_strikes_idea
+		custom_effect_tooltip = empty_line_tooltip
+		add_timed_idea = { idea = SAF_indian_strikes_idea days = 90 }
+	}
+}
+
+# Обвал на руднике
+country_event = {
+	id = NW_SAF.18
+	title = NW_SAF.18.t
+	desc = NW_SAF.18.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.18" }
+	option = {
+		name = NW_SAF.18.a
+		trigger = { NOT = { has_completed_focus = SAF_secure_the_mining_industry } }
+		add_stability = -0.02
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -20 max = -7 integer = yes }
+		add_manpower = random_num
+	}
+	option = {
+		name = NW_SAF.18.b
+		trigger = { has_completed_focus = SAF_secure_the_mining_industry }
+		add_stability = -0.01
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -20 max = -7 integer = yes }
+		add_manpower = random_num
+	}
+}
+
+# Болезнь на рудниках
+country_event = {
+	id = NW_SAF.19
+	title = NW_SAF.19.t
+	desc = NW_SAF.19.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.19" }
+	option = {
+		name = NW_SAF.19.a
+		trigger = { NOT = { has_completed_focus = SAF_secure_the_mining_industry } }
+		add_stability = -0.02
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -10 max = -3 integer = yes }
+		add_manpower = random_num
+	}
+	option = {
+		name = NW_SAF.19.b
+		trigger = { has_completed_focus = SAF_secure_the_mining_industry }
+		add_stability = -0.01
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -10 max = -3 integer = yes }
+		add_manpower = random_num
+	}
+}
+
+# Падение грунта
+country_event = {
+	id = NW_SAF.20
+	title = NW_SAF.20.t
+	desc = NW_SAF.20.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.20" }
+	option = {
+		name = NW_SAF.20.a
+		trigger = { NOT = { has_completed_focus = SAF_secure_the_mining_industry } }
+		add_stability = -0.02
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -30 max = -10 integer = yes }
+		add_manpower = random_num
+		custom_effect_tooltip = empty_line_tooltip
+		random_owned_controlled_state = {
+			limit = { industrial_complex > 0 }
+			damage_building = { type = industrial_complex damage = 0.5 }
+		}
+	}
+	option = {
+		name = NW_SAF.20.b
+		trigger = { has_completed_focus = SAF_secure_the_mining_industry }
+		add_stability = -0.01
+		custom_effect_tooltip = empty_line_tooltip
+		set_temp_variable_to_random = { var = random_num min = -30 max = -10 integer = yes }
+		add_manpower = random_num
+		custom_effect_tooltip = empty_line_tooltip
+		random_owned_controlled_state = {
+			limit = { industrial_complex > 0 }
+			damage_building = { type = industrial_complex damage = 0.25 }
+		}
+	}
+}
+
+# ЮАС просит передать малые протектораты под их контроль
+country_event = {
+	id = NW_SAF.21
+	title = NW_SAF.21.t
+	desc = NW_SAF.21.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.21" }
+	option = {
+		name = NW_SAF.21.a
+		FROM = {
+			country_event = { id = NW_SAF.23 hours = 12 }
+			custom_effect_tooltip = empty_line_tooltip
+			effect_tooltip = {
+				add_opinion_modifier = {
+					modifier = SAF_accept_to_transfer_protectorates_op
+					target = ROOT
+				}
+				transfer_state = 542
+				add_state_core = 542
+				transfer_state = 1105
+				add_state_core = 1105
+				transfer_state = 1106
+				add_state_core = 1106
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.21.b
+		ai_chance = { base = 0 }
+		FROM = {
+			country_event = { id = NW_SAF.22 hours = 12 }
+			effect_tooltip = {
+				add_opinion_modifier = {
+					modifier = SAF_refusal_to_transfer_protectorates_op
+					target = ROOT
+				}
+			}
+		}
+	}
+}
+
+# Великобритания отказалась передать протектораты
+country_event = {
+	id = NW_SAF.22
+	title = NW_SAF.22.t
+	desc = NW_SAF.22.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.22" }
+	option = {
+		name = NW_SAF.22.a
+		add_opinion_modifier = {
+			modifier = SAF_refusal_to_transfer_protectorates_op
+			target = FROM
+		}
+	}
+}
+
+# Великобритания согласна передать протектораты
+country_event = {
+	id = NW_SAF.23
+	title = NW_SAF.23.t
+	desc = NW_SAF.23.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.23" }
+	option = {
+		name = NW_SAF.23.a
+		add_opinion_modifier = {
+			modifier = SAF_accept_to_transfer_protectorates_op
+			target = FROM
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		542 = {
+			transfer_state_to = ROOT
+			add_core_of = ROOT
+		}
+		1105 = {
+			transfer_state_to = ROOT
+			add_core_of = ROOT
+		}
+		1106 = {
+			transfer_state_to = ROOT
+			add_core_of = ROOT
+		}
+	}
+}
+
+# SAF_secure_interests_in_africa completed
+# South-African National focus
+country_event = {
+	id = tfv_south_africa.1
+	title = tfv_south_africa.1.t
+	desc = tfv_south_africa.1.d
+	picture = GFX_report_event_saf_soldiers
+	is_triggered_only = yes
+	option = {
+		name = tfv_south_africa.1.a
+		ai_chance = { base = 80 }
+		effect_tooltip = {
+			SAF = {
+				transfer_state = 542
+				transfer_state = 545
+				transfer_state = 546
+				transfer_state = 547
+				transfer_state = 903
+				transfer_state = 904
+				transfer_state = 905
+				transfer_state = 548
+				transfer_state = 771
+				transfer_state = 770
+				transfer_state = 981
+			}
+		}
+		hidden_effect = {
+			SAF = {
+				country_event = { id = tfv_south_africa.2 }
+			}
+		}
+	}
+	option = {
+		name = tfv_south_africa.1.b
+		ai_chance = { base = 0 }
+		hidden_effect = {
+			SAF = {
+				country_event = { id = tfv_south_africa.3 }
+			}
+		}
+	}
+	option = {
+		name = tfv_south_africa.1.c
+		ai_chance = {
+			base = 20
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+			modifier = {
+				SAF = { NOT = { has_government = democratic} }
+				factor = 4
+			}
+		}
+		trigger = {
+			KEN = { exists = no }
+			ZIM = { exists = no }
+			BOT = { exists = no }
+			ZAM = { exists = no }
+			MLW = { exists = no }
+			TZN = { exists = no }
+			UGA = { exists = no }
+		}
+		effect_tooltip = {
+			custom_effect_tooltip = SAF_colonies_tt
+		}
+		hidden_effect = {
+			SAF = {
+				country_event = { id = tfv_south_africa.4 }
+			}
+		}
+	}
+}
+
+#ENG transfers colonies
+country_event = {
+	id = tfv_south_africa.2
+	title = tfv_south_africa.2.t
+	desc = tfv_south_africa.2.d
+	picture = GFX_report_event_saf_soldiers_2
+	is_triggered_only = yes
+	option = {
+		name = tfv_south_africa.2.a
+		if = {
+			limit = { 
+				ZIM = { exists = no }
+			}
+			transfer_state = 545
+		}
+		if = {
+			limit = { 
+				ZIM = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = ZIM
+		}
+		if = {
+			limit = { 
+				BOT = { exists = no }
+			}
+			transfer_state = 542
+		}
+		if = {
+			limit = { 
+				BOT = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = BOT
+		}
+		if = {
+			limit = { 
+				ZAM = { exists = no }
+			}
+			transfer_state = 771
+			transfer_state = 981
+		}
+		if = {
+			limit = { 
+				ZAM = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = ZAM
+		}
+		if = {
+			limit = { 
+				MLW = { exists = no }
+			}
+			transfer_state = 770
+		}
+		if = {
+			limit = { 
+				MLW = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = MLW
+		}
+		if = {
+			limit = { 
+				TZN = { exists = no }
+			}
+			transfer_state = 546
+		}
+		if = {
+			limit = { 
+				TZN = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = TZN
+		}
+		if = {
+			limit = { 
+				KEN = { exists = no }
+			}
+			transfer_state = 547
+			transfer_state = 903
+			transfer_state = 904
+			transfer_state = 905
+		}
+		if = {
+			limit = { 
+				KEN = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = KEN
+		}
+		if = {
+			limit = { 
+				UGA = { exists = no }
+			}
+			transfer_state = 548
+		}
+		if = {
+			limit = { 
+				UGA = {
+					exists = yes
+					is_subject_of = ENG
+				}
+			}
+			puppet = UGA
+		}
+		hidden_effect = {
+			news_event = { id = news.260 hours = 6 }
+		}
+	}	
+}
+
+#ENG refuses
+country_event = {
+	id = tfv_south_africa.3
+	title = tfv_south_africa.3.t
+	desc = tfv_south_africa.3.d
+	picture = GFX_report_event_saf_soldiers_3
+	is_triggered_only = yes
+	option = {
+		name = tfv_south_africa.3.a
+	}
+}
+
+#ENG compromises
+country_event = {
+	id = tfv_south_africa.4
+	title = tfv_south_africa.4.t
+	desc = tfv_south_africa.4.d
+	picture = GFX_report_event_saf_soldiers
+	is_triggered_only = yes
+	option = {
+		name = tfv_south_africa.4.a
+		if = {
+			limit = { 
+				BOT = { exists = no }	
+			}
+			release = BOT
+			ENG = {
+				puppet = BOT
+			}
+		}
+		if = {
+			limit = { 
+				ZIM = { exists = no }	
+			}
+			release = ZIM
+			ENG = {
+				puppet = ZIM
+			}
+		}
+		if = {
+			limit = { 
+				ZAM = { exists = no }	
+			}
+			release = ZAM
+			ENG = {
+				puppet = ZAM
+			}
+		}
+		if = {
+			limit = { 
+				MLW = { exists = no }	
+			}
+			release = MLW
+			ENG = {
+				puppet = MLW
+			}
+		}
+		if = {
+			limit = { 
+				TZN = { exists = no }	
+			}
+			release = TZN
+			ENG = {
+				puppet = TZN
+			}
+		}
+		if = {
+			limit = { 
+				KEN = { exists = no } 
+			}
+			release = KEN			
+			ENG = { 
+				puppet = KEN 
+			}
+		}
+		if = {
+			limit = { 
+				UGA = { exists = no }	
+			}
+			release = UGA
+			ENG = {
+				puppet = UGA
+			}
+		}
+		SAF = { transfer_state = 542 }
+		hidden_effect = {
+			news_event = { id = news.261 hours = 6 }
+		}
+	}
+}
+
+#SAF takes over British Colonies
+news_event = {
+	id = news.260
+	title = news.260.t
+	desc = news.260.desc
+	picture = GFX_news_event_south_africa_patrol
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = news.260.a
+		trigger = { NOT = { tag = SAF tag = ENG is_in_faction_with = ENG } }
+	}
+	option = {
+		name = news.260.b
+		trigger = { tag = SAF }
+	}
+	option = {
+		name = news.260.c
+		trigger = { 
+			OR = { tag = ENG is_in_faction_with = ENG }
+			NOT = { tag = SAF }
+		}
+	}
+}
+
+# Britain compromisses, releases KEN/ZIM
+news_event = {
+	id = news.261
+	title = news.261.t
+	desc = news.261.desc
+	picture = GFX_news_event_kenya_army
+	major = yes
+	is_triggered_only = yes
+	option = {
+		name = news.261.a
+		trigger = { NOT = { tag = SAF tag = ENG is_in_faction_with = ENG } }
+	}
+	option = {
+		name = news.261.b
+		trigger = { tag = SAF }
+	}
+	option = {
+		name = news.261.c
+		trigger = { 
+			OR = { tag = ENG is_in_faction_with = ENG }
+			NOT = { tag = SAF }
+		}
+	}
+}
+
+# КПЮА парализовала заводы
+country_event = {
+	id = NW_SAF.24
+	title = NW_SAF.24.t
+	desc = NW_SAF.24.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.24" }
+	option = {
+		name = NW_SAF.24.a
+		effect_tooltip = { add_timed_idea = { idea = SAF_paralyzed_military_production_idea days = 45 } }
+	}
+}
+
+# Расправив плечи
+country_event = {
+    id = NW_SAF.25
+	title = NW_SAF.25.t
+    desc = NW_SAF.25.d    
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.25" }
+    option = {
+        name = NW_SAF.25.a
+		trigger = {
+			if = {
+				limit = { is_ai = yes }
+				has_country_flag = NW_SAF_AI_DEMOCRATIC_BLACK_COUP_FLAG
+			}
+			else = {
+				democratic > party_popularity@communism
+				democratic > party_popularity@trozkism
+			}
+		}
+		set_country_flag = SAF_proclame_dsar_unlock_flag
+		effect_tooltip = { unlock_national_focus = SAF_proclame_dsar }
+	}
+	option = {
+        name = NW_SAF.25.b
+		trigger = {
+			if = {
+				limit = { is_ai = yes }
+				has_country_flag = NW_SAF_AI_TROZKISM_FLAG
+			}
+			else = {
+				trozkism > party_popularity@communism
+				trozkism > party_popularity@democratic
+			}
+		}
+		set_country_flag = SAF_create_the_first_international_state_unlock_flag
+		effect_tooltip = { unlock_national_focus = SAF_create_the_first_international_state }
+	}
+	option = {
+        name = NW_SAF.25.c
+		trigger = {
+			if = {
+				limit = { is_ai = yes }
+				has_country_flag = NW_SAF_AI_COMMUNIST_FLAG
+			}
+			else = {
+				communism > party_popularity@trozkism
+				communism > party_popularity@democratic
+			}
+		}
+		set_country_flag = SAF_start_building_the_black_republic_unlock_flag
+		effect_tooltip = { unlock_national_focus = SAF_start_building_the_black_republic }
+	}
+}
+
+# Я готов умереть
+country_event = {
+	id = NW_SAF.26
+	title = NW_SAF.26.t
+	desc = NW_SAF.26.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.26" }
+	option = {
+		name = NW_SAF.26.a
+		add_war_support = 0.1
+	}
+}
+
+# Вопрос о нейтралитете
+country_event = {
+	id = NW_SAF.27
+	title = NW_SAF.27.t
+	desc = NW_SAF.27.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.27" }
+	option = {
+		name = NW_SAF.27.a
+		trigger = {
+			OR = {
+				check_variable = { power_balance_value@power_balance > 0 }
+				AND = {
+					is_ai = yes
+					has_country_flag = NW_SAF_AI_UNITED_PARTY_FLAG
+				}
+			}
+		}
+		remove_ideas = SAF_uncertainty_of_foreign_policy_idea
+		hidden_effect = { country_event = { id = NW_SAF.28 days = 10 } }
+	}
+	option = {
+		name = NW_SAF.27.b
+		ai_chance = { base = 0 }
+		trigger = { check_variable = { power_balance_value@power_balance < 0 } }
+		hidden_effect = { country_event = { id = NW_SAF.29 days = 30 } }
+	}
+	option = {
+		name = NW_SAF.27.c
+		ai_chance = { base = 0 }
+		trigger = { check_variable = { power_balance_value@power_balance = 0 } }
+		hidden_effect = { country_event = { id = NW_SAF.27 days = 30 } }
+	}
+}
+
+# Премьер-министр обращается к генерал-губернатору
+country_event = {
+	id = NW_SAF.28
+	title = NW_SAF.28.t
+	desc = NW_SAF.28.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.28" }
+	option = {
+		name = NW_SAF.28.a
+		complete_national_focus = SAF_resignation_of_the_prime_minister
+	}
+}
+
+# Премьер-министр укрепляет свои позиции
+country_event = {
+	id = NW_SAF.29
+	title = NW_SAF.29.t
+	desc = NW_SAF.29.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.29" }
+	option = {
+		name = NW_SAF.29.a
+		complete_national_focus = SAF_strengthening_the_prime_minister_position
+		custom_effect_tooltip = empty_line_tooltip
+		set_party_name = { ideology = democratic long_name = SAF_democratic_party_1 name = SAF_democratic_party_1 }
+		custom_effect_tooltip = empty_line_tooltip
+		promote_character = SAF_charles_frampton_stallard
+	}
+}
+
+# Южно-Африканский союз желает выкупить Мозамбик
+country_event = {
+	id = NW_SAF.30
+	title = NW_SAF.30.t
+	desc = NW_SAF.30.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.30"
+		set_variable = { global.SAF_purchase_of_mozambique_seller = ROOT }
+	}
+	option = {
+		name = NW_SAF.30.a
+		FROM = {
+			country_event = { id = NW_SAF.32 hours = 12 }
+			effect_tooltip = {
+				if = {
+					limit = { has_country_flag = NW_SAF_30_a_a_flag }
+					transfer_state = 544
+					transfer_state = 983
+				}
+				else = {
+					annex_country = { target = MZB transfer_troops = yes }
+				}
+				add_timed_idea = { idea = SAF_purchase_of_mozambique_idea days = 3650 }
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.30.b
+		FROM = {
+			country_event = { id = NW_SAF.31 hours = 12 }
+			effect_tooltip = {
+				if = {
+					limit = { has_country_flag = NW_SAF_30_a_a_flag }
+					create_wargoal = {
+						type = take_state_focus
+						target = ROOT
+						generator = { 544 983 }
+						expire = 0
+					}
+				}
+				else = {
+					create_wargoal = {
+						type = take_state_focus
+						target = MZB
+						generator = { 544 983 }
+						expire = 0
+					}
+				}
+			}
+		}
+	}
+}
+
+# Нам отказали в покупке Мозамбика
+country_event = {
+	id = NW_SAF.31
+	title = NW_SAF.31.t
+	desc = NW_SAF.31.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.31" }
+	option = {
+		name = NW_SAF.31.a
+		add_war_support = -0.03
+	}
+	option = {
+		name = NW_SAF.31.b
+		if = {
+			limit = { has_country_flag = NW_SAF_30_a_a_flag }
+			create_wargoal = {
+				type = take_state_focus
+				target = FROM
+				generator = { 544 983 }
+				expire = 0
+			}
+		}
+		else = {
+			create_wargoal = {
+				type = take_state_focus
+				target = MZB
+				generator = { 544 983 }
+				expire = 0
+			}
+		}
+	}
+}
+
+# Мы выкупаем Мозамбик
+country_event = {
+	id = NW_SAF.32
+	title = NW_SAF.32.t
+	desc = NW_SAF.32.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.32" }
+	option = {
+		name = NW_SAF.32.a
+		if = {
+			limit = { has_country_flag = NW_SAF_30_a_a_flag }
+			transfer_state = 544
+			transfer_state = 983
+		}
+		else = {
+			annex_country = { target = MZB transfer_troops = yes }
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		add_timed_idea = { idea = SAF_purchase_of_mozambique_idea days = 3650 }
+		custom_effect_tooltip = empty_line_tooltip
+		unlock_decision_tooltip = SAF_premature_repayment_of_debt
+	}
+}
+
+# Южно-Африканский союз предлагает нам присоединиться
+country_event = {
+	id = NW_SAF.33
+	title = NW_SAF.33.t
+	desc = NW_SAF.33.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.33" }
+	option = {
+		name = NW_SAF.33.a
+		custom_effect_tooltip = GAME_OVER_TT
+		custom_effect_tooltip = empty_line_tooltip
+		if = {
+			limit = {
+				FROM = { is_ai = yes }
+				is_ai = no
+			}
+			effect_tooltip = { FROM = { change_tag_from = ROOT } }
+			custom_effect_tooltip = empty_line_tooltip
+		}
+		FROM = {
+			country_event = { id = NW_SAF.34 hours = 12 }
+			effect_tooltip = {
+				annex_country = { target = ROOT transfer_troops = yes }
+				ROOT = { every_core_state = { add_core_of = FROM } }
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.33.b
+		FROM = {
+			country_event = { id = NW_SAF.35 hours = 12 }
+			effect_tooltip = {
+				create_wargoal = {
+					type = annex_everything
+					target = ROOT
+					expire = 0
+				}
+			}
+		}
+	}
+}
+
+# Второй референдум в Южной Родезии прошёл удачно
+country_event = {
+	id = NW_SAF.34
+	title = NW_SAF.34.t
+	desc = NW_SAF.34.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.34" }
+	option = {
+		name = NW_SAF.34.a
+		FROM = {
+			hidden_effect = {
+				if = {
+					limit = {
+						is_ai = no
+						ROOT = { is_ai = yes }
+					}
+					ROOT = { change_tag_from = FROM }
+				}
+			}
+			ROOT = { annex_country = { target = FROM transfer_troops = yes } }
+			every_core_state = { add_core_of = ROOT }
+		}
+	}
+}
+
+# Второй референдум в Южной Родезии потерпел неудачу
+country_event = {
+	id = NW_SAF.35
+	title = NW_SAF.35.t
+	desc = NW_SAF.35.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.35" }
+	option = {
+		name = NW_SAF.35.a
+		add_war_support = -0.03
+	}
+	option = {
+		name = NW_SAF.35.b
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# Потеря малых протекторатов в Южной Африке
+country_event = {
+	id = NW_SAF.36
+	title = NW_SAF.36.t
+	desc = NW_SAF.36.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.36" }
+	option = {
+		name = NW_SAF.36.a
+		add_war_support = -0.02
+	}
+	option = {
+		name = NW_SAF.36.b
+		ai_chance = { base = 0 }
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# ЮАС оккупировал Малави
+country_event = {
+	id = NW_SAF.37
+	title = NW_SAF.37.t
+	desc = NW_SAF.37.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.37" }
+	option = {
+		name = NW_SAF.37.a
+		add_war_support = -0.01
+	}
+	option = {
+		name = NW_SAF.37.b
+		trigger = { check_variable = { SAF_action_against_var > 1 } }
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# ЮАС оккупировал Северную Родезию
+country_event = {
+	id = NW_SAF.38
+	title = NW_SAF.38.t
+	desc = NW_SAF.38.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.38" }
+	option = {
+		name = NW_SAF.38.a
+		add_war_support = -0.01
+	}
+	option = {
+		name = NW_SAF.38.b
+		trigger = { check_variable = { SAF_action_against_var > 1 } }
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# ЮАС требует Таганьику
+country_event = {
+	id = NW_SAF.39
+	title = NW_SAF.39.t
+	desc = NW_SAF.39.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.39" }
+	option = {
+		name = NW_SAF.39.a
+		add_war_support = -0.05
+		custom_effect_tooltip = empty_line_tooltip
+		every_controlled_state = {
+			limit = {
+				OR = {
+					state = 992
+					state = 830
+					state = 546
+				}
+			}
+			transfer_state_to = FROM
+		}
+	}
+	option = {
+		name = NW_SAF.39.b
+		trigger = { check_variable = { SAF_action_against_var > 1 } }
+		create_wargoal = {
+			type = annex_everything
+			target = FROM
+			expire = 0
+		}
+	}
+}
+
+# Агитация в вооружённые силы
+country_event = {
+	id = NW_SAF.40
+	title = NW_SAF.40.t
+	desc = NW_SAF.40.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.40" }
+	option = {
+		name = NW_SAF.40.a
+		add_war_support = 0.02
+	}
+}
+
+# Найм чернокожих из частных кампаний
+country_event = {
+	id = NW_SAF.41
+	title = NW_SAF.41.t
+	desc = NW_SAF.41.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.41" }
+	option = {
+		name = NW_SAF.41.a
+		add_war_support = 0.02
+	}
+}
+
+# Подкуп вождей
+country_event = {
+	id = NW_SAF.42
+	title = NW_SAF.42.t
+	desc = NW_SAF.42.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.42" }
+	option = {
+		name = NW_SAF.42.a
+		add_war_support = 0.02
+	}
+}
+
+# Обманутые ожидания Туземного корпуса
+country_event = {
+	id = NW_SAF.43
+	title = NW_SAF.43.t
+	desc = NW_SAF.43.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	trigger = {
+		is_dynamic_country = no
+		NOT = { has_country_flag = SAF_civil_war_flag }
+		check_variable = { var = SAF_conscription_factor_var value = -0.63 compare = less_than_or_equals }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.43" }
+	option = {
+		name = NW_SAF.43.a
+		set_country_flag = SAF_salary_regulation_unlock_flag
+		add_ideas = SAF_low_pay_for_black_soldiers_idea
+		custom_effect_tooltip = empty_line_tooltip
+		unlock_decision_tooltip = SAF_pay_rise_for_black_soldiers
+		unlock_decision_tooltip = SAF_pay_low_for_black_soldiers
+	}
+}
+
+# Выборы президента
+country_event = {
+	id = NW_SAF.44
+	title = NW_SAF.44.t
+	desc = NW_SAF.44.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.44" }
+	option = {
+		name = NW_SAF.44.a
+		effect_tooltip = { unlock_national_focus = SAF_path_of_peaceful_propaganda }
+		custom_effect_tooltip = empty_line_tooltip
+		add_country_leader_role = {
+			character = SAF_zacharias_richard_mahabane
+			promote_leader = yes
+			country_leader = {
+				desc = "POLITICS_ZAHARIAS_RICHARD_MAHABANE_DESC"
+				ideology = social_liberalism
+				traits = { SAF_pastor anti_communist }
+			}
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		add_advisor_role = {
+			character = SAF_alfred_bitini_xuma
+			advisor = {
+				slot = political_advisor
+				cost = 150
+				idea_token = SAF_alfred_bitini_xuma
+				traits = { head_of_a_youth_organization }
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.44.b
+		effect_tooltip = { unlock_national_focus = SAF_moderate_radicalization_of_the_party }
+		custom_effect_tooltip = empty_line_tooltip
+		add_country_leader_role = {
+			character = SAF_alfred_bitini_xuma
+			promote_leader = yes
+			country_leader = {
+				desc = "POLITICS_ALFRED_BITINI_XUMA_DESC"
+				ideology = social_liberalism
+				traits = { SAF_first_doctor SAF_black_englishman }
+			}
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		add_advisor_role = {
+			character = SAF_zacharias_richard_mahabane
+			advisor = {
+				slot = political_advisor
+				cost = 150
+				idea_token = SAF_zacharias_richard_mahabane
+				traits = { SAF_chief_chaplain }
+			}
+		}
+	}
+}
+
+# Установление постоянного правительства
+country_event = {
+	id = NW_SAF.45
+	title = NW_SAF.45.t
+	desc = NW_SAF.45.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.45" }
+	option = {
+		name = NW_SAF.45.a
+		set_politics = { ruling_party = communism elections_allowed = no }
+	}
+}
+
+# Завершение строительства чёрной республики
+country_event = {
+	id = NW_SAF.46
+	title = NW_SAF.46.t
+	desc = NW_SAF.46.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.46" }
+	option = {
+		name = NW_SAF.46.a
+		set_cosmetic_tag = SAF_socialist_republic_of_azania
+		custom_effect_tooltip = empty_line_tooltip
+		add_ideas = SAF_black_republic_idea
+	}
+}
+
+# Переманивание членов АНК в компартию
+country_event = {
+	id = NW_SAF.47
+	title = NW_SAF.47.t
+	desc = NW_SAF.47.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.47" }
+	option = {
+		name = NW_SAF.47.a
+		add_popularity = { ideology = democratic popularity = -0.02 }
+		add_popularity = { ideology = communism popularity = 0.02 }
+	}
+}
+
+# Замена членов комитета сочувствующих АНК
+country_event = {
+	id = NW_SAF.48
+	title = NW_SAF.48.t
+	desc = NW_SAF.48.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.48" }
+	option = {
+		name = NW_SAF.48.a
+		add_popularity = { ideology = democratic popularity = -0.02 }
+		add_popularity = { ideology = communism popularity = 0.02 }
+	}
+}
+
+# Отстранение генерального секретаря
+country_event = {
+	id = NW_SAF.49
+	title = NW_SAF.49.t
+	desc = NW_SAF.49.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.49" }
+	option = {
+		name = NW_SAF.49.a
+		add_stability = -0.05
+	}
+}
+
+# Назначение нового генерального секретаря
+country_event = {
+	id = NW_SAF.50
+	title = NW_SAF.50.t
+	desc = NW_SAF.50.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.50" }
+	option = {
+		name = NW_SAF.50.a
+		add_country_leader_role = {
+			character = SAF_moses_kotane
+			promote_leader = yes
+			country_leader = {
+				desc = "POLITICS_MOSES_KOTANE_DESC"
+				ideology = leninism
+				traits = { SAF_giant_of_struggle }
+			}
+		}
+	}
+}
+
+# Введение однопартийной системы
+country_event = {
+	id = NW_SAF.51
+	title = NW_SAF.51.t
+	desc = NW_SAF.51.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.51" }
+	option = {
+		name = NW_SAF.51.a
+		set_temp_variable = { add_communism_var = 1 }
+		subtract_from_temp_variable = { var = add_communism_var value = party_popularity@communism }
+		add_popularity = { ideology = communism popularity = add_communism_var }
+		set_temp_variable = { var = ban_monarchy_var value = party_popularity@monarchy }
+		multiply_temp_variable = { var = ban_monarchy_var value = -1 }
+		add_popularity = { ideology = monarchy popularity = ban_monarchy_var }
+		set_temp_variable = { var = ban_fascism_var value = party_popularity@fascism }
+		multiply_temp_variable = { var = ban_fascism_var value = -1 }
+		add_popularity = { ideology = fascism popularity = ban_fascism_var }
+		set_temp_variable = { var = ban_democratic_var value = party_popularity@democratic }
+		multiply_temp_variable = { var = ban_democratic_var value = -1 }
+		add_popularity = { ideology = democratic popularity = ban_democratic_var }
+		set_temp_variable = { var = ban_trozkism_var value = party_popularity@trozkism }
+		multiply_temp_variable = { var = ban_trozkism_var value = -1 }
+		add_popularity = { ideology = trozkism popularity = ban_trozkism_var }
+		set_temp_variable = { var = ban_anarchism_var value = party_popularity@anarchism }
+		multiply_temp_variable = { var = ban_anarchism_var value = -1 }
+		add_popularity = { ideology = anarchism popularity = ban_anarchism_var }
+		set_temp_variable = { var = ban_technocracy_var value = party_popularity@technocracy }
+		multiply_temp_variable = { var = ban_technocracy_var value = -1 }
+		add_popularity = { ideology = technocracy popularity = ban_technocracy_var }
+		set_temp_variable = { var = ban_neutrality_var value = party_popularity@neutrality }
+		multiply_temp_variable = { var = ban_neutrality_var value = -1 }
+		add_popularity = { ideology = neutrality popularity = ban_neutrality_var }
+		hidden_effect = {
+			set_party_name = { ideology = democratic name = anarchism_party_banned }
+			set_party_name = { ideology = trozkism name = anarchism_party_banned }
+			set_party_name = { ideology = fascism name = anarchism_party_banned }
+			set_party_name = { ideology = neutrality name = anarchism_party_banned }
+			set_party_name = { ideology = technocracy name = anarchism_party_banned }
+			set_party_name = { ideology = anarchism name = anarchism_party_banned }
+			set_party_name = { ideology = monarchy name = anarchism_party_banned }
+		}
+	}
+}
+
+# Митинги АНК
+country_event = {
+	id = NW_SAF.52
+	title = NW_SAF.52.t
+	desc = NW_SAF.52.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.52"
+		set_variable = { SAF_stability_factor_var_2 = -0.2 }
+		set_variable = { SAF_monthly_population_var_1 = -0.1 }
+		set_variable = { SAF_production_factory_efficiency_gain_factor_var_1 = -0.2 }
+		set_variable = { SAF_production_factory_max_efficiency_factor_var_2 = -0.2 }
+	}
+	option = {
+		name = NW_SAF.52.a
+		add_popularity = { ideology = communism popularity = -0.05 }
+		add_stability = -0.05
+		custom_effect_tooltip = empty_line_tooltip
+		add_dynamic_modifier = { modifier = SAF_anc_rallies_modifier }
+	}
+}
+
+# Запрет АНК
+country_event = {
+	id = NW_SAF.53
+	title = NW_SAF.53.t
+	desc = NW_SAF.53.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.53" }
+	option = {
+		name = NW_SAF.53.a
+		add_political_power = -100
+		custom_effect_tooltip = empty_line_tooltip
+		custom_effect_tooltip = SAF_anc_rallies_modifier_change_tt
+		add_to_variable = { SAF_monthly_population_var_1 = 0.03 tooltip = monthly_population_tooltip }
+		add_to_variable = { SAF_stability_factor_var_2 = 0.05 tooltip = stability_factor_tooltip }
+		add_to_variable = { SAF_production_factory_max_efficiency_factor_var_2 = 0.05 tooltip = production_factory_max_efficiency_factor_tooltip }
+		add_to_variable = { SAF_production_factory_efficiency_gain_factor_var_1 = 0.05 tooltip = production_factory_efficiency_gain_factor_tooltip }
+		force_update_dynamic_modifier = yes
+	}
+}
+
+# Речь Мозаса Котане
+country_event = {
+	id = NW_SAF.54
+	title = NW_SAF.54.t
+	desc = NW_SAF.54.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.54" }
+	option = {
+		name = NW_SAF.54.a
+		set_temp_variable = { SAF_building_the_black_republic_temp_var = 5 }
+		SAF_building_the_black_republic_effect = yes
+		custom_effect_tooltip = empty_line_tooltip
+		retire_character = SAF_william_henry_andrews
+		retire_character = SAF_benjamin_jennings_caddy
+	}
+}
+
+# ЮАС предлагает объединение
+country_event = {
+	id = NW_SAF.55
+	title = NW_SAF.55.t
+	desc = NW_SAF.55.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.55" }
+	option = {
+		name = NW_SAF.55.a
+		FROM = { annex_country = { target = ROOT transfer_troops = yes } }
+		if = {
+			limit = { OR = { tag = MZB tag = ANG } }
+			custom_effect_tooltip = empty_line_tooltip
+			if = {
+				limit = { is_in_faction = yes }
+				leave_faction = yes
+				custom_effect_tooltip = empty_line_tooltip
+			}
+			OVERLORD = {
+				country_event = { id = NW_SAF.56 hours = 12 }
+				end_puppet = ROOT
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.55.b
+		ai_chance = { base = 0 }
+	}
+}
+
+# [FROM.GetName] предала нашу республику
+country_event = {
+	id = NW_SAF.56
+	title = NW_SAF.56.t
+	desc = NW_SAF.56.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.56" }
+	option = {
+		name = NW_SAF.56.a
+		ai_chance = { base = 50 }
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = FROM
+			expire = 0
+		}
+	}
+	option = {
+		name = NW_SAF.56.b
+		ai_chance = { base = 50 }
+	}
+}
+
+# ЮЧР требует передать Мадагаскар
+country_event = {
+	id = NW_SAF.57
+	title = NW_SAF.57.t
+	desc = NW_SAF.57.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.57" }
+	option = {
+		name = NW_SAF.57.a
+		ai_chance = { base = 50 }
+		FROM = {
+			create_wargoal = {
+				type = take_state_focus
+				target = ROOT
+				generator = { 543 }
+				expire = 0
+			}
+		}
+	}
+	option = {
+		name = NW_SAF.57.b
+		ai_chance = { base = 50 }
+		543 = {
+			transfer_state_to = FROM
+			add_core_of = FROM
+		}
+	}
+}
+
+# Новая Республика
+country_event = {
+	id = NW_SAF.58
+	title = NW_SAF.58.t
+	desc = NW_SAF.58.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.58" }
+	option = {
+		name = NW_SAF.58.a
+		add_war_support = 0.05
+		custom_effect_tooltip = empty_line_tooltip
+		add_popularity = { ideology = communism popularity = 0.05 }
+	}
+}
+
+# ENG Изгнание белых из Народной Республики Азания
+country_event = {
+	id = NW_SAF.59
+	title = NW_SAF.59.t
+	desc = NW_SAF.59.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.59" }
+	option = {
+		name = NW_SAF.59.a
+		random_owned_controlled_state = {
+			prioritize = { 126 }
+			add_manpower = 371600
+		}
+	}
+}
+
+# HOL Изгнание белых из Народной Республики Азания
+country_event = {
+	id = NW_SAF.60
+	title = NW_SAF.60.t
+	desc = NW_SAF.60.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.60" }
+	option = {
+		name = NW_SAF.60.a
+		7 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				add_manpower = 520240
+			}
+		}
+		35 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				add_manpower = 260120
+			}
+		}
+		976 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				add_manpower = 260120
+			}
+		}
+		36 = {
+			if = {
+				limit = { is_controlled_by = ROOT }
+				add_manpower = 260120
+			}
+		}
+	}
+}
+
+# Успех аграрной политики
+country_event = {
+	id = NW_SAF.61
+	title = NW_SAF.61.t
+	desc = NW_SAF.61.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.61" }
+	option = {
+		name = NW_SAF.61.a
+		if = {
+			limit = { has_government = communism }
+			set_temp_variable = { SAF_building_the_black_republic_temp_var = 10 }
+			SAF_building_the_black_republic_effect = yes
+		}
+		add_stability = 0.05
+		custom_effect_tooltip = empty_line_tooltip
+		every_controlled_state = {
+			limit = {
+				free_building_slots = {
+					building = fuel_silo
+					size > 0
+					include_locked = yes
+				}
+			}
+			add_extra_state_shared_building_slots = 1
+		}
+	}
+}
+
+# Принятие Хартии Свободы
+country_event = {
+	id = NW_SAF.62
+	title = NW_SAF.62.t
+	desc = NW_SAF.62.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.62" }
+	option = {
+		name = NW_SAF.62.a
+		add_political_power = 50
+	}
+}
+
+# Помощь из ДЮАР
+country_event = {
+	id = NW_SAF.63
+	title = NW_SAF.63.t
+	desc = NW_SAF.63.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.63" }
+	option = {
+		name = NW_SAF.63.a
+		add_ideas = SAF_help_from_dsar_idea
+	}
+}
+
+# Агитация в малых протекторатах
+country_event = {
+	id = NW_SAF.64
+	title = NW_SAF.64.t
+	desc = NW_SAF.64.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.64" }
+	option = {
+		name = NW_SAF.64.a
+		meta_effect = {
+			text = { add_timed_idea = { idea = SAF_agitation_in_small_protectorates_idea_0 days = [SAF_days_left] } }
+			SAF_days_left = "[?SAF_future_of_small_protectorates_flag:days_left]"
+		}
+
+	}
+	option = {
+		name = NW_SAF.64.b
+		meta_effect = {
+			text = { add_timed_idea = { idea = SAF_agitation_in_small_protectorates_idea_1 days = [SAF_days_left] } }
+			SAF_days_left = "[?SAF_future_of_small_protectorates_flag:days_left]"
+		}
+	}
+	option = {
+		name = NW_SAF.64.c
+		hidden_effect = {
+			meta_effect = {
+				text = {
+					random_list = {
+						33 = { country_event = { id = NW_SAF.65 days = [SAF_days_left] } }
+						67 = { country_event = { id = NW_SAF.66 days = [SAF_days_left] } }
+					}
+				}
+				SAF_days_left = "[?SAF_future_of_small_protectorates_flag:days_left]"
+			}
+		}
+	}
+}
+
+# Протектораты вошли в наш состав
+country_event = {
+	id = NW_SAF.65
+	title = NW_SAF.65.t
+	desc = NW_SAF.65.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.65" }
+	option = {
+		name = NW_SAF.65.a
+		542 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = ROOT
+				add_core_of = ROOT
+			}
+		}
+		1106 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = ROOT
+				add_core_of = ROOT
+			}
+		}
+		1105 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = ROOT
+				add_core_of = ROOT
+			}
+		}
+	}
+}
+
+# Протектораты объявили себя независимыми
+country_event = {
+	id = NW_SAF.66
+	title = NW_SAF.66.t
+	desc = NW_SAF.66.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.66" }
+	option = {
+		name = NW_SAF.66.a
+		542 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = BOT
+			}
+		}
+		1106 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = LES
+			}
+		}
+		1105 = {
+			if = {
+				limit = {
+					NOT = { is_controlled_by = ROOT }
+					controller = { NOT = { has_war_with = ROOT } }
+				}
+				transfer_state_to = ESW
+			}
+		}
+	}
+}
+
+# Последний шанс на спасение
+country_event = {
+	id = NW_SAF.67
+	title = NW_SAF.67.t
+	desc = NW_SAF.67.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.67" }
+	option = {
+		name = NW_SAF.67.a
+		add_stability = -0.03
+		add_popularity = { ideology = democratic popularity = 0.01 }
+		custom_effect_tooltip = empty_line_tooltip
+		random_owned_controlled_state = {
+			prioritize = { 1108 }
+			limit = { is_core_of = ROOT }
+			add_manpower = 600
+		}
+	}
+}
+
+# Рост поддержки антиеврейского протеста
+country_event = {
+	id = NW_SAF.68
+	title = NW_SAF.68.t
+	desc = NW_SAF.68.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.68" }
+	option = {
+		name = NW_SAF.68.a
+		trigger = { NOT = { has_government = fascism } }
+		add_popularity = { ideology = fascism popularity = 0.05 }
+		if = {
+			limit = { has_power_balance = { id = SAF_confrontation_between_afrikaners_and_anglophiles } }
+			custom_effect_tooltip = empty_line_tooltip
+			add_power_balance_value = { id = SAF_confrontation_between_afrikaners_and_anglophiles value = -0.1 }
+		}
+	}
+	option = {
+		name = NW_SAF.68.b
+		trigger = { has_government = fascism }
+		add_popularity = { ideology = fascism popularity = 0.05 }
+		if = {
+			limit = { has_power_balance = { id = SAF_confrontation_between_afrikaners_and_anglophiles } }
+			custom_effect_tooltip = empty_line_tooltip
+			add_power_balance_value = { id = SAF_confrontation_between_afrikaners_and_anglophiles value = -0.1 }
+		}
+	}
+}
+
+# Учреждение Оссевабрандваг
+country_event = {
+    id = NW_SAF.69
+	title = NW_SAF.69.t
+    desc = NW_SAF.69.d   
+	picture = GFX_report_event_hol_21_26
+	fire_only_once = yes
+	mean_time_to_happen = { days = 5 }
+	trigger = {
+		tag = SAF
+		is_dynamic_country = no
+		fascism > 0.1
+		NOT = { has_completed_focus = SAF_victory_of_the_purified_national_party }
+	}
+	immediate = {
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.69"
+		set_country_flag = NW_SAF_69_flag
+	}
+    option = {
+        name = NW_SAF.69.a
+		
+	}
+}
+
+# Турне Лааса и Оссвабрандвага
+country_event = {
+    id = NW_SAF.70
+	title = NW_SAF.70.t
+    desc = NW_SAF.70.d   
+	picture = GFX_report_event_hol_21_26
+	fire_only_once = yes
+	mean_time_to_happen = { days = 5 }
+	trigger = {
+		tag = SAF
+		is_dynamic_country = no
+		fascism > 0.2
+		has_country_flag = NW_SAF_69_flag
+		NOT = { has_completed_focus = SAF_victory_of_the_purified_national_party }
+	}
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.70" }
+    option = {
+        name = NW_SAF.70.a
+		add_ideas = SAF_ossvabrandwag_activity_idea
+		custom_effect_tooltip = empty_line_tooltip
+		unlock_decision_category_tooltip = SAF_ossvabrandwag_activity_category
+		activate_mission = SAF_ossvabrandwag_activity_mission
+	}
+}
+
+# Триумфальное турне по Оранжевому свободному государству
+country_event = {
+	id = NW_SAF.71
+	title = NW_SAF.71.t
+	desc = NW_SAF.71.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.71" }
+	option = {
+		name = NW_SAF.71.a
+		add_popularity = { ideology = fascism popularity = 0.03 }
+	}
+}
+
+# Нерезультативное турне по Оранжевому свободному государству
+country_event = {
+	id = NW_SAF.72
+	title = NW_SAF.72.t
+	desc = NW_SAF.72.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.72" }
+	option = {
+		name = NW_SAF.72.a
+		add_stability = -0.01
+	}
+}
+
+# Триумфальное турне по Южной Африке
+country_event = {
+	id = NW_SAF.73
+	title = NW_SAF.73.t
+	desc = NW_SAF.73.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.73" }
+	option = {
+		name = NW_SAF.73.a
+		add_popularity = { ideology = fascism popularity = 0.03 }
+	}
+}
+
+# Нерезультативное турне по Южной Африке
+country_event = {
+	id = NW_SAF.74
+	title = NW_SAF.74.t
+	desc = NW_SAF.74.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.74" }
+	option = {
+		name = NW_SAF.74.a
+		add_stability = -0.01
+	}
+}
+
+# Оссвабрандваг успешно привлёк бывших военных
+country_event = {
+	id = NW_SAF.75
+	title = NW_SAF.75.t
+	desc = NW_SAF.75.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.75" }
+	option = {
+		name = NW_SAF.75.a
+		add_popularity = { ideology = fascism popularity = 0.03 }
+	}
+}
+
+# Хрупкое региональное и местное управление в Оссвабрандваге
+country_event = {
+	id = NW_SAF.76
+	title = NW_SAF.76.t
+	desc = NW_SAF.76.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.76" }
+	option = {
+		name = NW_SAF.76.a
+	}
+}
+
+# Тихое смещение Лааса с поста главы Оссвабрандвага
+country_event = {
+	id = NW_SAF.77
+	title = NW_SAF.77.t
+	desc = NW_SAF.77.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.77" }
+	option = {
+		name = NW_SAF.77.a
+		add_popularity = { ideology = fascism popularity = 0.03 }
+	}
+}
+
+# Громкое и скандальное смещение Лааса с поста главы Оссвабрандвага
+country_event = {
+	id = NW_SAF.78
+	title = NW_SAF.78.t
+	desc = NW_SAF.78.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.78" }
+	option = {
+		name = NW_SAF.78.a
+		add_popularity = { ideology = fascism popularity = -0.03 }
+	}
+}
+
+# Создание и бурный рост Штормярс
+country_event = {
+	id = NW_SAF.79
+	title = NW_SAF.79.t
+	desc = NW_SAF.79.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.79" }
+	option = {
+		name = NW_SAF.79.a
+		add_popularity = { ideology = fascism popularity = 0.03 }
+	}
+}
+
+# Создание и слабый рост Штормярс
+country_event = {
+	id = NW_SAF.80
+	title = NW_SAF.80.t
+	desc = NW_SAF.80.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.80" }
+	option = {
+		name = NW_SAF.80.a
+		add_popularity = { ideology = fascism popularity = 0.01 }
+	}
+}
+
+# Силы Штромярс и Оссвабрандвага захватывают власть в стране
+country_event = {
+	id = NW_SAF.81
+	title = NW_SAF.81.t
+	desc = NW_SAF.81.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.81" }
+	option = {
+		name = NW_SAF.81.a
+		add_stability = -0.05
+		add_popularity = { ideology = fascism popularity = 0.1 }
+		custom_effect_tooltip = empty_line_tooltip
+		set_politics = { ruling_party = fascism elections_allowed = no }
+		custom_effect_tooltip = empty_line_tooltip
+		set_party_name = { ideology = democratic long_name = SAF_fascism_party_1 name = SAF_fascism_party_1 }
+		custom_effect_tooltip = empty_line_tooltip
+		add_country_leader_role = {
+			character = SAF_johannes_frederik_janse_van_rensburg
+			promote_leader = yes
+			country_leader = {
+				desc = "POLITICS_JOHANNES_FREDERIK_JANSE_VAN_RENSBURG_DESC"
+				ideology = nazism
+				traits = { SAF_militaristic_views SAF_despises_the_british }
+			}
+		}
+		hidden_effect = {
+			add_ideas = SAF_despises_the_british_idea
+			if = {
+				limit = { has_completed_focus = SAF_parliamentary_elections }
+				uncomplete_national_focus = { focus = SAF_parliamentary_elections uncomplete_children = yes }
+			}
+		}
+		remove_ideas = SAF_ossvabrandwag_activity_idea
+		custom_effect_tooltip = empty_line_tooltip
+		complete_national_focus = SAF_march_to_pretoria
+	}
+}
+
+# Силы Штромярс разгромлены. Оссвабрандваг дискредитирован
+country_event = {
+	id = NW_SAF.82
+	title = NW_SAF.82.t
+	desc = NW_SAF.82.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.82" }
+	option = {
+		name = NW_SAF.82.a
+		add_popularity = { ideology = fascism popularity = -0.2 }
+		add_stability = 0.05
+		add_political_power = 100
+	}
+}
+
+# Гражданские государственные перестановки
+country_event = {
+	id = NW_SAF.83
+	title = NW_SAF.83.t
+	desc = NW_SAF.83.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.83" }
+	option = {
+		name = NW_SAF.83.a
+    	add_to_variable = { NW_political_advisor = 1 tooltip = slot_of_political_minister_unlock_effect_tt }
+		custom_effect_tooltip = empty_line_tooltip
+		activate_advisor = SAF_sir_patrick_duncan
+	}
+}
+
+# Военные государственные перестановки
+country_event = {
+	id = NW_SAF.84
+	title = NW_SAF.84.t
+	desc = NW_SAF.84.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.84" }
+	option = {
+		name = NW_SAF.84.a
+    	add_to_variable = { NW_political_advisor = 1 tooltip = slot_of_political_minister_unlock_effect_tt }
+		custom_effect_tooltip = empty_line_tooltip
+		activate_advisor = SAF_colonel_j_c_c_laas
+		custom_effect_tooltip = empty_line_tooltip
+		add_field_marshal_role = {
+			character = SAF_colonel_j_c_c_laas
+			traits = { offensive_doctrine inspirational_leader }
+			skill = 2
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 2
+		}
+		add_corps_commander_role = {
+			character = SAF_johannes_van_der_walt
+			traits = { irregulars_officer cavalry_officer fortress_buster }
+			skill = 2
+			attack_skill = 3
+			defense_skill = 3
+			planning_skill = 1
+			logistics_skill = 1
+		}
+	}
+}
+
+# Объявление о создании Оранжевой Свободной Республики
+country_event = {
+	id = NW_SAF.85
+	title = NW_SAF.85.t
+	desc = NW_SAF.85.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.85" }
+	option = {
+		name = NW_SAF.85.a
+		every_other_country = {
+			limit = {
+				has_war_with = ROOT.OVERLORD
+				has_war_with = ROOT
+			}
+			white_peace = ROOT
+			custom_effect_tooltip = empty_line_tooltip
+		}
+    	OVERLORD = { end_puppet = ROOT }
+		if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		custom_effect_tooltip = empty_line_tooltip
+		set_cosmetic_tag = SAF_orange_free_state
+	}
+}
+
+# Южноафриканский союз уведомляет о выходе из альянса
+country_event = {
+	id = NW_SAF.86
+	title = NW_SAF.86.t
+	desc = NW_SAF.86.d
+	picture = GFX_report_event_hol_21_26
+	is_triggered_only = yes
+	immediate = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): event NW_SAF.86" }
+	option = {
+		name = NW_SAF.86.a
+	}
+	option = {
+		name = NW_SAF.86.b
+		ai_chance = { base = 0 }
+    	create_wargoal = {
+			type = puppet_wargoal_focus
+			target = FROM
+			expire = 0
+		}
+	}
+}

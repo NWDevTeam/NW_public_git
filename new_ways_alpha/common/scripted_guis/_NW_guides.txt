@@ -31,16 +31,38 @@ scripted_gui = {
 		ai_enabled = { always = no }
 		
 		triggers = {
-			leader_frame2_click_enabled = {
-				OR = {
-					check_variable = { NW_character_token = token:JAP_Machida_Chuji }
-					check_variable = { NW_character_token = token:JAP_Fusanosuke_Kuhara }
-					check_variable = { NW_character_token = token:JAP_Seigo_Nakano }
-					check_variable = { NW_character_token = token:JAP_Chikuhei_Nakajima }
-					check_variable = { NW_character_token = token:JAP_Ichiro_Hatoyama }
-					check_variable = { NW_character_token = token:JAP_Abe_Iso }
-					check_variable = { NW_character_token = token:JAP_Aso_Hisashi }
-					check_variable = { NW_character_token = token:JAP_Ryutaro_Nagai }
+			# leader_frame2_click_enabled = {
+				# OR = {
+					# check_variable = { NW_character_token = token:JAP_Machida_Chuji }
+					# check_variable = { NW_character_token = token:JAP_Fusanosuke_Kuhara }
+					# check_variable = { NW_character_token = token:JAP_Seigo_Nakano }
+					# check_variable = { NW_character_token = token:JAP_Chikuhei_Nakajima }
+					# check_variable = { NW_character_token = token:JAP_Ichiro_Hatoyama }
+					# check_variable = { NW_character_token = token:JAP_Abe_Iso }
+					# check_variable = { NW_character_token = token:JAP_Aso_Hisashi }
+					# check_variable = { NW_character_token = token:JAP_Ryutaro_Nagai }
+				# }
+			# }
+			
+			leader_visible = {
+				var:NW_character_scope = {
+					NOT = { has_state_flag = NW_guides_character_hidden@ROOT }
+				}
+			}
+			leader_frame2_visible = {
+				var:NW_character_scope = {
+					NOT = { has_state_flag = NW_guides_character_hidden@ROOT }
+				}
+			}
+			leader_name_visible = {
+				var:NW_character_scope = {
+					NOT = { has_state_flag = NW_guides_character_hidden@ROOT }
+				}
+			}
+			swap_guide_visible = {
+				var:NW_character_scope = {
+					NOT = { check_variable = { NW_swap_character@ROOT = 0 } }
+					NOT = { has_state_flag = NW_guides_character_hidden@ROOT }
 				}
 			}
 		}
@@ -51,16 +73,19 @@ scripted_gui = {
 			
 			leader_frame2_click = {
 				clear_array = NW_guide_current_character
-				add_to_array = { NW_guide_current_character = NW_character_token }
-				
-				meta_effect = {
-					text = {
-						[CHARACTER] = {
-							set_variable = { ROOT.NW_ideology_token = NW_ideology_token }
-							set_variable = { ROOT.NW_focus_token = NW_focus_token }
-						}
-					}
-					CHARACTER = "[?NW_character_token.GetTokenKey]"
+				var:NW_character_scope = {
+					add_to_array = { ROOT.NW_guide_current_character = NW_character_token@ROOT }
+					set_variable = { ROOT.NW_ideology_token = NW_ideology_token@ROOT }
+					set_variable = { ROOT.NW_focus_token = NW_focus_token@ROOT }
+				}
+			}
+			swap_guide_click = {
+				var:NW_character_scope = {
+					set_state_flag = NW_guides_character_hidden@ROOT
+					set_temp_variable = { next_char = NW_swap_character@ROOT }
+				}
+				var:next_char = {
+					clr_state_flag = NW_guides_character_hidden@ROOT
 				}
 			}
 			
@@ -73,7 +98,7 @@ scripted_gui = {
 		dynamic_lists = {
 			NW_characters_grid = {
 				array = NW_guide_character_array
-				value = NW_character_token
+				value = NW_character_scope
 				change_scope = no
 				entry_container = scripted_gui_NW_characters_ui_entry
 			}
@@ -101,7 +126,7 @@ scripted_gui = {
 			leader = { 
 				x = _NW_guides_l_x^i
 				y = _NW_guides_l_y^i
-				image = "GFX_portrait_[?NW_character_token.GetTokenKey]" 
+				image = "[NWGuide_GetPortrait]"
 			}
 			leader_frame2 = {
 				x = _NW_guides_lf_x^i
@@ -110,6 +135,10 @@ scripted_gui = {
 			leader_name = {
 				x = _NW_guides_ln_x^i
 				y = _NW_guides_ln_y^i
+			}
+			swap_guide = {
+				x = _NW_guides_lf_x^i
+				y = _NW_guides_lf_y^i
 			}
 			
 			leader2 = { image = "GFX_portrait_[?NW_character_token.GetTokenKey]" }

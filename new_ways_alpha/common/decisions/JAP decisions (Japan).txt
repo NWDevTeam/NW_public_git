@@ -1,3 +1,599 @@
+
+## Олимпиада_1940 block
+
+JAP_olympiad_category = {
+	JAP_session_of_the_ioc_mis = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+ 		selectable_mission = no
+		days_mission_timeout = 200
+ 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_session_of_the_ioc_mis"			
+			custom_effect_tooltip = JAP_session_of_the_ioc_timeout_tool
+			every_other_country = {
+				limit = {
+					OR = {
+						is_subject = no
+						is_subject_of = ENG
+					}
+					NOT = { original_tag = SOV }
+					has_civil_war = no
+					OR = {
+						is_literally_china = no # TODO нормальную проверку на признанное государство
+						original_tag = CHI
+					}
+				}
+				country_event = { id = NW_JAP.olympiad.3 } # TODO минорное событие
+			}
+			hidden_effect = {
+				country_event = { id = NW_JAP.olympiad.17 days = 3 } # TODO больше дней?
+			}
+  		}
+	}
+	JAP_invite_the_president_of_the_ioc_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_active_mission = JAP_session_of_the_ioc_mis
+		}
+		cost = 30
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_invite_the_president_of_the_ioc_des"
+			country_event = { id = NW_JAP.olympiad.1 days = 1 random_days = 3 }
+		}
+	}
+	
+	JAP_prepare_to_olympiad_mis = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		cancel_trigger = {
+			NOT = { has_country_flag = JAP_prepare_to_olympiad_flag }
+		}
+		selectable_mission = no
+ 		days_mission_timeout = 1460
+ 		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_prepare_to_olympiad_mis"
+            clr_country_flag = JAP_organizing_committee_created_flag
+  		}
+ 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_prepare_to_olympiad_mis"	
+			custom_effect_tooltip = JAP_prepare_to_olympiad_mis_tool		
+            clr_country_flag = JAP_prepare_to_olympiad_flag
+            clr_country_flag = JAP_organizing_committee_created_flag
+			clr_country_flag = JAP_olympiad_category_flag
+			if = {
+				limit = { has_country_flag = JAP_emperor_part_in_ceremony_flag }
+                hidden_effect = { news_event = { id = NW_JAP.olympiad.15 hours = 1 random_days = 1 } }
+			}	
+			else = {
+                hidden_effect = { news_event = { id = NW_JAP.olympiad.16 hours = 1 random_days = 1 } }
+			}	
+  		}
+	}
+	JAP_abandon_the_olympiad_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_active_mission = JAP_prepare_to_olympiad_mis
+			date < 1940.3.1
+		}
+		custom_cost_trigger = { 
+			AND = {
+				has_political_power > 49
+				has_stability > 0.029
+			}
+		}
+		custom_cost_text = JAP_stability_3_pol_power_50
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_abandon_the_olympiad_des"
+			hidden_effect = { add_stability = -0.03 add_political_power = -50 }
+			
+			custom_effect_tooltip = JAP_abandon_the_olympiad_tool
+			clr_country_flag = JAP_prepare_to_olympiad_flag
+			clr_country_flag = JAP_olympiad_category_flag
+			if = {
+				limit = { check_variable = { JAP_olympiad_votes_for_helsinki > JAP_olympiad_votes_for_london } }
+                hidden_effect = { news_event = { id = NW_JAP.olympiad.7 hours = 1 random_days = 1 } }
+			}
+			if = {
+				limit = {
+					OR = {
+						check_variable = { JAP_olympiad_votes_for_london > JAP_olympiad_votes_for_helsinki }
+						check_variable = { JAP_olympiad_votes_for_london = JAP_olympiad_votes_for_helsinki }
+					}
+				}
+                hidden_effect = { news_event = { id = NW_JAP.olympiad.8 hours = 1 random_days = 1 } }
+			}
+		}
+	}
+	JAP_organizing_committee_based_on_jaaa_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			NOT = { has_country_flag = JAP_organizing_committee_created_flag }
+		}
+		cost = 25
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_organizing_committee_based_on_jaaa_des"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_5_tool
+			custom_effect_tooltip = JAP_create_the_organizing_committee_tool
+			custom_effect_tooltip = JAP_set_organizing_committee_unity_green_tool
+            
+			set_country_flag = JAP_organizing_committee_created_flag
+			add_to_variable = { JAP_organizing_committee_unity_var = 7 }
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 5 }
+			activate_mission = JAP_organizing_committee_unity_mis
+		}
+	}
+	JAP_organizing_committee_based_on_city_administration_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			NOT = { has_country_flag = JAP_organizing_committee_created_flag }
+		}
+		cost = 20
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_organizing_committee_based_on_city_administration_des"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_5_tool
+			custom_effect_tooltip = JAP_create_the_organizing_committee_tool
+			custom_effect_tooltip = JAP_set_organizing_committee_unity_yellow_tool
+			
+			set_country_flag = JAP_organizing_committee_created_flag
+			add_to_variable = { JAP_organizing_committee_unity_var = 5 }
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 5 }
+			activate_mission = JAP_organizing_committee_unity_mis
+		}
+	}
+	JAP_national_organizing_committee_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			NOT = { has_country_flag = JAP_organizing_committee_created_flag }
+		}
+		cost = 10
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_national_organizing_committee_des"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_5_tool
+			custom_effect_tooltip = JAP_create_the_organizing_committee_tool
+			custom_effect_tooltip = JAP_set_organizing_committee_unity_red_tool
+			
+			set_country_flag = JAP_organizing_committee_created_flag
+			add_to_variable = { JAP_organizing_committee_unity_var = 2 }
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 5 }
+			activate_mission = JAP_organizing_committee_unity_mis
+		}
+	}
+	JAP_reorganize_organizing_committee_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+		}
+		cost = 100
+		fire_only_once = no
+		days_re_enable = 30
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_reorganize_organizing_committee_des"
+			custom_effect_tooltip = JAP_organizing_committee_unity_plus_3_tool
+			hidden_effect = { add_to_variable = { JAP_organizing_committee_unity_var = 3 } }
+			if = {
+				limit = { check_variable = { JAP_organizing_committee_unity_var > 10 } }
+				hidden_effect = { set_variable = { JAP_organizing_committee_unity_var = 10 } }
+			}
+		}
+	}
+	#
+	JAP_organizing_committee_unity_mis = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		cancel_trigger = {
+			NOT = { has_country_flag = JAP_prepare_to_olympiad_flag }
+		}
+ 		days_mission_timeout = 50
+ 		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_organizing_committee_unity_mis"			 
+			if = {
+				limit = { has_war = yes }
+				custom_effect_tooltip = JAP_organizing_committee_unity_minus_2_tool
+				add_to_variable = { JAP_organizing_committee_unity_var = -2 }
+				if = {
+					limit = { check_variable = { JAP_organizing_committee_unity_var < 0 } }
+					set_variable = { JAP_organizing_committee_unity_var = 0 }
+				}
+			}
+			else = {
+				custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+				add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+				if = {
+					limit = { check_variable = { JAP_organizing_committee_unity_var < 0 } }
+					set_variable = { JAP_organizing_committee_unity_var = 0 }
+				}
+			}
+			
+			if = {
+				limit = { NOT = { has_country_flag = JAP_build_olympic_complex_flag } }
+               	# TODO tooltip!!
+				clr_country_flag = JAP_tokyo_support_on_the_stadium_issue_flag
+				clr_country_flag = JAP_temple_administration_support_on_the_stadium_issue_flag
+				clr_country_flag = JAP_olympic_committee_support_on_the_stadium_issue_flag
+				clr_country_flag = JAP_ministry_of_internal_affairs_support_on_the_stadium_issue_flag
+			}  
+			if = {
+				limit = { NOT = { has_country_flag = JAP_all_support_for_the_relay_race_flag } }
+               	# TODO tooltip!!
+				clr_country_flag = JAP_olympic_committee_support_for_the_relay_race_flag
+				clr_country_flag = JAP_ministry_of_internal_affairs_support_for_the_relay_race_flag
+				clr_country_flag = JAP_international_participants_support_for_the_relay_race_flag
+			}
+			activate_mission = JAP_organizing_committee_unity_mis
+  		}
+	}
+	JAP_enlist_tokyo_support_on_the_stadium_issue_des = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_tokyo_support_on_the_stadium_issue_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 3 }
+			}
+		}
+		cost = 10
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_tokyo_support_on_the_stadium_issue_des"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_tokyo_support_on_the_stadium_issue_flag
+		}
+	}
+	JAP_enlist_the_support_of_the_temple_administration_in_the_stadium_issue = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_temple_administration_support_on_the_stadium_issue_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 6 }
+			}
+		}
+		cost = 15
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_temple_administration_in_the_stadium_issue"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_temple_administration_support_on_the_stadium_issue_flag
+		}
+	}
+	JAP_enlist_the_support_of_the_olympic_committee_on_the_stadium_issue = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_olympic_committee_support_on_the_stadium_issue_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 4 }
+			}
+		}
+		cost = 5
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_olympic_committee_on_the_stadium_issue"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_olympic_committee_support_on_the_stadium_issue_flag
+		}
+	}
+	JAP_enlist_the_support_of_the_ministry_of_internal_affairs_in_the_stadium_issue = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_ministry_of_internal_affairs_support_on_the_stadium_issue_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 5 }
+			}
+		}
+		cost = 10
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_ministry_of_internal_affairs_in_the_stadium_issue"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_ministry_of_internal_affairs_support_on_the_stadium_issue_flag
+		}
+	}
+	JAP_build_olympic_complex_fast = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_build_olympic_complex_flag }
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 4
+			has_country_flag = JAP_tokyo_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_temple_administration_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_olympic_committee_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_ministry_of_internal_affairs_support_on_the_stadium_issue_flag
+		}
+		cancel_trigger = {
+			hidden_trigger = { NOT = { has_country_flag = JAP_prepare_to_olympiad_flag } }
+		}
+		modifier = {
+			civilian_factory_use = 6
+		}
+		cost = 50
+		days_remove = 250
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_olympic_complex_fast"
+            set_country_flag = JAP_build_olympic_complex_flag
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_olympic_complex_fast"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_35_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 35 }
+			282 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = hospital
+					level = 1
+					instant_build = yes			
+				}
+			}						
+		}
+	}
+	JAP_build_olympic_complex_ordinary = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_build_olympic_complex_flag }
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 2
+			has_country_flag = JAP_tokyo_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_temple_administration_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_olympic_committee_support_on_the_stadium_issue_flag
+			has_country_flag = JAP_ministry_of_internal_affairs_support_on_the_stadium_issue_flag
+		}
+		cancel_trigger = {
+			hidden_trigger = { NOT = { has_country_flag = JAP_prepare_to_olympiad_flag } }
+		}
+		modifier = {
+			civilian_factory_use = 3
+		}
+		cost = 30
+		days_remove = 400
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_olympic_complex_ordinary"
+			set_country_flag = JAP_build_olympic_complex_flag
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_olympic_complex_ordinary"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_35_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 35 }
+			282 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes			
+				}
+			}
+		}
+	}
+	JAP_convince_emperor_to_participate = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_organizing_committee_created_flag
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			NOT = { has_country_flag = JAP_emperor_part_change_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 3 }
+			}
+		}
+		cost = 75
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_convince_emperor_to_participate"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_10_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 10 }
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_3_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -3 }
+			
+			set_country_flag = JAP_emperor_part_change_flag
+			set_country_flag = JAP_emperor_part_in_ceremony_flag
+			add_popularity = {
+				ideology = monarchy
+				popularity = 0.03
+			} 
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.03
+			} 
+		}
+	}
+	JAP_achieve_to_change_the_rules = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			NOT = { has_country_flag = JAP_emperor_part_change_flag }
+		}
+		cost = 30
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_achieve_to_change_the_rules"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_10_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 10 }
+            set_country_flag = JAP_emperor_part_change_flag
+			every_country = {
+				limit = {
+					OR = {
+						original_tag = ITA
+						original_tag = ENG
+						original_tag = FIN
+					}
+				}
+				add_opinion_modifier = {
+					target = JAP
+					modifier = JAP_change_the_rules
+				}
+			}
+		}
+	}
+	JAP_enlist_the_support_of_the_olympic_committee_for_the_relay_race = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_olympic_committee_support_for_the_relay_race_flag }
+			NOT = { has_country_flag = JAP_all_support_for_the_relay_race_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 4 }
+			}
+		}
+		cost = 7
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_olympic_committee_for_the_relay_race"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_olympic_committee_support_for_the_relay_race_flag
+		}
+	}
+	JAP_enlist_the_support_of_the_ministry_of_internal_affairs_for_the_relay_race = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_ministry_of_internal_affairs_support_for_the_relay_race_flag }
+			NOT = { has_country_flag = JAP_all_support_for_the_relay_race_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 6 }
+			}
+		}
+		cost = 7
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_ministry_of_internal_affairs_for_the_relay_race"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_ministry_of_internal_affairs_support_for_the_relay_race_flag
+		}
+	}
+	JAP_enlist_the_support_of_the_international_participants_for_the_relay_race = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+			NOT = { has_country_flag = JAP_international_participants_support_for_the_relay_race_flag }
+			NOT = { has_country_flag = JAP_all_support_for_the_relay_race_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = JAP_organizing_committee_unity_enough
+				check_variable = { JAP_organizing_committee_unity_var > 2 }
+			}
+		}
+		cost = 7
+		fire_only_once = no
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_the_international_participants_for_the_relay_race"
+			custom_effect_tooltip = JAP_organizing_committee_unity_minus_1_tool
+			add_to_variable = { JAP_organizing_committee_unity_var = -1 }
+            set_country_flag = JAP_international_participants_support_for_the_relay_race_flag
+		}
+	}
+	JAP_technical_consultant_from_the_ioc = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+			has_country_flag = JAP_organizing_committee_created_flag
+		}
+		cost = 10
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_technical_consultant_from_the_ioc"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_10_n_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 10 }
+		}
+	}
+	JAP_allocate_money_for_foreign_athletes = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+		}
+		available = {
+			num_of_civilian_factories_available_for_projects > 2
+		}
+		cancel_trigger = {
+			hidden_trigger = { NOT = { has_country_flag = JAP_prepare_to_olympiad_flag } }
+		}
+		modifier = {
+			civilian_factory_use = 3
+		}
+		cost = 10
+		days_remove = 60
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_allocate_money_for_foreign_athletes"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_15_n_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 15 }
+		}
+	}
+	JAP_prepare_translators = {
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		visible = {
+			has_country_flag = JAP_prepare_to_olympiad_flag
+		}
+		cancel_trigger = {
+			hidden_trigger = { NOT = { has_country_flag = JAP_prepare_to_olympiad_flag } }
+		}
+		cost = 50
+		days_remove = 120
+		fire_only_once = yes
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_prepare_translators"
+			custom_effect_tooltip = JAP_degree_of_readiness_to_olympiad_plus_15_n_tool
+			add_to_variable = { JAP_degree_of_readiness_to_olympiad_var = 15 }
+		}
+	}
+}
+
+##
+
+
 JAP_Naisen_Ittai = {
 
 	JAP_reorganize_the_administrative_apparatus = {
@@ -1411,7 +2007,7 @@ JAP_special_military_court_category = {
 				set_character_flag = JAP_balance_purge
 			}
 			if = { 
-				limit = { check_variable = { MAN_kwantung_army_commander_faction = token:ugaki_faction } }
+				limit = { check_variable = { MAN_kwantung_army_commander_faction = token:ugaki } }
 				country_event = NW_JAP.630
 			}
 		}
@@ -1811,6 +2407,31 @@ JAP_echoes_of_the_night_of_snow_and_blood_category = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_waiting_for_the_punishment_of_young_officers"
 			add_political_power = -150
 		}
+	}
+	
+	JAP_talk_to_the_young_officers = { 
+		priority = 910
+		available = { has_country_leader = { character = JAP_Jinzaburo_Masaki ruling_only = yes } }
+		visible = { has_active_mission = JAP_the_threat_of_radicalization_of_young_officers }
+		icon = JAP_support_of_the_current_course_of_the_government_by_the_Emperor
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 20 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
+		fire_only_once = no
+		days_re_enable = 25
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_support_of_the_current_course_of_the_government_by_the_Emperor"
+			hidden_effect = { 
+				add_command_power = -20 
+				if = { 
+					limit = { NOT = { has_country_flag = JAP_event_784_flag } }
+					country_event = NW_JAP.784
+				}
+			}
+			add_days_mission_timeout = { mission = JAP_the_threat_of_radicalization_of_young_officers days = 30 }
+		}	
 	}
 	
 	JAP_support_of_the_current_course_of_the_government_by_the_Emperor = {
@@ -4012,8 +4633,8 @@ JAP_new_genro_category = {
 
 JAP_Machid_Chunji_office_category = {
 	
-	JAP_agitation_of_rivals_mission = {
-		priority = 1000
+	JAP_money_from_mitsubishi = {
+		priority = 1020
 		icon = GFX_decision_JAP_agitation_of_rivals_mission
 		activation = { always = no }
 		available = { hidden_trigger = { always = no } }
@@ -4022,693 +4643,2164 @@ JAP_Machid_Chunji_office_category = {
 		days_mission_timeout = 30
 		cancel_trigger = { 
 			OR = {
-				has_completed_focus = JAP_new_parliamentary_elections
-				NOT = { has_country_leader = { character = JAP_Machida_Chuji ruling_only = yes } }
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				NOT = { has_country_flag = JAP_cabinet_of_Minseito }
 			}
 		}
-		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_rivals_mission" }
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_money_from_mitsubishi" }
 		timeout_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_rivals_mission"
-			if = {
-				limit = { has_variable = JAP_shinshinto_popularity }
-				add_to_variable = { JAP_shinshinto_popularity = -3 tooltip = JAP_shinshinto_popularity_tt }
-			}
-			else = {
-				add_to_variable = { JAP_rikken_minseito_popularity = -3 tooltip = JAP_rikken_minseito_popularity_tt }
-			}
-			if = {
-				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				if = {
-					limit = { has_variable = JAP_kakushin_shinto_popularity }
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						random_list = {
-							25 = { add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt } }
-							25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-							25 = { add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt } }
-						}
-					}
-					else = {
-						random_list = {
-							25 = { add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt } }
-							25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-							25 = { add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt } }
-							25 = { add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt } }
-						}
-					}
-				}
-				else = {
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						random_list = {
-							25 = { add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt } }
-							25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-							25 = { add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt } }
-							25 = { add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt } }
-						}
-					}
-					else = {
-						random_list = {
-							25 = { add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt } }
-							25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-							25 = { add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt } }
-							25 = { add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt } }
-							25 = { add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt } }
-						}
-					}
-				}
-			}
-			else = {
-				if = {
-					limit = { has_variable = JAP_kakushin_shinto_popularity }
-					random_list = {
-						25 = { add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt } }
-						25 = { add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt } }
-						25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-						25 = { add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt } }
-					}
-				}
-				else = {
-					random_list = {
-						25 = { add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt } }
-						25 = { add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt } }
-						25 = { add_to_variable = { JAP_small_parties_popularity = 3 tooltip = JAP_small_parties_popularity_tt } }
-						25 = { add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt } }
-						25 = { add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt } }
-					}
-				}
-			}
-			JAP_Machid_Chunji_office_effect = yes
-			activate_mission = JAP_agitation_of_rivals_mission
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_money_from_mitsubishi"
+			add_to_variable = { JAP_party_finances = 1 tooltip = JAP_party_finances_tt }
+			
+			activate_mission = JAP_money_from_mitsubishi
 		}
 	}
 	
-	JAP_increase_the_circulation_of_the_party_newspaper = {
-		priority = 900
-		icon = GFX_decision_JAP_increase_the_circulation_of_the_party_newspaper
-		allowed = { original_tag = JAP }
-		available = {
-			if = {
-				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				if = {
-					limit = { NOT = { has_variable = JAP_kakushin_shinto_popularity } }
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_shakai_taishuto_popularity > 4 }
-								tooltip = JAP_shakai_taishuto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_tohokai_popularity > 4 }
-								tooltip = JAP_tohokai_popularity_check_tt
-							}
-						}
-					}
-					else = {
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_shakai_taishuto_popularity > 4 }
-								tooltip = JAP_shakai_taishuto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_tohokai_popularity > 4 }
-								tooltip = JAP_tohokai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_innovation_alliance_popularity > 4 }
-								tooltip = JAP_innovation_alliance_popularity_check_tt
-							}
-						}
-					}
-				}
-				else = {
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_kakushin_shinto_popularity > 4 }
-								tooltip = JAP_kakushin_shinto_popularity_check_tt
-							}
-						}
-					}
-					else = {
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_kakushin_shinto_popularity > 4 }
-								tooltip = JAP_kakushin_shinto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_innovation_alliance_popularity > 4 }
-								tooltip = JAP_innovation_alliance_popularity_check_tt
-							}
-						}
-					}
-				}
-			}
-			else = {
-				if = {
-					limit = { NOT = { has_variable = JAP_kakushin_shinto_popularity } }
-					custom_trigger_tooltip = {
-						check_variable = { JAP_small_parties_popularity > 4 }
-						tooltip = JAP_small_parties_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_shakai_taishuto_popularity > 4 }
-						tooltip = JAP_shakai_taishuto_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_tohokai_popularity > 4 }
-						tooltip = JAP_tohokai_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_reformists_popularity > 4 }
-						tooltip = JAP_sayukai_reformists_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_ortodox_popularity > 4 }
-						tooltip = JAP_sayukai_ortodox_popularity_tt_check_tt
-					}
-				}
-				else = {
-					custom_trigger_tooltip = {
-						check_variable = { JAP_small_parties_popularity > 4 }
-						tooltip = JAP_small_parties_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_kakushin_shinto_popularity > 4 }
-						tooltip = JAP_kakushin_shinto_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_reformists_popularity > 4 }
-						tooltip = JAP_sayukai_reformists_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_ortodox_popularity > 4 }
-						tooltip = JAP_sayukai_ortodox_popularity_tt_check_tt
-					}
-				}
+	JAP_money_from_mitsui = {
+		priority = 1020
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+		cancel_trigger = { 
+			OR = {
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				NOT = { has_country_flag = JAP_cabinet_of_Seyukai }
 			}
 		}
-		fire_only_once = no
-		days_re_enable = 90
-		cost = 25
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_increase_the_circulation_of_the_party_newspaper"
-			if = {
-				limit = { has_variable = JAP_shinshinto_popularity }
-				add_to_variable = { JAP_shinshinto_popularity = JAP_currently_num_parties tooltip = JAP_shinshinto_popularity_tt }
-			}
-			else = {
-				add_to_variable = { JAP_rikken_minseito_popularity = JAP_currently_num_parties tooltip = JAP_rikken_minseito_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_innovation_alliance_popularity > 0 } }
-				add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_rikken_sayukai_popularity > 0 } }
-				add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_small_parties_popularity > 0 } }
-				add_to_variable = { JAP_small_parties_popularity = -1 tooltip = JAP_small_parties_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_shakai_taishuto_popularity > 0 } }
-				add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_tohokai_popularity > 0 } }
-				add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_kakushin_shinto_popularity > 0 } }
-				add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_sayukai_ortodox_popularity > 0 } }
-				add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
-			}
-			if = {
-				limit = { check_variable = { JAP_sayukai_reformists_popularity > 0 } }
-				add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
-			}
-			JAP_Machid_Chunji_office_effect = yes
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_money_from_mitsui" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_money_from_mitsui"
+			add_to_variable = { JAP_party_finances = 1 tooltip = JAP_party_finances_tt }
+			
+			activate_mission = JAP_money_from_mitsui
 		}
 	}
 	
-	JAP_make_a_lunge_towards_another_party = {
-		priority = 800
-		icon = GFX_decision_JAP_make_a_lunge_towards_another_party
-		allowed = { original_tag = JAP }
-		available = {
-			if = {
-				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				if = {
-					limit = { NOT = { has_variable = JAP_kakushin_shinto_popularity } }
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_shakai_taishuto_popularity > 4 }
-								tooltip = JAP_shakai_taishuto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_tohokai_popularity > 4 }
-								tooltip = JAP_tohokai_popularity_check_tt
-							}
-						}
-					}
-					else = {
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_shakai_taishuto_popularity > 4 }
-								tooltip = JAP_shakai_taishuto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_tohokai_popularity > 4 }
-								tooltip = JAP_tohokai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_innovation_alliance_popularity > 4 }
-								tooltip = JAP_innovation_alliance_popularity_check_tt
-							}
-						}
-					}
-				}
-				else = {
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_kakushin_shinto_popularity > 4 }
-								tooltip = JAP_kakushin_shinto_popularity_check_tt
-							}
-						}
-					}
-					else = {
-						OR = {
-							custom_trigger_tooltip = {
-								check_variable = { JAP_rikken_sayukai_popularity > 4 }
-								tooltip = JAP_rikken_sayukai_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_small_parties_popularity > 4 }
-								tooltip = JAP_small_parties_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_kakushin_shinto_popularity > 4 }
-								tooltip = JAP_kakushin_shinto_popularity_check_tt
-							}
-							custom_trigger_tooltip = {
-								check_variable = { JAP_innovation_alliance_popularity > 4 }
-								tooltip = JAP_innovation_alliance_popularity_check_tt
-							}
-						}
-					}
-				}
-			}
-			else = {
-				if = {
-					limit = { NOT = { has_variable = JAP_kakushin_shinto_popularity } }
-					custom_trigger_tooltip = {
-						check_variable = { JAP_small_parties_popularity > 4 }
-						tooltip = JAP_small_parties_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_shakai_taishuto_popularity > 4 }
-						tooltip = JAP_shakai_taishuto_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_tohokai_popularity > 4 }
-						tooltip = JAP_tohokai_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_reformists_popularity > 4 }
-						tooltip = JAP_sayukai_reformists_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_ortodox_popularity > 4 }
-						tooltip = JAP_sayukai_ortodox_popularity_tt_check_tt
-					}
-				}
-				else = {
-					custom_trigger_tooltip = {
-						check_variable = { JAP_small_parties_popularity > 4 }
-						tooltip = JAP_small_parties_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_kakushin_shinto_popularity > 4 }
-						tooltip = JAP_kakushin_shinto_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_reformists_popularity > 4 }
-						tooltip = JAP_sayukai_reformists_popularity_check_tt
-					}
-					custom_trigger_tooltip = {
-						check_variable = { JAP_sayukai_ortodox_popularity > 4 }
-						tooltip = JAP_sayukai_ortodox_popularity_tt_check_tt
-					}
-				}
+	JAP_money_from_nakajima = {
+		priority = 1025 
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 50
+		cancel_trigger = { 
+			OR = {
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				NOT = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
 			}
 		}
-		fire_only_once = no
-		days_re_enable = 30
-		cost = 5
-		complete_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_make_a_lunge_towards_another_party"
-			if = {
-				limit = { has_variable = JAP_shinshinto_popularity }
-				add_to_variable = { JAP_shinshinto_popularity = 5 tooltip = JAP_shinshinto_popularity_tt }
-			}
-			else = {
-				add_to_variable = { JAP_rikken_minseito_popularity = 5 tooltip = JAP_rikken_minseito_popularity_tt }
-			}
-			if = {
-				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				if = {
-					limit = { has_variable = JAP_kakushin_shinto_popularity }
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						random_list = {
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_rikken_sayukai_popularity < 5 }
-								}
-								add_to_variable = { JAP_rikken_sayukai_popularity = -5 tooltip = JAP_rikken_sayukai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_small_parties_popularity < 5 }
-								}
-								add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_kakushin_shinto_popularity < 5 }
-								}
-								add_to_variable = { JAP_kakushin_shinto_popularity = -5 tooltip = JAP_kakushin_shinto_popularity_tt }
-							}
-						}
-					}
-					else = {
-						random_list = {
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_rikken_sayukai_popularity < 5 }
-								}
-								add_to_variable = { JAP_rikken_sayukai_popularity = -5 tooltip = JAP_rikken_sayukai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_small_parties_popularity < 5 }
-								}
-								add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_kakushin_shinto_popularity < 5 }
-								}
-								add_to_variable = { JAP_kakushin_shinto_popularity = -5 tooltip = JAP_kakushin_shinto_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_innovation_alliance_popularity < 5 }
-								}
-								add_to_variable = { JAP_innovation_alliance_popularity = -5 tooltip = JAP_innovation_alliance_popularity_tt }
-							}
-						}
-					}
-				}
-				else = {
-					if = {
-						limit = { NOT = { has_variable = JAP_innovation_alliance_popularity } }
-						random_list = {
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_rikken_sayukai_popularity < 5 }
-								}
-								add_to_variable = { JAP_rikken_sayukai_popularity = -5 tooltip = JAP_rikken_sayukai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_small_parties_popularity < 5 }
-								}
-								add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_tohokai_popularity < 5 }
-								}
-								add_to_variable = { JAP_tohokai_popularity = -5 tooltip = JAP_tohokai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_shakai_taishuto_popularity < 5 }
-								}
-								add_to_variable = { JAP_shakai_taishuto_popularity = -5 tooltip = JAP_shakai_taishuto_popularity_tt }
-							}
-						}
-					}
-					else = {
-						random_list = {
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_rikken_sayukai_popularity < 5 }
-								}
-								add_to_variable = { JAP_rikken_sayukai_popularity = -5 tooltip = JAP_rikken_sayukai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_small_parties_popularity < 5 }
-								}
-								add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_tohokai_popularity < 5 }
-								}
-								add_to_variable = { JAP_tohokai_popularity = -5 tooltip = JAP_tohokai_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_shakai_taishuto_popularity < 5 }
-								}
-								add_to_variable = { JAP_shakai_taishuto_popularity = -5 tooltip = JAP_shakai_taishuto_popularity_tt }
-							}
-							25 = {
-								modifier = {
-									factor = 0
-									check_variable = { JAP_innovation_alliance_popularity < 5 }
-								}
-								add_to_variable = { JAP_innovation_alliance_popularity = -5 tooltip = JAP_innovation_alliance_popularity_tt }
-							}
-						}
-					}
-				}
-			}
-			else = {
-				if = {
-					limit = { has_variable = JAP_kakushin_shinto_popularity }
-					random_list = {
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_small_parties_popularity < 5 }
-							}
-							add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_kakushin_shinto_popularity < 5 }
-							}
-							add_to_variable = { JAP_kakushin_shinto_popularity = -5 tooltip = JAP_kakushin_shinto_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_sayukai_reformists_popularity < 5 }
-							}
-							add_to_variable = { JAP_sayukai_reformists_popularity = -5 tooltip = JAP_sayukai_reformists_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_sayukai_ortodox_popularity < 5 }
-							}
-							add_to_variable = { JAP_sayukai_ortodox_popularity = -5 tooltip = JAP_sayukai_ortodox_popularity_tt }
-						}
-					}
-				}
-				else = {
-					random_list = {
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_small_parties_popularity < 5 }
-							}
-							add_to_variable = { JAP_small_parties_popularity = -5 tooltip = JAP_small_parties_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_tohokai_popularity < 5 }
-							}
-							add_to_variable = { JAP_tohokai_popularity = -5 tooltip = JAP_tohokai_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_shakai_taishuto_popularity < 5 }
-							}
-							add_to_variable = { JAP_shakai_taishuto_popularity = -5 tooltip = JAP_shakai_taishuto_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_sayukai_reformists_popularity < 5 }
-							}
-							add_to_variable = { JAP_sayukai_reformists_popularity = -5 tooltip = JAP_sayukai_reformists_popularity_tt }
-						}
-						25 = {
-							modifier = {
-								factor = 0
-								check_variable = { JAP_sayukai_ortodox_popularity < 5 }
-							}
-							add_to_variable = { JAP_sayukai_ortodox_popularity = -5 tooltip = JAP_sayukai_ortodox_popularity_tt }
-						}
-					}
-				}
-			}
-			JAP_Machid_Chunji_office_effect = yes
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_money_from_nakajima" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_money_from_nakajimai"
+			add_to_variable = { JAP_party_finances = 1 tooltip = JAP_party_finances_tt }
+			
+			activate_mission = JAP_money_from_nakajima
 		}
 	}
 	
-	JAP_defence_zaibatsu = {
+	JAP_donations_from_small_business = {
+		priority = 1020
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 90
+		cancel_trigger = { 
+			OR = {
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				NOT = { has_country_flag = JAP_cabinet_of_Tohokai }
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_donations_from_small_business" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_donations_from_small_business"
+			add_to_variable = { JAP_party_finances = 1 tooltip = JAP_party_finances_tt }
+			
+			activate_mission = JAP_donations_from_small_business
+		}
+	}
+	
+	JAP_donations_from_people = {
+		priority = 1020
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 60
+		cancel_trigger = { 
+			OR = {
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				NOT = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_donations_from_people" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_donations_from_people"
+			add_to_variable = { JAP_party_finances = 1 tooltip = JAP_party_finances_tt }
+			
+			activate_mission = JAP_donations_from_people
+		}
+	}
+	
+	JAP_agitation_of_Seyukai_mission = {
+		priority = 20
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+		cancel_trigger = { 
+			OR = {
+				has_country_flag = JAP_split_of_seukai_flag # NW_JAP_348_event_flag
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Seyukai
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Seyukai_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Seyukai_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Seyukai_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+			#	add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+			#	add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 7
+			#	add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 8
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_rikken_sayukai_popularity = 1 tooltip = JAP_rikken_sayukai_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Seyukai_mission
+		}
+	}
+	
+	JAP_agitation_of_Innovation_alliance_mission = {
+		priority = 5
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 45
+		cancel_trigger = { 
+			OR = {
+				has_country_flag = NW_JAP_348_event_flag 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Innovation_alliance
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Innovation_alliance_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Innovation_alliance_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Innovation_alliance_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+			#	add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 7
+			#	add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 8
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_innovation_alliance_popularity = 1 tooltip = JAP_innovation_alliance_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Innovation_alliance_mission
+		}
+	}
+	
+	JAP_agitation_of_Seyukai_reformists_mission = {
+		priority = 10
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 45
+		cancel_trigger = { 
+			OR = { 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Seyukai_reformists 
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Seyukai_reformists_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Seyukai_reformists_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Seyukai_reformists_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+			#	add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+			#	add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 5
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_sayukai_ortodox_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_sayukai_reformists_popularity = 1 tooltip = JAP_sayukai_reformists_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Seyukai_reformists_mission
+		}
+	}
+	
+	JAP_agitation_of_Seyukai_ortodox_mission = {
+		priority = 10
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 45
+		cancel_trigger = { 
+			OR = { 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Seyukai_ortodox 
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Seyukai_ortodox_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Seyukai_ortodox_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Seyukai_ortodox_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 4
+			#	add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 5
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_sayukai_ortodox_popularity = 1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Seyukai_ortodox_mission
+		}
+	}
+	
+	JAP_agitation_of_Shakai_Taishuto_mission = {
+		priority = 12
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 60
+		cancel_trigger = { 
+			OR = { 
+				NOT = { 
+					has_country_flag = JAP_party_popularity_active 
+					has_country_flag = NW_JAP_333_event_flag			#Национальный фронт продолжается
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+				has_country_flag = JAP_cabinet_of_Shakai_Taishuto
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Shakai_Taishuto_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Shakai_Taishuto_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Shakai_Taishuto_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+			#	add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 3
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 4
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 6
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 7
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 6 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 7 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Shakai_Taishuto_mission
+		}
+	}
+	
+	JAP_agitation_of_Tohokai_mission = {
+		priority = 12
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 100
+		cancel_trigger = { 
+			OR = { 
+				NOT = { 
+					has_country_flag = JAP_party_popularity_active 
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+				has_country_flag = JAP_cabinet_of_Tohokai
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Tohokai_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Tohokai_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Tohokai_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 3
+			#	add_to_temp_array = { pops = JAP_tohokai_popularity } # 3
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 4
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 6
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 7
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 6 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 7 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_tohokai_popularity = 1 tooltip = JAP_tohokai_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Tohokai_mission
+		}
+	}
+	
+	JAP_agitation_of_Kakushin_shinto_mission = {
+		priority = 12
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 50
+		cancel_trigger = { 
+			OR = { 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Kakushin_shinto 
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Kakushin_shinto_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Kakushin_shinto_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Kakushin_shinto_mission_tt
+			
+			hidden_effect = {
+				add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+			#	add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 2
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 2
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 3
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 4
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 5 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 6
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 7
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_shinshinto_popularity
+					}
+					add_to_variable = { JAP_shinshinto_popularity = -1 tooltip = JAP_shinshinto_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_rikken_minseito_popularity
+					}
+					add_to_variable = { JAP_rikken_minseito_popularity = -1 tooltip = JAP_rikken_minseito_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 6 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 7 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Kakushin_shinto_mission
+		}
+	}
+	
+	JAP_agitation_of_Minseito_mission = {
+		priority = 30
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+		cancel_trigger = { 
+			OR = { 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Minseito
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Minseito_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Minseito_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Minseito_mission_tt
+			
+			hidden_effect = {
+			#	add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+			#	add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 1
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 2
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 3
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 4 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 5
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 6
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 6 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Minseito_mission
+		}
+	}
+	
+	JAP_agitation_of_Shinshinto_mission = {
+		priority = 30
+		icon = GFX_decision_JAP_agitation_of_rivals_mission
+		activation = { always = no }
+		available = { hidden_trigger = { always = no } }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+		cancel_trigger = { 
+			OR = { 
+				NOT = { has_country_flag = JAP_party_popularity_active }
+				has_country_flag = JAP_cabinet_of_Shinshinto 
+			}
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_agitation_of_Shinshinto_mission" }
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_agitation_of_Shinshinto_mission"
+		#	JAP_find_max_party_effect = yes 
+			custom_effect_tooltip = JAP_agitation_of_Shinshinto_mission_tt
+			
+			hidden_effect = {
+			#	add_to_temp_array = { pops = JAP_shinshinto_popularity } # 0
+			#	add_to_temp_array = { pops = JAP_rikken_minseito_popularity } # 1
+				add_to_temp_array = { pops = JAP_kakushin_shinto_popularity } # 0
+				add_to_temp_array = { pops = JAP_shakai_taishuto_popularity } # 1
+				add_to_temp_array = { pops = JAP_tohokai_popularity } # 2
+				add_to_temp_array = { pops = JAP_rikken_sayukai_popularity } # 3
+				add_to_temp_array = { pops = JAP_innovation_alliance_popularity } # 4 (победить не могут)
+				add_to_temp_array = { pops = JAP_sayukai_reformists_popularity } # 5
+				add_to_temp_array = { pops = JAP_sayukai_ortodox_popularity } # 6
+			#	add_to_temp_array = { pops = JAP_small_parties_popularity } # 9 (победить не могут)
+		
+				find_highest_in_array = { array = pops index = largest }
+
+				if = {
+					limit = {
+						check_variable = { largest = 0 } # JAP_kakushin_shinto_popularity
+					}
+					add_to_variable = { JAP_kakushin_shinto_popularity = -1 tooltip = JAP_kakushin_shinto_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 1 } # JAP_shakai_taishuto_popularity
+					}
+					add_to_variable = { JAP_shakai_taishuto_popularity = -1 tooltip = JAP_shakai_taishuto_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 2 } # JAP_tohokai_popularity
+					}
+					add_to_variable = { JAP_tohokai_popularity = -1 tooltip = JAP_tohokai_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 3 } # JAP_rikken_sayukai_popularity
+					}
+					add_to_variable = { JAP_rikken_sayukai_popularity = -1 tooltip = JAP_rikken_sayukai_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 4 } # JAP_innovation_alliance_popularity
+					}
+					add_to_variable = { JAP_innovation_alliance_popularity = -1 tooltip = JAP_innovation_alliance_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 5 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+				else_if = {
+					limit = {
+						check_variable = { largest = 6 } # JAP_sayukai_reformists_popularity
+					}
+					add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+					add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+				}
+			
+			}
+			JAP_Machid_Chunji_office_effect = yes
+			activate_mission = JAP_agitation_of_Shinshinto_mission
+		}
+	}
+
+	JAP_fight_against_seyukai = {
 		priority = 700
 		icon = GFX_decision_JAP_defence_zaibatsu
 		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai }
+			NOT = { has_country_flag = JAP_split_of_seukai_flag }
+		}
 		available = {
-			if = { 
-				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				custom_trigger_tooltip = {
-					check_variable = { JAP_rikken_sayukai_popularity > 2 }
-					tooltip = JAP_rikken_sayukai_popularity_check_tt
-				}
-			} 
-			else = { 
-				custom_trigger_tooltip = {
-					check_variable = { JAP_sayukai_reformists_popularity > 1 }
-					tooltip = JAP_sayukai_reformists_popularity_check_tt
-				}
-				custom_trigger_tooltip = {
-					check_variable = { JAP_sayukai_ortodox_popularity > 1 }
-					tooltip = JAP_sayukai_ortodox_popularity_tt_check_tt
-				}
+			custom_trigger_tooltip = {
+				check_variable = { JAP_rikken_sayukai_popularity > 5 }
+				tooltip = JAP_rikken_sayukai_popularity_check_tt
 			}
+			NOT = { has_country_flag = JAP_Seyukai_in_coalition }
 		}
 		fire_only_once = no
-		days_re_enable = 5
-		cost = 5
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
 		complete_effect = {
-			if = {
-				limit = { has_variable = JAP_shinshinto_popularity }
-				add_to_variable = { JAP_shinshinto_popularity = 1 tooltip = JAP_shinshinto_popularity_tt }
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
 			}
-			else = {
-				add_to_variable = { JAP_rikken_minseito_popularity = 1 tooltip = JAP_rikken_minseito_popularity_tt }
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
 			}
-			if = {
-				limit = { has_variable = JAP_kakushin_shinto_popularity }
-				add_to_variable = { JAP_kakushin_shinto_popularity = 1 tooltip = JAP_kakushin_shinto_popularity_tt }
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
 			}
-			else = {
-				add_to_variable = { JAP_shakai_taishuto_popularity = 1 tooltip = JAP_shakai_taishuto_popularity_tt }
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
 			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
 			if = {
 				limit = { has_variable = JAP_rikken_sayukai_popularity }
-				add_to_variable = { JAP_rikken_sayukai_popularity = -2 tooltip = JAP_rikken_sayukai_popularity_tt }
+				add_to_variable = { JAP_rikken_sayukai_popularity = -3 tooltip = JAP_rikken_sayukai_popularity_tt }
 			}
-			else = {
-				add_to_variable = { JAP_sayukai_reformists_popularity = -1 tooltip = JAP_sayukai_reformists_popularity_tt }
-				add_to_variable = { JAP_sayukai_ortodox_popularity = -1 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_seyukai_pp = {
+		priority = 690
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai }
+			NOT = { has_country_flag = JAP_split_of_seukai_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_rikken_sayukai_popularity > 5 }
+				tooltip = JAP_rikken_sayukai_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Seyukai_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_rikken_sayukai_popularity }
+				add_to_variable = { JAP_rikken_sayukai_popularity = -3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_innovation_alliance = {
+		priority = 680
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+			has_country_flag = NW_JAP_348_event_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_innovation_alliance_popularity > 5 }
+				tooltip = JAP_innovation_alliance_popularity_tt
+			}
+			NOT = { has_country_flag = JAP_Innovation_alliance_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_innovation_alliance"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_innovation_alliance"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_innovation_alliance_popularity }
+				add_to_variable = { JAP_innovation_alliance_popularity = -3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_innovation_alliance_pp = {
+		priority = 670
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai }
+			has_country_flag = NW_JAP_348_event_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_innovation_alliance_popularity > 5 }
+				tooltip = JAP_innovation_alliance_popularity_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Innovation_alliance_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_innovation_alliance_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_innovation_alliance_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_innovation_alliance_popularity }
+				add_to_variable = { JAP_innovation_alliance_popularity = -3 tooltip = JAP_innovation_alliance_popularity_tt }
 			}
 			JAP_Machid_Chunji_office_effect = yes
 		}
 	}
+	
+	JAP_fight_against_seyukai_reformists = {
+		priority = 665
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+			has_country_flag = JAP_split_of_seukai_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_sayukai_reformists_popularity > 5 }
+				tooltip = JAP_sayukai_reformists_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Seyukai_reformists_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai_reformists"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai_reformists"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_sayukai_reformists_popularity }
+				add_to_variable = { JAP_sayukai_reformists_popularity = -3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_seyukai_reformists_pp = {
+		priority = 660
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+			has_country_flag = JAP_split_of_seukai_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_sayukai_reformists_popularity > 5 }
+				tooltip = JAP_sayukai_reformists_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Seyukai_reformists_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai_reformists_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai_reformists_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_sayukai_reformists_popularity }
+				add_to_variable = { JAP_sayukai_reformists_popularity = -3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_seyukai_ortodox = {
+		priority = 655
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+			has_country_flag = JAP_split_of_seukai_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_sayukai_ortodox_popularity > 5 }
+				tooltip = JAP_sayukai_ortodox_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Seyukai_ortodox_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai_ortodox"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai_ortodox"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_fight_against_seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = -3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_seyukai_ortodox_pp = {
+		priority = 654
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+			has_country_flag = JAP_split_of_seukai_flag
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_sayukai_ortodox_popularity > 5 }
+				tooltip = JAP_sayukai_ortodox_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Seyukai_ortodox_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_seyukai_ortodox_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_seyukai_ortodox_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_fight_against_seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = -3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_shakai_taishuto = {
+		priority = 658
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+			NOT = { 
+				OR = { 
+					has_country_flag = NW_JAP_333_event_flag			#Национальный фронт продолжается
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_shakai_taishuto_popularity > 5 }
+				tooltip = JAP_shakai_taishuto_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Shakai_Taishuto_in_coalition }  
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_shakai_taishuto"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_shakai_taishuto"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_shakai_taishuto_popularity } 
+				add_to_variable = { JAP_shakai_taishuto_popularity = -3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_shakai_taishuto_pp = {
+		priority = 657
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+			NOT = { 
+				OR = { 
+					has_country_flag = NW_JAP_333_event_flag			#Национальный фронт продолжается
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_shakai_taishuto_popularity > 5 }
+				tooltip = JAP_shakai_taishuto_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Shakai_Taishuto_in_coalition }  
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_shakai_taishuto_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_shakai_taishuto_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_shakai_taishuto_popularity } 
+				add_to_variable = { JAP_shakai_taishuto_popularity = -3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_tohokai = {
+		priority = 655
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Tohokai }
+			NOT = { 
+				OR = { 
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_tohokai_popularity > 5 }
+				tooltip = JAP_tohokai_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Tohokai_in_coalition } 
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_tohokai"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_tohokai"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_tohokai_popularity } 
+				add_to_variable = { JAP_tohokai_popularity = -3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_tohokai_pp = {
+		priority = 650
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Tohokai }
+			NOT = { 
+				OR = { 
+					has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+					has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+					has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+				}
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_tohokai_popularity > 5 }
+				tooltip = JAP_tohokai_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Tohokai_in_coalition } 
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_tohokai_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_tohokai_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_tohokai_popularity } 
+				add_to_variable = { JAP_tohokai_popularity = -3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_kakushin_shinto = {
+		priority = 645
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+			OR = { 
+				has_country_flag = NW_JAP_333_event_flag			#Национальный фронт продолжается
+				has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+				has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+				has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_kakushin_shinto_popularity > 5 }
+				tooltip = JAP_kakushin_shinto_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Kakushin_Shinto_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_kakushin_shinto"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_kakushin_shinto"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_kakushin_shinto_popularity } 
+				add_to_variable = { JAP_kakushin_shinto_popularity = -3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_kakushin_shinto_pp = {
+		priority = 640
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+			OR = { 
+				has_country_flag = NW_JAP_333_event_flag			#Национальный фронт продолжается
+				has_country_flag = NW_JAP_330_event_flag			#Коноэ возглавит Новую Обновленческую партию
+				has_country_flag = NW_JAP_328_event_flag			#Коллективное руководство новой партией
+				has_country_flag = NW_JAP_325_event_flag			#Новая Обновленческая партия сформирована
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_kakushin_shinto_popularity > 5 }
+				tooltip = JAP_kakushin_shinto_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Kakushin_Shinto_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_kakushin_shinto_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_kakushin_shinto_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Minseito }
+				add_to_variable = { JAP_rikken_minseito_popularity = 3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_kakushin_shinto_popularity } 
+				add_to_variable = { JAP_kakushin_shinto_popularity = -3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_rikken_minseito = {
+		priority = 645
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Minseito }
+			NOT = { has_country_flag = JAP_shinshinto_was_created_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_rikken_minseito_popularity > 5 }
+				tooltip = JAP_rikken_minseito_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Minseito_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_rikken_minseito"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_rikken_minseito"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shinshinto }
+				add_to_variable = { JAP_shinshinto_popularity = 3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_rikken_minseito_popularity } 
+				add_to_variable = { JAP_rikken_minseito_popularity = -3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_rikken_minseito_pp = {
+		priority = 640
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Minseito }
+			NOT = { has_country_flag = JAP_shinshinto_was_created_flag }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_rikken_minseito_popularity > 5 }
+				tooltip = JAP_rikken_minseito_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Minseito_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_rikken_minseito_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_rikken_minseito_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_rikken_minseito_popularity } 
+				add_to_variable = { JAP_rikken_minseito_popularity = -3 tooltip = JAP_rikken_minseito_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_shinshinto = {
+		priority = 645
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Shinshinto }
+			has_country_flag = JAP_shinshinto_was_created_flag 
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_shinshinto_popularity > 5 }
+				tooltip = JAP_shinshinto_popularity_check_tt
+			}
+			NOT = { has_country_flag = JAP_Shinshinto_in_coalition }
+		}
+		fire_only_once = no
+		
+		custom_cost_trigger = {
+			set_temp_variable = { cost = 1 }
+			check_variable = { var = JAP_party_finances value = cost compare = greater_than_or_equals }
+		}
+		custom_cost_text = JAP_party_finance_cost
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_shinshinto"
+			hidden_effect = { add_to_variable = { JAP_party_finances = -1 } }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_shinshinto"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_shinshinto_popularity } 
+				add_to_variable = { JAP_shinshinto_popularity = -3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	JAP_fight_against_shinshinto_pp = {
+		priority = 640
+		icon = GFX_decision_JAP_defence_zaibatsu
+		allowed = { original_tag = JAP }
+		visible = { 
+			NOT = { has_country_flag = JAP_cabinet_of_Shinshinto }
+			has_country_flag = JAP_shinshinto_was_created_flag 
+		}
+		available = {
+			custom_trigger_tooltip = {
+				check_variable = { JAP_shinshinto_popularity > 5 }
+				tooltip = JAP_shinshinto_popularity_check_tt
+			}
+			democratic > 0.15
+			NOT = { has_country_flag = JAP_Shinshinto_in_coalition }
+		}
+		fire_only_once = no
+		
+		cost = 10 
+		days_remove = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_fight_against_shinshinto_pp"
+			add_stability = -0.005 
+			add_popularity = { ideology = neutrality popularity = 0.003 }
+		}
+		
+		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): remove decision JAP_fight_against_shinshinto_pp"
+			if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Kakushin_shinto }
+				add_to_variable = { JAP_kakushin_shinto_popularity = 3 tooltip = JAP_kakushin_shinto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Tohokai }
+				add_to_variable = { JAP_tohokai_popularity = 3 tooltip = JAP_tohokai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_ortodox }
+				add_to_variable = { JAP_sayukai_ortodox_popularity = 3 tooltip = JAP_sayukai_ortodox_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai_reformists }
+				add_to_variable = { JAP_sayukai_reformists_popularity = 3 tooltip = JAP_sayukai_reformists_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Shakai_Taishuto }
+				add_to_variable = { JAP_shakai_taishuto_popularity = 3 tooltip = JAP_shakai_taishuto_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Seyukai }
+				add_to_variable = { JAP_rikken_sayukai_popularity = 3 tooltip = JAP_rikken_sayukai_popularity_tt }
+			}
+			else_if = { 
+				limit = { has_country_flag = JAP_cabinet_of_Innovation_alliance }
+				add_to_variable = { JAP_innovation_alliance_popularity = 3 tooltip = JAP_innovation_alliance_popularity_tt }
+			}
+
+			if = {
+				limit = { has_variable = JAP_shinshinto_popularity } 
+				add_to_variable = { JAP_shinshinto_popularity = -3 tooltip = JAP_shinshinto_popularity_tt }
+			}
+			
+			JAP_Machid_Chunji_office_effect = yes
+		}
+	}
+	
+	
 }
 
 JAP_dictatorial_powers_from_the_House_of_Representatives_category = {
@@ -6468,7 +8560,7 @@ JAP_eradicate_communism_category = {
 	}
 }
 
-JAP_asia_in_the_broadest_sense_category = {
+JAP_asia_in_the_broadest_sense_category = { # TODO выпилить
 	
 	JAP_invite_to_alliance_2 = {
 		priority = 50
@@ -7456,7 +9548,28 @@ JAP_the_Law_on_the_General_Mobilization_of_the_Nation_category = {
 		available = { hidden_trigger = { always = no } }
 		fire_only_once = yes
 		selectable_mission = no
-		days_mission_timeout = 185
+		days_mission_timeout = 125
+		
+		cancel_trigger = {
+			OR = {
+				has_war = no
+				hidden_trigger = {
+					NOT = {
+						has_government = democratic
+						has_government = neutrality
+					}
+				}
+			}
+		}
+		cancel_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_adoption_of_the_law_on_national_mobilization_mission"
+			uncomplete_national_focus = {
+				focus = JAP_the_Law_on_the_General_Mobilization_of_the_Nation
+				uncomplete_children = yes
+				refund_political_power = no
+			}
+		}
+		
 		timeout_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_passing_the_law_mission"
 			uncomplete_national_focus = {
@@ -7475,30 +9588,15 @@ JAP_the_Law_on_the_General_Mobilization_of_the_Nation_category = {
 		fire_only_once = yes
 		selectable_mission = no
 		days_mission_timeout = 30
-		cancel_trigger = {
-			OR = {
-				set_temp_variable = { JAP_consent_of_the_sejm_temp_var = 50 }
-				custom_trigger_tooltip = {
-					check_variable = { var = JAP_consent_of_the_sejm_var value = JAP_consent_of_the_sejm_temp_var compare = greater_than_or_equals }
-					tooltip = JAP_consent_of_the_sejm_var_check_tt
-				}
-				has_war = no
-				hidden_trigger = {
-					NOT = {
-						has_government = democratic
-						has_government = neutrality
-					}
-				}
-			}
-		}
-		cancel_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_adoption_of_the_law_on_national_mobilization_mission"
-			if = {
+		
+		timeout_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_adoption_of_the_law_on_national_mobilization_mission"
+			if = { 
 				limit = {
-					has_war = yes
-					OR = {
-						has_government = democratic
-						has_government = neutrality
+					set_temp_variable = { JAP_consent_of_the_sejm_temp_var = 50 }
+					custom_trigger_tooltip = {
+						check_variable = { var = JAP_consent_of_the_sejm_var value = JAP_consent_of_the_sejm_temp_var compare = greater_than_or_equals }
+						tooltip = JAP_consent_of_the_sejm_var_check_tt
 					}
 				}
 				set_country_flag = JAP_law_on_national_mobilization_flag
@@ -7516,78 +9614,13 @@ JAP_the_Law_on_the_General_Mobilization_of_the_Nation_category = {
 					custom_effect_tooltip = JAP_despotism_tt
 					set_country_leader_ideology = despotism
 				}
-				#MANPOWER LAW#
-#				if = {
-#					limit = { has_idea = disarmed_nation }
-#					swap_ideas = {
-#						remove_idea = disarmed_nation
-#						add_idea = volunteer_only
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = volunteer_only }
-#					swap_ideas = {
-#						remove_idea = volunteer_only
-#						add_idea = limited_conscription
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = limited_conscription }
-#					swap_ideas = {
-#						remove_idea = limited_conscription
-#						add_idea = extensive_conscription
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = extensive_conscription }
-#					swap_ideas = {
-#						remove_idea = extensive_conscription
-#						add_idea = service_by_requirement
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = service_by_requirement }
-#					swap_ideas = {
-#						remove_idea = service_by_requirement
-#						add_idea = all_adults_serve
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = all_adults_serve }
-#					swap_ideas = {
-#						remove_idea = all_adults_serve
-#						add_idea = scraping_the_barrel
-#					}
-#				}
-#				#ECONOMIC LAW#
-#				if = {
-#					limit = { has_idea = free_trade }
-#					swap_ideas = {
-#						remove_idea = free_trade
-#						add_idea = export_focus
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = export_focus }
-#					swap_ideas = {
-#						remove_idea = export_focus
-#						add_idea = limited_exports
-#					}
-#				}
-#				else_if = {
-#					limit = { has_idea = limited_exports }
-#					swap_ideas = {
-#						remove_idea = limited_exports
-#						add_idea = closed_economy
-#					}
-#				}
+				
 			}
-		}
-		timeout_effect = {
-			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_adoption_of_the_law_on_national_mobilization_mission"
-			add_to_variable = { JAP_consent_of_the_sejm_var = -5 tooltip = JAP_consent_of_the_sejm_var_tt }
-			activate_mission = JAP_adoption_of_the_law_on_national_mobilization_mission
-			JAP_consent_of_the_sejm_effect = yes
+			else = { 
+			    add_to_variable = { JAP_consent_of_the_sejm_var = -5 tooltip = JAP_consent_of_the_sejm_var_tt }
+				activate_mission = JAP_adoption_of_the_law_on_national_mobilization_mission
+				JAP_consent_of_the_sejm_effect = yes
+			}
 		}
 	}
 	
@@ -7735,7 +9768,9 @@ JAP_resettlement_program_in_manchukuo_category = {
 						if = {
 							limit = { OR = { state = 528 state = 529 state = 530 state = 531 state = 532 state = 533 state = 534 state = 535 state = 536 state = 282 } }
 							if = { 
-								limit = { has_completed_focus = JAP_agrarian_expansionism }
+								limit = { 
+									JAP = { has_completed_focus = JAP_agrarian_expansionism }
+								}
 								add_to_temp_variable = { JAP_sum_of_manpower = 2000 }
 							}
 							else = { 
@@ -7748,7 +9783,9 @@ JAP_resettlement_program_in_manchukuo_category = {
 			every_controlled_state = {
 				limit = { OR = { state = 528 state = 529 state = 530 state = 531 state = 532 state = 533 state = 534 state = 535 state = 536 state = 282 } }
 				if = { 
-					limit = { has_completed_focus = JAP_agrarian_expansionism }
+					limit = { 
+						JAP = { has_completed_focus = JAP_agrarian_expansionism }
+					}
 					add_manpower = -2000
 				}
 				else = { 
@@ -7886,28 +9923,16 @@ JAP_resettlement_program_in_manchukuo_category = {
 			else = { 
 				add_stability = 0.01
 			}
-			if = {
-				limit = {
-					if = {
-						limit = { OR = { state = 528 state = 529 state = 530 state = 531 state = 532 state = 533 state = 534 state = 535 state = 536 state = 282 } }
-						if = { 
-							limit = { has_completed_focus = JAP_agrarian_expansionism }
-							add_to_temp_variable = { JAP_sum_of_manpower = 2000 }
-						}
-						else = { 
-							add_to_temp_variable = { JAP_sum_of_manpower = 1000 }
-						}
-					}
-				}
-			}
 			every_controlled_state = {
 				limit = { OR = { state = 528 state = 529 state = 530 state = 531 state = 532 state = 533 state = 534 state = 535 state = 536 state = 282 } }
 				if = { 
-					limit = { has_completed_focus = JAP_agrarian_expansionism }
+					limit = { JAP = { has_completed_focus = JAP_agrarian_expansionism } }
 					add_manpower = -2000
+					add_to_temp_variable = { JAP_sum_of_manpower = 2000 }
 				}
 				else = { 
 					add_manpower = -1000
+					add_to_temp_variable = { JAP_sum_of_manpower = 1000 }
 				}
 			}
 			MAN = {
@@ -9313,6 +11338,7 @@ JAP_lone_ranger_diplomacy_category = {
 		priority = 997
 		icon = GFX_decision_generic_political_discourse
 		available = { has_completed_focus = JAP_audience_with_the_emperor }
+		visible = { has_active_mission = JAP_discontent_of_the_military_mission }
 		cost = 10
 		fire_only_once = no
 		days_re_enable = 15
@@ -9333,6 +11359,7 @@ JAP_lone_ranger_diplomacy_category = {
 				tooltip = JAP_the_level_of_insubordination_var_check_tt3
 			}
 		}
+		visible = { has_active_mission = JAP_discontent_of_the_military_mission }
 		cost = 25
 		fire_only_once = no
 		days_re_enable = 30
@@ -9439,7 +11466,7 @@ JAP_Ugaki_power_balance_category = {
 		allowed = { original_tag = JAP }
 		fire_only_once = no
 		days_re_enable = 5
-		сost = 20
+		cost = 20
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_work_with_army"
 			add_power_balance_value = {
@@ -9492,7 +11519,7 @@ JAP_Ishiwara_power_balance_category = {
 		available = { power_balance_value = { id = JAP_Ishiwara_power_balance value > -0.33 } }
 		fire_only_once = no
 		days_re_enable = 5
-		сost = 15
+		cost = 15
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_lection_about_principles_of_east_asian_league"
 			add_power_balance_value = {
@@ -9516,7 +11543,7 @@ JAP_Ishiwara_power_balance_category = {
 		allowed = { original_tag = JAP }
 		fire_only_once = no
 		days_re_enable = 5
-		сost = 15
+		cost = 15
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_lection_about_last_war"
 			add_power_balance_value = {
@@ -9541,7 +11568,7 @@ JAP_Ishiwara_power_balance_category = {
 		available = {  }
 		fire_only_once = no
 		days_re_enable = 5
-		сost = 15
+		cost = 15
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_lection_of_need_to_preserve_democracy"
 			add_power_balance_value = {
@@ -9561,16 +11588,10 @@ JAP_Ishiwara_power_balance_category = {
 
 }
 
-JAP_Hayashi_office_category = { 
-	
-
-
-}
-
 JAP_the_level_of_insubordination_category = {
 	JAP_growth_of_insubordination_from_china = {
-		icon = GFX_decision_generic_political_discourse
-		priority = 500
+	#	icon = GFX_decision_generic_political_discourse
+		priority = 700
 		activation = { 
 			always = no
 		}
@@ -9580,7 +11601,10 @@ JAP_the_level_of_insubordination_category = {
 			has_war = no
 		} 
 		icon = GFX_decision_activate_the_combat_cell_anarchist
-		is_good = yes
+	#	is_good = yes
+	
+		fire_only_once = yes
+	
 		days_mission_timeout = 30
 		selectable_mission = no
 		timeout_effect = {
@@ -9599,26 +11623,28 @@ JAP_the_level_of_insubordination_category = {
 				add_to_variable = { JAP_the_level_of_insubordination_var = 1 tooltip = JAP_the_level_of_insubordination_var_tt }
 				JAP_the_level_of_insubordination_effect = yes
 			}
+			activate_mission = JAP_growth_of_insubordination_from_china
 		}
 	}
 
 	JAP_growth_of_demand_for_an_alliance_with_germany = {
 		icon = GFX_decision_generic_political_discourse
-		priority = 500
+		priority = 300
 		activation = { 
 			has_completed_focus = JAP_reassure_the_military 
 			NOT = { has_country_flag = JAP_Imperial_Headquarters_was_created }
 			GER = { has_completed_focus = GER_improve_national_spirit }
+			NOT = { has_country_flag = JAP_anti_soviet_alliance_flag }
 			check_variable = { JAP_the_level_of_insubordination_var > 0 }
 		}
 		available = { hidden_trigger = { always = no } }
 		cancel_trigger = {
 			has_country_flag = JAP_Imperial_Headquarters_was_created 
-			GER = { has_completed_focus = GER_improve_national_spirit }
+			has_country_flag = JAP_anti_soviet_alliance_flag
 			check_variable = { JAP_the_level_of_insubordination_var = 0 }
 		} 
 		icon = GFX_decision_activate_the_combat_cell_anarchist
-		is_good = yes
+	#	is_good = yes
 		days_mission_timeout = 180
 		selectable_mission = no
 		timeout_effect = {
@@ -9642,7 +11668,7 @@ JAP_the_level_of_insubordination_category = {
 	
 	JAP_growth_of_demand_for_an_attack_the_soviets = {
 		icon = GFX_decision_generic_political_discourse
-		priority = 500
+		priority = 800
 		activation = { 
 			has_completed_focus = JAP_reassure_the_military 
 			NOT = { has_country_flag = JAP_Imperial_Headquarters_was_created }
@@ -9664,7 +11690,7 @@ JAP_the_level_of_insubordination_category = {
 			check_variable = { JAP_the_level_of_insubordination_var = 0 }
 		} 
 		icon = GFX_decision_activate_the_combat_cell_anarchist
-		is_good = yes
+	#	is_good = yes
 		days_mission_timeout = 120
 		selectable_mission = no
 		timeout_effect = {
@@ -9748,7 +11774,7 @@ JAP_treatment_of_war_prisoners = {
 			}
 			else_if = { 
 				limit = { has_idea = JAP_problem_with_discipline_idea_1 }
-				remove_idea = JAP_problem_with_discipline_idea_1
+				remove_ideas = JAP_problem_with_discipline_idea_1
 			}
 		}
 		ai_will_do = { base = 10 }
@@ -9762,10 +11788,10 @@ JAP_Nasano_school_category = {
 		icon = GFX_decision_generic_political_discourse
 		allowed = { original_tag = JAP }
 		available = { 
-			640 = { is_controlled_by = { NOT = { is_in_faction_with = JAP } } }
+			640 = { controller = { NOT = { is_in_faction_with = JAP } } } 
 		}
 		fire_only_once = yes
-		сost = 50
+		cost = 50
 		days_remove = 100
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_prepare_an_uprising_in_Burma"
@@ -9788,10 +11814,10 @@ JAP_Nasano_school_category = {
 		icon = GFX_decision_generic_political_discourse
 		allowed = { original_tag = JAP }
 		available = { 
-			672 = { is_controlled_by = { NOT = { is_in_faction_with = JAP } } }
+			672 = { controller = { NOT = { is_in_faction_with = JAP } } }
 		}
 		fire_only_once = yes
-		сost = 50
+		cost = 50
 		days_remove = 100
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_prepare_an_uprising_in_Sumatra"
@@ -9816,12 +11842,12 @@ JAP_Nasano_school_category = {
 		available = { 
 			has_war_with = RAJ 
 			OR = { 
-				336 = { is_controlled_by = { is_in_faction_with = JAP } }
+				336 = { controller = { is_in_faction_with = JAP } }
 				336 = { is_controlled_by = JAP }
 			}
 		}
 		fire_only_once = yes
-		сost = 50
+		cost = 50
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_create_Indian_National_Army"
 			if = {
@@ -9863,7 +11889,7 @@ JAP_Nasano_school_category = {
 		allowed = { original_tag = JAP }
 		available = { 524 = { is_controlled_by = JAP } }
 		fire_only_once = yes
-		сost = 50
+		cost = 50
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_create_Takasago_volunters"
 			if = {
@@ -9913,7 +11939,7 @@ JAP_new_Okada_government_power_balance_category = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_lection_about_principles_of_east_asian_league"
 			add_power_balance_value = {
 				id = JAP_new_Okada_government_power_balance
-				value = -0.01
+				value = -0.02
 				tooltip_side = JAP_supporters_of_democracy
 			}
 		}
@@ -9940,7 +11966,7 @@ JAP_new_Okada_government_power_balance_category = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_find_support_from_minseito"
 			add_power_balance_value = {
 				id = JAP_new_Okada_government_power_balance
-				value = -0.02
+				value = -0.04
 				tooltip_side = JAP_supporters_of_democracy
 			}
 			hidden_effect = { add_stability = -0.03 }
@@ -9965,7 +11991,7 @@ JAP_new_Okada_government_power_balance_category = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_find_support_from_independent_liberals"
 			add_power_balance_value = {
 				id = JAP_new_Okada_government_power_balance
-				value = -0.005
+				value = -0.01
 				tooltip_side = JAP_supporters_of_democracy
 			}
 		}
@@ -10022,7 +12048,7 @@ JAP_new_Okada_government_power_balance_category = {
 				JAP_Keisuke_Okada = { 
 					swap_country_leader_traits = { 
 						remove = JAP_morally_depressed
-						addt = JAP_psychological_tension
+						add = JAP_psychological_tension
 					}
 				}
 			}
@@ -10117,13 +12143,12 @@ JAP_state_of_Rikken_Sayukai_category = {
 		activation = { 
 			has_idea = JAP_low_unity_of_rikken_Seyukai_idea
 			set_temp_variable = { JAP_popularity_of_party_var_TEMP = 20 }
-			check_variable = { JAP_popularity_of_party_var < JAP_popularity_of_party_var_TEMP }
-			tooltip = JAP_popularity_of_party_var_check_tt
-			#custom_trigger_tooltip = {
-			#	check_variable = { JAP_popularity_of_party_var < JAP_popularity_of_party_var_TEMP }
-			#	tooltip = JAP_popularity_of_party_var_check_tt
-			#	
-			#}
+		#	check_variable = { JAP_popularity_of_party_var < JAP_popularity_of_party_var_TEMP }
+		#	tooltip = JAP_popularity_of_party_var_check_tt
+			custom_trigger_tooltip = {
+				check_variable = { JAP_popularity_of_party_var < JAP_popularity_of_party_var_TEMP }
+				tooltip = JAP_popularity_of_party_var_check_tt	
+			}
 		}
 		available = { hidden_trigger = { always = no } }
 		#fire_only_once = yes
@@ -10201,9 +12226,15 @@ JAP_melancholy_of_prince_category = {
 		icon = JAP_time_to_retirement
 		activation = { always = no }
 		available = { hidden_trigger = { always = no } }
-		#fire_only_once = yes
+		fire_only_once = yes
 		selectable_mission = no
 		days_mission_timeout = 450
+		
+		cancel_trigger = { 
+			NOT = { has_country_leader = { character = JAP_Fumimaro_Konoe ruling_only = yes } }
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_loss_of_trust" }
+		
 		timeout_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_time_to_retirement"
 			if = { 
@@ -10242,9 +12273,15 @@ JAP_melancholy_of_prince_category = {
 		icon = JAP_change_of_mood
 		activation = { always = no }
 		available = { hidden_trigger = { always = no } }
-		#fire_only_once = yes
+		fire_only_once = yes
 		selectable_mission = no
 		days_mission_timeout = 60
+		
+		cancel_trigger = { 
+			NOT = { has_country_leader = { character = JAP_Fumimaro_Konoe ruling_only = yes } }
+		}
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_loss_of_trust" }
+		
 		timeout_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_change_of_mood"
 			if = { 
@@ -10525,8 +12562,10 @@ JAP_plan_fugu_category = {
 		priority = 700
 		icon = JAP_organize_the_introduction_into_industries
 		available = {  
-			check_variable = { JAP_amount_of_jews > 80000 } 
-			custom_trigger_tooltip = JAP_organize_the_introduction_into_industries_tt
+			custom_trigger_tooltip = {
+				check_variable = { JAP_amount_of_jews > 80000 } 
+				tooltip = JAP_organize_the_introduction_into_industries_tt
+			}
 		}
 		cost = 100
 		fire_only_once = yes
@@ -10643,33 +12682,91 @@ JAP_reform_bureaucrats_category = {
 	JAP_loss_of_trust = {
 		priority = 1000
 		icon = JAP_loss_of_trust
-		available = { 
-			has_completed_focus = JAP_Fumio_Goto_office
-			NOT = { 
+		available = { hidden_trigger = { always = no } }
+		activation = { always = no }
+		fire_only_once = yes
+		selectable_mission = no
+		days_mission_timeout = 30
+		cancel_trigger = { 
+			OR = { 
 				has_country_flag = JAP_fall_of_bureaucrats 
 				has_completed_focus = JAP_managerial_revolution
 			}
 		}
-		activation = { always = no }
-		fire_only_once = no
-		selectable_mission = no
-		days_mission_timeout = 30
+		cancel_effect = { log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): cancel mission JAP_loss_of_trust" }
 		timeout_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): timeout mission JAP_loss_of_trust"
 			random_list = { 
 				25 = { 
-					add_to_variable = { JAP_support_from_parliament_var = -1 tooltip = JAP_support_of_parliament_var_tt }
+					if = { 
+						limit = { 
+							surrender_progress > 0.01 
+						}
+						add_to_variable = { JAP_support_from_parliament_var = -3 tooltip = JAP_support_of_parliament_var_tt }
+					}
+					else_if = { 
+						limit = { 
+							has_war_support < 0.3
+						}
+						add_to_variable = { JAP_support_from_parliament_var = -2 tooltip = JAP_support_of_parliament_var_tt }
+					}
+					else = { 
+						add_to_variable = { JAP_support_from_parliament_var = -1 tooltip = JAP_support_of_parliament_var_tt }
+					}
 				}
 				25 = { 
-					add_to_variable = { JAP_support_from_army_var = -1 tooltip = JAP_support_of_army_var_tt }
+					if = { 
+						limit = { 
+							surrender_progress > 0.01 
+						}
+						add_to_variable = { JAP_support_from_army_var = -3 tooltip = JAP_support_of_army_var_tt }
+					}
+					else_if = { 
+						limit = { 
+							has_war_support < 0.3
+						}
+						add_to_variable = { JAP_support_from_army_var = -2 tooltip = JAP_support_of_army_var_tt }
+					}
+					else = { 
+						add_to_variable = { JAP_support_from_army_var = -1 tooltip = JAP_support_of_army_var_tt }
+					}
 				}
 				25 = { 
-					add_to_variable = { JAP_support_from_fleet_var = -1 tooltip = JAP_support_of_fleet_var_tt }
+					if = { 
+						limit = { 
+							surrender_progress > 0.01 
+						}
+						add_to_variable = { JAP_support_from_fleet_var = -3 tooltip = JAP_support_of_fleet_var_tt }
+					}
+					else_if = { 
+						limit = { 
+							has_war_support < 0.3
+						}
+						add_to_variable = { JAP_support_from_fleet_var = -2 tooltip = JAP_support_of_fleet_var_tt }
+					}
+					else = { 
+						add_to_variable = { JAP_support_from_fleet_var = -1 tooltip = JAP_support_of_fleet_var_tt }
+					}
 				}
 				25 = { 
-					add_to_variable = { JAP_support_from_imperial_court_var = -1 tooltip = JAP_support_of_imperial_court_var_tt }
+					if = { 
+						limit = { 
+							surrender_progress > 0.01 
+						}
+						add_to_variable = { JAP_support_from_imperial_court_var = -3 tooltip = JAP_support_of_imperial_court_var_tt }
+					}
+					else_if = { 
+						limit = { 
+							has_war_support < 0.3
+						}
+						add_to_variable = { JAP_support_from_imperial_court_var = -2 tooltip = JAP_support_of_imperial_court_var_tt }
+					}
+					else = { 
+						add_to_variable = { JAP_support_from_imperial_court_var = -1 tooltip = JAP_support_of_imperial_court_var_tt }
+					}
 				}
 			}
+			JAP_reform_bureaucrats_effect = yes
 			activate_mission = JAP_loss_of_trust
 		}
 	}
@@ -10686,14 +12783,18 @@ JAP_reform_bureaucrats_category = {
 				tooltip = JAP_support_of_parliament_var_check_tt
 			}
 		} 
-		#visible = {
-		#	check_variable = { JAP_support_from_parliament_var < 10 }
-		#}
 		days_re_enable = 10
 		cost = 30
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_parliament"
-			add_to_variable = { JAP_support_from_parliament_var = 1 tooltip = JAP_support_of_parliament_var_tt }
+			if = { 
+				limit = { has_country_flag = JAP_mass_party_was_created }
+				add_to_variable = { JAP_support_from_parliament_var = 1 tooltip = JAP_support_of_parliament_var_tt }
+			}
+			else = { 
+				add_to_variable = { JAP_support_from_parliament_var = 3 tooltip = JAP_support_of_parliament_var_tt }
+				clamp_variable = { var = JAP_support_from_parliament_var min = 0 max = 10 }
+			}
 		}
 	}
 	
@@ -10712,10 +12813,16 @@ JAP_reform_bureaucrats_category = {
 		#visible = {
 		#	check_variable = { JAP_support_from_parliament_var < 10 }
 		#}
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 10 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
 		days_re_enable = 10
-		cost = 15
+	#	cost = 15
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_army"
+			hidden_effect = { add_command_power = -10 } 
 			add_to_variable = { JAP_support_from_army_var = 1 tooltip = JAP_support_of_army_var_tt }
 		}
 	}
@@ -10735,10 +12842,16 @@ JAP_reform_bureaucrats_category = {
 		#visible = {
 		#	check_variable = { JAP_support_from_parliament_var < 10 }
 		#}
+		custom_cost_trigger = {
+			set_temp_variable = { cp_cost = 10 }
+			check_variable = { var = command_power value = cp_cost }
+		}
+		custom_cost_text = CP_COST
 		days_re_enable = 10
-		cost = 20
+	#	cost = 20
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_fleet"
+			hidden_effect = { add_command_power = -10 }
 			add_to_variable = { JAP_support_from_fleet_var = 1 tooltip = JAP_support_of_fleet_var_tt }
 		}
 	}
@@ -10763,6 +12876,233 @@ JAP_reform_bureaucrats_category = {
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_enlist_the_support_of_imperial_court"
 			add_to_variable = { JAP_support_from_imperial_court_var = 1 tooltip = JAP_support_of_imperial_court_var_tt }
+		}
+	}
+	
+	JAP_make_concessions_to_the_opponents = {
+		priority = 600
+		icon = JAP_make_concessions_to_the_opponents
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			has_active_mission = JAP_loss_of_trust
+		} 
+		days_re_enable = 10
+		cost = 15
+		custom_cost_trigger = {
+			technocracy > 0.03
+			has_political_power > 15
+		#	set_temp_variable = { custom_cost_pp = 0.03 }
+		#	multiply_temp_variable = { custom_cost_pp = JAP_cost_dec }
+		#	check_variable = { popularity_of > custom_cost_pp }
+		}
+		custom_cost_text = JAP_burref_custom_cost_desc	
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_make_concessions_to_the_opponents"
+			hidden_effect = {
+				add_popularity = { ideology = technocracy popularity = -0.03 }
+				add_political_power = -15
+			}
+			add_days_mission_timeout = { mission = JAP_loss_of_trust days = 30 }
+		}
+	}
+	
+	JAP_popularize_the_ideas = {
+		priority = 500
+		icon = JAP_popularize_the_ideas
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			has_active_mission = JAP_loss_of_trust
+		} 
+		days_re_enable = 10
+		cost = 15
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_popularize_the_ideas"
+			add_days_mission_timeout = { mission = JAP_loss_of_trust days = -20 }
+			add_popularity = { ideology = technocracy popularity = 0.02 }
+		}
+	}
+	
+	JAP_create_mass_party = {
+		priority = 500
+		icon = JAP_create_mass_party
+		#allowed = { original_tag = JAP }
+		fire_only_once = yes
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			has_active_mission = JAP_loss_of_trust
+			has_government = technocracy
+		} 
+		available = { 
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_number_of_technocrat_ministers_var > 3 } 
+				tooltip = JAP_number_of_technocrat_ministers_var_check_tt
+			}
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_support_from_parliament_var > 5 }
+				tooltip = JAP_support_of_parliament_var_check_tt2
+			}
+		}
+		
+		cost = 150
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_create_mass_party"
+			set_country_flag = JAP_mass_party_was_created
+			set_party_name = { ideology = technocracy long_name = JAP_technocracy_party1_long name = JAP_technocracy_party1 }
+			add_popularity = { ideology = technocracy popularity = 0.1 }
+			country_event = NW_JAP.612
+		}
+	}
+	
+	JAP_to_make_additional_promises = {
+		priority = 450
+		icon = JAP_to_make_additional_promises
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_support_from_parliament_var < 10 }
+				tooltip = JAP_support_of_parliament_var_check_tt
+			}
+		} 
+		#visible = {
+		#	check_variable = { JAP_support_from_parliament_var < 10 }
+		#}
+		days_re_enable = 10
+		cost = 10
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_to_make_additional_promises"
+			add_to_variable = { JAP_support_from_parliament_var = 1 tooltip = JAP_support_of_parliament_var_tt }
+			random_list = { 
+				50 = { 
+					add_to_variable = { JAP_support_from_army_var = -1 tooltip = JAP_support_of_army_var_tt }
+				}
+				50 = { 
+					add_to_variable = { JAP_support_from_fleet_var = -1 tooltip = JAP_support_of_fleet_var_tt }
+				}
+			}
+			JAP_reform_bureaucrats_effect = yes
+		}
+	}
+	
+	JAP_to_assure_the_imperial_entourage = {
+		priority = 700
+		icon = JAP_to_assure_the_imperial_entourage
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_support_from_imperial_court_var < 10 }
+				tooltip = JAP_support_of_imperial_court_var_check_tt
+			}
+		} 
+		#visible = {
+		#	check_variable = { JAP_support_from_parliament_var < 10 }
+		#}
+		days_re_enable = 10
+		cost = 5
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_to_assure_the_imperial_entourage"
+			add_to_variable = { JAP_support_from_imperial_court_var = 1 tooltip = JAP_support_of_imperial_court_var_tt }
+			random_list = { 
+				50 = { 
+					add_to_variable = { JAP_support_from_parliament_var = -1 tooltip = JAP_support_of_parliament_var_tt }
+				}
+				50 = { 
+					add_to_variable = { JAP_support_from_fleet_var = -1 tooltip = JAP_support_of_fleet_var_tt }
+				}
+			}
+			JAP_reform_bureaucrats_effect = yes
+		}
+	}
+	
+	JAP_increase_the_army_budget = {
+		priority = 350
+		icon = JAP_increase_the_army_budget
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_support_from_army_var < 10 }
+				tooltip = JAP_support_of_army_var_check_tt
+			}
+		} 
+		#visible = {
+		#	check_variable = { JAP_support_from_parliament_var < 10 }
+		#}
+		days_re_enable = 10
+		cost = 5
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_increase_the_army_budget"
+			add_to_variable = { JAP_support_from_army_var = 1 tooltip = JAP_support_of_army_var_tt }
+			add_to_variable = { JAP_support_from_parliament_var = -1 tooltip = JAP_support_of_parliament_var_tt }
+			JAP_reform_bureaucrats_effect = yes
+		}
+	}
+	
+	JAP_increase_the_fleet_budget = {
+		priority = 300
+		icon = JAP_increase_the_fleet_budget
+		#allowed = { original_tag = JAP }
+		fire_only_once = no
+		visible = { 
+			#set_temp_variable = { JAP_supports_var_temp = 10 }
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_support_from_fleet_var < 10 }
+				tooltip = JAP_support_of_fleet_var_check_tt
+			}
+		} 
+		#visible = {
+		#	check_variable = { JAP_support_from_parliament_var < 10 }
+		#}
+		days_re_enable = 10
+		cost = 5
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_increase_the_fleet_budget"
+			add_to_variable = { JAP_support_from_fleet_var = 1 tooltip = JAP_support_of_fleet_var_tt }
+			add_to_variable = { JAP_support_from_parliament_var = -1 tooltip = JAP_support_of_parliament_var_tt }
+			JAP_reform_bureaucrats_effect = yes
+		}
+	}
+	
+}
+
+JAP_complex_technology_category = {
+	
+	JAP_make_state_planning_in_the_region = {
+		icon = JAP_make_state_planning_in_the_region
+		priority = 100
+
+		
+		icon = GFX_decision_JAP_reorganize_the_administrative_apparatus # TODO
+		
+		available = {
+			num_of_civilian_factories_available_for_projects > 2
+			 controls_state = FROM
+		}
+		state_target = yes
+		modifier = {
+			civilian_factory_use = 3
+		}
+		cost = 30
+		days_remove = 250
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		targets = { 524 525 527 528 529 530 531 532 533 534 535 536 282 }
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_make_state_planning_in_the_region"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_make_state_planning_in_the_region"
+			FROM = { add_extra_state_shared_building_slots = 3 }
+			
 		}
 	}
 }
@@ -10830,14 +13170,19 @@ JAP_resource_allocation_category = {
 	JAP_meet_the_requirements_of_the_army = {
 		priority = 1000
 		#allowed = { original_tag = JAP }
-		#available = { hidden_trigger = { always = no } }
+		available = { 
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_RA_var > -7 }
+				tooltip = JAP_RA_var_check_tt2 
+			}
+		}
 		icon = JAP_purge_of_Kokutai_members_in_the_Army
 		cost = 15
 		fire_only_once = no
 		#days_re_enable = 120
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_meet_the_requirements_of_the_army"
-			set_variable = { JAP_RA_var = 0 }  
+			 
 			add_to_variable = { var = JAP_RA_var value = -2.5 } 
 			JAP_resource_allocation_effect = yes
 		}
@@ -10846,19 +13191,25 @@ JAP_resource_allocation_category = {
 	JAP_meet_the_requirements_of_the_fleet = {
 		priority = 900
 		#allowed = { original_tag = JAP }
-		#available = { hidden_trigger = { always = no } }
+		available = { 
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_RA_var < 7 }
+				tooltip = JAP_RA_var_check_tt 
+			}
+		}
 		icon = JAP_naval_officers_icon
 		cost = 15
 		fire_only_once = no
 		#days_re_enable = 120
 		complete_effect = {
 			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_meet_the_requirements_of_the_fleet"
-			set_variable = { JAP_RA_var = 0 }  
+			  
 			add_to_variable = { var = JAP_RA_var value = 2.5 } 
 			JAP_resource_allocation_effect = yes
 		}
 	}
 
+	# TODO и это все? а как сама механика то работает
 }
 
 JAP_empire_of_asian_development_category = {
@@ -10878,11 +13229,12 @@ JAP_empire_of_asian_development_category = {
 					desc = "POLITICS_ANY_DEVELOPMENT_COUNCIL_DESC"
 					picture = "gfx/leaders/Portrait_Generic_Technocratic_Council.dds"
 					expire = "1965.1.1"
-					ideology = governing_state
+					ideology = governing_state_ideology
 					traits = {
 						JAP_development_council_trait
 					}
 				}
+				set_politics = { ruling_party = technocracy elections_allowed = no }
 			}
 		}
 	}

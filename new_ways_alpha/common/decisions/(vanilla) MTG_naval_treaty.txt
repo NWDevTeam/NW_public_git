@@ -2,7 +2,6 @@ MTG_naval_treaties = {
 	MTG_abandon_treaty_democratic = {
 
 		icon = generic
-			
 	
 		available = {
 			OR = {
@@ -14,7 +13,7 @@ MTG_naval_treaties = {
 		cost = 150
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 0
+			base = 0
 		}
 	
 		visible = {
@@ -22,6 +21,12 @@ MTG_naval_treaties = {
 			OR = {
 				has_government = democratic
 				has_government = neutrality
+			}
+			NOT = {
+				AND = {
+					original_tag = JAP
+					has_government = neutrality
+				}
 			}
 		}
 	
@@ -100,13 +105,13 @@ MTG_naval_treaties = {
 		cost = 25
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 1
+			base = 1
 			modifier = {
 				OR = {
 					tag = ITA
 					tag = JAP
 				}
-				add = 1
+				add = 3
 			}
 			modifier = {
 				tag = USA
@@ -116,7 +121,13 @@ MTG_naval_treaties = {
 			modifier = {
 				tag = JAP
 				is_historical_focus_on = yes
-				add = 50
+				add = 300
+			}
+			modifier = {
+				tag = JAP
+				is_historical_focus_on = yes
+				date > 1937.03.01
+				factor = 10
 			}
 		}
 	
@@ -167,6 +178,106 @@ MTG_naval_treaties = {
 						any_of_scopes = {
 							array = global.is_in_naval_treaty
 							NOT = { tag = ROOT }
+							OR = {
+								has_idea = MTG_naval_treaty_cheating_reduced
+								has_idea = MTG_naval_treaty_adherent_reduced
+							}
+						}
+					}
+				}
+				every_other_country = {
+					limit = {
+						OR = {
+							has_idea = MTG_naval_treaty_cheating
+							has_idea = MTG_naval_treaty_adherent
+						}
+					}
+					activate_mission = MTG_escalator_clause_invocation_mission
+					custom_effect_tooltip = MTG_escalator_clause_tt
+				}
+			}
+		}
+	}
+
+	MTG_abandon_treaty_japanese = {
+
+		icon = generic
+			
+	
+		available = {
+			OR = {
+				threat > 0.2
+				has_global_flag = MTG_second_london_conference
+			}
+		}
+	
+		cost = 25
+		fire_only_once = yes
+		ai_will_do = {
+			base = 1
+			modifier = {
+				tag = JAP
+				add = 100
+			}
+			modifier = {
+				tag = JAP
+				is_historical_focus_on = yes
+				add = 300
+			}
+			modifier = {
+				tag = JAP
+				is_historical_focus_on = yes
+				date > 1937.03.01
+				factor = 10
+			}
+		}
+	
+		visible = {
+			has_naval_treaty_trigger = yes
+			original_tag = JAP
+			OR = {
+				has_government = neutrality
+				has_government = technocracy # TODO при других идеологиях (кроме фаш и нейтралов) тоже может?
+			}
+		}
+	
+		complete_effect = {
+			remove_naval_treaty_effect = yes
+			every_other_country = {
+				limit = {
+					has_naval_treaty_trigger = yes
+				}
+				country_event = { id = MTG_naval_treaty.7 days = 2 }
+			}
+			if = {
+				limit = {
+					has_global_flag = {
+						flag = MTG_naval_treaty_signatories
+						value < 3
+					}
+				}
+				random_other_country = {
+					limit = {
+						has_naval_treaty_trigger = yes
+					}
+					remove_naval_treaty_effect = yes
+				}
+				clr_global_flag = MTG_naval_treaty_signatories
+				hidden_effect = { news_event = mtg_news.60 }
+			}
+			if = {
+				limit = {
+					has_global_flag = MTG_naval_treaty_signatories
+				}
+				modify_global_flag = {
+					flag = MTG_naval_treaty_signatories
+					value = -1
+				}
+			}
+			if = {
+				limit = {
+					not = {
+						any_other_country = {
 							OR = {
 								has_idea = MTG_naval_treaty_cheating_reduced
 								has_idea = MTG_naval_treaty_adherent_reduced
@@ -684,10 +795,11 @@ MTG_naval_treaties = {
 				always = no
 			}
 		}
+		days_mission_timeout = 120
+		
 		visible = {
 			has_naval_treaty_trigger = yes
 		}
-		days_mission_timeout = 120
 		timeout_effect = {
 			clr_global_flag = MTG_second_london_conference 
 		}
@@ -709,10 +821,11 @@ MTG_naval_treaties = {
 				always = no
 			}
 		}
+		days_mission_timeout = 365
+	
 		visible = {
 			has_naval_treaty_trigger = yes
 		}
-		days_mission_timeout = 365
 		timeout_effect = {
 			if = {
 				limit = {

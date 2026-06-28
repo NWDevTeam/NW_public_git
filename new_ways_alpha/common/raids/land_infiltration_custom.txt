@@ -1,0 +1,2218 @@
+types = {
+
+	PRC_weapons_depot_raid = { # TODO
+
+		days_to_prepare = 15
+
+		speed_multiplier = 1.25
+
+		category = land_infiltration_raids
+
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+
+		target_icon = GFX_other_target_icon
+
+		target_loc_key = raid_target_name_supply_hub
+
+		launch_sound = raid_land_launchable_sound
+
+		arrow = {
+		    type = land
+		}
+
+     	unit_model = {
+         entity = motorized_vehicle_entity
+     	}
+
+		ai_will_do = {
+			base = 5 
+
+			modifier = {
+				factor = 1.5
+				has_equipment = {
+					infantry_equipment < 0
+				}
+			}
+			modifier = {
+				factor = 1.5
+				has_equipment = {
+					infantry_equipment < 2500
+				}
+			}
+			modifier = {
+				factor = 1.5
+				command_power > 50
+			}
+			modifier = {
+				factor = 1.5
+				command_power > 75
+			}
+			modifier = {
+				factor = 0.5
+				has_equipment = {
+					infantry_equipment > 5000
+				}
+			}
+			modifier = {
+				factor = 0.5
+				command_power < 50
+			}
+		}
+
+		command_power = 25
+
+		allowed = {
+			has_dlc = "No Compromise, No Surrender"
+			original_tag = PRC
+			always = no
+		}
+
+		fire_only_once = no
+
+		visible = {
+			# OR = {
+				# has_completed_focus = PRC_raid_weapon_depots
+				# has_completed_focus = PRC_raiding_parties
+			# }
+		}
+
+		show_target = {
+			var:target_state = {
+				is_core_of = PRC
+				NOT = {
+					state = 524 #it's an island, bruh
+				}
+				OR = {
+					has_dynamic_modifier = {
+						modifier = PRC_anti_japanese_base
+					}
+					has_dynamic_modifier = {
+						modifier = PRC_guerilla_cells_active_1
+					}
+					has_dynamic_modifier = {
+						modifier = PRC_guerilla_cells_active_2
+					}
+				}
+			}
+		}
+
+		available = {
+			
+		}
+
+		launchable = {
+			has_war_with = FROM
+		}
+		
+		starting_point = {
+		    building_types = { supply_node }
+		    allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				militia = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				mountaineers = { min = 4 }
+			}
+		}
+		#essential_equipment = {
+		#	transport_plane_equipment = 5
+		#}
+
+		additional_equipment = {
+			# list of equipment archetypes and numbers
+			#support_equipment = 25
+			#infantry_equipment = 100
+		}
+
+		target_type = {
+			building = {
+				type = supply_node
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.75
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.25
+					start_weight = -0.2
+					reference = 1.0
+				}
+
+				organisation = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 100
+				}
+				strength = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 1
+				}
+				recon = {
+					weight = 0.05
+					reference = 10
+				}
+
+				### Target Modifiers
+
+				resistance = {
+					reference = 100
+					start_reference = 15 # Resistance below 15 doesn't help
+					weight = 0.4
+				}
+				air_superiority = {
+					reference = 1
+					start_reference = 0.5
+					weight = 0.2
+				}
+
+				enemy_units = {
+					reference = 4 # More than 4 DIVs in the target Province shouldn't make any difference
+					weight = -0.4
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+		}
+
+		success_levels = {
+			failure = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 1 # levels of damage
+								province = var:ROOT.target_province
+							}
+						}
+					}
+			    }
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.95
+						str_damage = 0.95
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 1 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.1
+							}
+						}
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -100
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -50
+						}
+
+					}
+				}
+				actor_effects = {
+					
+ 					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 100
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 50
+							producer = PRC_equipment_producer
+						}
+					}
+
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.65
+						str_damage = 0.3
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+			success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 4 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.25
+							}
+						}
+
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -250
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -75
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = -25
+						}
+					}
+				}
+				actor_effects = {
+					
+					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 250
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 75
+							producer = PRC_equipment_producer
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = 25
+							producer = PRC_equipment_producer
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.45
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+			critical_success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 6 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.4
+							}
+						}
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -500
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -150
+						}
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = -50
+						}
+					}
+				}
+				actor_effects = {
+					
+					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 500
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 150
+							producer = PRC_equipment_producer
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = 50
+							producer = PRC_equipment_producer
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.25
+						str_damage = 0.15
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+
+	#PREPARATION FOR BORDER RAIDS to help out in the Border Wars
+	PRC_probe_border_defenses_raid = { # TODO
+	
+		days_to_prepare = 15
+	
+		speed_multiplier = 2
+	
+		category = land_infiltration_raids
+	
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+	
+		target_icon = GFX_other_target_icon
+	
+		target_loc_key = raid_target_name_probe_defenses
+	
+		launch_sound = raid_land_launchable_sound
+	
+		arrow = {
+		    type = land
+		}
+
+     unit_model = {
+         entity = motorized_vehicle_entity
+     }
+	
+		ai_will_do = {
+			base = 5 
+			modifier = {
+				factor = 2
+				command_power > 25
+			}
+			modifier = {
+				factor = 1.5
+				has_war = no
+			}
+			modifier = {
+				factor = 0
+				var:target_state = { # Less chance to do eastern raid
+					controller = {
+						original_tag = SHX
+					}
+				}
+			}
+			#modifier = {
+			#	factor = 0
+			#	is_historical_focus_on = yes
+			#}
+		}
+	
+		command_power = 25
+	
+		allowed = {
+			has_dlc = "No Compromise, No Surrender"
+			original_tag = PRC
+			always = no
+		}
+	
+		fire_only_once = no
+	
+		visible = {
+			# has_completed_focus = PRC_know_the_enemy
+			# NOT = {
+				# has_country_flag = {
+					# flag = PRC_probe_border_defenses_flag
+					# value > 2
+				# }
+			# }
+		}
+	
+		show_target = {
+			var:target_state = {
+				NOT = { has_state_flag = PRC_probe_border_defenses_state_flag }
+				controller = {
+					OR = {
+						original_tag = SHX
+						original_tag = NXM
+						#original_tag = XIC
+					}
+					NOT = {
+						is_ally_with = ROOT
+						has_war_with = ROOT
+					}
+				}
+			}
+		}
+	
+		available = {
+			var:target_state = {
+				controller = {
+					OR = {
+						original_tag = SHX
+						original_tag = NXM
+						#original_tag = XIC
+					}
+					NOT = {
+						is_ally_with = ROOT
+						has_war_with = ROOT
+					}
+				}
+			}
+		}
+	
+		launchable = {
+			var:target_state = {
+				NOT = { has_state_flag = PRC_probe_border_defenses_state_flag }
+			}
+		}
+		
+		starting_point = {
+		    building_types = { supply_node }
+		}
+	
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				militia = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				mountaineers = { min = 4 }
+			}
+		}
+		#essential_equipment = {
+		#	transport_plane_equipment = 5
+		#}
+	
+		additional_equipment = {
+			# list of equipment archetypes and numbers
+			#support_equipment = 25
+			#infantry_equipment = 100
+		}
+	
+		target_type = {
+			#Victory Point Provinces
+			province = 1519
+			province = 5025
+			#province = 8049
+		}
+	
+		success_factors = {
+			success = {
+				base = 0.75
+	
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.25
+					start_weight = -0.2
+					reference = 1.0
+				}
+	
+				organisation = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 100
+				}
+				strength = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 1
+				}
+				recon = {
+					weight = 0.05
+					reference = 10
+				}
+	
+				### Target Modifiers
+	
+				resistance = {
+					reference = 100
+					start_reference = 15 # Resistance below 15 doesn't help
+					weight = 0.4
+				}
+				air_superiority = {
+					reference = 1
+					start_reference = 0.5
+					weight = 0.2
+				}
+	
+				enemy_units = {
+					reference = 4 # More than 4 DIVs in the target Province shouldn't make any difference
+					weight = -0.4
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+		}
+	
+		success_levels = {
+			failure = {
+			   victim_effects = {
+			   	var:target_state = {
+			   		set_state_flag = PRC_probe_border_defenses_state_flag
+			   	}
+				}
+				actor_effects = {
+					
+					var:actor_country = {
+						if = {
+							limit = {
+								NOT = { has_country_flag = PRC_probe_border_defenses_flag }
+							}
+							set_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+						else = {
+							modify_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.95
+						str_damage = 0.5
+						ratio = yes
+					}
+	
+					# Unit Experience
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 25
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+			   victim_effects = {
+					var:target_state = {
+						add_dynamic_modifier = {
+							modifier = PRC_probed_border_defenses
+							scope = PRC
+							days = 180
+						}
+			   		set_state_flag = PRC_probe_border_defenses_state_flag
+			   		if = {
+							limit = {
+								state = 1045
+							}
+							damage_units = {
+							    province = 3745
+							    state = 1045
+							    region = 144
+							   # damage = 0.25
+							    org_damage = 0.5
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 5025
+							    state = 1045
+							    region = 144
+							    #damage = 0.5
+							    org_damage = 0.5
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+						}
+				    	else_if = {
+				    		limit = {
+				    			state = 615
+				    		}
+					    	damage_units = {
+							    province = 10367
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							    org_damage = 0.4
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 1531
+							    state = 615
+							    region = 245
+							  # damage = 0.35
+							    org_damage = 0.4
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 4074
+							    state = 615
+							    region = 245
+							   # damage = 0.35
+							    org_damage = 0.4
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+				    	}
+					}
+				}
+				actor_effects = {
+	
+					var:actor_country = {
+						if = {
+							limit = {
+								NOT = { has_country_flag = PRC_probe_border_defenses_flag }
+							}
+							set_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+						else = {
+							modify_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.65
+						str_damage = 0.60
+						ratio = yes
+					}
+	
+					# Unit Experience
+					raid_add_unit_experience = 0.1
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+			success = {
+			   victim_effects = {
+			    	var:target_state = {
+			    		add_dynamic_modifier = {
+			    			modifier = PRC_infiltrated_border_defenses
+			    			scope = PRC
+			    			days = 180
+			    		}
+			    		set_state_flag = PRC_probe_border_defenses_state_flag
+
+						add_dynamic_modifier = {
+							modifier = PRC_probed_border_defenses_victim
+							scope = var:ROOT.victim_country
+							days = 180
+						}
+						if = {
+							limit = {
+								state = 1045
+							}
+							damage_units = {
+							    province = 3745
+							    state = 1045
+							    region = 144
+							   # damage = 0.25
+							    org_damage = 0.7
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 5025
+							    state = 1045
+							    region = 144
+							    #damage = 0.5
+							    org_damage = 0.7
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+						}
+				    	else_if = {
+				    		limit = {
+				    			state = 615
+				    		}
+					    	damage_units = {
+							    province = 10367
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							    org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 1531
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							     org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 4074
+							    state = 615
+							    region = 245
+							   # damage = 0.35
+							    org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+				    	}
+			    	}
+				}
+				actor_effects = {
+					
+					var:actor_country = {
+						if = {
+							limit = {
+								NOT = { has_country_flag = PRC_probe_border_defenses_flag }
+							}
+							set_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+						else = {
+							modify_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+					}
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.45
+						str_damage = 0.30
+						ratio = yes
+					}
+	
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+			critical_success = {
+			   victim_effects = {
+					var:target_state = {
+						add_dynamic_modifier = {
+							modifier = PRC_sabotaged_border_defenses
+							scope = PRC
+							days = 180
+						}
+						add_dynamic_modifier = {
+							modifier = PRC_probed_border_defenses_victim_massive
+							scope = var:ROOT.victim_country
+							days = 180
+						}
+					
+					
+						set_state_flag = PRC_probe_border_defenses_state_flag
+
+						if = {
+							limit = {
+								state = 1045
+							}
+							damage_units = {
+							    province = 3745
+							    state = 1045
+							    region = 144
+							   # damage = 0.25
+							    org_damage = 0.8
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 5025
+							    state = 1045
+							    region = 144
+							   # damage = 0.5
+							    org_damage = 0.8
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+						}
+				    	else_if = {
+				    		limit = {
+				    			state = 615
+				    		}
+					    	damage_units = {
+							    province = 10367
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							    org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 1531
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							    org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+							damage_units = {
+							    province = 4074
+							    state = 615
+							    region = 245
+							  #  damage = 0.35
+							    org_damage = 0.65
+							    str_damage = 0.1
+							    ratio = yes
+							    army = yes
+							    navy = no
+							}
+				    	}
+					}
+				}
+				actor_effects = {
+					
+					var:actor_country = {
+						if = {
+							limit = {
+								NOT = { has_country_flag = PRC_probe_border_defenses_flag }
+							}
+							set_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+						else = {
+							modify_country_flag = {
+								flag = PRC_probe_border_defenses_flag
+								value = 1
+							}
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.25
+						str_damage = 0.15
+						ratio = yes
+					}
+	
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+	CHI_great_wall_raid_land = {
+
+		days_to_prepare = 15
+
+		speed_multiplier = 2
+
+		category = land_infiltration_raids
+
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+
+		target_icon = GFX_the_great_wall_icon
+
+		target_loc_key = raid_target_name_great_wall
+
+		launch_sound = raid_land_launchable_sound
+
+		arrow = {
+		    type = land
+		}
+
+     	unit_model = {
+         entity = motorized_vehicle_entity
+     	}
+
+		ai_will_do = {
+			base = 2
+
+			modifier = {
+				factor = 1.5
+				command_power > 50
+			}
+			modifier = {
+				factor = 1.5
+				command_power > 75
+			}
+			modifier = {
+				factor = 2
+				command_power > 90
+			}
+			modifier = {
+				factor = 0.5
+				has_equipment = {
+					infantry_equipment > 5000
+				}
+			}
+			modifier = {
+				factor = 0.5
+				command_power < 50
+			}
+			modifier = {
+				# Don't target anyone who is not a potential enemy
+				factor = 0
+				NOT = {
+					is_in_array = {
+						array = potential_and_current_enemies
+						value = FROM  # Target country
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				original_tag = CHI
+				is_historical_focus_on = yes
+			}
+		}
+
+		command_power = 15
+
+		allowed = {
+			is_literally_china = yes
+			has_dlc = "No Compromise, No Surrender"
+		}
+
+		fire_only_once = no
+
+		visible = {
+			any_state_in = {
+				array = global.great_wall_state
+				has_state_flag = CHI_great_wall_raidable
+			}
+		}
+
+		show_target = {
+			NOT = {
+				is_ally_with = FROM
+			}
+			var:target_state = {
+				has_state_flag = CHI_great_wall_raidable
+			}
+		}
+
+		available = {
+			var:target_state = {
+				any_neighbor_state = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+
+		launchable = {
+			has_war_with = FROM
+		}
+
+		starting_point = {
+		    building_types = { supply_node }
+		    allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				militia = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				mountaineers = { min = 4 }
+			}
+		}
+
+		additional_equipment = {
+		}
+
+		target_type = {
+			building = {
+				type = landmark_great_wall_section
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.6
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.25
+					start_weight = -0.2
+					reference = 1.0
+				}
+
+				organisation = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 100
+				}
+				strength = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 1
+				}
+				recon = {
+					weight = 0.05
+					reference = 10
+				}
+
+				### Target Modifiers
+
+				resistance = {
+					reference = 100
+					start_reference = 15 # Resistance below 15 doesn't help
+					weight = 0.4
+				}
+				air_superiority = {
+					reference = 1
+					start_reference = 0.5
+					weight = 0.2
+				}
+
+				enemy_units = {
+					reference = 4 # More than 4 DIVs in the target Province shouldn't make any difference
+					weight = -0.4
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+		}
+
+		success_levels = {
+			failure = {
+			    victim_effects = {
+
+			    }
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.95
+						str_damage = 0.95
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+			    victim_effects = {
+
+				}
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.65
+						str_damage = 0.3
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+			success = {
+			    victim_effects = {
+					var:target_state = {
+						remove_province_modifier = {
+							static_modifiers = { the_great_wall }
+							province = var:ROOT.target_province
+						}
+						damage_building = {
+							type = landmark_great_wall_section
+							damage = 0.85 # levels of damage
+							province = var:ROOT.target_province
+						}
+						clr_state_flag = CHI_great_wall_raidable
+					}
+				}
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.45
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+					}
+			}
+			critical_success = {
+			    victim_effects = {
+					var:target_state = {
+						remove_province_modifier = {
+							static_modifiers = { the_great_wall }
+							province = var:ROOT.target_province
+						}
+						damage_building = {
+							type = landmark_great_wall_section
+							damage = 0.85 # levels of damage
+							province = var:ROOT.target_province
+						}
+						clr_state_flag = CHI_great_wall_raidable
+					}
+				}
+				actor_effects = {
+
+					var:actor_country = {
+
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.25
+						str_damage = 0.15
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	# INS_militia_increase_activity_raid = {
+
+		# days_to_prepare = 30
+		# days_re_enable = 0
+		# speed_multiplier = 20
+		# category = land_infiltration_raids
+		# custom_map_icon = GFX_raid_target_icon_guerilla_raid
+		# target_icon = GFX_other_target_icon
+		# target_loc_key = raid_target_name_state
+		# launch_sound = raid_land_launchable_sound
+
+		# arrow = {
+			# type = land
+		# }
+
+		# unit_model = {
+			# entity = "INS_militia_alt_0_entity"
+			# scale = 0.5
+		# }
+
+
+		# ai_will_do = {
+			# base = 1 # 1 weight = 1% of success chance, but always keep it at base 1 so it tries to do any raid at all
+			# # note: do not add negative weight, if you want to reduce it, use a factor like 0.5, to ensure its always above 0 so AI will always do a raid even if all options are bad
+
+			# # java is pretty neat we want that
+			# modifier = {
+				# factor = 5
+				# var:target_state = {
+					# OR = {
+						# state = 335
+						# state = 1051
+						# state = 1058
+					# }
+				# }
+			# }
+
+			# # add weight based on how many conditions met, the goal here is to try and emulate a "do raids that are likely to actually succeed first" effect
+			# modifier = {
+				# add = 10
+				# var:target_state = {
+					# has_dynamic_modifier = {
+						# modifier = INS_state_militia_activity_1
+					# }
+				# }
+			# }
+			# modifier = {
+				# add = 20
+				# var:target_state = {
+					# has_dynamic_modifier = {
+						# modifier = INS_state_militia_activity_2
+					# }
+				# }
+			# }
+			# modifier = {
+				# add = 30
+				# var:target_state = {
+					# has_dynamic_modifier = {
+						# modifier = INS_state_militia_activity_3
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.95
+				# var:target_state = {
+					# infrastructure > 4
+				# }
+			# }
+			# modifier = {
+				# factor = 0.9
+				# var:target_state = {
+					# infrastructure > 2
+					# infrastructure > 4
+				# }
+			# }
+			# modifier = {
+				# factor = 0.85
+				# var:target_state = {
+					# infrastructure > 1
+					# infrastructure > 3
+				# }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# var:target_state = {
+					# infrastructure > 0
+					# infrastructure > 2
+				# }
+			# }
+			# modifier = {
+				# factor = 0.75
+				# var:target_state = {
+					# infrastructure < 1
+				# }
+			# }
+
+			# # due to the lack of a streamlined way to do this, this wont be super accurate, but it doesnt need to be, it just needs to somewhat be aware of the division count in the state
+
+		    # # Strongly prefer empty states
+		    # modifier = {
+		        # factor = 3
+		        # var:target_state = {
+		            # owner = {
+		                # NOT = { divisions_in_state = { size > 0  state = PREV } }
+		                # NOT = { overlord = { divisions_in_state = { size > 0  state = PREV.PREV } } }
+		            # }
+		        # }
+		    # }
+		    # # Avoid states with a real garrison (3+ divs from owner OR overlord)
+		    # modifier = {
+		        # factor = 0.3
+		        # var:target_state = {
+		            # OR = {
+		                # owner = { divisions_in_state = { size > 2  state = PREV } }
+		                # owner = { overlord = { divisions_in_state = { size > 2  state = PREV.PREV } } }
+		            # }
+		        # }
+		    # }
+		    # # Almost never touch heavily garrisoned states
+		    # modifier = {
+		        # factor = 0.05
+		        # var:target_state = {
+		            # OR = {
+		                # owner = { divisions_in_state = { size > 5  state = PREV } }
+		                # owner = { overlord = { divisions_in_state = { size > 5  state = PREV.PREV } } }
+		            # }
+		        # }
+		    # }
+		# }
+
+		# ai_min_success_chance = 0.15
+
+		# command_power = 20
+
+		# allowed = {
+			# has_dlc = "Thunder at Our Gates"
+			# tag = INS
+		# }
+
+		# visible = {
+			# has_country_flag = {
+				# flag = INS_revolution_has_started
+			# }
+			# NOT = {
+				# has_war_with = HOL
+			# }
+			# has_event_target = INS_dutch_indonesia
+			# NOT = {
+				# has_country_flag = INS_no_raids_allowed
+			# }
+		# }
+
+		# show_target = {
+			# var:target_state = {
+				# is_in_array = {
+					# array = INS.owned_states_at_game_start
+					# value = THIS
+				# }
+				# OWNER = {
+					# OR = {
+						# tag = HOL
+						# tag = event_target:INS_dutch_indonesia
+					# }
+				# }
+				# any_neighbor_state = {
+					# OR = {
+						# is_owned_by = INS
+					# }
+				# }
+				# impassable = no
+			# }
+		# }
+
+		# fire_only_once = no
+
+		# available = {
+			# #var:target_state = {
+			# #	NOT = {
+			# #		state = 1058
+			# #	}
+			# #}
+		# }
+
+		# cancel_trigger = {
+			# NOT = { has_country_flag = INS_revolution_has_started }
+		# }
+
+		# starting_point = {
+			# building_types = { supply_node rail_way bunker naval_base }
+			# allow_faction_buildings = yes
+		# }
+
+		# target_type = {
+			# state = {
+				# is_owned_by = FROM
+			# }
+		# }
+
+		# #unit_requirements = {
+		# #	battalion_types = {
+		# #		infantry = { min = 3 }
+		# #	}
+		# #}
+
+		# unit_requirements = {
+			# battalion_types = {
+				# militia = { min = 3 }
+			# }
+		# }
+
+		# #essential_equipment = {
+		# #
+		# #}
+
+		# additional_equipment = {
+
+		# }
+
+		# success_factors = {
+			# success = {
+				# base = 0.25
+
+				# #INS_is_batavia_mod = {
+				# #	scope = state
+				# #	formula = {
+				# #		base = 0
+				# #		modifier = {
+				# #			add = 1
+				# #			is_capital = yes
+				# #		}
+				# #	}
+				# #	weight = -0.15
+				# #	reference = 1
+				# #	can_actor_affect = no
+				# #	can_target_affect = no
+				# #}
+
+				# INS_has_influence_mod = {
+					# scope = state
+					# formula = {
+						# base = 0
+						# modifier = {
+							# add = 1
+							# has_dynamic_modifier = {
+								# modifier = INS_state_militia_activity_1
+							# }
+						# }
+						# modifier = {
+							# add = 2
+							# has_dynamic_modifier = {
+								# modifier = INS_state_militia_activity_2
+							# }
+						# }
+						# modifier = {
+							# add = 3
+							# has_dynamic_modifier = {
+								# modifier = INS_state_militia_activity_3
+							# }
+						# }
+					# }
+					# weight = 0.3
+					# reference = 3
+				    # can_actor_affect = yes # If true, this modifier will be included in the list of measures the actor country can take to increase the success chance of the raid
+				    # can_target_affect = yes # If true, this modifier will be included in the list of countermeasures the target country can take to decreases the success chance of the raid
+				# }
+
+				# INS_infrastructure_modifier_militia = {
+					# scope = state
+					# formula = {
+						# base = 1
+						# modifier = {
+							# factor = infrastructure_level
+						# }
+					# }
+					# weight = -0.15
+					# reference = 5
+				    # can_actor_affect = no # If true, this modifier will be included in the list of measures the actor country can take to increase the success chance of the raid
+				    # can_target_affect = yes # If true, this modifier will be included in the list of countermeasures the target country can take to decreases the success chance of the raid
+				# }
+
+				# INS_militia_leader_level_modifier = {
+					# scope = character
+					# formula = {
+						# base = 0
+						# modifier = {
+							# factor = level
+						# }
+					# }
+					# weight = 0.1
+					# reference = 5
+				    # can_actor_affect = no # If true, this modifier will be included in the list of measures the actor country can take to increase the success chance of the raid
+				    # can_target_affect = yes # If true, this modifier will be included in the list of countermeasures the target country can take to decreases the success chance of the raid
+				# }
+
+				# INS_defense_modifier = {
+					# scope = state
+					# formula = {
+						# base = 0
+
+						# # +40% if no divs at all, having a single div makes it only a small bonus
+						# modifier = {
+							# OR = {
+								# owner = {
+									# divisions_in_state = {
+										# size > 0
+										# state = PREV
+									# }
+								# }
+								# owner = {
+									# overlord = {
+										# divisions_in_state = {
+											# size > 0
+											# state = PREV.PREV
+										# }
+									# }
+								# }
+							# }
+							# add = 6
+						# }
+
+						# # 2 total divs makes it +/-0%
+						# modifier = {
+							# OR = {
+								# owner = {
+									# divisions_in_state = {
+										# size > 1
+										# state = PREV
+									# }
+								# }
+								# owner = {
+									# overlord = {
+										# divisions_in_state = {
+											# size > 1
+											# state = PREV.PREV
+										# }
+									# }
+								# }
+								# AND = {
+									# owner = {
+										# divisions_in_state = {
+											# size > 0
+											# state = PREV
+										# }
+									# }
+									# owner = {
+										# overlord = {
+											# divisions_in_state = {
+												# size > 0
+												# state = PREV.PREV
+											# }
+										# }
+									# }
+								# }
+							# }
+							# add = 4
+						# }
+
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 1
+									# state = PREV
+								# }
+							# }
+							# add = 1
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 2
+									# state = PREV
+								# }
+							# }
+							# add = 2
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 3
+									# state = PREV
+								# }
+							# }
+							# add = 3
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 4
+									# state = PREV
+								# }
+							# }
+							# add = 4
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 5
+									# state = PREV
+								# }
+							# }
+							# add = 5
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 6
+									# state = PREV
+								# }
+							# }
+							# add = 6
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 7
+									# state = PREV
+								# }
+							# }
+							# add = 7
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 8
+									# state = PREV
+								# }
+							# }
+							# add = 8
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size = 9
+									# state = PREV
+								# }
+							# }
+							# add = 9
+						# }
+						# modifier = {
+							# owner = {
+								# divisions_in_state = {
+									# size > 9
+									# state = PREV
+								# }
+							# }
+							# add = 10
+						# }
+
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 1
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 1
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 2
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 2
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 3
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 3
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 4
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 4
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 5
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 5
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 6
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 6
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 7
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 7
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 8
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 8
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size = 9
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 9
+						# }
+						# modifier = {
+							# owner = {
+								# overlord = {
+									# divisions_in_state = {
+										# size > 9
+										# state = PREV.PREV
+									# }
+								# }
+							# }
+							# add = 10
+						# }
+
+						# # the AI is a cheater (and doesnt know how to do a feint uprising)
+						# modifier = {
+							# owner = {
+								# is_ai = yes
+							# }
+							# factor = 0.9
+						# }
+
+						# # the AI is a huge cheater if there's no consequences to a player
+						# modifier = {
+							# owner = {
+								# is_ai = yes
+							# }
+							# HOL = {
+								# is_ai = yes
+							# }
+							# factor = 0.75
+						# }
+					# }
+					# weight = -0.4
+					# start_weight = 0.4
+					# reference = 20
+				    # can_actor_affect = yes # If true, this modifier will be included in the list of measures the actor country can take to increase the success chance of the raid
+				    # can_target_affect = yes # If true, this modifier will be included in the list of countermeasures the target country can take to decreases the success chance of the raid
+				# }
+
+				# # Raiding unit modifiers
+				# experience = {
+					# weight = 0.3
+					# start_weight = -0.15
+					# reference = 0.5
+				# }
+
+				# organisation = {
+					# weight = 0.05
+					# start_weight = -0.1
+					# reference = 100
+				# }
+				# strength = {
+					# weight = 0.05
+					# start_weight = -0.1
+					# reference = 1
+				# }
+				# recon = {
+					# weight = 0.025
+					# reference = 10
+				# }
+
+				# ### Target Modifiers
+
+				# resistance = {
+					# reference = 100
+					# start_reference = 15 # Resistance below 15 doesn't help
+					# weight = 0.25
+				# }
+				# air_superiority = {
+					# reference = 1
+					# start_reference = 0.5
+					# weight = 0.2
+				# }
+
+				# intel = {
+					# weight = 0.15
+					# #start_reference = 50
+					# reference = 100
+				# }
+			# }
+		# }
+
+		# success_levels = {
+			# failure = {
+				# victim_effects = {
+					# var:victim_country = {
+						# if = {
+							# limit = {
+								# is_subject = no #ie you are the netherlands. if not then this shouldnt happen
+							# }
+							# country_event = {
+								# id = INS_revolution_events.11
+								# hours = 4
+							# }
+						# }
+						# else = {
+							# overlord = {
+								# country_event = {
+									# id = INS_revolution_events.11
+									# hours = 4
+								# }
+							# }
+						# }
+					# }
+				# }
+				# actor_effects = {
+				# }
+				# division_effects = {
+					# destroy_unit = yes
+					# add_divisional_commander_xp = 50
+				# }
+				# visual_effect = {
+					# entity = "raid_failed_entity"
+					# animation = "attack"
+				# }
+			# }
+
+			# limited_success = {
+				# victim_effects = {
+					# var:target_state = {
+						# if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+							# }
+							
+						# }
+						# else = {
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+						# }
+						# save_global_event_target_as = INS_temp_occupied_state
+					# }
+					# var:victim_country = {
+						# if = {
+							# limit = {
+								# is_subject = no #ie you are the netherlands. if not then this shouldnt happen
+							# }
+							# country_event = {
+								# id = INS_revolution_events.12
+								# hours = 4
+							# }
+						# }
+						# else = {
+							# overlord = {
+								# country_event = {
+									# id = INS_revolution_events.12
+									# hours = 4
+								# }
+							# }
+						# }
+					# }
+				# }
+				# actor_effects = {
+				# }
+				# division_effects = {
+					# destroy_unit = yes
+					# add_divisional_commander_xp = 50
+				# }
+				# visual_effect = {
+					# entity = "land_raids_limited_success_entity"
+					# animation = "attack"
+				# }
+			# }
+			# success = {
+				# victim_effects = {
+					# var:target_state = {
+						# if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+							# }
+							# # do nothing
+						# }
+						# else = {
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+						# }
+						# save_global_event_target_as = INS_temp_occupied_state
+
+						# if = {
+							# limit = {
+								# INS = { has_country_flag = INS_revolution_has_started }
+							# }
+							# transfer_state_to = INS
+							# indonesia_increase_escalation_1_effect = yes
+						# }
+					# }
+					# var:victim_country = {
+						# if = {
+							# limit = {
+								# is_subject = no #ie you are the netherlands. if not then this shouldnt happen
+							# }
+							# country_event = {
+								# id = INS_revolution_events.14
+								# hours = 4
+							# }
+						# }
+						# else = {
+							# overlord = {
+								# country_event = {
+									# id = INS_revolution_events.14
+									# hours = 4
+								# }
+							# }
+						# }
+					# }
+				# }
+				# actor_effects = {
+				# }
+				# division_effects = {
+					# destroy_unit = yes
+					# add_divisional_commander_xp = 50
+				# }
+				# visual_effect = {
+					# entity = "land_raids_success_entity"
+					# animation = "attack"
+				# }
+			# }
+			# critical_success = {
+				# victim_effects = {
+					# var:target_state = {
+						# if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_1 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# }
+							# remove_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+						# }
+						# else_if = {
+							# limit = {
+								# has_dynamic_modifier = { modifier = INS_state_militia_activity_3 }
+							# }
+							# # do nothing
+						# }
+						# else = {
+							# add_dynamic_modifier = { modifier = INS_state_militia_activity_2 }
+						# }
+						# save_global_event_target_as = INS_temp_occupied_state
+
+						# if = {
+							# limit = {
+								# INS = { has_country_flag = INS_revolution_has_started }
+							# }
+							# transfer_state_to = INS
+							# indonesia_increase_escalation_1_effect = yes
+						# }
+					# }
+				# }
+				# actor_effects = {
+				# }
+				# division_effects = {
+					# destroy_unit = yes
+					# add_divisional_commander_xp = 50
+				# }
+				# visual_effect = {
+					# entity = "land_raids_critical_success_entity"
+					# animation = "attack"
+				# }
+			# }
+		# }
+	# }
+
+}

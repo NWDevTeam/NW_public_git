@@ -30,7 +30,7 @@ types = {
 		fire_only_once = yes
 
 		visible = {
-			has_completed_focus = GER_expansion_of_luftwaffe #Todo_Danne change to Fallschirmsjäger
+			has_completed_focus = GER_expansion_of_luftwaffe
 			has_tech = paratroopers
 		}
 
@@ -76,7 +76,7 @@ types = {
 		    type = air
 		}
         unit_model = {
-            type = transport
+            equipment = air_transport
         }
 
 		starting_point = {
@@ -317,6 +317,449 @@ types = {
 				# Other unit effects
 				division_effects = {
 					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_critical_success_entity"
+					animation = "attack"
+					}
+			}
+		}
+	}
+	
+	CZE_sokolov_raid_pfot = { #Pfot, for GER
+
+		days_to_prepare = 30
+
+		category = paratrooper_raids
+		custom_map_icon = GFX_raid_type_icon_other_raid
+
+		ai_will_do = {
+			base = 0.1 # Meh, we can handle the Czechs without cheap tricks
+
+			modifier = {
+				# contexts I wouldn't want to do this
+				factor = 0
+				OR = {
+					is_in_faction_with = CZE
+					date > 1941.1.1
+					CZE = {
+						OR = {
+							exists = no
+							surrender_progress > 0.15 #we broke them elsewhere
+						}
+					}
+				}
+			}
+			# modifier = { #No Quarter for a player on a high difficulty
+			# 	add = 100
+			# 	surrender_progress < 0.05
+			# 	CZE = {
+			# 		is_ai = no
+			# 		difficulty > 2
+			# 	}
+			# }
+			modifier = { #Might want to start thinking about speeding this whole thing up
+				add = 5
+				date > 1938.11.11
+				surrender_progress < 0.05
+				CZE = {
+					surrender_progress < 0.05
+				}
+				casualties_inflicted_by = {
+    				opponent = CZE
+    				thousands > 5
+				}
+			}
+			modifier = { #Gave me a bloody nose
+				factor = 10
+				date > 1939.3.3
+				surrender_progress < 0.05
+				CZE = {
+					surrender_progress < 0.05
+				}
+				casualties_inflicted_by = {
+    				opponent = CZE
+    				thousands > 15
+				}
+			}
+			modifier = { #no more mister nice guy
+				factor = 25
+				date > 1939.5.5
+				surrender_progress < 0.05
+				CZE = {
+					surrender_progress < 0.05
+				}
+				casualties_inflicted_by = {
+    				opponent = CZE
+    				thousands > 74
+				}
+			}
+			# modifier = { #please cease this nonsense
+			# 	factor = 25
+			# 	date > 1939.7.7
+			# 	surrender_progress < 0.05
+			# 	CZE = {
+			# 		surrender_progress < 0.03
+			# 	}
+			# 	casualties_inflicted_by = {
+    		# 		opponent = CZE
+    		# 		thousands > 199
+			# 	}
+			# }
+			# modifier = { #ouch :(
+			# 	factor = 50
+			# 	date > 1939.9.9
+			# 	surrender_progress < 0.05
+			# 	CZE = {
+			# 		surrender_progress < 0.02
+			# 	}
+			# 	casualties_inflicted_by = {
+    		# 		opponent = CZE
+    		# 		thousands > 299
+			# 	}
+			# }
+		}
+
+		fire_only_once = yes #We got one shot at this stunt
+
+		command_power = 20
+
+		allowed = {
+			has_dlc = "Peace For Our Time"
+			original_tag = GER
+		}
+
+		fire_only_once = yes
+
+		visible = {
+			has_completed_focus = GER_expansion_of_luftwaffe
+			has_tech = paratroopers
+		}
+
+		show_target = {
+			69 = {
+				is_owned_and_controlled_by = CZE
+			}
+		}
+
+		available = {
+			69 = {
+				is_owned_and_controlled_by = CZE
+			}
+		}
+
+		launchable = {
+			has_war_with = CZE
+		}
+
+		unit_requirements = {
+			battalion_types = {
+			 	paratrooper = { min = 1 }
+			}
+		}
+		essential_equipment = {
+			transport_plane_equipment = 5
+		}
+
+		additional_equipment = {
+			#list of equipment archetypes and numbers
+			support_equipment = 100
+			infantry_equipment = 250
+		}
+
+		target_type = {
+			province = 6470
+		}
+		target_icon = GFX_eben_emael_target_icon
+		target_loc_key = raid_type_CZE_sokolov_raid_pfot
+
+		launch_sound = raid_launch_paratrooper
+		arrow = {
+		    type = air
+		}
+        unit_model = {
+            equipment = air_transport
+        }
+
+		starting_point = {
+		    types = { air_base }
+		}
+
+		success_factors = {
+			success = {
+				base = 0.55
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.25
+					start_weight = -0.25
+					reference = 1.0
+				}
+
+				organisation = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 100
+				}
+				strength = {
+					weight = 0.1
+					start_weight = -0.15
+					reference = 1
+				}
+				recon = {
+					weight = 0.10
+					reference = 10
+				}
+
+				### Target Modifiers
+				air_superiority = { #Very important here
+					reference = 1
+					start_reference = 0.5
+					weight = 0.25
+				}
+				anti_air = { #These Czech fort AA's have hands
+					reference = 5
+					weight = -0.25
+				}
+				interception = {
+					reference = 200 # More than 250 fighters won't really make any difference
+					weight = -0.2
+				}
+				enemy_units = {
+					reference = 3 # More than 3 DIVs in the target Province shouldn't make any difference
+					weight = -0.5
+				}
+				intel = {
+					weight = 0.25
+					#start_reference = 50
+					reference = 100
+				}
+			}
+
+			disaster = {
+				base = 0.01
+
+       			enemy_units = {
+					reference = 5 #You are jumping on a lot of guys
+					weight = 0.24
+				}
+    		}
+		}
+
+		success_levels = {
+			failure = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { bunker > 0 }
+							damage_building = {
+								type = bunker
+								damage = 1 # levels of damage
+								province = 6470
+								repair_speed_modifier = -0.10
+							}
+							damage_building = {
+								type = bunker
+								damage = 1 # levels of damage
+								province = 424
+								repair_speed_modifier = -0.10
+							}
+							damage_building = {
+								type = bunker
+								damage = 1 # levels of damage
+								province = 3585
+								province = 424
+								repair_speed_modifier = -0.10
+							}
+						}
+					}
+			    }
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.95
+						str_damage = 0.95
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.25
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 25
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+					}
+			}
+			limited_success = {
+			    victim_effects = {
+					var:target_province = {
+						IF = {
+							limit = { bunker > 0 }
+							damage_building = {
+								type = bunker
+								damage = 3 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.1
+							}
+						}
+					}
+					var:target_state = {
+						add_dynamic_modifier = {
+							modifier = sokolov_raided_limited_success_modifier
+							days = 30
+						}
+					}
+			    }
+				actor_effects = {
+
+					var:actor_country = {
+						add_timed_idea = {
+							idea = CZE_sokolov_raid_pfot_limited_success_ns
+							days = 30
+						}
+					}
+
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.65
+						str_damage = 0.60
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.1
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_limited_success_entity"
+					animation = "attack"
+					}
+			}
+			success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { bunker > 0 }
+							damage_building = {
+								type = bunker
+								damage = 5 # levels of damage
+								province = 6470
+								repair_speed_modifier = -0.25
+							}
+							damage_building = {
+								type = bunker
+								damage = 5 # levels of damage
+								province = 424
+								repair_speed_modifier = -0.25
+							}
+							damage_building = {
+								type = bunker
+								damage = 5 # levels of damage
+								province = 3585
+								repair_speed_modifier = -0.25
+							}
+						}
+
+						add_dynamic_modifier = {
+							modifier = sokolov_raided_success_modifier
+							days = 90
+						}
+					}
+			    }
+				actor_effects = {
+
+					var:actor_country = {
+						add_timed_idea = {
+							idea = CZE_sokolov_raid_pfot_success_ns
+							days = 90
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.45
+						str_damage = 0.30
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 75
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_success_entity"
+					animation = "attack"
+					}
+			}
+			critical_success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { bunker > 1 }
+							damage_building = {
+								type = bunker
+								damage = 6 # levels of damage
+								province = 6470
+								repair_speed_modifier = -0.25
+							}
+							damage_building = {
+								type = bunker
+								damage = 6 # levels of damage
+								province = 424
+								repair_speed_modifier = -0.25
+							}
+							damage_building = {
+								type = bunker
+								damage = 6 # levels of damage
+								province = 3585
+								repair_speed_modifier = -0.25
+							}
+						}
+
+						add_dynamic_modifier = {
+							modifier = sokolov_raided_critical_modifier
+							days = 90
+						}
+					}
+			    }
+				actor_effects = {
+
+					var:actor_country = {
+						add_timed_idea = {
+							idea = CZE_sokolov_raid_pfot_critical_success_ns
+							days = 90
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.25
+						str_damage = 0.15
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 100
 				}
 				visual_effect = {
 					entity = "air_raids_paradrop_critical_success_entity"

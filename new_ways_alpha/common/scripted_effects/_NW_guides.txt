@@ -1,3 +1,22 @@
+# character, ideology, start_focus
+NW_guides_add_character = {
+	add_to_variable = { global.NW_guides_character_scope_count = 1 }
+	if = {
+		limit = { check_variable = { global.NW_guides_character_scope_count = global.states^num } }
+		set_variable = { global.NW_guides_character_scope_count = 1 }
+		log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): обнуление счетчика (NW_guides_add_character)"
+	}
+
+	add_to_array = { NW_guide_character_array = global.NW_guides_character_scope_count }
+	var:global.NW_guides_character_scope_count = {
+		set_variable = { NW_character_token@ROOT = character }
+		set_variable = { NW_ideology_token@ROOT = ideology }
+		set_variable = { NW_focus_token@ROOT = start_focus }
+	}
+	
+	NW_guides_set_x_y_position = yes
+}
+
 # x_frame, y_frame
 NW_guides_set_x_y_position = {
 	# clamp_temp_variable = { var = x_frame min = 0 max = 4 } # макс 5 лидеров в линию
@@ -29,4 +48,899 @@ NW_guides_set_x_y_position = {
 	add_to_temp_variable = { y = 122 } # стартовая позиция leader_frame2
 	add_to_array = { _NW_guides_ln_x = x }
 	add_to_array = { _NW_guides_ln_y = y }
+}
+
+# character
+NW_guides_get_character_scope_for_token = {
+	for_each_scope_loop = {
+		array = NW_guide_character_array
+		break = b
+		
+		if = {
+			limit = {
+				check_variable = { NW_character_token@ROOT = character }
+			}
+			set_temp_variable = { character = THIS.id }
+			set_temp_variable = { b = 1 }
+		}
+	}
+}
+
+# root_character, swap_character
+NW_guides_set_swap_character_data = {
+	var:root_character = {
+		set_variable = { NW_swap_character@ROOT = swap_character }
+		# clr_state_flag = NW_guides_character_hidden@ROOT
+	}
+	var:swap_character = {
+		set_state_flag = NW_guides_character_hidden@ROOT
+	}
+}
+
+# character
+NW_guides_set_first_in_list = {
+	var:character = {
+		clr_state_flag = NW_guides_character_hidden@ROOT
+	}
+}
+
+###
+
+JAP_guides_setup = {	
+	## Кабинет Масаки (1 ветка)
+	set_temp_variable = { character = token:JAP_Jinzaburo_Masaki }			# токен персонажа
+	set_temp_variable = { ideology = token:despotism }						# его субка
+	set_temp_variable = { start_focus = token:JAP_Jinzaburo_Masaki_office } # первый фокус пути
+	set_temp_variable = { x_frame = 2 }										# x координата на схеме
+	set_temp_variable = { y_frame = 1 }										# у координата на схеме
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Сделать Японию Россией»
+	set_temp_variable = { character = token:JAP_Yasuhito } # порядок на самом деле не важен, главное просто не запутайтесь при создании связей кто в каких переменных лежит
+	set_temp_variable = { ideology = token:pure_socialism }
+	set_temp_variable = { start_focus = token:JAP_invite_Ikki_Kita }
+	set_temp_variable = { x_frame = 0 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Ikki_Kita }
+	set_temp_variable = { ideology = token:pure_socialism }
+	set_temp_variable = { start_focus = token:JAP_invite_Ikki_Kita }
+	set_temp_variable = { x_frame = 0 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	# Ниже описана связь гайдов (если несколько персонажей на один гайд. чтобы кароче кнопка перелистывания персонажей появилась)
+	set_temp_variable = { character = token:JAP_Yasuhito }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ikki_Kita
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ikki_Kita
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ikki_Kita
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Демократ под маской монархиста»
+	set_temp_variable = { character = token:JAP_Kodzaburo_Tachibana }
+	set_temp_variable = { ideology = token:farmer_communalism }
+	set_temp_variable = { start_focus = token:JAP_patriotic_reform }
+	set_temp_variable = { x_frame = 1 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Убей в себе государство»
+	set_temp_variable = { character = token:JAP_Yasuhito_2 }
+	set_temp_variable = { ideology = token:agrarian_nationalism }
+	set_temp_variable = { start_focus = token:JAP_fight_against_statism }
+	set_temp_variable = { x_frame = 2 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Jinzaburo_Masaki_2 }
+	set_temp_variable = { ideology = token:agrarian_nationalism }
+	set_temp_variable = { start_focus = token:JAP_fight_against_statism }
+	set_temp_variable = { x_frame = 2 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Yasuhito_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Jinzaburo_Masaki_2
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Jinzaburo_Masaki_2
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Jinzaburo_Masaki_2
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Little Dark Age»
+	set_temp_variable = { character = token:JAP_Teiichi_Suzuki }
+	set_temp_variable = { ideology = token:military_japonism }
+	set_temp_variable = { start_focus = token:JAP_the_rule_of_the_primordial_Kodokha }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu }
+	set_temp_variable = { ideology = token:military_japonism }
+	set_temp_variable = { start_focus = token:JAP_the_rule_of_the_primordial_Kodokha }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Jinzaburo_Masaki_3 }
+	set_temp_variable = { ideology = token:military_japonism }
+	set_temp_variable = { start_focus = token:JAP_the_rule_of_the_primordial_Kodokha }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Sadao_Araki }
+	set_temp_variable = { ideology = token:military_japonism }
+	set_temp_variable = { start_focus = token:JAP_the_rule_of_the_primordial_Kodokha }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Heisuke_Yanagava }
+	set_temp_variable = { ideology = token:military_japonism }
+	set_temp_variable = { start_focus = token:JAP_the_rule_of_the_primordial_Kodokha }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Teiichi_Suzuki }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Heisuke_Yanagava
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Jinzaburo_Masaki_3 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Sadao_Araki }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Heisuke_Yanagava
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Heisuke_Yanagava
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Купить у американцев верёвку для их повешения»
+	set_temp_variable = { character = token:JAP_Seishiro_Itagaki_2 }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_state_of_National_Defense }
+	set_temp_variable = { x_frame = 4 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Senjuro_Hayashi_2 }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_state_of_National_Defense }
+	set_temp_variable = { x_frame = 4 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Kanji_Ishiwara }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_state_of_National_Defense }
+	set_temp_variable = { x_frame = 4 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Seishiro_Itagaki_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kanji_Ishiwara
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Senjuro_Hayashi_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kanji_Ishiwara
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kanji_Ishiwara
+	NW_guides_set_first_in_list = yes
+	
+	## «Позитивные гномики Ишивары»
+	set_temp_variable = { character = token:JAP_Kimura_Takeo }
+	set_temp_variable = { ideology = token:social_liberalism }
+	set_temp_variable = { start_focus = token:JAP_formation_of_the_highest_culture }
+	set_temp_variable = { x_frame = 3 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	## «Купить у американцев верёвку для их повешения» (Итагаки)
+	set_temp_variable = { character = token:JAP_Seishiro_Itagaki }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_power_through_science }
+	set_temp_variable = { x_frame = 4 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	## «Безумный человек в очках»
+	set_temp_variable = { character = token:JAP_Masanobu_Cudzi }
+	set_temp_variable = { ideology = token:nichirenism }
+	set_temp_variable = { start_focus = token:JAP_fulfill_nichiren_prediction }
+	set_temp_variable = { x_frame = 5 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## Кабинет Хироты Коки (2 ветка)
+	set_temp_variable = { character = token:JAP_Hirota_Koki }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_Hirota_Koki_office }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 1 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «У Японской армии есть государство»
+	set_temp_variable = { character = token:JAP_Hideki_Todze }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_Hayasi_office }
+	set_temp_variable = { x_frame = 5 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Senjuro_Hayashi }
+	set_temp_variable = { ideology = token:state_of_national_defense }
+	set_temp_variable = { start_focus = token:JAP_Hayasi_office }
+	set_temp_variable = { x_frame = 5 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Hideki_Todze }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Senjuro_Hayashi
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Senjuro_Hayashi
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Senjuro_Hayashi
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Перерождённый Даймё»
+	set_temp_variable = { character = token:JAP_Fumimaro_Konoe }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_Prince_Konoe_office }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Связаться с плохой компанией»
+	set_temp_variable = { character = token:JAP_Aso_Hisashi_2 }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Inejiro_Asanuma_2 }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu_2 }
+	set_temp_variable = { ideology = token:fascism_ideology }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Yonezo_Maeda }
+	set_temp_variable = { ideology = token:japonism }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Seigo_Nakano_2 }
+	set_temp_variable = { ideology = token:totalism }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Fumimaro_Konoe_3 }
+	set_temp_variable = { ideology = token:national_syndicalism }
+	set_temp_variable = { start_focus = token:JAP_support_the_idea_of_Arima_Yeriyasu }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Aso_Hisashi_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fumimaro_Konoe_3
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Inejiro_Asanuma_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Yonezo_Maeda }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Seigo_Nakano_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fumimaro_Konoe_3
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fumimaro_Konoe_3
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Нормальный военный?»
+	set_temp_variable = { character = token:JAP_Esicuko_Tatekava }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_Ugaki_office }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Nobuyuki_Abe }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:authoritarian_democracy }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Dziro_Minami }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:authoritarian_democracy }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_kuniaki_koiso }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:authoritarian_democracy }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Kazushige_Ugaki }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:authoritarian_democracy }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Esicuko_Tatekava }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kazushige_Ugaki
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Nobuyuki_Abe }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Dziro_Minami }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_kuniaki_koiso }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kazushige_Ugaki
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Kazushige_Ugaki
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Не ломайте то, что работает»
+	set_temp_variable = { character = token:JAP_Hiranuma_Kiichiro }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_Kiitiro_Hiranuma_office }
+	set_temp_variable = { x_frame = 8 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Прыжок в будущее»
+	set_temp_variable = { character = token:JAP_Hiroo_Wada }
+	set_temp_variable = { ideology = token:governing_state_ideology }
+	set_temp_variable = { start_focus = token:JAP_Fumio_Goto_office }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Technocratic_Council }
+	set_temp_variable = { ideology = token:governing_state_ideology }
+	set_temp_variable = { start_focus = token:JAP_Fumio_Goto_office }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:MAN_nobusuke_kishi }
+	set_temp_variable = { ideology = token:governing_state_ideology }
+	set_temp_variable = { start_focus = token:JAP_Fumio_Goto_office }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Shigeru_Yoshida_bureaucrat }
+	set_temp_variable = { ideology = token:governing_state_ideology }
+	set_temp_variable = { start_focus = token:JAP_Fumio_Goto_office }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Hiroo_Wada }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Shigeru_Yoshida_bureaucrat
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Technocratic_Council }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:MAN_nobusuke_kishi }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Shigeru_Yoshida_bureaucrat
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Shigeru_Yoshida_bureaucrat
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## ... (Окада) (3 ветка)
+	set_temp_variable = { character = token:JAP_Keisuke_Okada }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_new_Okada_government }
+	set_temp_variable = { x_frame = 13 }
+	set_temp_variable = { y_frame = 1 }
+	NW_guides_add_character = yes
+	
+	## ... (первый Чуджи)
+	set_temp_variable = { character = token:JAP_Machida_Chuji_2 }
+	set_temp_variable = { ideology = token:social_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Machid_Chunji_office }
+	set_temp_variable = { x_frame = 13 }
+	set_temp_variable = { y_frame = 2 }
+	NW_guides_add_character = yes
+	
+	## Ёнай выпилен из гайдов
+	# set_temp_variable = { character = token:JAP_Mitsumasa_Yonai }
+	# set_temp_variable = { ideology = token:authoritarian_democracy }
+	# set_temp_variable = { start_focus = token:JAP_trial_on_Sabura_Aizawa }
+	# set_temp_variable = { x_frame = 14 }
+	# set_temp_variable = { y_frame = 2 }
+	# NW_guides_add_character = yes
+	
+	###
+	
+	## «Опасный союз»
+	set_temp_variable = { character = token:JAP_Fumimaro_Konoe_2 }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_trial_on_Sabura_Aizawa }
+	set_temp_variable = { x_frame = 10 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Fusanosuke_Kuhara }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_Kuharo_office }
+	set_temp_variable = { x_frame = 10 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Fumimaro_Konoe_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Пересмотр капитализма»
+	set_temp_variable = { character = token:JAP_Seigo_Nakano }
+	set_temp_variable = { ideology = token:totalism }
+	set_temp_variable = { start_focus = token:JAP_Nakano_office }
+	set_temp_variable = { x_frame = 11 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	## «Киберпанк 1947»
+	set_temp_variable = { character = token:JAP_Chikuhei_Nakajima }
+	set_temp_variable = { ideology = token:oligarchism }
+	set_temp_variable = { start_focus = token:JAP_Nakadzima_office }
+	set_temp_variable = { x_frame = 12 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	## «Искупление за грехи»
+	set_temp_variable = { character = token:JAP_Ichiro_Hatoyama }
+	set_temp_variable = { ideology = token:liberalism }
+	set_temp_variable = { start_focus = token:JAP_Hatoyama_office }
+	set_temp_variable = { x_frame = 13 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Благословенная социал-демократия»
+	set_temp_variable = { character = token:JAP_Tetsu_Katayama }
+	set_temp_variable = { ideology = token:socialism }
+	set_temp_variable = { start_focus = token:JAP_Isu_office }
+	set_temp_variable = { x_frame = 14 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Yoshihika_Tokugawa }
+	set_temp_variable = { ideology = token:socialism }
+	set_temp_variable = { start_focus = token:JAP_Isu_office }
+	set_temp_variable = { x_frame = 14 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Abe_Iso }
+	set_temp_variable = { ideology = token:socialism }
+	set_temp_variable = { start_focus = token:JAP_Isu_office }
+	set_temp_variable = { x_frame = 14 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Tetsu_Katayama }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Abe_Iso
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Yoshihika_Tokugawa }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Abe_Iso
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Abe_Iso
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Такие разные национал-социалисты»
+	set_temp_variable = { character = token:JAP_Jotaro_Kawakami }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_Hisasi_office }
+	set_temp_variable = { x_frame = 15 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Inejiro_Asanuma }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_Hisasi_office }
+	set_temp_variable = { x_frame = 15 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Aso_Hisashi }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_Hisasi_office }
+	set_temp_variable = { x_frame = 15 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Jotaro_Kawakami }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Aso_Hisashi
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Inejiro_Asanuma }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Aso_Hisashi
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Aso_Hisashi
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Plastic war»
+	set_temp_variable = { character = token:JAP_Yuki_Taketi }
+	set_temp_variable = { ideology = token:national_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Nagaya_office }
+	set_temp_variable = { x_frame = 16 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Ryutaro_Nagai }
+	set_temp_variable = { ideology = token:national_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Nagaya_office }
+	set_temp_variable = { x_frame = 16 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Yuki_Taketi }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ryutaro_Nagai
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ryutaro_Nagai
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Ryutaro_Nagai
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «I can't stop the liberalization»
+	set_temp_variable = { character = token:JAP_Kenzo_Matsumura }
+	set_temp_variable = { ideology = token:social_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Machid_Chunji_second_office }
+	set_temp_variable = { x_frame = 17 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Saito_Takao }
+	set_temp_variable = { ideology = token:social_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Machid_Chunji_second_office }
+	set_temp_variable = { x_frame = 17 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Machida_Chuji }
+	set_temp_variable = { ideology = token:social_liberalism }
+	set_temp_variable = { start_focus = token:JAP_Machid_Chunji_second_office }
+	set_temp_variable = { x_frame = 17 }
+	set_temp_variable = { y_frame = 3 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Kenzo_Matsumura }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Machida_Chuji
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { character = token:JAP_Saito_Takao }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Machida_Chuji
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Machida_Chuji
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Аристократическая крепость»
+	set_temp_variable = { character = token:JAP_Hiranuma_Kiichiro_2 }
+	set_temp_variable = { ideology = token:authoritarian_democracy }
+	set_temp_variable = { start_focus = token:JAP_AHT_is_public_organization }
+	set_temp_variable = { x_frame = 4 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Соцдемы с национальным уклоном»
+	# set_temp_variable = { character = token:JAP_Inejiro_Asanuma_3 }	TODO
+	# set_temp_variable = { ideology = token:national_socialism }
+	# set_temp_variable = { start_focus = token:JAP_Hisasi_office }
+	# set_temp_variable = { x_frame = 5 }
+	# set_temp_variable = { y_frame = 5 }
+	# NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Inejiro_Asanuma_3 }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 5 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Современные проблемы требуют современных решений»
+	# set_temp_variable = { character = token:JAP_Kingoro_Hasimoto }	TODO
+	# set_temp_variable = { ideology = token:national_socialism }
+	# set_temp_variable = { start_focus = token:JAP_Hisasi_office }
+	# set_temp_variable = { x_frame = 6 }
+	# set_temp_variable = { y_frame = 5 }
+	# NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Kingoro_Hasimoto }
+	set_temp_variable = { ideology = token:national_socialism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 6 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	###
+	
+	## «Истинное обновление Японии»
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu_3 }
+	set_temp_variable = { ideology = token:japonism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Seigo_Nakano_3 }
+	set_temp_variable = { ideology = token:totalism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 7 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Nobumasa_Suecegu_3 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Seigo_Nakano_3
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Seigo_Nakano_3
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Seigo_Nakano_3
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Сделать Японию великой снова»
+	set_temp_variable = { character = token:MAN_nobusuke_kishi_2 }
+	set_temp_variable = { ideology = token:japonism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 8 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Yosuke_Matsuoka }
+	set_temp_variable = { ideology = token:japonism }
+	set_temp_variable = { start_focus = token:JAP_radicals_Set_new_Rules }
+	set_temp_variable = { x_frame = 8 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:MAN_nobusuke_kishi_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Yosuke_Matsuoka
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Yosuke_Matsuoka
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Yosuke_Matsuoka
+	NW_guides_set_first_in_list = yes
+	
+	###
+	
+	## «Всем правит популизм»
+	set_temp_variable = { character = token:JAP_Ryutaro_Nagai_2 }
+	set_temp_variable = { ideology = token:despotism }
+	set_temp_variable = { start_focus = token:JAP_new_chairs_old_people }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Fusanosuke_Kuhara_2 }
+	set_temp_variable = { ideology = token:despotism }
+	set_temp_variable = { start_focus = token:JAP_new_chairs_old_people }
+	set_temp_variable = { x_frame = 9 }
+	set_temp_variable = { y_frame = 5 }
+	NW_guides_add_character = yes
+	
+	set_temp_variable = { character = token:JAP_Ryutaro_Nagai_2 }
+	NW_guides_get_character_scope_for_token = yes
+	set_temp_variable = { root_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara_2
+	set_temp_variable = { swap_character = character }
+	NW_guides_set_swap_character_data = yes
+	#
+	set_temp_variable = { root_character = swap_character }
+	set_temp_variable = { swap_character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara_2
+	NW_guides_set_swap_character_data = yes
+	##
+	set_temp_variable = { character = global.NW_guides_character_scope_count } # сейчас здесь JAP_Fusanosuke_Kuhara_2
+	NW_guides_set_first_in_list = yes
 }

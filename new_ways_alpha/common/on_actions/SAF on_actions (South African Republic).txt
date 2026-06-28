@@ -1,0 +1,124 @@
+on_actions = {
+
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					tag = SAF
+					is_dynamic_country = no
+				}
+				if = {
+					limit = { has_country_leader = { character = SAF_daniel_francois_malan ruling_only = yes } }
+					HOL = { add_opinion_modifier = { target = PREV modifier = SAF_good_connections_in_holland_op } }
+					if = {
+						limit = { NOT = { has_country_flag = SAF_civil_war_flag } }
+						set_temp_variable = { SAF_tension_among_black_temp_var = 20 }
+						SAF_tension_among_black_effect = yes
+					}
+					if = {
+						limit = { has_power_balance = { id = SAF_confrontation_between_afrikaners_and_anglophiles } }
+						add_power_balance_value = { id = SAF_confrontation_between_afrikaners_and_anglophiles value = -0.20 }
+					}
+				}
+				else_if = {
+					limit = { has_country_leader = { character = SAF_charles_frampton_stallard ruling_only = yes } }
+					ENG = { add_opinion_modifier = { target = PREV modifier = SAF_supporter_of_the_british_crown_op } }
+					if = {
+						limit = { NOT = { has_country_flag = SAF_civil_war_flag } }
+						set_temp_variable = { SAF_tension_among_black_temp_var = -10 }
+						SAF_tension_among_black_effect = yes
+					}
+					if = {
+						limit = { has_power_balance = { id = SAF_confrontation_between_afrikaners_and_anglophiles } }
+						add_power_balance_value = { id = SAF_confrontation_between_afrikaners_and_anglophiles value = 0.20 }
+					}
+				}
+				else_if = {
+					limit = { has_country_leader = { character = SAF_jan_smuts ruling_only = yes } }
+					if = {
+						limit = { has_power_balance = { id = SAF_confrontation_between_afrikaners_and_anglophiles } }
+						add_power_balance_value = { id = SAF_confrontation_between_afrikaners_and_anglophiles value = 0.10 }
+					}
+					if = {
+						limit = { NOT = { has_country_flag = SAF_civil_war_flag } }
+						set_temp_variable = { SAF_tension_among_black_temp_var = -10 }
+						SAF_tension_among_black_effect = yes
+					}
+				}
+			}
+		}
+	}
+	on_startup = {
+		effect = {
+			if = {
+				limit = { has_start_date < 1936.01.02 }
+				SAF = {
+					country_event = { id = NW_SAF.4 }
+					country_event = { id = NW_SAF.67 days = 301 }
+					country_event = { id = NW_SAF.68 days = 309 }
+				}
+			}
+		}
+	}
+	on_weekly_SAF = {
+		effect = {
+			if = {
+				limit = { check_variable = { var = modifier@SAF_increase_in_tension_among_the_black_population_modifier value = 0 compare = not_equals } }
+				set_temp_variable = { SAF_tension_among_black_temp_var = modifier@SAF_increase_in_tension_among_the_black_population_modifier }
+				SAF_tension_among_black_effect = yes
+			}
+		}
+	}
+	on_weekly = {
+		effect = {
+			if = {
+				limit = { original_tag = SAF }
+				if = {
+					limit = { has_completed_focus = SAF_experimental_work_in_the_diamond_industry }
+					add_to_variable = { SAF_num_of_drills_var = SAF_num_of_drills_last_week }
+					SAF_factories_for_diamond_industry_check_effect = yes
+				}
+			}
+		}
+	}
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					FROM = { tag = SAB }
+					tag = SAF
+				}
+				if = {
+					limit = { has_subject = NMB }
+					FROM = { set_autonomy = { target = NMB autonomous_state = autonomy_integrated_puppet freedom_level = 0.5 } }
+				}
+				FROM = { country_event = { id = NW_SAF.25 days = 2 } }
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = { FROM.FROM = { has_dynamic_modifier = { modifier = SAF_homeland_state_modifier } } }
+				if = {
+					limit = {
+						FROM = {
+							tag = SAF
+							NOT = { has_country_flag = SAF_civil_war_flag }
+						}
+					}
+					FROM = { add_to_variable = { SAF_num_of_created_homelands = 1 } }
+				}
+				else_if = {
+					limit = {
+						ROOT = {
+							tag = SAF
+							NOT = { has_country_flag = SAF_civil_war_flag }
+						}
+					}
+					ROOT = { add_to_variable = { SAF_num_of_created_homelands = 1 } }
+				}
+			}
+		}
+	}
+}

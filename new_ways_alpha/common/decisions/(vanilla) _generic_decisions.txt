@@ -1,4 +1,5 @@
 political_actions = {
+
 	
 	targeted_race_for_the_bomb = {
 
@@ -20,13 +21,13 @@ political_actions = {
             NOT = { has_global_flag = first_nuke_dropped }
             NOT = { has_idea = race_for_the_bomb }
 		}
-		
+
 		#If this trigger matches a country.
 		target_trigger = {
 			#Target is FROM
 			FROM = {
         		NOT = { is_in_faction_with = ROOT }
-				has_tech = nuclear_reactor
+				is_special_project_completed = sp:sp_nuclear_reactor
 				any_owned_state = {
 					nuclear_reactor > 0
 				}
@@ -40,7 +41,7 @@ political_actions = {
             NOT = { has_idea = race_for_the_bomb }
             FROM = {
         		NOT = { is_in_faction_with = ROOT }
-				has_tech = nuclear_reactor
+				is_special_project_completed = sp:sp_nuclear_reactor
 				any_owned_state = {
 					nuclear_reactor > 0
 				}
@@ -54,13 +55,17 @@ political_actions = {
 
 		ai_will_do = {
 			factor = 1
+			# modifier = {
+				# factor = 0
+				# any_other_country = { is_special_project_completed = sp:sp_nuclear_bomb }
+			# }
 		}
 	}
 
 	improved_worker_conditions = {
 
 		icon = generic_industry
-
+		priority = 10
 		available = {
 			has_stability < 1.0
 			if = {
@@ -80,19 +85,12 @@ political_actions = {
 		fire_only_once = no
 
 		modifier = {
-			#political_power_cost = 0.3
-			stability_weekly = 0.005
-			consumer_goods_factor = 0.1
-			industrial_capacity_factory = -0.1
-		}
-		
-		modifier = {
 			stability_weekly = 0.005
 			consumer_goods_factor = 0.10
 			industrial_capacity_factory = -0.1
+			
 		}
 
-		
 		days_remove = 180
 		days_re_enable = 540
 
@@ -219,12 +217,19 @@ economy_decisions = {
 					}
 				}
 			}
+			if = {
+				limit = {
+					has_idea = FRA_protected_by_the_maginot_line
+				}
+				remove_ideas = FRA_protected_by_the_maginot_line
+			}
 		}
 	}
+
 	restructure_supply_system = { #one time boost to get a few cheap supply hubs
 
 		icon = GFX_decision_generic_wreckers
-		
+
 		visible = { 
 			OR = {
 				is_major = no
@@ -257,13 +262,14 @@ economy_decisions = {
 		}
 
 		cancel_trigger = {
-			check_variable = { node_goal < num_of_supply_nodes } #if the number of supply nodes exceeds the old number by +3, immediately cancel
+			
+			 check_variable = { node_goal < num_of_supply_nodes } #if the number of supply nodes exceeds the old number by +3, immediately cancel
 		}
 	}
 	seize_some_trains_woo = { #repeating train seize
-		
+
 		icon = GFX_decision_generic_train
-		
+
 		visible = { 
 			num_of_factories < 60
 		}
@@ -336,7 +342,6 @@ economy_decisions = {
 }
 
 propaganda_efforts = {
-
 	war_propaganda = {
 
 		icon = generic_prepare_civil_war
@@ -344,6 +349,7 @@ propaganda_efforts = {
 		available = {
 			NOT = { has_country_flag = war_propaganda_campaign_running }
 			has_war_support < 0.5
+			
 			if = {
 				limit = {
 					original_tag = SPR
@@ -403,7 +409,6 @@ propaganda_efforts = {
 		}
 	}
 	
-		
 	war_propaganda_casualties = {
 
 		icon = generic_prepare_civil_war
@@ -470,6 +475,10 @@ propaganda_efforts = {
 					has_idea = limited_conscription
 					has_idea = extensive_conscription
 				}
+			}
+			modifier = {
+				factor = 0
+				has_war_support > 0.9
 			}
 		}
 	}
@@ -599,6 +608,115 @@ propaganda_efforts = {
 		}
 	}
 	
+	war_propaganda_radio_industry = { 
+
+		icon = generic_prepare_civil_war
+
+		available = {
+			threat > 0.25
+			has_tech = radio
+		}
+
+		visible = {
+			if = {
+				limit = {
+					tag = SPR
+					has_dlc = "La Resistance"
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
+			if = {
+				limit = {
+					original_tag = SPR
+					has_dlc = "La Resistance"
+				}
+				has_global_flag = scw_over
+			}
+		}
+
+		fire_only_once = yes
+
+		cost = 75
+
+		complete_effect = {
+			add_war_support = 0.05
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 201
+				has_war_support < 0.6
+			}
+		}
+	}
+	
+	war_propaganda_film_industry = { 
+
+		icon = generic_prepare_civil_war
+
+		available = { 
+			has_war_with_non_exiled_country = yes
+			OR = {
+				is_major = yes
+				any_allied_country = {
+					is_major = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_government = fascism }
+				}
+				threat > 0.5
+			}
+			else = {
+				threat > 0.30
+			}
+		}
+
+		visible = {
+			if = {
+				limit = {
+					tag = SPR
+					has_dlc = "La Resistance"
+				}
+				NOT = {
+					has_idea = SPR_political_violence
+				}
+			}
+			if = {
+				limit = {
+					original_tag = SPR
+					has_dlc = "La Resistance"
+				}
+				has_global_flag = scw_over
+			}
+		}
+
+		fire_only_once = yes
+
+		cost = 100 
+
+		complete_effect = {
+			effect_tooltip = {
+				add_war_support = 0.10
+			}
+			hidden_effect = {
+				country_event = political.33
+				set_country_flag = has_taken_the_war_propaganda_film_industry_decision
+			}
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 201
+				has_war_support < 0.6
+			}
+		}
+	}
 	
 #	#Propaganda campaign against a country in offensive that has caused a lot of tension and started a war
 #	war_propaganda_against_warmonger = {
@@ -1308,7 +1426,7 @@ operations = {
 	#		set_war_support = 1
 	#	}
 	#}
-	
+
 	blow_suez_canal = {
 
 		icon = GFX_decision_generic_ignite_civil_war
@@ -1711,7 +1829,8 @@ war_measures = {
 
 		visible = {
 			has_defensive_war = yes
-			has_offensive_war = no			
+			has_offensive_war = no
+			num_of_controlled_states > 0
 		}
 
 		fire_only_once = no
@@ -1780,6 +1899,10 @@ war_measures = {
 			modifier = {
 				surrender_progress > 0.6
 				factor = 10
+			}
+			modifier = {
+				has_capitulated = yes
+				factor = 0
 			}
 		}
 
@@ -1928,7 +2051,7 @@ war_measures = {
 		cost = GER_war_bonds_var?50
 
 		modifier = {
-			consumer_goods_factor = -0.2
+			consumer_goods_factor = -0.20
 		}
 
 		ai_will_do = {
@@ -2008,7 +2131,7 @@ war_measures = {
 	diversify_special_forces = {
 
 		icon = GFX_decision_generic_military
-		
+
 		allowed = {
 			has_dlc = "Arms Against Tyranny"
 		}
@@ -2052,8 +2175,24 @@ war_measures = {
 					original_tag = RAJ
 				}
 			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_doctrine = mountaineers_1
+					has_doctrine = mountaineers_2
+					has_doctrine = marines_1
+					has_doctrine = marines_2
+					has_doctrine = paratroopers_1
+					has_doctrine = paratroopers_2
+					has_doctrine = jaeger_1
+					has_doctrine = jaeger_2
+					has_doctrine = shocktroops_1
+					has_doctrine = shocktroops_2
+				}
+			}
 		}
 	}
+	
 }
 
 foreign_politics = {
@@ -2076,17 +2215,17 @@ foreign_politics = {
         	FROM = {
         		NOT = { has_country_flag = rejected_withdrawing_attache }
         		NOT = { has_country_flag = rejected_withdrawing_attache@ROOT }
-				NOT = { has_country_flag = object_attache_going_on }
+        		NOT = { has_country_flag = object_attache_going_on }
         	}
         	has_war = yes
-			has_capitulated = no
+        	has_capitulated = no
         	NOT = { has_war_with = FROM }
         	any_enemy_country = {
 				has_attache_from = FROM
 			}
 			NOT = { has_government = anarchism }
 		}
-		
+
 		target_root_trigger = {
 			has_war = yes
 			has_capitulated = no
@@ -2115,6 +2254,7 @@ foreign_politics = {
 }
 
 economy_decisions = {
+
 	infrastructure_building_slot = {
 
 		icon = generic_construction
@@ -2128,10 +2268,10 @@ economy_decisions = {
 
         days_re_enable = 30
 
-        available = {
-            any_owned_state = {
-            	NOT = { has_state_flag = infrastructure_building_slot_flag }
-            	is_fully_controlled_by = ROOT
+		available = {
+			any_owned_state = {
+				NOT = { has_state_flag = infrastructure_building_slot_flag }
+				is_fully_controlled_by = ROOT
 				free_building_slots = {
 					building = infrastructure
 					size < 1
@@ -2139,11 +2279,11 @@ economy_decisions = {
             }
 			hidden_trigger = { NOT = { has_government = anarchism } }
         }
-
-        visible = {
+	
+		visible = {
 			any_owned_state = {
-            	NOT = { has_state_flag = infrastructure_building_slot_flag }
-            	is_fully_controlled_by = ROOT
+				NOT = { has_state_flag = infrastructure_building_slot_flag }
+				is_fully_controlled_by = ROOT
 				free_building_slots = {
 					building = infrastructure
 					size < 1
@@ -2173,7 +2313,7 @@ economy_decisions = {
 			}
 		}
 		ai_will_do = {
-			factor = 1
+			base = 1
 			modifier = {
 				factor = 10
 				any_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
@@ -2193,7 +2333,7 @@ economy_decisions = {
         fire_only_once = no
 
         available = {
-            IF = { 
+			IF = { 
 				limit = { 
 					OR = { 
 						has_dlc = "Man the Guns" 	
@@ -2205,12 +2345,12 @@ economy_decisions = {
 			ELSE = {
 				has_war = yes
 			}
-            any_owned_state = {
-            	NOT = { has_state_flag = war_building_slot_flag }
-            	is_fully_controlled_by = ROOT
+			any_owned_state = {
+				NOT = { has_state_flag = war_building_slot_flag }
+				is_fully_controlled_by = ROOT
             }
 			hidden_trigger = { NOT = { has_government = anarchism } }
-        }
+		}
 
         visible = {
 			has_war = yes
@@ -2298,7 +2438,7 @@ economy_decisions = {
 			}
 		}
 		ai_will_do = {
-			factor = 1
+			base = 1
 			modifier = {
 				factor = 10
 				all_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }

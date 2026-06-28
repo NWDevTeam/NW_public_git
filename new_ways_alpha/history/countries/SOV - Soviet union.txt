@@ -176,11 +176,14 @@ recruit_character = SOV_vasily_korzh
 recruit_character = SOV_sidor_kovpak
 recruit_character = SOV_lev_dovator
 recruit_character = SOV_pavel_rybalko
-
 recruit_character = SOV_abram_ioffe
 recruit_character = SOV_boris_stechkin
 recruit_character = SOV_arkady_nazarov
 recruit_character = SOV_vladimir_kotelnikov
+
+# Even without NSB so Germany can access them on historical
+recruit_character = SOV_pyotr_krasnov
+recruit_character = SOV_konstantin_nechayev
 
 if = {
 	limit = {
@@ -199,8 +202,6 @@ if = {
 	recruit_character = SOV_yan_nagursky
 	recruit_character = SOV_vasily_yanchenko
 	recruit_character = SOV_tsar_vladimir_kirillovich
-	recruit_character = SOV_pyotr_krasnov
-	recruit_character = SOV_konstantin_nechayev
 	recruit_character = SOV_aleksandr_rodzyanko
 	recruit_character = SOV_vladimir_kosmin
 	recruit_character = SOV_andrey_shkuro
@@ -395,13 +396,14 @@ if = {
 	SOV_martemyan_ryutin = {
 		set_character_flag = SOV_imprisoned_flag
 	}
-	
+
+
 	### PROPAGANDA ###
-	set_variable = { SOV_new_propaganda_campaign = 1 } #Used to pick a poster slot
+	set_variable = { SOV_new_propaganda_campaign = 0 } #Used to pick a poster slot
 	set_variable = { SOV_propaganda_campaign_to_remove = 0 } #Used to reset a poster slot
 	set_variable = { SOV_propaganda_locked_slot_index = 1 } #### === INSERT LOCKED SLOT INDEX IN STRIPE HERE === ####
 	set_variable = { SOV_propaganda_empty_slot_index = 2 } #### === INSERT EMPTY SLOT INDEX IN STRIPE HERE === ####
-	set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_empty_slot_index } #Set up the appropriate unlocked slot GFX
+	set_variable = { SOV_poster_left_icon_frame = SOV_propaganda_locked_slot_index } #Set up the appropriate empty slot GFX
 	set_variable = { SOV_poster_center_icon_frame = SOV_propaganda_locked_slot_index } #Set up the appropriate locked slot GFX
 	set_variable = { SOV_poster_right_icon_frame = SOV_propaganda_locked_slot_index } #Set up the appropriate locked slot GFX
 
@@ -434,6 +436,9 @@ if = {
 	set_variable = { SOV_propaganda_rebuild_to_glory_cost = SOV_propaganda_cost } # ID = 23
 	set_variable = { SOV_propaganda_peace_cost = SOV_propaganda_cost } # ID = 24
 	set_variable = { SOV_propaganda_happy_life_cost = SOV_propaganda_cost } # ID = 25
+
+	set_variable = { SOV_propaganda_campaigns_taken = 0 } #Used as a requirement for certain focuses
+
 
 	###PARANOIA ###
 	set_variable = { SOV_paranoia = 0 } # Intitial Paranoia value
@@ -539,6 +544,18 @@ if = {
 	set_variable = { SOV_fyp_consumer_goods_factor = 0.10 }
 	set_variable = { SOV_fyp_production_speed_industrial_complex_factor = 0.05 }
 
+	# TODO ??
+	# set_variable = { SOV_fyp_industrial_concern_cost_factor = -0.15 } #-> Third Five Year Plan
+	# set_variable = { SOV_fyp_local_resources_factor = 0 } #-> Increase State Reserves
+	# set_variable = { SOV_fyp_line_change_production_efficiency_factor = 0 } #-> Industrial Modernization
+	# set_variable = { SOV_fyp_production_speed_arms_factory_factor = 0.1 } #-> Shift to Armaments Production
+	# set_variable = { SOV_fyp_production_factory_start_efficiency_factor = 0 } #-> Optimize Production Lines
+	# set_variable = { SOV_fyp_industrial_capacity_factory = 0 } #-> Steel Casting Industry
+	# set_variable = { SOV_fyp_industrial_capacity_dockyard = 0 } #-> Steel Casting Industry
+	# set_variable = { SOV_fyp_fuel_gain_factor_from_states = 0 } #-> Oil Production
+	# set_variable = { SOV_fyp_production_oil_factor = 0 } #-> Oil Production
+	# set_variable = { SOV_fyp_industry_repair_factor = 0.1 } #-> Fourth Five Year Plan
+
 	add_dynamic_modifier = { modifier = SOV_second_five_year_plan_dynamic_modifier }
 
 
@@ -642,7 +659,7 @@ if = {
 	set_variable = { SOV_planned_economy_max_surrender_limit_offset = 0 } #Victory Over Devastation
 	set_variable = { SOV_planned_economy_industry_repair_factor = 0 } #Victory Over Devastation
 	set_variable = { SOV_planned_economy_consumer_goods_factor = 0 } #Victory Over Devastation
-	
+
 	add_ideas = {
 		strengthen_border_controls
 		home_of_revolution
@@ -650,6 +667,24 @@ if = {
 		SOV_politicized_military
 		
 		SOV_genrikh_yagoda #NKVD Chief (political advisor)
+	}
+	
+	set_grand_doctrine = mass_assault
+	set_grand_doctrine = new_fleet_in_being
+	
+	add_breakthrough_progress = {
+		specialization = specialization_land
+		value = 0.2
+	}
+
+	add_breakthrough_progress = {
+		specialization = specialization_naval
+		value = 0.2
+	}
+
+	add_breakthrough_progress = {
+		specialization = specialization_air
+		value = 0.3
 	}
 }
 
@@ -702,7 +737,7 @@ set_technology = {
 #### VANILLA ####
 ####
 
-capital = 219
+capital = 219 # Moscow
 
 starting_train_buffer = 3.0
 
@@ -743,6 +778,7 @@ if = {
 			basic_medium_airframe = 1
 			aircraft_construction = 1
 			air_torpedoe_1 = 1
+			bba_early_transport_plane = 1
 		}
 	else = {
 		set_air_oob = "SOV_1936_air_legacy"
@@ -752,6 +788,7 @@ if = {
 			early_bomber = 1
 			strategic_bomber1 = 1
 			naval_bomber1 = 1
+			early_transport_plane = 1
 		}
 	}
 }
@@ -774,8 +811,6 @@ set_technology = { #WARNING: Do not just remove techs from here -> It can impact
 	paratroopers = 1
 	gw_artillery = 1
 	interwar_antiair = 1
-	mass_assault = 1
-	fleet_in_being = 1
 	fuel_silos = 1
 	fuel_refining = 1
 	basic_train = 1
@@ -785,7 +820,6 @@ set_technology = { #WARNING: Do not just remove techs from here -> It can impact
 	# tech_flamethrower_support = 1
 	basic_motorcycle = 1
 }
-
 
 if = {
 	limit = {
@@ -868,15 +902,17 @@ set_popularities = {
 	communism = 88
 }
 
-create_faction = Comintern
+create_faction_from_template = faction_template_comintern
 add_to_faction = SOV
 add_to_faction = MON
 add_to_faction = TAN
+recognize_unrecognized_state = SIK
 
 if = {
 	limit = {
 		has_dlc = "La Resistance"
 	}
+
 	create_operative_leader = {
 		name = SOV_alexander_rado
 		GFX = GFX_portrait_alexander_rado
@@ -894,7 +930,7 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV ENG }
 	}
-	
+
 	create_operative_leader = {
 		name = SOV_richard_sorge
 		GFX = GFX_portrait_richard_sorge
@@ -903,7 +939,16 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV GER JAP }
 	}
-	
+
+	create_operative_leader = {
+		name = SOV_yan_chernyak
+		GFX = GFX_portrait_SOV_yan_chernyak
+		traits = { operative_linguist operative_infiltrator }
+		bypass_recruitment = no
+		available_to_spy_master = yes
+		nationalities = { SOV GER HUN ROM CZE SLO }
+	}
+
 	create_operative_leader = {
 		name = SOV_alexander_orlov
 		GFX = GFX_Portrait_alexander_orlov
@@ -912,7 +957,7 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV }
 	}
-	
+
 	create_operative_leader = {
 		name = SOV_nikolay_kuznetsov
 		GFX = GFX_Portrait_nikolai_kuznetsov
@@ -921,7 +966,7 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV GER }
 	}
-	
+
 	create_operative_leader = {
 		name = SOV_wilhelm_leman
 		portrait_path = "gfx/leaders/SOV/Portrait_Wilhelm_Leman.dds"
@@ -931,7 +976,7 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV GER }
 	}
-	
+
 	create_operative_leader = {
 		name = SOV_leopold_trepper
 		portrait_path = "gfx/leaders/SOV/Portrait_Leopold_Trepper.dds"
@@ -941,7 +986,7 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV BPL FRA }
 	}
-	
+
 	create_operative_leader = {
 		name = SOV_ivan_agayants
 		portrait_path = "gfx/leaders/SOV/Portrait_Ivan_Agayants.dds"
@@ -951,7 +996,9 @@ if = {
 		available_to_spy_master = yes
 		nationalities = { SOV PER }
 	}
+
 }
+
 
 ### VARIANTS ###
 # 1936 Start #
@@ -960,7 +1007,7 @@ if = {
 	limit = {
 		has_dlc = "By Blood Alone"
 	}
-	create_equipment_variant = {
+	create_equipment_variant = { #Note: There is a copy of this variant in Finnish Scripted Effects file (FIN_purchase_soviet_equipment_for_cw). Any changes here should also be applied there
 		name = "I-15" #
 		type = small_plane_airframe_0
 		modules = {
@@ -1020,7 +1067,7 @@ if = {
 	limit = {
 		has_dlc = "No Step Back"
 	}
-	create_equipment_variant = {
+	create_equipment_variant = { #Note: There is a copy of this variant in Finnish Scripted Effects file (FIN_purchase_soviet_equipment_for_cw). Any changes here should also be applied there
 		name = "T-27"
 		type = light_tank_chassis_0
 		parent_version = 0
@@ -1058,7 +1105,7 @@ if = {
 		}
 		icon = "gfx/interface/technologies/SOV_basic_light_tank.dds"
 	}
-	create_equipment_variant = {
+	create_equipment_variant = { #Note: There is a copy of this variant in Finnish National Focus file (FIN_bring_foreign_armor_experts). Any changes here should also be applied there
 		name = "BT-5"
 		type = light_tank_chassis_1
 		design_team = mio:SOV_morozov_design_bureau_organization
@@ -1075,6 +1122,7 @@ if = {
 			tank_nsb_armor_upgrade = 1
 		}
 		icon = "gfx/interface/technologies/SOV_imp_light_tank.dds"
+		model = "SOV_light_armor_entity" #More similar to BT-7 than to T-26
 	}
 	create_equipment_variant = {
 		name = "BT-7"
@@ -1094,6 +1142,7 @@ if = {
 		}
 		icon = "gfx/interface/technologies/SOV_imp_light_tank.dds"
 	}
+
 	create_equipment_variant = {
 		name = "T-28"
 		type = medium_tank_chassis_0
@@ -1114,6 +1163,7 @@ if = {
 			tank_nsb_engine_upgrade = 10
 		}
 		icon = "gfx/interface/technologies/SOV_basic_heavy_tank.dds"
+		model = "SOV_medium_gw_armor_0_entity"
 	}
 	create_equipment_variant = {
 		name = "T-35"
@@ -1361,7 +1411,7 @@ if = {
 	create_equipment_variant = {
 		name = "Komintern Class"
 		type = ship_hull_cruiser_1
-		name_group = SOV_CL_HISTORICAL
+		name_group = SOV_MINELAYERS_HISTORICAL
 		parent_version = 0
 		modules = {
 			fixed_ship_battery_slot = ship_light_medium_battery_1
@@ -1420,7 +1470,6 @@ if = {
 				fixed_ship_fire_control_system_slot = ship_fire_control_system_0
 				fixed_ship_radar_slot = empty
 				fixed_ship_engine_slot = cruiser_ship_engine_2
-				fixed_ship_secondaries_slot = empty
 				fixed_ship_armor_slot = ship_armor_cruiser_1
 				mid_1_custom_slot = ship_airplane_launcher_1
 				mid_2_custom_slot = ship_anti_air_1

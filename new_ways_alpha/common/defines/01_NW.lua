@@ -92,6 +92,7 @@ NDefines.NAir.MISSION_COMMAND_POWER_COSTS = {
 }
 
 -- Graphics
+NDefines.NGraphics.POLITICAL_GRID_SMALL_BOX_LIMIT = 100
 NDefines_Graphics.NGraphics.COMMANDGROUP_PRESET_COLORS_HSV = {
 	0.0/360.0, 1.0, 0.75,		--red
 	24.0/360.0, 1.0, 1.0,		--orange
