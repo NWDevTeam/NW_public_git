@@ -1933,7 +1933,13 @@ JAP_special_military_court_category = {
 	JAP_purge_of_Toseiha_members_in_the_Army = {
 		priority = 910
 		icon = JAP_promote_toseikha_faction_officers
-		visible = { has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_UNLOCK_flag }
+	#	visible = { has_country_flag = JAP_purge_of_Toseiha_members_in_the_Army_UNLOCK_flag }
+		available = { 
+			NOT = { 
+				has_country_leader = { character = JAP_Senjuro_Hayashi ruling_only = yes } 
+				has_completed_focus = JAP_Hayasi_office
+			} 
+		}
 		cost = 50
 		fire_only_once = yes
 		complete_effect = {
@@ -1978,6 +1984,12 @@ JAP_special_military_court_category = {
 	JAP_purge_of_Ugaki_members_in_the_Army = {
 		priority = 900
 		icon = JAP_promote_ugaki_faction_officers
+		available = { 
+			NOT = { 
+				has_country_leader = { character = JAP_Kazushige_Ugaki ruling_only = yes }
+				has_completed_focus = JAP_Ugaki_office
+			} 
+		}
 		cost = 50
 		fire_only_once = yes
 		complete_effect = {
@@ -3465,7 +3477,6 @@ JAP_hokusin_rock_category = {
 			562 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
 			574 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
 			644 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
-			887 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
 			637 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
 			763 = { controller = { OR = { tag = ROOT is_subject_of = ROOT } } }
 		}
@@ -3478,7 +3489,6 @@ JAP_hokusin_rock_category = {
 				transfer_state = 562
 				transfer_state = 574
 				transfer_state = 644
-				transfer_state = 887
 				transfer_state = 637
 				transfer_state = 763
 				ROOT = {
@@ -10028,7 +10038,10 @@ JAP_alliance_with_france_category = {
 	
 	JAP_exile_beyond_suez_decision = {
 		priority = 900
-		available = { can_declare_war_on = 1064.controller }
+		available = { 
+			can_declare_war_on = 1064.controller
+			1064 = { is_controlled_by = ENG }
+		}
 		visible = { has_completed_focus = JAP_exile_beyond_suez }
 		cost = 25
 		fire_only_once = yes
@@ -11565,7 +11578,7 @@ JAP_Ishiwara_power_balance_category = {
 		priority = 900
 		icon = JAP_lection_of_need_to_preserve_democracy 
 		allowed = { original_tag = JAP }
-		available = {  }
+		available = { has_country_flag = JAP_Ishiwara_leans_to_democracy }
 		fire_only_once = no
 		days_re_enable = 5
 		cost = 15
@@ -12259,6 +12272,9 @@ JAP_melancholy_of_prince_category = {
 		icon = JAP_discuss_with_kido
 		fire_only_once = no
 		available = {
+		}
+		visible = { 
+			has_active_mission = JAP_time_to_retirement
 		}
 		days_re_enable = 30
 		cost = 30 
@@ -13608,32 +13624,427 @@ JAP_preparing_Manchuria_for_war_category = {
 			add_ideas = JAP_logging_tanks_idea
 		}
 	}
-	
-	
-		#	328 = {
-		#		if = {
-		#			limit = {
-		#				free_building_slots = {
-		#					building = arms_factory
-		#					size > 0
-		#					include_locked = yes
-		#				}
-		#			}
-		#			add_extra_state_shared_building_slots = 1
-		#			add_building_construction = {
-		#				type = arms_factory
-		#				level = 1
-		#				instant_build = yes		
-		#			}
-		#		}
-		#	}
-		#	MAN = {
-		#		add_doctrine_cost_reduction = {
-		#			name = JAP_preparing_Manchuria_for_war
-		#			cost_reduction = 0.5
-		#			uses = 1
-		#			category = land_doctrine
-		#		}
-		#	}
-	
 }
+
+
+JAP_reorganization_of_the_urban_environment_category = {
+	
+	JAP_ressettle_Tokyo = {
+		icon = JAP_ressettle_Tokyo
+		priority = 105
+
+		available = {
+			has_completed_focus = JAP_dismantling_of_cities
+			controls_state = FROM
+			num_of_civilian_factories_available_for_projects > 1
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_RotUE_var > 29 }
+				tooltip = JAP_RotUE_var_check_tt1 
+			}
+		}
+		state_target = yes
+		modifier = {
+			civilian_factory_use = 2
+		}
+		cost = 100
+		days_remove = 100
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		
+		targets = { 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Tokyo"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Tokyo"
+			282 = { add_manpower = -300000 }
+			533 = { add_manpower = 300000 }
+			add_to_variable = { JAP_RotUE_var = 3 tooltip = JAP_reorganization_var_tooltip }
+		}
+	}
+	
+	JAP_ressettle_Yokogama = {
+		icon = JAP_ressettle_Yokogama
+		priority = 104
+
+		available = {
+			has_completed_focus = JAP_dismantling_of_cities
+			controls_state = FROM
+			num_of_civilian_factories_available_for_projects > 1
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_RotUE_var > 49 }
+				tooltip = JAP_RotUE_var_check_tt2 
+			}
+		}
+		state_target = yes
+		modifier = {
+			civilian_factory_use = 2
+		}
+		cost = 100
+		days_remove = 100
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		
+		targets = { 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Yokogama"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Yokogama"
+			282 = { add_manpower = -300000 }
+			533 = { add_manpower = 300000 }
+			add_to_variable = { JAP_RotUE_var = 3 tooltip = JAP_reorganization_var_tooltip }
+		}
+	}
+	
+	JAP_ressettle_Osaka = {
+		icon = JAP_ressettle_Osaka
+		priority = 103
+
+		available = {
+			has_completed_focus = JAP_dismantling_of_cities
+			controls_state = FROM
+			num_of_civilian_factories_available_for_projects > 1
+			custom_trigger_tooltip = { 
+				check_variable = { JAP_RotUE_var > 39 }
+				tooltip = JAP_RotUE_var_check_tt3 
+			}
+		}
+		state_target = yes
+		modifier = {
+			civilian_factory_use = 2
+		}
+		cost = 100
+		days_remove = 100
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		
+		targets = { 531 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Osaka"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_ressettle_Osaka"
+			531 = { add_manpower = -300000 }
+			533 = { add_manpower = 300000 }
+			add_to_variable = { JAP_RotUE_var = 3 tooltip = JAP_reorganization_var_tooltip }
+		}
+	}
+	
+	JAP_show_reorg = {
+		priority = 200
+		icon = JAP_show_reorg
+		available = {
+			
+		}
+		visible = { 
+			has_country_flag = JAP_reorg_flag_hide
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = JAP_reorg_flag_hide
+		}
+	}
+	
+	JAP_hide_reorg = {
+		priority = 200
+		icon = JAP_hide_reorg
+		available = {
+			
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_reorg_flag_hide }
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = JAP_reorg_flag_hide
+		}
+	}
+	
+	JAP_reorganize_urban_environment_in_the_region = {
+		icon = JAP_reorganize_urban_environment_in_the_region
+		priority = 100
+
+		available = {
+			controls_state = FROM
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				num_of_civilian_factories_available_for_projects > 1
+			}
+			else = { 
+				num_of_civilian_factories_available_for_projects > 2
+			}
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_reorg_flag_hide }
+		}
+		state_target = yes
+		modifier = {
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				civilian_factory_use = 2
+			}
+			else = { 
+				civilian_factory_use = 3
+			}
+		}
+		cost = 100
+		days_remove = 300
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		targets = { 524 525 527 528 529 530 531 532 533 534 535 536 282 }
+		
+	#	targets = { 528 529 530 531 532 533 534 535 536 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_reorganize_urban_environment_in_the_region"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_reorganize_urban_environment_in_the_region"
+			FROM = { add_extra_state_shared_building_slots = 1 }
+			add_to_variable = { JAP_RotUE_var = 2 tooltip = JAP_reorganization_var_tooltip }
+		}
+	
+	}
+	
+	
+	JAP_show_electr = {
+		priority = 190
+		icon = JAP_show_electr
+		available = {
+			
+		}
+		visible = { 
+			has_country_flag = JAP_electr_flag_hide
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = JAP_electr_flag_hide
+		}
+	}
+	
+	JAP_hide_electr = {
+		priority = 190
+		icon = JAP_hide_electr
+		available = {
+			
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_electr_flag_hide }
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = JAP_electr_flag_hide
+		}
+	}
+	
+	JAP_electrificate_villages_in_the_region = {
+		icon = JAP_electrificate_villages_in_the_region
+		priority = 80
+
+		available = {
+			controls_state = FROM
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				num_of_civilian_factories_available_for_projects > 1
+			}
+			else = { 
+				num_of_civilian_factories_available_for_projects > 2
+			}
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_electr_flag_hide }
+			has_completed_focus = JAP_rural_electrification
+		}
+		state_target = yes
+		modifier = {
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				civilian_factory_use = 2
+			}
+			else = { 
+				civilian_factory_use = 3
+			}
+		}
+		cost = 75
+		days_remove = 200
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		targets = { 524 525 527 528 529 530 531 532 533 534 535 536 282 }
+		
+	#	targets = { 528 529 530 531 532 533 534 535 536 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_electrificate_villages_in_the_region"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_electrificate_villages_in_the_region"
+			add_to_variable = { JAP_RotUE_var = 1 tooltip = JAP_reorganization_var_tooltip }
+			
+		#	custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	
+	JAP_show_mecha = {
+		priority = 180
+		icon = JAP_show_mecha
+		available = {
+			
+		}
+		visible = { 
+			has_country_flag = JAP_mecha_flag_hide
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = JAP_mecha_flag_hide
+		}
+	}
+	
+	JAP_hide_mecha = {
+		priority = 180
+		icon = JAP_hide_mecha
+		available = {
+			
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_mecha_flag_hide }
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = JAP_mecha_flag_hide
+		}
+	}
+	
+	JAP_mechanize_agriculture_in_the_region = {
+		icon = JAP_mechanize_agriculture_in_the_region
+		priority = 70
+
+		available = {
+			num_of_civilian_factories_available_for_projects > 2
+			controls_state = FROM
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_mecha_flag_hide }
+			has_completed_focus = JAP_mechanization_of_agriculture
+		}
+		state_target = yes
+		modifier = {
+			civilian_factory_use = 3
+		}
+		cost = 50
+		days_remove = 120
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		targets = { 524 525 527 528 529 530 531 532 533 534 535 536 282 }
+		
+	#	targets = { 528 529 530 531 532 533 534 535 536 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_mechanize_agriculture_in_the_region"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_mechanize_agriculture_in_the_region"
+			add_to_variable = { JAP_RotUE_var = 1 tooltip = JAP_reorganization_var_tooltip }
+			
+		#	custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+	
+	
+	JAP_show_build = {
+		priority = 170
+		icon = JAP_show_build
+		available = {
+			
+		}
+		visible = { 
+			has_country_flag = JAP_build_flag_hide
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			clr_country_flag = JAP_build_flag_hide
+		}
+	}
+	
+	JAP_hide_build = {
+		priority = 170
+		icon = JAP_hide_build
+		available = {
+			
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_build_flag_hide }
+		}
+		days_re_enable = 5
+		fire_only_once = no
+		complete_effect = {
+			set_country_flag = JAP_build_flag_hide
+		}
+	}
+	
+	JAP_build_farm_villages_in_the_region = {
+		icon = JAP_build_farm_villages_in_the_region
+		priority = 90
+
+		available = {
+			controls_state = FROM
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				num_of_civilian_factories_available_for_projects > 1
+			}
+			else = { 
+				num_of_civilian_factories_available_for_projects > 2
+			}
+		}
+		visible = { 
+			NOT = { has_country_flag = JAP_build_flag_hide }
+			has_completed_focus = JAP_restoration_of_farming_villages
+		}
+		state_target = yes
+		modifier = {
+			if = { 
+				limit = { has_completed_focus = JAP_army_for_public_service }
+				civilian_factory_use = 2
+			}
+			else = { 
+				civilian_factory_use = 3
+			}
+		}
+		cost = 50
+		days_remove = 350
+		fire_only_once = yes
+		on_map_mode = map_and_decisions_view
+		targets = { 524 525 527 528 529 530 531 532 533 534 535 536 282 }
+		
+	#	targets = { 528 529 530 531 532 533 534 535 536 282 }
+		
+		complete_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_farm_villages_in_the_region"
+			
+		}
+ 		remove_effect = {
+			log = "[GetDateText]: [Root.GetName] ([Root.GetTag]): complete decision JAP_build_farm_villages_in_the_region"
+			add_to_variable = { JAP_RotUE_var = 2 tooltip = JAP_reorganization_var_tooltip }
+			
+		#	custom_effect_tooltip = empty_line_tooltip
+		}
+	}
+}
+
